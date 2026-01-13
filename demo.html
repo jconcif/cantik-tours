@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cantik Tours - Bali no se visita, se vive</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .dark .glass {
+            background: rgba(16, 31, 34, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .btn-primary {
+            background: #13c8ec;
+            color: white;
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(19, 200, 236, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#13c8ec',
+                        'bg-light': '#f6f8f8',
+                        'bg-dark': '#101f22',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-[#f6f8f8] text-[#101f22] transition-colors duration-300">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Simple Icon Component since Lucide CDN is tricky with React UMD
+        const Icon = ({ name, size = 24, className = "" }) => {
+            // Placeholder icons using simple shapes
+            return (
+                <div className={`inline-block ${className}`} style={{ width: size, height: size }}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-full h-full">
+                        {name === 'Sun' && <circle cx="12" cy="12" r="5" />}
+                        {name === 'Moon' && <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />}
+                        {name === 'Search' && <><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></>}
+                        {name === 'ArrowRight' && <><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></>}
+                        {name === 'ChevronLeft' && <polyline points="15 18 9 12 15 6" />}
+                        {name === 'Compass' && <><circle cx="12" cy="12" r="10" /><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" /></>}
+                        {name === 'Heart' && <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />}
+                        {name === 'CalendarCheck' && <><rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /><polyline points="9 16 11 18 15 14" /></>}
+                        {name === 'User' && <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></>}
+                        {name === 'Star' && <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />}
+                        {name === 'Share2' && <><circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><line x1="8.59" y1="13.51" x2="15.42" y2="17.49" /><line x1="15.41" y1="6.51" x2="8.59" y2="10.49" /></>}
+                        {name === 'Check' && <polyline points="20 6 9 17 4 12" />}
+                        {!['Sun', 'Moon', 'Search', 'ArrowRight', 'ChevronLeft', 'Compass', 'Heart', 'CalendarCheck', 'User', 'Star', 'Share2', 'Check'].includes(name) && <circle cx="12" cy="12" r="2" />}
+                    </svg>
+                </div>
+            );
+        };
+
+        const Navbar = ({ isDark, setDark }) => (
+            <nav className="sticky top-0 z-50 glass px-6 py-4 flex items-center justify-between mx-auto w-full">
+                <div className="flex items-center gap-2">
+                    <span className="text-2xl font-extrabold tracking-tighter text-primary">CANTIK</span>
+                    <span className="text-2xl font-light tracking-widest uppercase dark:text-white">Tours</span>
+                </div>
+                <div className="flex items-center gap-4">
+                    <button onClick={() => setDark(!isDark)} className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/5 dark:text-white">
+                        {isDark ? <Icon name="Sun" size={20} /> : <Icon name="Moon" size={20} />}
+                    </button>
+                    <a href="https://wa.me/6281572451127" className="hidden md:block btn-primary">Reserva Ahora</a>
+                </div>
+            </nav>
+        );
+
+        const Hero = () => (
+            <div className="relative h-[80vh] w-full flex items-center justify-center overflow-hidden">
+                <img src="images/hero.png" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#f6f8f8] dark:to-[#101f22]" />
+                <div className="relative z-10 px-6 text-center">
+                    <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-4">Bali no se visita, <span className="text-primary italic">se vive.</span></h1>
+                    <p className="text-xl text-white/90 mb-12">Experiencias privadas en español con el alma de un local.</p>
+                    <div className="bg-white dark:bg-gray-800 rounded-full p-2 pl-6 shadow-2xl flex items-center max-w-2xl mx-auto">
+                        <input className="flex-grow bg-transparent outline-none py-3 dark:text-white" placeholder="¿Qué quieres explorar?" />
+                        <button className="bg-primary p-4 rounded-full text-white flex items-center justify-center w-12 h-12">
+                            <Icon name="Search" size={22} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const CategoryChips = () => (
+            <div className="flex gap-4 overflow-x-auto py-8 px-6 no-scrollbar">
+                {['Templos', 'Cascadas', 'Playas', 'Aventura', 'Cultura'].map(cat => (
+                    <button key={cat} className="flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-gray-800 shadow-sm whitespace-nowrap dark:text-white">
+                        <span className="font-semibold">{cat}</span>
+                    </button>
+                ))}
+            </div>
+        );
+
+        const TourCard = ({ title, price, image, badge }) => (
+            <div className="bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-xl flex flex-col group transition-all hover:shadow-2xl">
+                <div className="relative h-64 overflow-hidden">
+                    <img src={image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <span className="absolute bottom-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">{badge}</span>
+                </div>
+                <div className="p-6">
+                    <h3 className="text-xl font-bold mb-4 dark:text-white">{title}</h3>
+                    <div className="flex items-center justify-between border-t dark:border-white/10 pt-6 mt-4">
+                        <div className="dark:text-white"><span className="text-2xl font-black">€{price}</span><span className="text-sm text-gray-400 ml-1">/coche</span></div>
+                        <button className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition-colors">
+                            <Icon name="ArrowRight" size={20} />
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const AboutUs = () => (
+            <section className="py-24 px-6 max-w-7xl mx-auto">
+                <div className="flex flex-col md:flex-row gap-16 items-center">
+                    <div className="flex-1 relative">
+                        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&q=80&w=2000" className="rounded-[2rem] shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500" />
+                    </div>
+                    <div className="flex-1">
+                        <h2 className="text-4xl font-black mb-8 dark:text-white leading-tight">Somos Perty y <span className="text-primary">Javier.</span></h2>
+                        <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">Ella es la sabiduría local de Bali; yo soy un viajero chileno que sabe exactamente lo que buscas: seguridad, cercanía y que te hablen en tu idioma.</p>
+                        <div className="bg-primary/5 border-l-4 border-primary p-6 italic dark:text-white rounded-r-2xl shadow-sm">"En Cantik Tours no eres un turista, eres nuestro invitado."</div>
+                    </div>
+                </div>
+            </section>
+        );
+
+        const BottomNav = () => (
+            <div className="md:hidden fixed bottom-4 left-4 right-4 glass p-4 flex justify-around z-50 rounded-3xl shadow-2xl">
+                <div className="flex flex-col items-center text-primary"><Icon name="Compass" size={24} /><span className="text-[10px] font-bold mt-1">EXPLORAR</span></div>
+                <div className="flex flex-col items-center text-gray-400"><Icon name="Heart" size={24} /><span className="text-[10px] font-bold mt-1">FAVORITOS</span></div>
+                <div className="flex flex-col items-center text-gray-400"><Icon name="CalendarCheck" size={24} /><span className="text-[10px] font-bold mt-1">RESERVAS</span></div>
+                <div className="flex flex-col items-center text-gray-400"><Icon name="User" size={24} /><span className="text-[10px] font-bold mt-1">NOSOTROS</span></div>
+            </div>
+        );
+
+        const App = () => {
+            const [isDark, setDark] = useState(false);
+
+            useEffect(() => {
+                if (isDark) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+            }, [isDark]);
+
+            return (
+                <div className="min-h-screen pb-24 dark:bg-[#101f22]">
+                    <Navbar isDark={isDark} setDark={setDark} />
+                    <Hero />
+                    <CategoryChips />
+                    <section className="px-6 py-12 max-w-7xl mx-auto">
+                        <h2 className="text-3xl font-black mb-12 dark:text-white">Tours Destacados</h2>
+                        <div className="grid md:grid-cols-3 gap-8">
+                            <TourCard title="Ubud Místico y Cascadas" price="50" image="images/ubud.png" badge="Popular" />
+                            <TourCard title="Atardecer en Uluwatu" price="40" image="images/uluwatu.png" badge="Recomendado" />
+                            <TourCard title="Puertas del Cielo" price="60" image="images/gates.png" badge="Imprescindible" />
+                        </div>
+                    </section>
+                    <AboutUs />
+                    <BottomNav />
+                    <a href="https://wa.me/6285940365407" className="fixed bottom-24 right-6 bg-[#25D366] p-4 rounded-full shadow-2xl md:bottom-10 hover:scale-110 transition-transform">
+                        <svg className="w-8 h-8 text-white fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.588-5.946 0-6.556 5.332-11.888 11.888-11.888 3.176 0 6.161 1.237 8.404 3.48 2.242 2.242 3.48 5.227 3.48 8.404 0 6.556-5.332 11.888-11.888 11.888-2.013 0-3.987-.512-5.731-1.484l-6.252 1.609zm6.091-3.69c1.558.926 3.41 1.415 5.3 1.415 5.728 0 10.388-4.659 10.388-10.388 0-2.776-1.082-5.385-3.046-7.349-1.964-1.964-4.573-3.046-7.349-3.046-5.728 0-10.388 4.659-10.388 10.388 0 1.935.538 3.817 1.556 5.43l-.946 3.454 3.535-.909zm11.366-7.327c-.314-.157-1.858-.916-2.148-1.022-.29-.105-.502-.157-.713.157-.21.314-.816 1.022-1 1.229-.183.208-.367.234-.68.077-.314-.157-1.326-.488-2.527-1.558-.934-.834-1.564-1.864-1.748-2.178-.183-.314-.02-.485.137-.641.141-.14.314-.367.471-.55.157-.183.21-.314.314-.524.105-.21.053-.393-.026-.55-.079-.157-.713-1.714-.977-2.352-.257-.622-.518-.537-.713-.547-.183-.009-.393-.01-.603-.01s-.55.079-.834.393c-.284.314-1.082 1.058-1.082 2.58 0 1.522 1.108 2.992 1.264 3.202.157.21 2.181 3.329 5.282 4.67 2.345 1.014 2.822.812 3.33.765.508-.047 1.638-.669 1.868-1.312.23-.643.23-1.192.161-1.312-.069-.11-.254-.208-.569-.365z" /></svg>
+                    </a>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>

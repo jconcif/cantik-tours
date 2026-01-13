@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #13c8ec;
+  --bg-light: #f6f8f8;
+  --bg-dark: #101f22;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  @apply bg-bg-light text-bg-dark transition-colors duration-300;
+}
+
+.dark body {
+  @apply bg-bg-dark text-bg-light;
+}
+
+/* Custom Utilities */
+.glass {
+  @apply backdrop-blur-md bg-white/70 dark:bg-bg-dark/70 border border-white/20 dark:border-white/10;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#109db8];
+}
+
+.btn-primary {
+  @apply bg-primary hover:bg-[#109db8] text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/20;
+}
+
+/* Hide scrollbar for category chips */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
