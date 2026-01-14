@@ -1,27 +1,19 @@
 import React, { useState } from 'react';
-import { Landmark, Waves, TreePine, Compass, Palette } from 'lucide-react';
+import { Landmark, Waves, TreePine, Compass, Palette, Camera } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const categories = [
-    { id: 'todos', name: 'Todos', icon: Compass },
-    { id: 'templos', name: 'Templos', icon: Landmark },
-    { id: 'cascadas', name: 'Cascadas', icon: Waves },
-    { id: 'playas', name: 'Playas', icon: Waves },
-    { id: 'aventura', name: 'Aventura', icon: TreePine },
-    { id: 'cultura', name: 'Cultura', icon: Palette },
+    { id: 'todos', nameKey: 'tours.categories.todos', icon: Compass },
+    { id: 'cultura', nameKey: 'tours.categories.cultura', icon: Palette },
+    { id: 'cascadas', nameKey: 'tours.categories.cascadas', icon: Waves },
+    { id: 'fotografia', nameKey: 'tours.categories.fotografia', icon: Camera },
+    { id: 'playas', nameKey: 'tours.categories.playas', icon: Waves },
+    { id: 'aventura', nameKey: 'tours.categories.aventura', icon: TreePine },
 ];
 
 const CategoryChips = ({ active = 'todos', onSelect }) => {
-    // If no props provided (like in Home), use local state logic or default props.
-    // However, better to make it controlled or uncontrolled properly.
-    // For now, if no onSelect is passed, it's just visual.
-    // But since Home.jsx also uses it, we should update Home.jsx or make this smarter.
-
-    // Let's assume for Home.jsx we might just want to link to /tours with that filter? 
-    // Or just make it interactive there too? Let's make it interactive everywhere if possible or just links.
-    // For now, let's keep it simple: Controlled component.
-
-    // Actually, to make it work in Home without complexity, let's default to internal state if no props.
+    const { t } = useTranslation();
     const [internalActive, setInternalActive] = useState('todos');
 
     const currentActive = onSelect ? active : internalActive;
@@ -48,7 +40,7 @@ const CategoryChips = ({ active = 'todos', onSelect }) => {
                         }`}
                 >
                     <cat.icon size={20} className={currentActive === cat.id ? 'text-white' : 'text-primary'} />
-                    <span className="font-bold text-sm">{cat.name}</span>
+                    <span className="font-bold text-sm">{t(cat.nameKey)}</span>
                 </motion.button>
             ))}
         </div>

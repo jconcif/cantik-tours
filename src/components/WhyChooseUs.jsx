@@ -1,6 +1,7 @@
 import React from 'react';
 import { Languages, Clock, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const reasons = [
     {
@@ -21,8 +22,28 @@ const reasons = [
 ];
 
 const WhyChooseUs = () => {
+    const { t } = useTranslation();
+
+    const reasons = [
+        {
+            icon: Languages,
+            title: t('why.reason1.title'),
+            text: t('why.reason1.text')
+        },
+        {
+            icon: Clock,
+            title: t('why.reason2.title'),
+            text: t('why.reason2.text')
+        },
+        {
+            icon: ShieldCheck,
+            title: t('why.reason3.title'),
+            text: t('why.reason3.text')
+        }
+    ];
+
     return (
-        <section className="py-24 bg-white dark:bg-bg-dark/50">
+        <section id="why-us" className="py-24 bg-white dark:bg-bg-dark/50">
             <div className="max-w-7xl mx-auto px-6">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -31,8 +52,8 @@ const WhyChooseUs = () => {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-4xl font-black mb-4">¿Por qué elegirnos?</h2>
-                    <p className="text-gray-500 max-w-xl mx-auto">Diseñamos cada detalle para que tu única preocupación sea disfrutar de la Isla de los Dioses.</p>
+                    <h2 className="text-4xl font-black mb-4">{t('why.title')}</h2>
+                    <p className="text-gray-500 max-w-xl mx-auto">{t('why.subtitle')}</p>
                 </motion.div>
 
                 <div className="grid md:grid-cols-3 gap-12">

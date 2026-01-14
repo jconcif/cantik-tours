@@ -1,0 +1,3 @@
+# Configuración estándar para Hostinger
+Options -MultiViews
+DirectoryIndex index.html

@@ -1,42 +1,83 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #13c8ec;
-  --bg-light: #f6f8f8;
-  --bg-dark: #101f22;
+@layer base {
+  :root {
+    --primary: #13c8ec;
+    --secondary: #ec138a;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    @apply bg-bg-light text-bg-dark antialiased transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-bg-dark text-bg-light;
+  }
+
+  /* Selection color */
+  ::selection {
+    @apply bg-primary/30 text-inherit;
+  }
 }
 
-body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  @apply bg-bg-light text-bg-dark transition-colors duration-300;
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-md bg-white/70 dark:bg-bg-dark/70 border border-white/20 dark:border-white/10 shadow-lg;
+  }
+  
+  .glass-card {
+    @apply backdrop-blur-xl bg-white/80 dark:bg-surface-dark/80 border border-white/20 dark:border-white/5 shadow-xl rounded-2xl;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#109db8] to-secondary;
+  }
+  
+  .text-gradient-hover {
+    @apply hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-primary hover:to-secondary transition-all duration-300;
+  }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-700 rounded-full hover:bg-primary/50 transition-colors;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
 }
 
-.dark body {
-  @apply bg-bg-dark text-bg-light;
-}
-
-/* Custom Utilities */
-.glass {
-  @apply backdrop-blur-md bg-white/70 dark:bg-bg-dark/70 border border-white/20 dark:border-white/10;
-}
-
-.text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-[#109db8];
-}
-
-.btn-primary {
-  @apply bg-primary hover:bg-[#109db8] text-white font-bold py-3 px-6 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/20;
-}
-
-/* Hide scrollbar for category chips */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary to-[#109db8] hover:to-primary text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/25 hover:shadow-primary/40;
+  }
+  
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95;
+  }
+  
+  .container-custom {
+    @apply container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl;
+  }
 }

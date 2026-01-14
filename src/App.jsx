@@ -5,6 +5,7 @@ import { DarkModeProvider } from './context/DarkModeContext';
 import Home from './pages/Home';
 import TourList from './pages/TourList';
 import TourDetail from './pages/TourDetail';
+import BaliGuide from './pages/BaliGuide';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
@@ -20,6 +21,7 @@ function App() {
                         <Route path="/" element={<Home />} />
                         <Route path="/tours" element={<TourList />} />
                         <Route path="/tour/:id" element={<TourDetail />} />
+                        <Route path="/guia-bali" element={<BaliGuide />} />
                     </Routes>
                 </main>
                 <Footer />
@@ -29,4 +31,3 @@ function App() {
 }
 
 export default App;
-
