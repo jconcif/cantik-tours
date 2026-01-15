@@ -132,7 +132,11 @@ i18n
                         description: "Tu agencia de confianza en Bali. Experiencias privadas, auténticas y acompañamiento local.",
                         quick_links: "Enlaces rápidos",
                         contact: "Contacto",
-                        rights: "Todos los derechos reservados."
+                        rights: "Todos los derechos reservados.",
+                        trust_1: "Pago Seguro en Destino",
+                        trust_2: "Guías Locales Verificados",
+                        made_with: "Hecho con",
+                        in_bali: "en Bali"
                     },
                     common: {
                         loading: "Cargando...",
@@ -264,7 +268,11 @@ i18n
                         description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",
                         quick_links: "Quick Links",
                         contact: "Contact",
-                        rights: "All rights reserved."
+                        rights: "All rights reserved.",
+                        trust_1: "Secure Payment on Arrival",
+                        trust_2: "Verified Local Guides",
+                        made_with: "Made with",
+                        in_bali: "from Bali"
                     },
                     common: {
                         loading: "Loading...",

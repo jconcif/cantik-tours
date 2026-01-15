@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Instagram, Heart, MessageCircle } from 'lucide-react';
+import { Instagram, Heart, MessageCircle, ShieldCheck, Users, Banknote } from 'lucide-react';
 
 const Footer = () => {
     const { t } = useTranslation();
@@ -18,6 +18,14 @@ const Footer = () => {
                     <p className="text-gray-500 dark:text-gray-400 font-medium">
                         {t('footer.description')}
                     </p>
+                    <div className="flex flex-col gap-4 mt-6">
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                            <ShieldCheck size={16} className="text-secondary" /> {t('footer.trust_1')}
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 font-medium">
+                            <Users size={16} className="text-secondary" /> {t('footer.trust_2')}
+                        </div>
+                    </div>
                 </div>
 
                 <div>
@@ -41,20 +49,20 @@ const Footer = () => {
                 <div>
                     <h4 className="font-bold text-lg mb-6">Social</h4>
                     <div className="flex gap-4">
-                        <a href="https://instagram.com/CantikToursBali" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
-                            <Instagram size={20} />
+                        <a href="https://instagram.com/CantikToursBali" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                            <Instagram size={24} />
                         </a>
-                        <a href="https://wa.me/376614535" className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all">
-                            <MessageCircle size={20} />
+                        <a href="https://wa.me/376614535" className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                            <MessageCircle size={24} />
                         </a>
                     </div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto border-t border-black/5 dark:border-white/5 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-bold text-gray-400 uppercase tracking-widest">
-                <p>© {currentYear} CANTIK TOURS. {t('footer.rights')}</p>
+            <div className="max-w-7xl mx-auto border-t border-black/5 dark:border-white/5 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-medium text-gray-400">
+                <p>© {currentYear} Cantik Tours. {t('footer.rights')}</p>
                 <p className="flex items-center gap-2">
-                    Made with <Heart size={14} className="text-red-500 fill-red-500" /> in Bali
+                    {t('footer.made_with')} <Heart size={14} className="text-red-500 fill-red-500" /> {t('footer.in_bali')}
                 </p>
             </div>
         </footer>
