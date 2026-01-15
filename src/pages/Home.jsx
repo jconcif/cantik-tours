@@ -5,6 +5,7 @@ import TourCard from '../components/TourCard';
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import WhyChooseUs from '../components/WhyChooseUs';
+import FeaturesGrid from '../components/FeaturesGrid';
 import Testimonials from '../components/Testimonials';
 import AboutUs from '../components/AboutUs';
 import { useTranslation } from 'react-i18next';
@@ -50,6 +51,7 @@ const Home = () => {
             </div>
 
             <WhyChooseUs />
+            <FeaturesGrid />
             <AboutUs />
 
             {/* Testimonials */}
@@ -67,13 +69,13 @@ const Home = () => {
                         <p className="text-lg md:text-xl mb-10 text-white/80 max-w-md mx-auto font-medium">
                             {t('cta.subtitle')}
                         </p>
-                        <a
-                            href="https://wa.me/376614535"
+                        <Link
+                            to="/tours"
                             className="inline-flex items-center gap-3 bg-white text-primary font-black px-10 py-5 rounded-full text-lg hover:scale-105 transition-all shadow-xl active:scale-95 group"
                         >
                             {t('cta.btn')}
                             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </section>

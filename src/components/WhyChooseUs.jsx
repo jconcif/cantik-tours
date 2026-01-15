@@ -1,37 +1,19 @@
 import React from 'react';
-import { Languages, Clock, ShieldCheck } from 'lucide-react';
+import { GraduationCap, Wifi, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-
-const reasons = [
-    {
-        icon: Languages,
-        title: "Guía en Español",
-        text: "Olvídate de las barreras del idioma. Te acompañamos en tu lengua materna."
-    },
-    {
-        icon: Clock,
-        title: "Flexibilidad Total",
-        text: "Tours privados a tu ritmo. Tú marcas los tiempos, nosotros la magia."
-    },
-    {
-        icon: ShieldCheck,
-        title: "Pago Seguro",
-        text: "Confianza ante todo. Reserva ahora y paga al finalizar el tour."
-    }
-];
 
 const WhyChooseUs = () => {
     const { t } = useTranslation();
 
     const reasons = [
         {
-            icon: Languages,
+            icon: GraduationCap,
             title: t('why.reason1.title'),
             text: t('why.reason1.text')
         },
         {
-            icon: Clock,
+            icon: Wifi,
             title: t('why.reason2.title'),
             text: t('why.reason2.text')
         },
