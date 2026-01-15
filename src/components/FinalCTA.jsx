@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MessageCircle, Calendar, ArrowRight, Star } from 'lucide-react';
+import { MessageCircle, Compass, ArrowRight, Star } from 'lucide-react';
 import BookingModal from './BookingModal';
 
 const FinalCTA = () => {
@@ -62,14 +63,14 @@ const FinalCTA = () => {
                                 transition={{ delay: 0.3 }}
                                 className="flex flex-col sm:flex-row items-center gap-4"
                             >
-                                <button
-                                    onClick={() => setIsModalOpen(true)}
+                                <Link
+                                    to="/tours"
                                     className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2 group"
                                 >
-                                    <Calendar size={20} />
+                                    <Compass size={20} />
                                     {t('cta.btn_availability')}
                                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                                </button>
+                                </Link>
 
                                 <a
                                     href={whatsappLink}

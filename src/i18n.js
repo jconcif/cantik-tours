@@ -56,7 +56,7 @@ i18n
                     cta: {
                         title: "¿Listo para vivir Bali como un local?",
                         subtitle: "Reserva hoy y vive el Bali que siempre soñaste con guías expertos.",
-                        btn_availability: "Consultar disponibilidad",
+                        btn_availability: "Ver Todos los Tours",
                         btn_whatsapp: "WhatsApp directo"
                     },
                     detail: {
@@ -192,7 +192,7 @@ i18n
                     cta: {
                         title: "Ready to live Bali like a local?",
                         subtitle: "Book today and experience the Bali you've always dreamed of with expert guides.",
-                        btn_availability: "Check availability",
+                        btn_availability: "See All Tours",
                         btn_whatsapp: "Direct WhatsApp"
                     },
                     detail: {
