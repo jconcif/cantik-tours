@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Hero from '../components/Hero';
 import { tours } from '../data/tours';
 import TourCard from '../components/TourCard';
@@ -9,18 +9,20 @@ import FeaturesGrid from '../components/FeaturesGrid';
 import Testimonials from '../components/Testimonials';
 import AboutUs from '../components/AboutUs';
 import FinalCTA from '../components/FinalCTA';
+import SEO from '../components/SEO';
 import { useTranslation } from 'react-i18next';
 
 const Home = () => {
     const { t } = useTranslation();
     const featuredTours = tours.slice(0, 3);
 
-    useEffect(() => {
-        document.title = `Cantik Tours Bali | ${t('hero.title_2')}`;
-    }, [t]);
-
     return (
         <div className="bg-bg-light dark:bg-bg-dark min-h-screen">
+            <SEO
+                title={t('hero.title_2')}
+                description="Agencia de viajes local en Bali con guías en español. Tours privados, itinerarios flexibles y experiencias auténticas con Perty y su equipo."
+                keywords="bali tours, guias en español bali, turismo bali, viaje a bali, bali tours privados, cantiktours"
+            />
             <Hero />
 
             {/* Featured Tours */}

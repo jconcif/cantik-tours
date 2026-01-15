@@ -27,7 +27,10 @@ i18n
                         title_2: "se vive.",
                         subtitle: "Descubre el alma de la isla con guías locales expertos y asistencia 100% personalizada.",
                         btn_tours: "Ver Experiencias",
-                        btn_story: "Nuestra Historia"
+                        btn_story: "Nuestra Historia",
+                        trust_1: "Guías 100% en Español",
+                        trust_2: "Pago Flexible en Destino",
+                        trust_3: "Transporte Privado Premium"
                     },
                     tours: {
                         title: "Nuestros",
@@ -156,7 +159,10 @@ i18n
                         title_2: "it's lived.",
                         subtitle: "Discover the island's soul with expert local guides and 100% personalized assistance.",
                         btn_tours: "See Experiences",
-                        btn_story: "Our Story"
+                        btn_story: "Our Story",
+                        trust_1: "100% Spanish Speaking Guides",
+                        trust_2: "Flexible Payment on Arrival",
+                        trust_3: "Premium Private Transport"
                     },
                     tours: {
                         title: "Our",

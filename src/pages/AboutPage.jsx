@@ -35,6 +35,11 @@ const AboutPage = () => {
 
     return (
         <div className="pt-24 min-h-screen bg-bg-light dark:bg-bg-dark overflow-hidden">
+            <SEO
+                title={`${t('about.title')} | Perty & Javi`}
+                description="Conoce la historia de Cantik Tours Bali. Perty (educadora local) y Javi (logística europea) unen fuerzas para ofrecerte la experiencia más auténtica y segura en Bali."
+                keywords="sobre nosotros cantiktours, guias bali español, historia cantik tours, perty y javi bali, tour operador bali"
+            />
             {/* Header Section */}
             <section className="relative px-6 py-20 md:py-32 max-w-7xl mx-auto text-center">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-[120px] -z-10" />
