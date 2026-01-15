@@ -42,19 +42,19 @@ const TourCard = ({ tour, index }) => {
 
                 <div className="grid grid-cols-2 gap-y-4 mb-8">
                     <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                             <Clock size={14} />
                         </div>
                         <span>{l('duration')}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 delay-75">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                             <Languages size={14} />
                         </div>
                         <span>{i18n.language.startsWith('es') ? 'Español/Inglés' : 'ES / EN Guide'}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-colors duration-300 delay-100">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                             <Users size={14} />
                         </div>
                         <span>{t('detail.private')}</span>
