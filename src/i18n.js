@@ -18,7 +18,8 @@ i18n
                         home: "Inicio",
                         tours: "Tours",
                         guide: "Guía Bali 2026",
-                        contact: "Hablar con Perty"
+                        contact: "Hablar con Perty",
+                        about: "Nosotros"
                     },
                     hero: {
                         badge: "Experiencias Premium en Indonesia",
@@ -50,10 +51,10 @@ i18n
                         }
                     },
                     cta: {
-                        title_1: "¿Listo para",
-                        title_2: "tu aventura?",
-                        subtitle: "Reserva hoy y vive el Bali que siempre soñaste.",
-                        btn: "Ver Experiencias"
+                        title: "¿Listo para vivir Bali como un local?",
+                        subtitle: "Reserva hoy y vive el Bali que siempre soñaste con guías expertos.",
+                        btn_availability: "Consultar disponibilidad",
+                        btn_whatsapp: "WhatsApp directo"
                     },
                     detail: {
                         itinerary: "Itinerario",
@@ -83,7 +84,7 @@ i18n
                     why: {
                         title: "¿Por qué Cantik Tours?",
                         subtitle: "No somos una agencia masiva. Somos locales especializados en crear recuerdos que duran toda la vida.",
-                        reason1: { title: "La Sabiduría de una Maestra", text: "Nuestros guías no solo conducen; te enseñan. Con la paciencia y el conocimiento de Perty, cada parada tiene un 'por qué' cultural." },
+                        reason1: { title: "Expertos en Cultura Local", text: "No solo te llevamos, te sumergimos. Todo nuestro equipo comparte la misma pasión por explicarte el 'por qué' de cada tradición, templo y paisaje." },
                         reason2: { title: "Confort sin Compromisos", text: "Vehículos premium, climatizados y con todas las facilidades para que Bali sea un placer de principio a fin." },
                         reason3: { title: "Confianza de Amigos", text: "Sin letras pequeñas. Reserva con un pequeño depósito y paga el resto al finalizar. Tu satisfacción es nuestra prioridad." }
                     },
@@ -91,27 +92,38 @@ i18n
                         title: "Detalles que marcan la",
                         title_accent: "diferencia",
                         subtitle: "No solo nos importa a dónde vas, sino cómo te sientes en cada kilómetro del trayecto.",
-                        wifi: { title: "WiFi a Bordo", text: "Comparte tus momentos al instante mientras recorres la isla." },
+                        wifi: { title: "WiFi a Bordo*", text: "Comparte tus momentos al instante mientras recorres la isla." },
                         water: { title: "Hidratación Premium", text: "Agua fría siempre disponible para combatir el sol tropical de Bali." },
                         car: { title: "Libertad en Movimiento", text: "Coches espaciosos y limpios. Tú decides cuándo parar y cuándo seguir." },
                         food: { title: "Gastronomía Real", text: "Te llevamos a los rincones donde los locales realmente disfrutamos comer." }
                     },
                     about: {
                         tag: "Nuestra Esencia",
-                        title: "El Alma detrás de Cantik Tours",
-                        meaning_title: "Más que un nombre, un sentimiento.",
-                        meaning_text: "En indonesio, Cantik significa 'hermoso'. Pero para nosotros, la belleza de Bali no está solo en sus atardeceres. Está en la devoción de una ofrenda matutina, en la sonrisa genuina de un agricultor y en la paz que se siente al comprender nuestra cultura. Nuestra misión es que cada momento de tu viaje sea, simplemente, Cantik.",
-                        perty_title: "¡Hola! Soy Perty.",
-                        perty_text: "Soy indonesia de raíces balinesas y profesora de vocación. Con un Máster en Educación, he dedicado mi vida a enseñar nuestra lengua y tradiciones. En Cantik Tours, no soy solo tu guía; soy tu ventana a la verdadera Bali. Mi misión es que no solo veas los monumentos, sino que comprendas el 'por qué' de cada ritual y te lleves contigo la sabiduría de mi isla. Conmigo, aprenderás a vivir Bali como un local, no como un turista.",
-                        team_title: "El Puente entre dos Mundos",
-                        team_text: "Cantik Tours nació de la unión de dos pasiones. Por un lado, la profundidad cultural y el conocimiento local de Perty. Por otro, la visión de nuestro socio chileno, quien entiende perfectamente las expectativas del viajero occidental: seguridad, puntualidad impecable y una comunicación fluida en tu idioma. Juntos, hemos diseñado una propuesta donde la autenticidad balinesa se encuentra con los más altos estándares de servicio y confianza. Él cuida cada detalle logístico y captura tus mejores momentos, para que tú solo tengas que estar presente.",
-                        why_title: "¿Por qué confiar en nosotros?",
-                        why_1_title: "Conexión Directa",
-                        why_1_text: "Sin agencias ni intermediarios. Hablas directamente con quienes diseñan y viven tu viaje.",
-                        why_2_title: "Tus tiempos son ley",
-                        why_2_text: "¿Te enamoraste de un rincón? Nos quedamos. Nuestra flexibilidad es total porque el viaje es tuyo.",
-                        why_3_title: "Cero Barreras",
-                        why_3_text: "Te acompañamos en español e inglés, asegurando que cada detalle y anécdota se entienda a la perfección."
+                        title: "Viaja a tu ritmo",
+                        meaning_title: "¿Qué significa Cantik?",
+                        meaning_text: "En indonesio, Cantik (pronunciado Chantik) significa hermoso. Pero para nosotros, la belleza de Bali no está solo en sus postales. Está en la devoción de una ofrenda matutina, en la sonrisa de un agricultor y en la paz que sientes al comprender nuestra cultura. Queremos que cada momento de tu viaje sea, simplemente, Cantik.",
+                        team_intro_title: "El Equipo",
+                        team_intro_text: "Sin prisas, con seguridad y en tu idioma.",
+                        perty_title: "Perty (El Alma Local)",
+                        perty_text: "Indonesia de raíces balinesas y profesora de lengua indonesia. Con un Máster en Educación y años recorriendo la isla como guía, Perty no solo te muestra el camino; es tu ventana real a los templos, rutas escondidas y rituales que otros solo ven de lejos.",
+                        javi_title: "Javi (Tu Garantía y Logística)",
+                        javi_text: "Chileno-español y viajero por naturaleza. Mi misión es ser tu puente en Bali. Coordino cada detalle: desde itinerarios a medida hasta tus consultas diarias, asegurando una comunicación fluida en español. Estoy aquí para que tú solo disfrutes, sabiendo que la logística está bajo control.",
+                        promise_title: "Nuestra Promesa",
+                        promise_text: "No vendemos transporte, compartimos nuestro hogar. Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen.",
+                        closing: "Con Cantik Tours, tu viaje no es solo una visita; es una inmersión real en Bali, diseñada para que cada instante sea, de verdad, Cantik.",
+                        meet_team_title: "Nuestros Guías Expertos",
+                        meet_team_subtitle: "Contamos con ellos por su conocimiento, calidez y compromiso.",
+                        join_team_title: "¿Eres guía en Bali?",
+                        join_team_text: "Creemos en el trabajo colaborativo. Buscamos personas apasionadas por compartir su cultura. ¡Escríbenos!",
+                        guide_1_name: "Wayan",
+                        guide_1_role: "Guardián de Templos",
+                        guide_1_desc: "Experto en historia y arquitectura balinesa. 10 años compartiendo secretos ancestrales.",
+                        guide_2_name: "Made",
+                        guide_2_role: "Aventurero Innato",
+                        guide_2_desc: "Especialista en trekkings y cascadas ocultas. Su energía es contagiosa.",
+                        guide_3_name: "Komang",
+                        guide_3_role: "Sonrisa de Bali",
+                        guide_3_desc: "Especialista en cultura local y gastronomía. Te hará sentir parte de su familia."
                     },
                     footer: {
                         description: "Tu agencia de confianza en Bali. Experiencias privadas, auténticas y acompañamiento local.",
@@ -135,7 +147,8 @@ i18n
                         home: "Home",
                         tours: "Tours",
                         guide: "Bali Guide 2026",
-                        contact: "Talk to Perty"
+                        contact: "Talk to Perty",
+                        about: "About Us"
                     },
                     hero: {
                         badge: "Premium Experiences in Indonesia",
@@ -167,10 +180,10 @@ i18n
                         }
                     },
                     cta: {
-                        title_1: "Ready for",
-                        title_2: "your adventure?",
-                        subtitle: "Book today and experience the Bali you've always dreamed of.",
-                        btn: "See Experiences"
+                        title: "Ready to live Bali like a local?",
+                        subtitle: "Book today and experience the Bali you've always dreamed of with expert guides.",
+                        btn_availability: "Check availability",
+                        btn_whatsapp: "Direct WhatsApp"
                     },
                     detail: {
                         itinerary: "Itinerary",
@@ -200,7 +213,7 @@ i18n
                     why: {
                         title: "Why Cantik Tours?",
                         subtitle: "We are not a mass-market agency. We are locals specialized in creating memories that last a lifetime.",
-                        reason1: { title: "A Teacher's Wisdom", text: "Our guides don't just drive; they teach. With Perty's patience and knowledge, every stop has a cultural 'why'." },
+                        reason1: { title: "Local Culture Experts", text: "We don't just take you there, we immerse you. Our entire team shares the same passion for explaining the 'why' of every tradition, temple, and landscape." },
                         reason2: { title: "Uncompromising Comfort", text: "Premium, air-conditioned vehicles with all the facilities to make Bali a pleasure from start to finish." },
                         reason3: { title: "Friends' Trust", text: "No fine print. Book with a small deposit and pay the rest at the end. Your satisfaction is our priority." }
                     },
@@ -208,27 +221,38 @@ i18n
                         title: "Details that make a",
                         title_accent: "difference",
                         subtitle: "We don't just care about where you go, but how you feel at every mile along the way.",
-                        wifi: { title: "On-board WiFi", text: "Share your moments instantly as you travel across the island." },
+                        wifi: { title: "On-board WiFi*", text: "Share your moments instantly as you travel across the island." },
                         water: { title: "Premium Hydration", text: "Always cold water available to beat Bali's tropical sun." },
                         car: { title: "Freedom in Motion", text: "Spacious and clean cars. You decide when to stop and when to keep moving." },
                         food: { title: "Real Gastronomy", text: "We take you to the hidden gems where locals actually enjoy eating." }
                     },
                     about: {
                         tag: "Our Essence",
-                        title: "The Soul behind Cantik Tours",
-                        meaning_title: "More than a name, a feeling.",
-                        meaning_text: "In Indonesian, Cantik means 'beautiful'. But for us, Bali's beauty isn't just in its sunsets. It's in the devotion of a morning offering, in the genuine smile of a farmer, and in the peace felt when understanding our culture. Our mission is for every moment of your trip to be, simply, Cantik.",
-                        perty_title: "Hi! I'm Perty.",
-                        perty_text: "I am Indonesian with Balinese roots and a teacher by vocation. With a Master's in Education, I have dedicated my life to teaching our language and traditions. At Cantik Tours, I am not just your guide; I am your window to the real Bali. My mission is for you to not only see the monuments but to understand the 'why' behind every ritual and take the wisdom of my island home with you. With me, you will learn to live Bali as a local, not as a tourist.",
-                        team_title: "The Bridge Between Two Worlds",
-                        team_text: "Cantik Tours was born from the union of two passions. On one hand, Perty's cultural depth and local knowledge. On the other, the vision of our Chilean partner, who perfectly understands the expectations of the Western traveler: safety, impeccable punctuality, and fluid communication in your language. Together, we have designed a proposal where Balinese authenticity meets the highest standards of service and trust. He takes care of every logistical detail and captures your best moments, so you only have to be present.",
-                        why_title: "Why trust us?",
-                        why_1_title: "Direct Connection",
-                        why_1_text: "No agencies or middlemen. You speak directly with those who design and live your trip.",
-                        why_2_title: "Your Time, Your Way",
-                        why_2_text: "Fell in love with a spot? We stay. Our flexibility is total because the trip is yours.",
-                        why_3_title: "Zero Barriers",
-                        why_3_text: "We accompany you in Spanish and English, ensuring every detail and story is perfectly understood."
+                        title: "Travel at your own pace",
+                        meaning_title: "What does Cantik mean?",
+                        meaning_text: "In Indonesian, Cantik (pronounced Chantik) means beautiful. But for us, the beauty of Bali is not just in its postcards. It is in the devotion of a morning offering, in the smile of a farmer, and in the peace you feel when understanding our culture. We want every moment of your trip to be, simply, Cantik.",
+                        team_intro_title: "The Team",
+                        team_intro_text: "No rush, safely, and in your language.",
+                        perty_title: "Perty (The Local Soul)",
+                        perty_text: "Indonesian with Balinese roots and a teacher of the Indonesian language. With a Master's in Education and years traveling the island as a guide, Perty doesn't just show you the way; she is your real window to the temples, hidden routes, and rituals that others only see from afar.",
+                        javi_title: "Javi (Your Guarantee & Logistics)",
+                        javi_text: "Chilean-Spanish and traveler by nature. My mission is to be your bridge in Bali. I coordinate every detail: from custom itineraries to your daily queries, ensuring fluid communication in Spanish. I am here so you can just enjoy, knowing the logistics are under control.",
+                        promise_title: "Our Promise",
+                        promise_text: "We don't sell transport, we share our home. To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
+                        closing: "With Cantik Tours, your trip is not just a visit; it is a real immersion in Bali, designed so that every instant is, truly, Cantik.",
+                        meet_team_title: "Our Expert Guides",
+                        meet_team_subtitle: "We count on them for their knowledge, warmth, and commitment.",
+                        join_team_title: "Are you a guide in Bali?",
+                        join_team_text: "We believe in collaborative work. We are looking for people passionate about sharing their culture. Write to us!",
+                        guide_1_name: "Wayan",
+                        guide_1_role: "Temple Guardian",
+                        guide_1_desc: "Expert in Balinese history and architecture. 10 years sharing ancestral secrets.",
+                        guide_2_name: "Made",
+                        guide_2_role: "Natural Adventurer",
+                        guide_2_desc: "Specialist in trekking and hidden waterfalls. His energy is contagious.",
+                        guide_3_name: "Komang",
+                        guide_3_role: "Bali's Smile",
+                        guide_3_desc: "Specialist in local culture and gastronomy. He will make you feel part of his family."
                     },
                     footer: {
                         description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",

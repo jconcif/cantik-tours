@@ -8,6 +8,7 @@ import WhyChooseUs from '../components/WhyChooseUs';
 import FeaturesGrid from '../components/FeaturesGrid';
 import Testimonials from '../components/Testimonials';
 import AboutUs from '../components/AboutUs';
+import FinalCTA from '../components/FinalCTA';
 import { useTranslation } from 'react-i18next';
 
 const Home = () => {
@@ -58,27 +59,7 @@ const Home = () => {
             <Testimonials reviews={tours[0].reviewsList} />
 
             {/* Final CTA */}
-            <section className="py-24 px-6">
-                <div className="max-w-4xl mx-auto bg-primary rounded-[3rem] p-12 md:p-16 text-center text-white relative overflow-hidden shadow-2xl">
-                    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent)]" />
-                    <div className="relative z-10">
-                        <h2 className="text-3xl md:text-5xl font-black mb-6 leading-tight">
-                            {t('cta.title_1')} <br />
-                            <span className="italic opacity-90">{t('cta.title_2')}</span>
-                        </h2>
-                        <p className="text-lg md:text-xl mb-10 text-white/80 max-w-md mx-auto font-medium">
-                            {t('cta.subtitle')}
-                        </p>
-                        <Link
-                            to="/tours"
-                            className="inline-flex items-center gap-3 bg-white text-primary font-black px-10 py-5 rounded-full text-lg hover:scale-105 transition-all shadow-xl active:scale-95 group"
-                        >
-                            {t('cta.btn')}
-                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                        </Link>
-                    </div>
-                </div>
-            </section>
+            <FinalCTA />
         </div>
     );
 };

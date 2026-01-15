@@ -21,6 +21,7 @@ const Navbar = () => {
     const isHome = location.pathname === '/' || location.pathname === '/index.html';
     const isTourDetail = location.pathname.startsWith('/tour/');
     const isBaliGuide = location.pathname.startsWith('/guia-bali');
+    const isAbout = location.pathname.startsWith('/nosotros');
     const isTourList = location.pathname.startsWith('/tours');
 
     // Need back button if NOT home
@@ -70,10 +71,17 @@ const Navbar = () => {
                         {t('nav.home')}
                         {isHome && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
                     </Link>
+
                     <Link to="/tours" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
                         {t('nav.tours')}
                         {isTourList && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
                     </Link>
+
+                    <Link to="/nosotros" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
+                        {t('nav.about')}
+                        {isAbout && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
+                    </Link>
+
                     <Link to="/guia-bali" className={`hover:text-primary transition-colors relative group py-2 flex items-center gap-2 ${textColorClass}`}>
                         <BookOpen size={16} />
                         {t('nav.guide')}
@@ -146,6 +154,13 @@ const Navbar = () => {
                             >
                                 <span className={isTourList ? 'text-primary' : 'dark:text-white text-gray-900'}>{t('nav.tours')}</span>
                                 <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-bold tracking-widest uppercase">Perts Choice</span>
+                            </Link>
+                            <Link
+                                to="/nosotros"
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="flex items-center justify-between py-4 border-b border-black/5 dark:border-white/5"
+                            >
+                                <span className={isAbout ? 'text-primary' : 'dark:text-white text-gray-900'}>{t('nav.about')}</span>
                             </Link>
                             <Link
                                 to="/guia-bali"
