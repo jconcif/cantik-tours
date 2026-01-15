@@ -6,6 +6,7 @@ import {
     Globe, Camera, Utensils, Info, ChevronDown
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import SEO from '../components/SEO';
 
 const GuideSection = ({ title, icon: Icon, children, isOpen, onToggle }) => (
     <div className="border border-black/5 dark:border-white/5 rounded-3xl overflow-hidden bg-white dark:bg-white/5 transition-all">
@@ -146,6 +147,11 @@ const BaliGuide = () => {
 
     return (
         <div className="pt-32 pb-24 px-6 max-w-5xl mx-auto">
+            <SEO
+                title={`${t('guide.title')} ${t('guide.title_accent')} | Viaja a tu ritmo`}
+                description={t('guide.subtitle')}
+                keywords="guía bali 2026, consejos viajar bali, visado bali, clima bali, seguridad bali, moneda indonesia"
+            />
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

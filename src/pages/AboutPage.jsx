@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Award, ArrowRight, Users, MapPin } from 'lucide-react';
+import SEO from '../components/SEO';
 
 const AboutPage = () => {
     const { t } = useTranslation();
@@ -36,7 +37,7 @@ const AboutPage = () => {
     return (
         <div className="pt-24 min-h-screen bg-bg-light dark:bg-bg-dark overflow-hidden">
             <SEO
-                title={`${t('about.title')} | Perty & Javi`}
+                title="Nosotros | Perty & Javi"
                 description="Conoce la historia de Cantik Tours Bali. Perty (educadora local) y Javi (logística europea) unen fuerzas para ofrecerte la experiencia más auténtica y segura en Bali."
                 keywords="sobre nosotros cantiktours, guias bali español, historia cantik tours, perty y javi bali, tour operador bali"
             />
