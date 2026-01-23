@@ -25,7 +25,7 @@ Me gustaría reservar una actividad:
 ¿Me confirman disponibilidad? Gracias!`;
 
         const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/376614535?text=${encodedMessage}`;
+        const whatsappUrl = `https://wa.me/6281572451127?text=${encodedMessage}`;
 
         // Abrir WhatsApp
         window.open(whatsappUrl, '_blank');

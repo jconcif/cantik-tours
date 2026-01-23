@@ -16,9 +16,9 @@ i18n
                 translation: {
                     nav: {
                         home: "Inicio",
-                        tours: "Tours",
+                        tours: "Explorar Tours",
                         guide: "Guía Bali 2026",
-                        contact: "Hablar con Perty",
+                        contact: "Habla con nosotros",
                         about: "Nosotros"
                     },
                     hero: {
@@ -82,7 +82,7 @@ i18n
                         subtitle: "Todo lo que necesitas saber antes de aterrizar en la Isla de los Dioses.",
                         help_title: "¿Aún tienes dudas?",
                         help_text: "Como locales, conocemos todos los secretos de la isla. Escríbenos por WhatsApp y te ayudaremos a planificar tu viaje sin compromiso.",
-                        help_btn: "Preguntar a Perty"
+                        help_btn: "Consultar ahora"
                     },
                     why: {
                         title: "¿Por qué Cantik Tours?",
@@ -152,9 +152,9 @@ i18n
                 translation: {
                     nav: {
                         home: "Home",
-                        tours: "Tours",
+                        tours: "Explore Tours",
                         guide: "Bali Guide 2026",
-                        contact: "Talk to Perty",
+                        contact: "Talk to us",
                         about: "About Us"
                     },
                     hero: {
@@ -218,7 +218,7 @@ i18n
                         subtitle: "Everything you need to know before landing on the Island of the Gods.",
                         help_title: "Still have questions?",
                         help_text: "As locals, we know all the island's secrets. Write to us on WhatsApp and we will help you plan your trip with no strings attached.",
-                        help_btn: "Ask Perty"
+                        help_btn: "Ask us now"
                     },
                     why: {
                         title: "Why Cantik Tours?",

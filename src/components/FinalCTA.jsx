@@ -9,7 +9,7 @@ const FinalCTA = () => {
     const { t } = useTranslation();
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const whatsappLink = "https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Me%20interesa%20reservar%20un%20tour%20en%20Bali.";
+    const whatsappLink = "https://wa.me/6281572451127?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours.";
 
     return (
         <section className="py-24 px-6 relative overflow-hidden bg-white dark:bg-bg-dark">

@@ -62,7 +62,7 @@ const Navbar = () => {
                     )}
                     <Link to="/" className="flex items-center gap-2 group">
                         <span className="text-2xl font-black tracking-tighter text-primary group-hover:scale-105 transition-transform">CANTIK</span>
-                        <span className={`text-2xl font-light tracking-widest uppercase transition-colors hidden sm:inline ${textColorClass}`}>Tours</span>
+                        <span className={`text-2xl font-light tracking-widest uppercase transition-colors ${textColorClass}`}>Tours</span>
                     </Link>
                 </div>
 
@@ -153,7 +153,7 @@ const Navbar = () => {
                                 className="flex items-center justify-between py-4 border-b border-black/5 dark:border-white/5"
                             >
                                 <span className={isTourList ? 'text-primary' : 'dark:text-white text-gray-900'}>{t('nav.tours')}</span>
-                                <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-bold tracking-widest uppercase">Perts Choice</span>
+                                <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-bold tracking-widest uppercase">Expert Choice</span>
                             </Link>
                             <Link
                                 to="/nosotros"
@@ -181,8 +181,10 @@ const Navbar = () => {
                                 <span className="text-primary font-black uppercase">{i18n.language.split('-')[0]}</span>
                             </button>
                             <a
-                                href="https://wa.me/376614535"
+                                href="https://wa.me/6281572451127?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours."
                                 className="w-full btn-primary flex items-center justify-center gap-3 py-4 text-lg"
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
                                 {t('nav.contact')}
                             </a>

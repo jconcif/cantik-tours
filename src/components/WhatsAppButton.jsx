@@ -12,7 +12,7 @@ const WhatsAppButton = () => {
             className="fixed bottom-32 right-6 md:bottom-10 md:right-10 z-50"
         >
             <a
-                href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Me%20interesa%20reservar%20un%20tour%20en%20Bali."
+                href="https://wa.me/6281572451127?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours."
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-[#25D366] text-white p-5 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform group relative"
