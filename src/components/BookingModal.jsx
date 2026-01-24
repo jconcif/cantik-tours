@@ -8,7 +8,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle }) => {
     const [showCoupon, setShowCoupon] = useState(false);
     const [formData, setFormData] = useState({
         date: '',
-        pax: '1-5 Personas',
+        pax: '2',
         hotel: '',
         coupon: ''
     });
@@ -33,6 +33,8 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
         window.open(whatsappUrl, '_blank');
         onClose();
     };
+
+    const inputClasses = "w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all text-gray-700 dark:text-gray-200 min-h-[62px]";
 
     return (
         <AnimatePresence>
@@ -73,7 +75,7 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
                             <div className="space-y-2">
                                 <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
                                     <Calendar size={14} className="text-primary" />
-                                    Fecha de viaje
+                                    {t('detail.booking_date')}
                                 </label>
                                 <div className="relative">
                                     <input
@@ -82,7 +84,7 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
                                         min={new Date().toISOString().split('T')[0]}
                                         value={formData.date}
                                         onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                        className="w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all text-gray-700 dark:text-gray-200 min-h-[58px]"
+                                        className={inputClasses}
                                     />
                                 </div>
                             </div>
@@ -92,16 +94,21 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
                                         <Users size={14} className="text-primary" />
-                                        Tamaño del Grupo
+                                        {t('detail.booking_pax')}
                                     </label>
                                     <select
                                         value={formData.pax}
                                         onChange={(e) => setFormData({ ...formData, pax: e.target.value })}
-                                        className="w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 transition-all appearance-none text-gray-700 dark:text-gray-200"
+                                        className={`${inputClasses} appearance-none cursor-pointer`}
                                     >
-                                        <option value="1-5 Personas">1-5 Personas</option>
-                                        <option value="6 o más">6 o más Personas</option>
-                                        <option value="12 o más">12 o más Personas (Grupo Grande)</option>
+                                        <option value="1">{t('detail.booking_pax_1')}</option>
+                                        <option value="2">{t('detail.booking_pax_2')}</option>
+                                        <option value="3">{t('detail.booking_pax_3')}</option>
+                                        <option value="4">{t('detail.booking_pax_4')}</option>
+                                        <option value="5">{t('detail.booking_pax_5')}</option>
+                                        <option value="6 o más">{t('detail.booking_pax_6')}</option>
+                                        <option value="12 o más">{t('detail.booking_pax_12')}</option>
+                                        <option value="20 o más">{t('detail.booking_pax_20')}</option>
                                     </select>
                                 </div>
 
@@ -109,15 +116,15 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
                                 <div className="space-y-2">
                                     <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
                                         <MapPin size={14} className="text-primary" />
-                                        Ubicación / Hotel
+                                        {t('detail.booking_hotel')}
                                     </label>
                                     <input
                                         type="text"
                                         required
-                                        placeholder="Ej: Maya Ubud Resort"
+                                        placeholder={t('detail.booking_hotel_placeholder')}
                                         value={formData.hotel}
                                         onChange={(e) => setFormData({ ...formData, hotel: e.target.value })}
-                                        className="w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 transition-all text-gray-700 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600"
+                                        className={inputClasses}
                                     />
                                 </div>
 
@@ -146,7 +153,7 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
                                                         placeholder={t('detail.coupon_placeholder')}
                                                         value={formData.coupon}
                                                         onChange={(e) => setFormData({ ...formData, coupon: e.target.value })}
-                                                        className="w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-secondary/50 transition-all text-gray-700 dark:text-gray-200 placeholder:text-gray-300 dark:placeholder:text-gray-600 uppercase"
+                                                        className={inputClasses}
                                                     />
                                                 </div>
                                             </motion.div>
@@ -160,11 +167,11 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
                                 className="w-full btn-primary py-5 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex items-center justify-center gap-3 mt-4"
                             >
                                 <MessageCircle size={24} />
-                                Confirmar y enviar
+                                {t('detail.booking_submit')}
                             </button>
 
-                            <p className="text-center text-[10px] text-gray-400 font-bold uppercase tracking-widest opacity-60">
-                                Sin pagos online. Reserva y paga en Bali.
+                            <p className="text-center text-[10px] text-gray-500 font-bold uppercase tracking-widest opacity-80 leading-relaxed px-4">
+                                {t('detail.booking_payment_info')}
                             </p>
                         </form>
                     </motion.div>

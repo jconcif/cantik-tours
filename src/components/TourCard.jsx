@@ -66,7 +66,7 @@ const TourCard = ({ tour, index }) => {
                         <span className="text-sm text-gray-400 block mb-1">{t('tours.from')}</span>
                         <div className="flex items-baseline gap-1">
                             <span className="text-3xl font-black text-bg-dark dark:text-bg-light">€{tour.price}</span>
-                            <span className="text-xs text-gray-500">{t('tours.per_car')}</span>
+                            <span className="text-[10px] font-bold text-gray-500 bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-md uppercase">{t('tours.per_car')}</span>
                         </div>
                     </div>
                     <Link
