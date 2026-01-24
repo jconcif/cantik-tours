@@ -132,12 +132,15 @@ i18n
                         guide_1_name: "Wayan",
                         guide_1_role: "Cultura y Templos",
                         guide_1_desc: "Experto en historia y arquitectura balinesa.",
-                        guide_2_name: "Made",
-                        guide_2_role: "Naturaleza y Rutas",
-                        guide_2_desc: "Especialista en trekkings y cascadas ocultas.",
+                        guide_2_name: "Putu",
+                        guide_2_role: "Gastronomía y Vida Local",
+                        guide_2_desc: "Especialista en sabores auténticos, mercados locales y la cocina tradicional de Bali.",
                         guide_3_name: "Komang",
-                        guide_3_role: "Vida Local",
-                        guide_3_desc: "Especialista en cultura local y gastronomía."
+                        guide_3_role: "Cultura y Tradición",
+                        guide_3_desc: "Experto en las costumbres locales y el día a día en los pueblos balineses.",
+                        guide_4_name: "Ketut",
+                        guide_4_role: "Cascadas y Aventura",
+                        guide_4_desc: "El guía más joven del equipo, experto en descubrir cascadas ocultas y rutas de aventura."
                     },
                     footer: {
                         description: "Tu agencia de confianza en Bali. Experiencias privadas, auténticas y acompañamiento local.",
@@ -308,12 +311,15 @@ i18n
                         guide_1_name: "Wayan",
                         guide_1_role: "History & Temples",
                         guide_1_desc: "Expert in Balinese history and architecture.",
-                        guide_2_name: "Made",
-                        guide_2_role: "Nature & Routes",
-                        guide_2_desc: "Specialist in trekking and hidden waterfalls.",
+                        guide_2_name: "Putu",
+                        guide_2_role: "Gastronomy & Local Life",
+                        guide_2_desc: "Specialist in authentic flavors, local markets, and traditional Balinese cuisine.",
                         guide_3_name: "Komang",
-                        guide_3_role: "Local Life",
-                        guide_3_desc: "Specialist in local culture and gastronomy."
+                        guide_3_role: "Culture & Tradition",
+                        guide_3_desc: "Expert in local customs and daily life in Balinese villages.",
+                        guide_4_name: "Ketut",
+                        guide_4_role: "Waterfalls & Adventure",
+                        guide_4_desc: "The youngest guide in the team, expert in discovering hidden waterfalls and adventure routes."
                     },
                     footer: {
                         description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",

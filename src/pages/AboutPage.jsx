@@ -23,13 +23,19 @@ const AboutPage = () => {
             name: t('about.guide_2_name'),
             role: t('about.guide_2_role'),
             desc: t('about.guide_2_desc'),
-            image: "/images/guide_made.png"
+            image: "/images/guide_putu.png"
         },
         {
             name: t('about.guide_3_name'),
             role: t('about.guide_3_role'),
             desc: t('about.guide_3_desc'),
             image: "/images/guide_komang.png"
+        },
+        {
+            name: t('about.guide_4_name'),
+            role: t('about.guide_4_role'),
+            desc: t('about.guide_4_desc'),
+            image: "/images/guide_ketut.png"
         }
     ];
 
@@ -148,7 +154,7 @@ const AboutPage = () => {
                     <h3 className="text-3xl font-black mb-4 uppercase tracking-tight">{t('about.meet_team_title')}</h3>
                     <p className="text-gray-500 font-medium">{t('about.meet_team_subtitle')}</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {guides.map((guide, idx) => (
                         <motion.div
                             key={idx}
