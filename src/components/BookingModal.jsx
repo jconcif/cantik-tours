@@ -16,15 +16,16 @@ const BookingModal = ({ isOpen, onClose, tourTitle }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const message = `Hola Cantik Tours!
-Me gustaría reservar una actividad:
+        const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
+        const message = `${t('detail.msg_greeting')}
+${t('detail.msg_intro')}
 
-- Tour: ${tourTitle}
-- Fecha: ${formData.date}
-- Pasajeros: ${formData.pax}
-- Hotel/Zona: ${formData.hotel}${showCoupon && formData.coupon ? `\n- Cupón: ${formData.coupon}` : ''}
+- ${t('detail.msg_tour')}: ${tourTitle}
+- ${t('detail.msg_date')}: ${formData.date}
+- ${t('detail.msg_pax')}: ${paxLabel}
+- ${t('detail.msg_hotel')}: ${formData.hotel}${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
-¿Me confirman disponibilidad? Gracias!`;
+${t('detail.msg_confirm')}`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/376614535?text=${encodedMessage}`;

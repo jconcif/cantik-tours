@@ -98,7 +98,15 @@ i18n
                         booking_pax_12: "12 o más personas",
                         booking_pax_20: "20 o más personas",
                         coupon: "¿Tienes un cupón?",
-                        coupon_placeholder: "Introduce tu código"
+                        coupon_placeholder: "Introduce tu código",
+                        msg_greeting: "Hola Cantik Tours!",
+                        msg_intro: "Me gustaría reservar una actividad:",
+                        msg_tour: "Tour",
+                        msg_date: "Fecha",
+                        msg_pax: "Pasajeros",
+                        msg_hotel: "Hotel/Zona",
+                        msg_coupon: "Cupón",
+                        msg_confirm: "¿Me confirman disponibilidad? Gracias!"
                     },
                     guide: {
                         badge: "Imprescindible para tu viaje",
@@ -292,7 +300,15 @@ i18n
                         booking_pax_12: "12 or more people",
                         booking_pax_20: "20 or more people",
                         coupon: "Do you have a coupon?",
-                        coupon_placeholder: "Enter code"
+                        coupon_placeholder: "Enter code",
+                        msg_greeting: "Hi Cantik Tours!",
+                        msg_intro: "I would like to book an activity:",
+                        msg_tour: "Tour",
+                        msg_date: "Date",
+                        msg_pax: "Passengers",
+                        msg_hotel: "Hotel/Area",
+                        msg_coupon: "Coupon",
+                        msg_confirm: "Can you confirm availability? Thanks!"
                     },
                     guide: {
                         badge: "Essential for your trip",
