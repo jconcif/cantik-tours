@@ -40,7 +40,7 @@ const Footer = () => {
                 <div>
                     <h4 className="font-bold text-lg mb-6">{t('footer.contact')}</h4>
                     <ul className="space-y-4 font-medium text-gray-500 dark:text-gray-400">
-                        <li>WhatsApp: +62 815 7245 1127</li>
+                        <li>WhatsApp: +376 614 535</li>
                         <li>Email: info@cantiktours.com</li>
                         <li>Bali, Indonesia</li>
                     </ul>
@@ -52,7 +52,7 @@ const Footer = () => {
                         <a href="https://instagram.com/CantikToursBali" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
                             <Instagram size={24} />
                         </a>
-                        <a href="https://wa.me/6281572451127?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours." className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                        <a href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours." className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
                             <MessageCircle size={24} />
                         </a>
                     </div>

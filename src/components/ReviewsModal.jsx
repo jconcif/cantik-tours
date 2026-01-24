@@ -1,14 +1,19 @@
 import React from 'react';
 import { X, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import { getLocalized } from '../utils/i18nUtils';
 
 const ReviewsModal = ({ isOpen, onClose, tourTitle, reviews = [] }) => {
+    const { t, i18n } = useTranslation();
+    const l = (obj, field) => getLocalized(obj, field, i18n.language);
+
     if (!isOpen) return null;
 
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
                     {/* Backdrop */}
                     <motion.div
                         initial={{ opacity: 0 }}
@@ -28,8 +33,8 @@ const ReviewsModal = ({ isOpen, onClose, tourTitle, reviews = [] }) => {
                         {/* Header */}
                         <div className="p-6 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-white dark:bg-bg-dark z-10">
                             <div>
-                                <h3 className="text-xl font-black">Opiniones</h3>
-                                <p className="text-sm text-gray-500 font-medium">Sobre {tourTitle}</p>
+                                <h3 className="text-xl font-black">{t('common.reviews_title')}</h3>
+                                <p className="text-sm text-gray-500 font-medium">{t('common.reviews_about')} {tourTitle}</p>
                             </div>
                             <button
                                 onClick={onClose}
@@ -50,23 +55,27 @@ const ReviewsModal = ({ isOpen, onClose, tourTitle, reviews = [] }) => {
                                             </div>
                                             <div>
                                                 <h4 className="font-bold text-sm">{review.name}</h4>
-                                                <span className="text-xs text-gray-400">{review.date}</span>
+                                                <span className="text-xs text-gray-400">
+                                                    {i18n.language.startsWith('es') ? review.date : review.date_en}
+                                                </span>
                                             </div>
                                         </div>
                                         <div className="flex gap-0.5 text-yellow-500">
                                             {[...Array(5)].map((_, stars) => (
-                                                <Star key={stars} size={14} fill={stars < review.rating ? "currentColor" : "none"} />
+                                                <Star key={stars} size={14} fill={stars < (review.rating || 5) ? "currentColor" : "none"} />
                                             ))}
                                         </div>
                                     </div>
-                                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">"{review.text}"</p>
+                                    <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed italic">"{l(review, 'text')}"</p>
                                 </div>
                             ))}
                         </div>
 
                         {/* Footer decorative */}
                         <div className="p-4 border-t border-black/5 dark:border-white/5 text-center bg-gray-50 dark:bg-black/20">
-                            <p className="text-xs text-gray-400 font-medium">Mostrando {reviews.length} opiniones verificadas</p>
+                            <p className="text-xs text-gray-400 font-medium">
+                                {t('common.reviews_showing')} {reviews.length} {t('common.reviews_verified')}
+                            </p>
                         </div>
                     </motion.div>
                 </div>

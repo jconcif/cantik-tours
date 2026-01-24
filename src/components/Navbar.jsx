@@ -42,7 +42,7 @@ const Navbar = () => {
     // Background logic
     const navBackgroundClass = scrolled
         ? 'glass py-3 shadow-lg'
-        : (isHome ? 'bg-gradient-to-b from-black/60 to-transparent py-6' : 'bg-white dark:bg-bg-dark py-4 shadow-sm');
+        : (isHome ? 'bg-gradient-to-b from-black/80 via-black/40 to-transparent py-7' : 'bg-white dark:bg-bg-dark py-4 shadow-sm');
 
     const positionClass = 'fixed top-0 left-0 right-0 z-50 transition-all duration-300';
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -60,9 +60,9 @@ const Navbar = () => {
                             <ChevronLeft size={24} />
                         </button>
                     )}
-                    <Link to="/" className="flex items-center gap-2 group">
-                        <span className="text-2xl font-black tracking-tighter text-primary group-hover:scale-105 transition-transform">CANTIK</span>
-                        <span className={`text-2xl font-light tracking-widest uppercase transition-colors ${textColorClass}`}>Tours</span>
+                    <Link to="/" className="flex items-center gap-1.5 group">
+                        <span className="text-xl sm:text-2xl font-black tracking-tighter text-primary group-hover:scale-105 transition-transform">CANTIK</span>
+                        <span className={`text-xl sm:text-2xl font-light tracking-widest uppercase transition-colors ${textColorClass}`}>Tours</span>
                     </Link>
                 </div>
 
@@ -89,29 +89,32 @@ const Navbar = () => {
                     </Link>
                 </div>
 
-                <div className="flex items-center gap-2 sm:gap-4">
-                    {/* Language Switcher */}
-                    <button
-                        onClick={toggleLanguage}
-                        className={`flex items-center gap-2 px-3 py-1.5 rounded-full transition-all font-black text-[10px] uppercase tracking-tighter border ${textColorClass} ${useDarkText ? 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5' : 'border-white/30 bg-white/10 backdrop-blur-sm'
-                            } hover:scale-105 active:scale-95`}
-                    >
-                        <Languages size={14} className="opacity-70" />
-                        <span>{i18n.language.startsWith('es') ? 'ES' : 'EN'}</span>
-                    </button>
+                <div className="flex items-center gap-1 sm:gap-4">
+                    {/* Desktop Toggles */}
+                    <div className="hidden md:flex items-center gap-4">
+                        <button
+                            onClick={toggleLanguage}
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all font-black text-[10px] uppercase tracking-tighter border ${textColorClass} ${useDarkText ? 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5' : 'border-white/30 bg-white/10 backdrop-blur-sm'
+                                } hover:scale-105 active:scale-95`}
+                        >
+                            <Languages size={14} className="opacity-70" />
+                            <span>{i18n.language.startsWith('es') ? 'ES' : 'EN'}</span>
+                        </button>
 
-                    <button
-                        onClick={toggleDarkMode}
-                        className={`p-2 rounded-full transition-colors ${textColorClass} hover:bg-black/5 dark:hover:bg-white/5`}
-                    >
-                        {isDark ? <Sun size={20} /> : <Moon size={20} />}
-                    </button>
+                        <button
+                            onClick={toggleDarkMode}
+                            className={`p-2 rounded-full transition-colors ${textColorClass} hover:bg-black/5 dark:hover:bg-white/5`}
+                        >
+                            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                        </button>
+                    </div>
 
+                    {/* Mobile Menu Button - Always visible on mobile */}
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        className={`md:hidden p-2 ${textColorClass}`}
+                        className={`md:hidden p-2 rounded-full hover:bg-white/10 transition-colors ${textColorClass}`}
                     >
-                        <Menu size={24} />
+                        <Menu size={28} />
                     </button>
                 </div>
             </nav>
@@ -172,16 +175,24 @@ const Navbar = () => {
                             </Link>
                         </div>
 
-                        <div className="mt-auto p-8 bg-gray-50 dark:bg-black/20 m-6 rounded-3xl">
-                            <button
-                                onClick={toggleLanguage}
-                                className="w-full mb-4 flex items-center justify-between p-4 bg-white dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10"
-                            >
-                                <span className="text-sm font-bold opacity-50 uppercase tracking-widest">Idioma / Language</span>
-                                <span className="text-primary font-black uppercase">{i18n.language.split('-')[0]}</span>
-                            </button>
+                        <div className="mt-auto p-8 bg-gray-50 dark:bg-black/20 m-6 rounded-3xl space-y-4">
+                            <div className="flex gap-4">
+                                <button
+                                    onClick={toggleLanguage}
+                                    className="flex-1 flex items-center justify-between p-4 bg-white dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10"
+                                >
+                                    <span className="text-xs font-bold opacity-50 uppercase tracking-widest">{t('common.language')}</span>
+                                    <span className="text-primary font-black uppercase">{i18n.language.split('-')[0]}</span>
+                                </button>
+                                <button
+                                    onClick={toggleDarkMode}
+                                    className="p-4 bg-white dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10 text-primary"
+                                >
+                                    {isDark ? <Sun size={24} /> : <Moon size={24} />}
+                                </button>
+                            </div>
                             <a
-                                href="https://wa.me/6281572451127?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours."
+                                href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours."
                                 className="w-full btn-primary flex items-center justify-center gap-3 py-4 text-lg"
                                 target="_blank"
                                 rel="noopener noreferrer"

@@ -9,7 +9,7 @@ const Feature = ({ icon: Icon, title, description, index }) => (
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ delay: index * 0.1 }}
-        className="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] border border-black/5 dark:border-white/5 hover:shadow-xl transition-all group"
+        className="bg-white dark:bg-white/5 p-8 rounded-3xl border border-black/5 dark:border-white/5 hover:shadow-xl transition-all group"
     >
         <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
             <Icon size={28} />
@@ -22,8 +22,7 @@ const Feature = ({ icon: Icon, title, description, index }) => (
 );
 
 const FeaturesGrid = () => {
-    const { t, i18n } = useTranslation();
-    const isEs = i18n.language.startsWith('es');
+    const { t } = useTranslation();
 
     const features = [
         {

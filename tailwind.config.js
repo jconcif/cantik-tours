@@ -19,6 +19,10 @@ export default {
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
+      boxShadow: {
+        'premium': '0 20px 50px rgba(19, 200, 236, 0.15)',
+        'premium-hover': '0 15px 40px rgba(19, 200, 236, 0.5)',
+      },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.5s ease-out',

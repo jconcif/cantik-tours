@@ -28,27 +28,29 @@ const Home = () => {
             {/* Featured Tours */}
             <div id="tours">
                 <div className="max-w-7xl mx-auto px-6 pt-24 pb-12">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                        <div>
-                            <h2 className="text-4xl md:text-5xl font-black mb-4">
-                                {t('tours.title')} <span className="text-primary italic">{t('tours.title_accent')}</span>
-                            </h2>
-                            <p className="text-gray-500 dark:text-gray-400 max-w-lg font-medium">
-                                {t('tours.subtitle')}
-                            </p>
-                        </div>
-                        <Link
-                            to="/tours"
-                            className="group flex items-center gap-2 text-primary font-black uppercase tracking-widest text-sm hover:translate-x-2 transition-transform"
-                        >
-                            {t('tours.see_all')} <ArrowRight size={20} />
-                        </Link>
+                    <div className="mb-16">
+                        <h2 className="text-4xl md:text-5xl font-black mb-4 capitalize">
+                            {t('tours.title')} <span className="text-primary italic">{t('tours.title_accent')}</span>
+                        </h2>
+                        <p className="text-gray-500 dark:text-gray-400 max-w-lg font-medium">
+                            {t('tours.subtitle')}
+                        </p>
                     </div>
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
                         {featuredTours.map((tour, index) => (
                             <TourCard key={tour.id} tour={tour} index={index} />
                         ))}
+                    </div>
+
+                    <div className="mt-16 flex justify-center">
+                        <Link
+                            to="/tours"
+                            className="btn-primary group flex items-center gap-3 px-10 py-5 text-lg"
+                        >
+                            {t('tours.see_all')}
+                            <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
                     </div>
                 </div>
             </div>

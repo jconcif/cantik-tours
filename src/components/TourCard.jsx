@@ -64,12 +64,15 @@ const TourCard = ({ tour, index }) => {
                 <div className="mt-auto pt-6 border-t border-black/5 dark:border-white/5 flex items-center justify-between">
                     <div>
                         <span className="text-sm text-gray-400 block mb-1">{t('tours.from')}</span>
-                        <span className="text-3xl font-black text-bg-dark dark:text-bg-light">€{tour.price}</span>
-                        <span className="text-xs text-gray-500 ml-1">{t('tours.per_car')}</span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-3xl font-black text-bg-dark dark:text-bg-light">€{tour.price}</span>
+                            <span className="text-xs text-gray-500">{t('tours.per_car')}</span>
+                        </div>
                     </div>
                     <Link
                         to={`/tour/${tour.id}`}
                         className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-all active:scale-95 bg-gradient-to-r from-primary to-[#109db8] text-white"
+                        title={t('detail.view_details')}
                     >
                         <ArrowRight size={22} />
                     </Link>

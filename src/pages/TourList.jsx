@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import TourCard from '../components/TourCard';
-import { Search, Sparkles } from 'lucide-react';
+import { Search, Sparkles, Map, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tours as allTours } from '../data/tours';
 import CategoryChips from '../components/CategoryChips';
 import { useTranslation } from 'react-i18next';
+import BookingModal from '../components/BookingModal';
 
 const TourList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('todos');
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const { t } = useTranslation();
 
     useEffect(() => {
@@ -86,6 +88,30 @@ const TourList = () => {
                         {filteredTours.map((tour, index) => (
                             <TourCard key={tour.id} tour={tour} index={index} />
                         ))}
+
+                        {/* Custom Itinerary Card */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ delay: 0.3 }}
+                            className="relative overflow-hidden rounded-3xl border-2 border-dashed border-primary/30 bg-primary/5 p-8 flex flex-col items-center text-center justify-center group hover:bg-primary/10 transition-all duration-500"
+                        >
+                            <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500 shadow-xl">
+                                <Map size={40} />
+                            </div>
+                            <h3 className="text-2xl font-black mb-4 tracking-tight">{t('tours.custom.title')}</h3>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium leading-relaxed mb-8">
+                                {t('tours.custom.description')}
+                            </p>
+                            <button
+                                onClick={() => setIsBookingModalOpen(true)}
+                                className="btn-primary w-full flex items-center justify-center gap-2"
+                            >
+                                {t('tours.custom.btn')}
+                                <ArrowRight size={20} />
+                            </button>
+                        </motion.div>
                     </motion.div>
                 ) : (
                     <motion.div
@@ -105,6 +131,12 @@ const TourList = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            <BookingModal
+                isOpen={isBookingModalOpen}
+                onClose={() => setIsBookingModalOpen(false)}
+                tourTitle={t('tours.custom.title')}
+            />
         </motion.div>
     );
 };

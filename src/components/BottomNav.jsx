@@ -25,7 +25,7 @@ const BottomNav = () => {
                 </NavLink>
 
                 <a
-                    href="https://wa.me/6281572451127?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours."
+                    href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours."
                     target="_blank"
                     rel="noopener noreferrer"
                     className="relative"

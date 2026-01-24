@@ -41,6 +41,11 @@ i18n
                         per_car: "/coche",
                         no_matches: "No hay coincidencias",
                         see_all: "Ver todos los tours",
+                        custom: {
+                            title: "Diseña tu Propia Aventura",
+                            description: "¿No sabes qué elegir? Cuéntanos qué te gusta y diseñaremos un itinerario 100% exclusivo para ti.",
+                            btn: "Crear mi itinerario"
+                        },
                         badge_popular: "Más Popular",
                         badge_recommended: "Recomendado",
                         badge_must: "Imprescindible",
@@ -50,7 +55,8 @@ i18n
                             cascadas: "Cascadas",
                             fotografia: "Fotografía",
                             playas: "Playas",
-                            aventura: "Aventura"
+                            aventura: "Aventura",
+                            naturaleza: "Naturaleza"
                         }
                     },
                     cta: {
@@ -73,7 +79,12 @@ i18n
                         availability: "Disponibilidad",
                         availability_label: "Todo el año",
                         price_special: "Precio Especial",
-                        per_person: "/ persona"
+                        per_person: "/ persona",
+                        not_included_msg: "Entradas y comidas no incluidas",
+                        view_details: "Ver Actividad",
+                        booking_title: "RESERVA TU VIAJE",
+                        coupon: "¿Tienes un cupón?",
+                        coupon_placeholder: "Introduce tu código"
                     },
                     guide: {
                         badge: "Imprescindible para tu viaje",
@@ -96,37 +107,37 @@ i18n
                         title_accent: "diferencia",
                         subtitle: "No solo nos importa a dónde vas, sino cómo te sientes en cada kilómetro del trayecto.",
                         wifi: { title: "WiFi a Bordo*", text: "Comparte tus momentos al instante mientras recorres la isla." },
-                        water: { title: "Hidratación Premium", text: "Agua fría siempre disponible para combatir el sol tropical de Bali." },
-                        car: { title: "Libertad en Movimiento", text: "Coches espaciosos y limpios. Tú decides cuándo parar y cuándo seguir." },
+                        water: { title: "Hidratación", text: "Agua fría siempre disponible para combatir el sol tropical de Bali." },
+                        car: { title: "Libertad Total", text: "Coches espaciosos y limpios. Tú decides cuándo parar y cuándo seguir." },
                         food: { title: "Gastronomía Real", text: "Te llevamos a los rincones donde los locales realmente disfrutamos comer." }
                     },
                     about: {
-                        tag: "Nuestra Esencia",
+                        tag: "Filosofía Cantik",
                         title: "Viaja a tu ritmo",
                         meaning_title: "¿Qué significa Cantik?",
-                        meaning_text: "En indonesio, Cantik (pronunciado Chantik) significa hermoso. Pero para nosotros, la belleza de Bali no está solo en sus postales. Está en la devoción de una ofrenda matutina, en la sonrisa de un agricultor y en la paz que sientes al comprender nuestra cultura. Queremos que cada momento de tu viaje sea, simplemente, Cantik.",
+                        meaning_text: "En indonesio, Cantik (pronunciado chantic) significa hermoso. Pero para nosotros, la belleza de Bali no está solo en sus postales. Está en la devoción de una ofrenda matutina, en la sonrisa de un agricultor y en la paz que sientes al comprender nuestra cultura. Queremos que cada momento de tu viaje sea, simplemente, Cantik.",
                         team_intro_title: "El Equipo",
                         team_intro_text: "Sin prisas, con seguridad y en tu idioma.",
-                        perty_title: "Perty (El Alma Local)",
-                        perty_text: "Indonesia de raíces balinesas y profesora de lengua indonesia. Con un Máster en Educación y años recorriendo la isla como guía, Perty no solo te muestra el camino; es tu ventana real a los templos, rutas escondidas y rituales que otros solo ven de lejos.",
-                        javi_title: "Javi (Tu Garantía y Logística)",
-                        javi_text: "Chileno-español y viajero por naturaleza. Mi misión es ser tu puente en Bali. Coordino cada detalle: desde itinerarios a medida hasta tus consultas diarias, asegurando una comunicación fluida en español. Estoy aquí para que tú solo disfrutes, sabiendo que la logística está bajo control.",
-                        promise_title: "Nuestra Promesa",
+                        perty_name: "Pertiyani",
+                        perty_role: "Fundadora",
+                        perty_title: "Pertiyani (Fundadora)",
+                        perty_text: "Con profundas raíces balinesas y una vida dedicada a la educación, he tenido el honor de representar nuestra cultura en diversos países como profesora de lengua indonesia. Hoy, mi verdadera pasión es ser tu vínculo personal con el alma de Bali. Para mí, acompañarte no es solo seguir un itinerario, es invitarte a sentir la mística de nuestros templos, la devoción de nuestros rituales y esos rincones secretos que solo revelamos a quienes nos visitan con el corazón. Mi mayor deseo es que vivas esta isla con el mismo respeto y profundo amor con el que yo la llamo hogar.",
+                        javi_title: "Javi (Tu Enlace y Logística)",
+                        javi_text: "Viajero incansable y un profundo enamorado de Bali, mi misión en Cantik es ser tu puente directo y confiable con la isla. Me encargo de que cada detalle de tu itinerario sea impecable y de resolver cualquier inquietud que surja en el camino. Estoy aquí para que te desprendas de la logística y te concentres únicamente en disfrutar, con la seguridad de saber que siempre tienes a alguien a tu lado para que todo fluya sin inconvenientes.",
+                        promise_title: "",
                         promise_text: "No vendemos transporte, compartimos nuestro hogar. Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen.",
                         closing: "Con Cantik Tours, tu viaje no es solo una visita; es una inmersión real en Bali, diseñada para que cada instante sea, de verdad, Cantik.",
-                        meet_team_title: "Nuestros Guías Expertos",
-                        meet_team_subtitle: "Contamos con ellos por su conocimiento, calidez y compromiso.",
-                        join_team_title: "¿Eres guía en Bali?",
-                        join_team_text: "Creemos en el trabajo colaborativo. Buscamos personas apasionadas por compartir su cultura. ¡Escríbenos!",
+                        meet_team_title: "Nuestros Guías",
+                        meet_team_subtitle: "Contamos con ellos por su conocimiento y compromiso.",
                         guide_1_name: "Wayan",
-                        guide_1_role: "Guardián de Templos",
-                        guide_1_desc: "Experto en historia y arquitectura balinesa. 10 años compartiendo secretos ancestrales.",
+                        guide_1_role: "Cultura y Templos",
+                        guide_1_desc: "Experto en historia y arquitectura balinesa.",
                         guide_2_name: "Made",
-                        guide_2_role: "Aventurero Innato",
-                        guide_2_desc: "Especialista en trekkings y cascadas ocultas. Su energía es contagiosa.",
+                        guide_2_role: "Naturaleza y Rutas",
+                        guide_2_desc: "Especialista en trekkings y cascadas ocultas.",
                         guide_3_name: "Komang",
-                        guide_3_role: "Sonrisa de Bali",
-                        guide_3_desc: "Especialista en cultura local y gastronomía. Te hará sentir parte de su familia."
+                        guide_3_role: "Vida Local",
+                        guide_3_desc: "Especialista en cultura local y gastronomía."
                     },
                     footer: {
                         description: "Tu agencia de confianza en Bali. Experiencias privadas, auténticas y acompañamiento local.",
@@ -135,8 +146,32 @@ i18n
                         rights: "Todos los derechos reservados.",
                         trust_1: "Pago Seguro en Destino",
                         trust_2: "Guías Locales Verificados",
+                        trust_3: "Soporte Personalizado",
                         made_with: "Hecho con",
                         in_bali: "en Bali"
+                    },
+                    testimonials: {
+                        badge: "Testimonios",
+                        title: "Lo que dicen nuestros",
+                        title_accent: "viajeros",
+                        subtitle: "Historias reales de personas que vivieron la magia de Bali con nosotros.",
+                        data: [
+                            {
+                                name: "Marta y Jorge",
+                                location: "España",
+                                text: "¡La mejor decisión de nuestro viaje! Perty es una guía excepcional, nos hizo sentir como en familia. Bali es mágica, pero verla con ellos es otro nivel."
+                            },
+                            {
+                                name: "Andrea R.",
+                                location: "México",
+                                text: "Servicio impecable. El conductor fue súper puntual y el coche muy cómodo. Nos llevaron a sitios que no salen en las guías turísticas. ¡100% recomendados!"
+                            },
+                            {
+                                name: "Familia González",
+                                location: "Argentina",
+                                text: "Viajamos con dos niños y tuvieron muchísima paciencia y flexibilidad. Nos organizaron un itinerario perfecto para nosotros. Gracias por todo."
+                            }
+                        ]
                     },
                     common: {
                         loading: "Cargando...",
@@ -144,7 +179,12 @@ i18n
                         more_info: "Más información",
                         copied: "¡Enlace copiado!",
                         error: "Algo salió mal",
-                        whatsapp_tooltip: "¡Hola! Soy Perty. ¿Hablamos?"
+                        whatsapp_tooltip: "¡Hola! Soy Perty. ¿Hablamos?",
+                        language: "Idioma",
+                        reviews_title: "Opiniones",
+                        reviews_about: "Sobre",
+                        reviews_showing: "Mostrando",
+                        reviews_verified: "opiniones verificadas"
                     }
                 }
             },
@@ -177,6 +217,11 @@ i18n
                         per_car: "/car",
                         no_matches: "No matches found",
                         see_all: "See all tours",
+                        custom: {
+                            title: "Design Your Own Adventure",
+                            description: "Don't know what to choose? Tell us what you like and we'll design a 100% exclusive itinerary for you.",
+                            btn: "Create my itinerary"
+                        },
                         badge_popular: "Most Popular",
                         badge_recommended: "Recommended",
                         badge_must: "Must See",
@@ -186,7 +231,8 @@ i18n
                             cascadas: "Waterfalls",
                             fotografia: "Photography",
                             playas: "Beaches",
-                            aventura: "Adventure"
+                            aventura: "Adventure",
+                            naturaleza: "Nature"
                         }
                     },
                     cta: {
@@ -209,7 +255,12 @@ i18n
                         availability: "Availability",
                         availability_label: "Year-round",
                         price_special: "Special Price",
-                        per_person: "/ person"
+                        per_person: "/ person",
+                        not_included_msg: "Tickets and meals not included",
+                        view_details: "View Details",
+                        booking_title: "RESERVE YOUR TRIP",
+                        coupon: "Do you have a coupon?",
+                        coupon_placeholder: "Enter code"
                     },
                     guide: {
                         badge: "Essential for your trip",
@@ -232,37 +283,37 @@ i18n
                         title_accent: "difference",
                         subtitle: "We don't just care about where you go, but how you feel at every mile along the way.",
                         wifi: { title: "On-board WiFi*", text: "Share your moments instantly as you travel across the island." },
-                        water: { title: "Premium Hydration", text: "Always cold water available to beat Bali's tropical sun." },
-                        car: { title: "Freedom in Motion", text: "Spacious and clean cars. You decide when to stop and when to keep moving." },
+                        water: { title: "Hydration", text: "Always cold water available to beat Bali's tropical sun." },
+                        car: { title: "Total Freedom", text: "Spacious and clean cars. You decide when to stop and when to keep moving." },
                         food: { title: "Real Gastronomy", text: "We take you to the hidden gems where locals actually enjoy eating." }
                     },
                     about: {
-                        tag: "Our Essence",
+                        tag: "Cantik Philosophy",
                         title: "Travel at your own pace",
                         meaning_title: "What does Cantik mean?",
                         meaning_text: "In Indonesian, Cantik (pronounced Chantik) means beautiful. But for us, the beauty of Bali is not just in its postcards. It is in the devotion of a morning offering, in the smile of a farmer, and in the peace you feel when understanding our culture. We want every moment of your trip to be, simply, Cantik.",
                         team_intro_title: "The Team",
                         team_intro_text: "No rush, safely, and in your language.",
-                        perty_title: "Perty (The Local Soul)",
-                        perty_text: "Indonesian with Balinese roots and a teacher of the Indonesian language. With a Master's in Education and years traveling the island as a guide, Perty doesn't just show you the way; she is your real window to the temples, hidden routes, and rituals that others only see from afar.",
-                        javi_title: "Javi (Your Guarantee & Logistics)",
-                        javi_text: "Chilean-Spanish and traveler by nature. My mission is to be your bridge in Bali. I coordinate every detail: from custom itineraries to your daily queries, ensuring fluid communication in Spanish. I am here so you can just enjoy, knowing the logistics are under control.",
-                        promise_title: "Our Promise",
+                        perty_name: "Pertiyani",
+                        perty_role: "Founder",
+                        perty_title: "Pertiyani (Founder)",
+                        perty_text: "With deep Balinese roots and a life dedicated to education, I have had the honor of representing our culture in various countries as an Indonesian language teacher. Today, my true passion is being your personal connection to the soul of Bali. For me, guiding you is not just following an itinerary; it's about inviting you to feel the mysticism of our temples, the devotion of our rituals, and those secret spots we only share with those who visit us with an open heart. My greatest wish is for you to experience this island with the same respect and profound love with which I call it home.",
+                        javi_title: "Javi (Your Link & Logistics)",
+                        javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
+                        promise_title: "",
                         promise_text: "We don't sell transport, we share our home. To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
                         closing: "With Cantik Tours, your trip is not just a visit; it is a real immersion in Bali, designed so that every instant is, truly, Cantik.",
-                        meet_team_title: "Our Expert Guides",
-                        meet_team_subtitle: "We count on them for their knowledge, warmth, and commitment.",
-                        join_team_title: "Are you a guide in Bali?",
-                        join_team_text: "We believe in collaborative work. We are looking for people passionate about sharing their culture. Write to us!",
+                        meet_team_title: "Our Guides",
+                        meet_team_subtitle: "We count on them for their knowledge and commitment.",
                         guide_1_name: "Wayan",
-                        guide_1_role: "Temple Guardian",
-                        guide_1_desc: "Expert in Balinese history and architecture. 10 years sharing ancestral secrets.",
+                        guide_1_role: "History & Temples",
+                        guide_1_desc: "Expert in Balinese history and architecture.",
                         guide_2_name: "Made",
-                        guide_2_role: "Natural Adventurer",
-                        guide_2_desc: "Specialist in trekking and hidden waterfalls. His energy is contagious.",
+                        guide_2_role: "Nature & Routes",
+                        guide_2_desc: "Specialist in trekking and hidden waterfalls.",
                         guide_3_name: "Komang",
-                        guide_3_role: "Bali's Smile",
-                        guide_3_desc: "Specialist in local culture and gastronomy. He will make you feel part of his family."
+                        guide_3_role: "Local Life",
+                        guide_3_desc: "Specialist in local culture and gastronomy."
                     },
                     footer: {
                         description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",
@@ -271,8 +322,32 @@ i18n
                         rights: "All rights reserved.",
                         trust_1: "Secure Payment on Arrival",
                         trust_2: "Verified Local Guides",
+                        trust_3: "Personalized Support",
                         made_with: "Made with",
                         in_bali: "from Bali"
+                    },
+                    testimonials: {
+                        badge: "Testimonials",
+                        title: "What our",
+                        title_accent: "travelers",
+                        subtitle: "Real stories from people who experienced the magic of Bali with us.",
+                        data: [
+                            {
+                                name: "Marta & Jorge",
+                                location: "Spain",
+                                text: "The best decision of our trip! Perty is an exceptional guide, she made us feel like family. Bali is magical, but seeing it with them is another level."
+                            },
+                            {
+                                name: "Andrea R.",
+                                location: "Mexico",
+                                text: "Impeccable service. The driver was super punctual and the car very comfortable. They took us to places not found in travel guides. 100% recommended!"
+                            },
+                            {
+                                name: "González Family",
+                                location: "Argentina",
+                                text: "We traveled with two children and they had a lot of patience and flexibility. They organized a perfect itinerary for us. Thanks for everything."
+                            }
+                        ]
                     },
                     common: {
                         loading: "Loading...",
@@ -280,7 +355,12 @@ i18n
                         more_info: "More info",
                         copied: "Link copied!",
                         error: "Something went wrong",
-                        whatsapp_tooltip: "Hi! I'm Perty. Shall we talk?"
+                        whatsapp_tooltip: "Hi! I'm Perty. Shall we talk?",
+                        language: "Language",
+                        reviews_title: "Reviews",
+                        reviews_about: "About",
+                        reviews_showing: "Showing",
+                        reviews_verified: "verified reviews"
                     }
                 }
             }

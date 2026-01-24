@@ -57,8 +57,8 @@ const AboutUs = () => {
                         />
                         <div className="flex items-center justify-between">
                             <div>
-                                <h4 className="font-black text-xl text-primary">Perty</h4>
-                                <p className="text-sm font-medium opacity-60">Founder</p>
+                                <h4 className="font-black text-xl text-primary">{t('about.perty_name')}</h4>
+                                <p className="text-sm font-medium opacity-60">{t('about.perty_role')}</p>
                             </div>
                             <div className="px-4 py-2 bg-primary/10 rounded-full text-primary font-bold text-xs uppercase tracking-widest">
                                 Local Experts
