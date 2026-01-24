@@ -183,9 +183,11 @@ const TourDetail = () => {
                 <div className="hidden lg:block">
                     <div className="sticky top-32 p-10 rounded-[2.5rem] bg-white dark:bg-bg-dark border border-black/5 dark:border-white/5 shadow-xl">
                         <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2 block">{t('detail.price_special')}</span>
-                        <div className="flex items-baseline gap-2 mb-8">
+                        <div className="flex items-center gap-3 mb-8">
                             <span className="text-5xl font-black text-gray-900 dark:text-white">€{tour.price}</span>
-                            <span className="text-gray-400 font-bold text-sm uppercase">{t('tours.per_car')}</span>
+                            <div className="pt-2">
+                                <span className="text-gray-400 font-bold text-[11px] uppercase leading-tight block">{t('tours.per_car')}</span>
+                            </div>
                         </div>
                         <button
                             onClick={() => setIsBookingModalOpen(true)}
@@ -199,10 +201,10 @@ const TourDetail = () => {
 
             {/* Mobile Booking Bar */}
             <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-bg-dark/80 backdrop-blur-xl border-t border-black/5 dark:border-white/5 p-6 z-[60] flex items-center justify-between shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
-                <div>
-                    <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-black text-gray-900 dark:text-white">€{tour.price}</span>
-                        <span className="text-gray-400 text-[10px] font-bold leading-none uppercase">{t('tours.per_car')}</span>
+                <div className="flex items-center gap-3">
+                    <span className="text-3xl font-black text-gray-900 dark:text-white">€{tour.price}</span>
+                    <div className="pt-1">
+                        <span className="text-gray-400 text-[9px] font-bold leading-tight uppercase block max-w-[80px]">{t('tours.per_car')}</span>
                     </div>
                 </div>
                 <button

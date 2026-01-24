@@ -22,8 +22,7 @@ Me gustaría reservar una actividad:
 - Tour: ${tourTitle}
 - Fecha: ${formData.date}
 - Pasajeros: ${formData.pax}
-- Hotel/Zona: ${formData.hotel}
-${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
+- Hotel/Zona: ${formData.hotel}${showCoupon && formData.coupon ? `\n- Cupón: ${formData.coupon}` : ''}
 
 ¿Me confirman disponibilidad? Gracias!`;
 
@@ -34,7 +33,7 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
         onClose();
     };
 
-    const inputClasses = "w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all text-gray-700 dark:text-gray-200 min-h-[62px]";
+    const inputClasses = "w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all text-gray-700 dark:text-gray-200 min-h-[62px] block box-border";
 
     return (
         <AnimatePresence>
@@ -69,7 +68,7 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
                         </div>
 
                         {/* Form */}
-                        <form onSubmit={handleSubmit} className="p-8 space-y-5 max-h-[80vh] overflow-y-auto custom-scrollbar">
+                        <form onSubmit={handleSubmit} className="p-8 space-y-6 max-h-[80vh] overflow-y-auto custom-scrollbar">
 
                             {/* Date Input */}
                             <div className="space-y-2">
@@ -77,89 +76,85 @@ ${showCoupon && formData.coupon ? `- Cupón: ${formData.coupon}` : ''}
                                     <Calendar size={14} className="text-primary" />
                                     {t('detail.booking_date')}
                                 </label>
-                                <div className="relative">
-                                    <input
-                                        type="date"
-                                        required
-                                        min={new Date().toISOString().split('T')[0]}
-                                        value={formData.date}
-                                        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                        className={inputClasses}
-                                    />
-                                </div>
+                                <input
+                                    type="date"
+                                    required
+                                    min={new Date().toISOString().split('T')[0]}
+                                    value={formData.date}
+                                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                    className={`${inputClasses} appearance-none block w-full relative`}
+                                />
                             </div>
 
-                            <div className="grid grid-cols-1 gap-5">
-                                {/* Pax Input */}
-                                <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                                        <Users size={14} className="text-primary" />
-                                        {t('detail.booking_pax')}
-                                    </label>
-                                    <select
-                                        value={formData.pax}
-                                        onChange={(e) => setFormData({ ...formData, pax: e.target.value })}
-                                        className={`${inputClasses} appearance-none cursor-pointer`}
-                                    >
-                                        <option value="1">{t('detail.booking_pax_1')}</option>
-                                        <option value="2">{t('detail.booking_pax_2')}</option>
-                                        <option value="3">{t('detail.booking_pax_3')}</option>
-                                        <option value="4">{t('detail.booking_pax_4')}</option>
-                                        <option value="5">{t('detail.booking_pax_5')}</option>
-                                        <option value="6 o más">{t('detail.booking_pax_6')}</option>
-                                        <option value="12 o más">{t('detail.booking_pax_12')}</option>
-                                        <option value="20 o más">{t('detail.booking_pax_20')}</option>
-                                    </select>
-                                </div>
+                            {/* Pax Input */}
+                            <div className="space-y-2">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                    <Users size={14} className="text-primary" />
+                                    {t('detail.booking_pax')}
+                                </label>
+                                <select
+                                    value={formData.pax}
+                                    onChange={(e) => setFormData({ ...formData, pax: e.target.value })}
+                                    className={`${inputClasses} appearance-none block w-full cursor-pointer`}
+                                >
+                                    <option value="1">{t('detail.booking_pax_1')}</option>
+                                    <option value="2">{t('detail.booking_pax_2')}</option>
+                                    <option value="3">{t('detail.booking_pax_3')}</option>
+                                    <option value="4">{t('detail.booking_pax_4')}</option>
+                                    <option value="5">{t('detail.booking_pax_5')}</option>
+                                    <option value="6 o más">{t('detail.booking_pax_6')}</option>
+                                    <option value="12 o más">{t('detail.booking_pax_12')}</option>
+                                    <option value="20 o más">{t('detail.booking_pax_20')}</option>
+                                </select>
+                            </div>
 
-                                {/* Hotel Input */}
-                                <div className="space-y-2">
-                                    <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                                        <MapPin size={14} className="text-primary" />
-                                        {t('detail.booking_hotel')}
-                                    </label>
-                                    <input
-                                        type="text"
-                                        required
-                                        placeholder={t('detail.booking_hotel_placeholder')}
-                                        value={formData.hotel}
-                                        onChange={(e) => setFormData({ ...formData, hotel: e.target.value })}
-                                        className={inputClasses}
-                                    />
-                                </div>
+                            {/* Hotel Input */}
+                            <div className="space-y-2">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                    <MapPin size={14} className="text-primary" />
+                                    {t('detail.booking_hotel')}
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    placeholder={t('detail.booking_hotel_placeholder')}
+                                    value={formData.hotel}
+                                    onChange={(e) => setFormData({ ...formData, hotel: e.target.value })}
+                                    className={`${inputClasses} block w-full`}
+                                />
+                            </div>
 
-                                {/* Coupon Toggle and Input */}
-                                <div className="pt-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowCoupon(!showCoupon)}
-                                        className="flex items-center gap-2 text-[10px] font-black text-gray-500 hover:text-primary transition-colors uppercase tracking-widest"
-                                    >
-                                        <Ticket size={14} className={showCoupon ? 'text-secondary' : 'text-gray-400'} />
-                                        {t('detail.coupon')}
-                                    </button>
+                            {/* Coupon Toggle and Input */}
+                            <div className="pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowCoupon(!showCoupon)}
+                                    className="flex items-center gap-2 text-[10px] font-black text-gray-500 hover:text-primary transition-colors uppercase tracking-widest"
+                                >
+                                    <Ticket size={14} className={showCoupon ? 'text-secondary' : 'text-gray-400'} />
+                                    {t('detail.coupon')}
+                                </button>
 
-                                    <AnimatePresence>
-                                        {showCoupon && (
-                                            <motion.div
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: 'auto', opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                className="overflow-hidden"
-                                            >
-                                                <div className="pt-3">
-                                                    <input
-                                                        type="text"
-                                                        placeholder={t('detail.coupon_placeholder')}
-                                                        value={formData.coupon}
-                                                        onChange={(e) => setFormData({ ...formData, coupon: e.target.value })}
-                                                        className={inputClasses}
-                                                    />
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
+                                <AnimatePresence>
+                                    {showCoupon && (
+                                        <motion.div
+                                            initial={{ height: 0, opacity: 0 }}
+                                            animate={{ height: 'auto', opacity: 1 }}
+                                            exit={{ height: 0, opacity: 0 }}
+                                            className="overflow-hidden"
+                                        >
+                                            <div className="pt-3">
+                                                <input
+                                                    type="text"
+                                                    placeholder={t('detail.coupon_placeholder')}
+                                                    value={formData.coupon}
+                                                    onChange={(e) => setFormData({ ...formData, coupon: e.target.value })}
+                                                    className={inputClasses}
+                                                />
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </div>
 
                             <button
