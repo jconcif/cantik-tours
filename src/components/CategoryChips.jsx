@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Landmark, Waves, TreePine, Compass, Palette, Camera } from 'lucide-react';
+import { Landmark, Waves, TreePine, Compass, Palette, Camera, Car } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -10,6 +10,7 @@ const categories = [
     { id: 'fotografia', nameKey: 'tours.categories.fotografia', icon: Camera },
     { id: 'playas', nameKey: 'tours.categories.playas', icon: Waves },
     { id: 'aventura', nameKey: 'tours.categories.aventura', icon: TreePine },
+    // { id: 'traslados', nameKey: 'tours.categories.traslados', icon: Car },
 ];
 
 const CategoryChips = ({ active = 'todos', onSelect }) => {

@@ -56,7 +56,8 @@ i18n
                             fotografia: "Fotografía",
                             playas: "Playas",
                             aventura: "Aventura",
-                            naturaleza: "Naturaleza"
+                            naturaleza: "Naturaleza",
+                            traslados: "Traslados"
                         }
                     },
                     cta: {
@@ -67,6 +68,7 @@ i18n
                     },
                     detail: {
                         itinerary: "Itinerario",
+                        description: "Descripción",
                         included: "Incluido",
                         not_included: "No incluido",
                         reviews: "Reseñas",
@@ -106,7 +108,30 @@ i18n
                         msg_pax: "Pasajeros",
                         msg_hotel: "Hotel/Zona",
                         msg_coupon: "Cupón",
-                        msg_confirm: "¿Me confirman disponibilidad? Gracias!"
+                        msg_confirm: "¿Me confirman disponibilidad? Gracias!",
+                        transfer_title: "RESERVA TU TRASLADO",
+                        transfer_type: "Trayecto",
+                        transfer_type_placeholder: "Selecciona el trayecto",
+                        transfer_route_1: "Aeropuerto → Ubud",
+                        transfer_route_2: "Ubud → Aeropuerto",
+                        transfer_route_3: "Ubud → Puerto Padangbai",
+                        transfer_route_4: "Puerto Padangbai → Ubud",
+                        transfer_route_5: "Ubud → Puerto Sanur",
+                        transfer_route_6: "Puerto Sanur → Ubud",
+                        transfer_route_7: "Aeropuerto → Puerto Padangbai",
+                        transfer_route_8: "Puerto Padangbai → Aeropuerto",
+                        transfer_route_other: "Otro trayecto",
+                        transfer_time: "Hora de recogida",
+                        transfer_flight: "Nº de Vuelo / Barco",
+                        transfer_flight_placeholder: "Opcional (para monitorizar retrasos)",
+                        transfer_bags: "Número de maletas",
+                        transfer_submit: "Solicitar presupuesto",
+                        msg_transfer_intro: "Hola Cantik Tours! Necesito un traslado:",
+                        msg_transfer_type: "Trayecto",
+                        msg_transfer_time: "Hora",
+                        msg_transfer_flight: "Vuelo/Barco",
+                        msg_transfer_bags: "Maletas",
+                        msg_transfer_pax: "Pasajeros"
                     },
                     guide: {
                         badge: "Imprescindible para tu viaje",
@@ -258,7 +283,8 @@ i18n
                             fotografia: "Photography",
                             playas: "Beaches",
                             aventura: "Adventure",
-                            naturaleza: "Nature"
+                            naturaleza: "Nature",
+                            traslados: "Transfers"
                         }
                     },
                     cta: {
@@ -269,6 +295,7 @@ i18n
                     },
                     detail: {
                         itinerary: "Itinerary",
+                        description: "Description",
                         included: "Included",
                         not_included: "Not included",
                         reviews: "Reviews",
@@ -308,7 +335,29 @@ i18n
                         msg_pax: "Passengers",
                         msg_hotel: "Hotel/Area",
                         msg_coupon: "Coupon",
-                        msg_confirm: "Can you confirm availability? Thanks!"
+                        msg_confirm: "Can you confirm availability? Thanks!",
+                        transfer_type: "Route",
+                        transfer_type_placeholder: "Select route",
+                        transfer_route_1: "Airport → Ubud",
+                        transfer_route_2: "Ubud → Airport",
+                        transfer_route_3: "Ubud → Padangbai Harbor",
+                        transfer_route_4: "Padangbai Harbor → Ubud",
+                        transfer_route_5: "Ubud → Sanur Harbor",
+                        transfer_route_6: "Sanur Harbor → Ubud",
+                        transfer_route_7: "Airport → Padangbai Harbor",
+                        transfer_route_8: "Padangbai Harbor → Airport",
+                        transfer_route_other: "Other route",
+                        transfer_time: "Pickup Time",
+                        transfer_flight: "Flight / Boat Number",
+                        transfer_flight_placeholder: "Optional (to monitor delays)",
+                        transfer_bags: "Number of bags",
+                        transfer_submit: "Request Quote",
+                        msg_transfer_intro: "Hi Cantik Tours! I need a transfer:",
+                        msg_transfer_type: "Route",
+                        msg_transfer_time: "Time",
+                        msg_transfer_flight: "Flight/Boat",
+                        msg_transfer_bags: "Bags",
+                        msg_transfer_pax: "Passengers"
                     },
                     guide: {
                         badge: "Essential for your trip",

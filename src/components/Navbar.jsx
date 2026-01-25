@@ -127,7 +127,7 @@ const Navbar = () => {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: '100%' }}
                         transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="fixed inset-0 z-[60] bg-white dark:bg-bg-dark flex flex-col"
+                        className="fixed inset-0 z-[110] bg-white dark:bg-bg-dark flex flex-col"
                     >
                         <div className="flex justify-between items-center p-6 border-b border-black/5 dark:border-white/10">
                             <div className="flex items-center gap-2">

@@ -1,70 +1,118 @@
 export const tours = [
     {
         id: 'ubud-central',
-        title: "Ubud Central: Templos y Arrozales",
-        title_en: "Ubud Central: Temples & Rice Terraces",
-        description: "Ritual de purificación, templos antiguos y las mejores terrazas de arroz de Ubud.",
-        description_en: "Purification ritual, ancient temples and the best rice terraces in Ubud.",
-        fullDescription: "Explora el corazón espiritual y natural de Bali. Este tour te lleva por templos sagrados menos transitados, cascadas refrescantes y los icónicos arrozales de Tegallalang, terminando con la opción de relajarte en los mejores cafés con vistas.",
-        fullDescription_en: "Explore the spiritual and natural heart of Bali. This tour takes you through less-traveled sacred temples, refreshing waterfalls and the iconic Tegalalang rice terraces, ending with the option to relax in the best cafes with views.",
+        title: "Ubud Central: Templos Sagrados y Arrozales",
+        title_en: "Ubud Central: Sacred Temples & Rice Terraces",
+        description: "Vive la esencia de Bali: rituales de purificación, templos milenarios y los arrozales más icónicos.",
+        description_en: "Experience the essence of Bali: purification rituals, ancient temples, and the most iconic rice terraces.",
+        fullDescription: "Sumérgete en el corazón espiritual de Bali. Este tour está diseñado para quienes buscan autenticidad, combinando templos históricos, cascadas escondidas y la belleza inigualable de Tegalalang Rice Terrace. Desde rituales de purificación tradicional hasta el relax en los mejores restaurantes con vistas a los arrozales, vive la experiencia completa de los alrededores de Ubud en un solo dia.",
+        fullDescription_en: "Immerse yourself in Bali's spiritual heart. This tour is designed for those seeking authenticity, combining historic temples, hidden waterfalls, and the unparalleled beauty of Tegalalang Rice Terrace. From traditional purification rituals to relaxing in the best restaurants with views of the rice fields, live the complete experience of the surroundings of Ubud in a single day.",
         price: 55,
         duration: "8-10 horas",
         duration_en: "8-10 hours",
-        image: "/images/tours/waterfalls-circuit.jpg",
-        badge: "Cultura Local",
-        badge_en: "Local Culture",
+        image: "/images/tours/ubud-highlights.jpg",
+        badge: "Más Popular",
+        badge_en: "Most Popular",
         category: "cultura",
         itinerary: [
-            { time: "08:30", activity: "Recogida en Hotel", activity_en: "Hotel Pickup" },
             {
-                time: "09:30",
-                activity: "Beji Griya o Cascada Tibumana",
-                activity_en: "Beji Griya or Tibumana Waterfall",
-                desc: "Beji Griya ofrece un ritual de purificación único en un entorno de cueva natural, mientras que Tibumana es conocida por su caída perfecta de agua rodeada de selva.",
-                desc_en: "Beji Griya offers a unique purification ritual in a natural cave setting, while Tibumana is known for its perfect waterfall drop surrounded by jungle."
+                type: 'pickup',
+                duration: "08:30",
+                activity: "Recogida en hotel",
+                activity_en: "Hotel pickup",
+                desc: "Comenzamos el día recogiéndote directamente en tu alojamiento.",
+                desc_en: "We start the day by picking you up directly at your accommodation."
             },
             {
-                time: "11:30",
-                activity: "Templo Gunung Kawi Tampaksiring",
-                activity_en: "Gunung Kawi Tampaksiring Temple",
-                desc: "Impresionantes santuarios tallados directamente en la roca de un acantilado del siglo XI.",
-                desc_en: "Stunning shrines carved directly into the rock of an 11th-century cliff."
+                type: 'photo',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
+                activity: "Cascada Tibumana o Cascada Kanto Lampo",
+                activity_en: "Tibumana or Kanto Lampo waterfall",
+                desc: "Elige entre la caída perfecta de Tibumana o la belleza escalonada de Kanto Lampo.",
+                desc_en: "Choose between Tibumana's perfect drop or Kanto Lampo's stepped beauty."
             },
             {
-                time: "13:30",
-                activity: "Pura Mengening o Sebatu",
-                activity_en: "Pura Mengening or Sebatu",
-                desc: "Templos de purificación tradicionales mucho más tranquilos donde podrás observar o participar en rituales locales auténticos.",
-                desc_en: "Much quieter traditional purification temples where you can observe or participate in authentic local rituals."
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Templo Gunung Kawi Tampaksiring (“Montaña Tallada\")",
+                activity_en: "Gunung Kawi Tampaksiring temple (\"Carved Mountain\")",
+                desc: "Impresionantes santuarios esculpidos directamente en el acantilado.",
+                desc_en: "Stunning shrines sculpted directly into the cliffside."
             },
             {
-                time: "15:00",
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Templo Pura Mengening (Templo de purificación tradicional)",
+                activity_en: "Pura Mengening temple (Traditional purification temple)",
+                desc: "Lugar de paz y espiritualidad auténtica fuera de las rutas comunes.",
+                desc_en: "A place of peace and authentic spirituality off the beaten path."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Pura Gunung Kawi Sebatu (Templo del siglo XI)",
+                activity_en: "Pura Gunung Kawi Sebatu (11th century temple)",
+                desc: "Joyas menos concurridas donde la espiritualidad y la naturaleza se funden.",
+                desc_en: "Less crowded gems where spirituality and nature merge."
+            },
+            {
+                type: 'food',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Almuerzo local",
+                activity_en: "Local lunch",
+                desc: "Tiempo para disfrutar de la gastronomía balinesa.",
+                desc_en: "Time to enjoy Balinese gastronomy."
+            },
+            {
+                type: 'visit',
+                duration: "2 horas",
+                duration_en: "2 hours",
+                activity: "Templo Pura Tirta Empul - Ritual de purificación (Opcional)",
+                activity_en: "Pura Tirta Empul temple - Purification ritual (Optional)",
+                desc: "El templo de agua más famoso de Bali.",
+                desc_en: "Bali's most famous water temple."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Bali Pulina - Plantación de Café (Opcional)",
+                activity_en: "Bali Pulina - Coffee plantation (Optional)",
+                desc: "Conoce el proceso del café balinés en un entorno auténtico. Disfruta de una degustación en sus famosas terrazas de madera con vistas espectaculares a la selva.",
+                desc_en: "Learn about the authentic Balinese coffee process. Enjoy a tasting on its famous wooden terraces with spectacular jungle views."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Tegalalang Rice Terrace",
                 activity_en: "Tegalalang Rice Terrace",
-                desc: "Pasea por los arrozales en terrazas más famosos de Bali, Patrimonio de la Humanidad.",
-                desc_en: "Walk through the most famous terraced rice fields in Bali, a World Heritage site."
+                desc: "Para terminar la tarde con vistas a los arrozales más icónicos.",
+                desc_en: "To end the afternoon with views of the most iconic rice terraces."
             },
             {
-                time: "16:30",
-                activity: "Atardecer en Tis Café o Cretya",
-                activity_en: "Sunset at Tis Café or Cretya",
-                desc: "Relájate en un club de piscina con las mejores vistas de las terrazas para terminar el día.",
-                desc_en: "Relax at a pool club with the best views of the terraces to end the day."
+                type: 'dropoff',
+                activity: "Regreso al hotel",
+                activity_en: "Return to hotel",
+                desc: "Te dejamos en tu alojamiento.",
+                desc_en: "We drop you off at your accommodation."
             }
         ],
         location: "Ubud Central",
-        included: ["Transporte privado", "Conductor", "Gasolina y Parking", "Agua mineral"],
-        included_en: ["Private transport", "Driver", "Gas and Parking", "Mineral water"],
-        not_included: ["Entradas / tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / tickets", "Meals", "Travel insurance"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
+        not_included: ["Entradas / Tickets", "Comidas", "Ritual de purificación (Opcional)", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals", "Purification ritual (Optional)", "Travel insurance"],
         rating: 4.9,
         reviews: 45,
         reviewsList: [
-            { name: "Carlos M.", date: "Hace 2 días", text: "Increíble experiencia, Perty nos explicó todo con muchísima paciencia.", date_en: "2 days ago", text_en: "Amazing experience, Perty explained everything with a lot of patience." },
-            { name: "Lucía R.", date: "Hace 1 semana", text: "La purificación fue el momento más especial de mi viaje.", date_en: "1 week ago", text_en: "The purification was the most special moment of my trip." },
-            { name: "Andrés G.", date: "Hace 3 semanas", text: "Ubud central es mágico con este tour. Sin prisas y muy auténtico.", date_en: "3 weeks ago", text_en: "Central Ubud is magical with this tour. No rush and very authentic." },
-            { name: "Marta H.", date: "Hace 1 mes", text: "El conductor fue muy amable y el coche impecable. Repetiremos!", date_en: "1 month ago", text_en: "The driver was very kind and the car spotless. We will repeat!" },
-            { name: "Santi F.", date: "Hace 2 meses", text: "Todo perfecto. Una forma distinta de ver Ubud lejos de las masas.", date_en: "2 months ago", text_en: "Everything perfect. A different way to see Ubud away from the crowds." }
+            { name: "Carlos M.", date: "Hace 2 días", text: "Increíble experiencia, el equipo nos explicó todo con muchísima paciencia.", date_en: "2 days ago", text_en: "Amazing experience, the team explained everything with a lot of patience." },
+            { name: "Lucía R.", date: "Hace 1 semana", text: "La purificación en los templos menos conocidos fue lo mejor del viaje.", date_en: "1 week ago", text_en: "The purification at the lesser-known temples was the best part of the trip." }
         ]
     },
     {
@@ -83,41 +131,61 @@ export const tours = [
         badge_en: "Must See",
         category: "cultura",
         itinerary: [
-            { time: "08:00", activity: "Salida desde Ubud", activity_en: "Departure from Ubud" },
             {
-                time: "10:00",
+                type: 'pickup',
+                duration: "15-30 min",
+                activity: "Recogida en hotel",
+                activity_en: "Hotel pickup",
+                desc: "Te pasaremos a recoger directamente en tu hotel a la hora acordada.",
+                desc_en: "We will pick you up directly at your hotel at the agreed time."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Palacio Tirta Gangga",
                 activity_en: "Tirta Gangga Palace",
-                desc: "Antiguo palacio real de agua con increíbles fuentes, estatuas y jardines llenos de peces koi gigantes.",
-                desc_en: "Former royal water palace with incredible fountains, statues and gardens full of giant koi fish."
+                desc: "Jardines reales con fuentes y peces koi gigantes.",
+                desc_en: "Royal gardens with fountains and giant koi fish."
             },
             {
-                time: "12:00",
+                type: 'visit',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
                 activity: "Templo Madre Besakih",
                 activity_en: "Besakih Mother Temple",
-                desc: "El complejo de templos más grande y sagrado de Bali, ubicado majestuosamente en la ladera del volcán Agung.",
-                desc_en: "The largest and holiest temple complex in Bali, majestically located on the slopes of Mount Agung."
+                desc: "El complejo más grande y sagrado de Bali.",
+                desc_en: "The largest and holiest complex in Bali."
             },
             {
-                time: "14:00",
-                activity: "Almuerzo con vistas al Volcán Batur",
-                activity_en: "Lunch with Batur Volcano views",
-                desc: "Disfruta de la gastronomía local con una de las mejores panorámicas del volcán activo Batur y su lago.",
-                desc_en: "Enjoy local gastronomy with one of the best panoramas of the active Batur volcano and its lake."
+                type: 'food',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Almuerzo en Kintamani",
+                activity_en: "Lunch in Kintamani",
+                desc: "Comida con vistas al volcán y lago Batur.",
+                desc_en: "Meal with views of the volcano and Lake Batur."
             },
             {
-                time: "16:00",
-                activity: "Penglipuran Village",
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Aldea Penglipuran",
                 activity_en: "Penglipuran Village",
-                desc: "Considerada una de las aldeas más limpias del mundo, es el ejemplo perfecto de cultura y arquitectura tradicional balinesa.",
-                desc_en: "Considered one of the cleanest villages in the world, it is the perfect example of traditional Balinese culture and architecture."
+                desc: "Aldea tradicional de bambú perfectamente conservada.",
+                desc_en: "Perfectly preserved traditional bamboo village."
+            },
+            {
+                type: 'dropoff',
+                activity: "Regreso al hotel",
+                activity_en: "Return to hotel"
             }
         ],
         location: "Este de Bali",
-        included: ["Transporte privado", "Conductor", "Gasolina y Parking", "Agua mineral"],
-        included_en: ["Private transport", "Driver", "Gas and Parking", "Mineral water"],
-        not_included: ["Entradas / tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / tickets", "Meals", "Travel insurance"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
+        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
         rating: 4.8,
         reviews: 28,
         reviewsList: [
@@ -143,39 +211,57 @@ export const tours = [
         badge_en: "Most Popular",
         category: "fotografia",
         itinerary: [
-            { time: "07:00", activity: "Salida de Ubud", activity_en: "Departure from Ubud" },
             {
-                time: "09:30",
-                activity: "Templo Lempuyang (Puertas del Cielo)",
+                type: 'pickup',
+                duration: "15-30 min",
+                activity: "Recogida temprana",
+                activity_en: "Early pickup",
+                desc: "Te pasaremos a recoger en tu hotel para evitar las colas.",
+                desc_en: "We will pick you up at your hotel to avoid the queues."
+            },
+            {
+                type: 'photo',
+                duration: "2 horas",
+                duration_en: "2 hours",
+                activity: "Templo Lempuyang (Puertas del cielo)",
                 activity_en: "Lempuyang Temple",
-                desc: "Famoso por su puerta icónica que enmarca el volcán Agung. Es un sitio de peregrinación sagrado.",
-                desc_en: "Famous for its iconic gate that frames Mount Agung. It is a sacred pilgrimage site."
+                desc: "Famosa puerta con vistas al volcán Agung.",
+                desc_en: "Famous gate with views of Mount Agung."
             },
             {
-                time: "12:00",
-                activity: "Tirta Gangga (Water Palace)",
-                activity_en: "Tirta Gangga Water Palace",
-                desc: "Un rincón de paz y belleza real perfecta para tus mejores fotos.",
-                desc_en: "A corner of peace and royal beauty perfect for your best photos."
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Tirta Gangga",
+                activity_en: "Tirta Gangga",
+                desc: "Palacio de agua y jardines reales.",
+                desc_en: "Water palace and royal gardens."
             },
             {
-                time: "13:30",
+                type: 'food',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Almuerzo local",
                 activity_en: "Local lunch"
             },
             {
-                time: "15:30",
+                type: 'visit',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
                 activity: "Templo Madre Besakih",
-                activity_en: "Besakih Mother Temple",
-                desc: "Explora el complejo central de la religión balinesa.",
-                desc_en: "Explore the central complex of the Balinese religion."
+                activity_en: "Besakih Mother Temple"
+            },
+            {
+                type: 'dropoff',
+                activity: "Regreso al hotel",
+                activity_en: "Return to hotel"
             }
         ],
         location: "Lempuyang",
-        included: ["Transporte privado", "Conductor", "Gasolina y Parking", "Agua mineral"],
-        included_en: ["Private transport", "Driver", "Gas and Parking", "Mineral water"],
-        not_included: ["Entradas / tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / tickets", "Meals", "Travel insurance"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
+        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
         rating: 4.9,
         reviews: 54,
         reviewsList: [
@@ -201,33 +287,52 @@ export const tours = [
         badge_en: "Transfer + Tour",
         category: "aventura",
         itinerary: [
-            { time: "08:00", activity: "Recogida en Ubud", activity_en: "Pickup in Ubud" },
             {
-                time: "09:00",
+                type: 'pickup',
+                duration: "15-30 min",
+                activity: "Recogida en Ubud",
+                activity_en: "Pickup in Ubud",
+                desc: "Te pasaremos a recoger directamente en tu hotel a la hora acordada.",
+                desc_en: "We will pick you up directly at your hotel at the agreed time."
+            },
+            {
+                type: 'photo',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Cascada Kanto Lampo o Tibumana",
-                activity_en: "Kanto Lampo or Tibumana Waterfall",
-                desc: "Kanto Lampo es una cascada escalonada ideal para fotos artísticas en el agua.",
-                desc_en: "Kanto Lampo is a stepped waterfall ideal for artistic water photos."
+                activity_en: "Kanto Lampo or Tibumana waterfall",
+                desc: "Parada para refrescarse y fotos en el agua.",
+                desc_en: "Stop for a break and water photos."
             },
             {
-                time: "11:00",
-                activity: "Templo Goa Lawah (Opcional)",
-                activity_en: "Goa Lawah Temple (Optional)",
-                desc: "Famoso templo en una cueva que alberga miles de murciélagos sagrados.",
-                desc_en: "Famous cave temple that houses thousands of sacred bats."
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Templo Goa Lawah (opcional)",
+                activity_en: "Goa Lawah temple (optional)",
+                desc: "Cueva de murciélagos sagrados.",
+                desc_en: "Sacred bat cave."
             },
             {
-                time: "13:00",
-                activity: "Tirta Gangga (Water Palace)",
-                activity_en: "Tirta Gangga Water Palace"
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Tirta Gangga (water palace)",
+                activity_en: "Tirta Gangga water palace"
             },
-            { time: "16:00", activity: "Llegada al Hotel en Amed", activity_en: "Arrival at Amed Hotel" }
+            {
+                type: 'dropoff',
+                activity: "Llegada al hotel en Amed",
+                activity_en: "Arrival at Amed hotel",
+                desc: "Te dejamos en tu nuevo alojamiento.",
+                desc_en: "We drop you off at your new accommodation."
+            }
         ],
         location: "Costa Este",
-        included: ["Transporte privado", "Conductor", "Gasolina y Parking", "Agua mineral"],
-        included_en: ["Private transport", "Driver", "Gas and Parking", "Mineral water"],
-        not_included: ["Entradas / tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / tickets", "Meals", "Travel insurance"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
+        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
         rating: 4.7,
         reviews: 18,
         reviewsList: [
@@ -252,44 +357,66 @@ export const tours = [
         badge_en: "Full Experience",
         category: "aventura",
         itinerary: [
-            { time: "08:00", activity: "Salida desde Ubud", activity_en: "Departure from Ubud" },
             {
-                time: "09:30",
-                activity: "Penglipuran traditional village",
+                type: 'pickup',
+                duration: "15-30 min",
+                activity: "Recogida temprana",
+                activity_en: "Early pickup",
+                desc: "Te pasaremos a recoger directamente en tu hotel a la hora acordada.",
+                desc_en: "We will pick you up directly at your hotel at the agreed time."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Aldea Penglipuran",
                 activity_en: "Penglipuran Village",
                 desc: "Cultura tradicional intacta en una aldea de bambú.",
                 desc_en: "Untouched traditional culture in a bamboo village."
             },
             {
-                time: "11:30",
-                activity: "Vistas panorámicas Batur (Kintamani)",
-                activity_en: "Batur Views (Kintamani)",
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Vistas Kintamani",
+                activity_en: "Kintamani views",
                 desc: "Vistas inolvidables del cráter del volcán Batur.",
                 desc_en: "Unforgettable views of the Batur volcano crater."
             },
             {
-                time: "13:00",
+                type: 'visit',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
                 activity: "Templo Madre Besakih",
                 activity_en: "Besakih Mother Temple"
             },
             {
-                time: "15:00",
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Palacio Tirta Gangga",
                 activity_en: "Tirta Gangga Palace"
             },
             {
-                time: "18:00",
+                type: 'photo',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Atardecer en Amed",
                 activity_en: "Sunset in Amed",
-                desc: "Relájate viendo como el sol baja tras el coloso Agung desde la costa.",
-                desc_en: "Relax watching the sun go down behind the colossus Agung from the coast."
+                desc: "Atardecer con vistas al coloso Agung.",
+                desc_en: "Sunset with views of colossus Agung."
+            },
+            {
+                type: 'dropoff',
+                activity: "Regreso al hotel",
+                activity_en: "Return to hotel"
             }
         ],
         location: "Amed / Besakih",
-        included: ["Transporte privado", "Conductor", "Gasolina y Parking", "Agua mineral"],
-        included_en: ["Private transport", "Driver", "Gas and Parking", "Mineral water"],
-        not_included: ["Entradas / tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / tickets", "Meals", "Travel insurance"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
+        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
         rating: 4.9,
         reviews: 32,
         reviewsList: [
@@ -315,46 +442,77 @@ export const tours = [
         badge_en: "Unique Landscapes",
         category: "naturaleza",
         itinerary: [
-            { time: "07:30", activity: "Salida desde Ubud", activity_en: "Departure from Ubud" },
             {
-                time: "08:30",
+                type: 'pickup',
+                duration: "15-30 min",
+                activity: "Recogida temprana",
+                activity_en: "Early Pickup",
+                desc: "Te pasaremos a recoger directamente en tu hotel a la hora acordada.",
+                desc_en: "We will pick you up directly at your hotel at the agreed time."
+            },
+            {
+                type: 'transport',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Coche",
+                activity_en: "Car"
+            },
+            {
+                type: 'photo',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
                 activity: "Cascada Nungnung o Leke Leke",
                 activity_en: "Nungnung or Leke Leke Waterfall",
-                desc: "Enormes saltos de agua con caídas espectaculares rodeadas de vegetación tropical.",
-                desc_en: "Huge waterfalls with spectacular drops surrounded by tropical vegetation."
+                desc: "Enormes saltos de agua rodeados de vegetación tropical.",
+                desc_en: "Huge waterfalls surrounded by tropical vegetation."
             },
             {
-                time: "10:30",
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Templo Ulun Danu Beratan",
                 activity_en: "Ulun Danu Beratan Temple",
-                desc: "El famoso templo flotante sobre el lago Beratan dedicado a la diosa del agua.",
-                desc_en: "The famous floating temple on Lake Beratan dedicated to the goddess of water."
+                desc: "El famoso templo flotante sobre el lago Beratan.",
+                desc_en: "The famous floating temple on Lake Beratan."
             },
             {
-                time: "13:00",
-                activity: "Jatiluwih Rice Terraces (UNESCO)",
+                type: 'visit',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
+                activity: "Terrazas de Jatiluwih (UNESCO)",
                 activity_en: "Jatiluwih Rice Terraces (UNESCO)",
-                desc: "Los campos de arroz más extensos de Bali con un sistema de riego milenario único.",
-                desc_en: "Bali's most extensive rice fields with a unique ancient irrigation system."
+                desc: "Campos de arroz Patrimonio de la Humanidad.",
+                desc_en: "World Heritage rice fields."
             },
             {
-                time: "14:30",
+                type: 'food',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Almuerzo con vistas",
                 activity_en: "Lunch with views"
             },
             {
-                time: "16:00",
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Templo Taman Ayun (Opcional)",
                 activity_en: "Taman Ayun Temple",
-                desc: "Templo real rodeado de jardines y hermosos estanques.",
-                desc_en: "Royal temple surrounded by gardens and beautiful ponds."
+                desc: "Templo real rodeado de jardines.",
+                desc_en: "Royal temple surrounded by gardens."
+            },
+            {
+                type: 'dropoff',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
+                activity: "Regreso al Hotel",
+                activity_en: "Return to Hotel"
             }
         ],
         location: "Norte de Bali",
-        included: ["Transporte privado", "Conductor", "Gasolina y Parking", "Agua mineral"],
-        included_en: ["Private transport", "Driver", "Gas and Parking", "Mineral water"],
-        not_included: ["Entradas / tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / tickets", "Meals", "Travel insurance"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
+        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
         rating: 4.9,
         reviews: 41,
         reviewsList: [
@@ -380,40 +538,63 @@ export const tours = [
         badge_en: "Epic Adventure",
         category: "aventura",
         itinerary: [
-            { time: "04:30", activity: "Recogida nocturna", activity_en: "Night Pickup" },
             {
-                time: "06:30",
+                type: 'pickup',
+                duration: "15-30 min",
+                activity: "Recogida nocturna",
+                activity_en: "Night pickup",
+                desc: "Te recogeremos temprano para llegar a Lovina antes del alba.",
+                desc_en: "We will pick you up early to reach Lovina before sunrise."
+            },
+            {
+                type: 'visit',
+                duration: "2 horas",
+                duration_en: "2 hours",
                 activity: "Delfines en Lovina",
                 activity_en: "Dolphins in Lovina",
-                desc: "Sube a una barca local al amanecer para ver delfines saltando en mar abierto.",
-                desc_en: "Board a local boat at sunrise to see dolphins jumping in the open sea."
+                desc: "Avistamiento de delfines en barca tradicional durante el amanecer.",
+                desc_en: "Dolphin watching on a traditional boat during sunrise."
             },
             {
-                time: "09:30",
+                type: 'photo',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
                 activity: "Cascada Banyumala",
-                activity_en: "Banyumala Waterfall",
-                desc: "Una de las cascadas más hermosas y vírgenes para darte un baño refrescante.",
-                desc_en: "One of the most beautiful and untouched waterfalls for a refreshing swim."
+                activity_en: "Banyumala waterfall",
+                desc: "Darse un baño en una de las cascadas más bonitas de Bali.",
+                desc_en: "Take a swim in one of Bali's most beautiful waterfalls."
             },
             {
-                time: "11:30",
-                activity: "Vistas Lagos Gemelos",
-                activity_en: "Twin Lakes Views",
-                desc: "Panorámica aérea de los lagos Tamblingan y Buyan.",
-                desc_en: "Aerial panorama of Tamblingan and Buyan lakes."
+                type: 'visit',
+                duration: "30 min",
+                activity: "Vistas lagos gemelos",
+                activity_en: "Twin lakes views"
             },
             {
-                time: "13:00",
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Templo Ulun Danu Beratan",
-                activity_en: "Ulun Danu Beratan Temple"
+                activity_en: "Ulun Danu Beratan temple"
             },
-            { time: "15:00", activity: "Jatiluwih Rice Terraces", activity_en: "Jatiluwih Rice Terraces" }
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Terrazas de Jatiluwih",
+                activity_en: "Jatiluwih rice terraces"
+            },
+            {
+                type: 'dropoff',
+                activity: "Regreso al hotel",
+                activity_en: "Return to hotel"
+            }
         ],
         location: "Lovina / Norte",
-        included: ["Transporte privado", "Conductor", "Gasolina y Parking", "Barca para delfines", "Agua mineral"],
-        included_en: ["Private transport", "Driver", "Gas and Parking", "Dolphin boat", "Mineral water"],
-        not_included: ["Entradas / tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / tickets", "Meals", "Travel insurance"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Barca para delfines", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Dolphin boat", "Mineral water", "Snacks"],
+        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
         rating: 4.8,
         reviews: 25,
         reviewsList: [
@@ -439,46 +620,68 @@ export const tours = [
         badge_en: "Best Seller",
         category: "cultura",
         itinerary: [
-            { time: "08:30", activity: "Encuentro en Hotel", activity_en: "Hotel Meeting" },
             {
-                time: "09:00",
+                type: 'pickup',
+                duration: "15-30 min",
+                activity: "Recogida en hotel",
+                activity_en: "Hotel pickup",
+                desc: "Te pasaremos a recoger directamente en tu hotel a la hora acordada.",
+                desc_en: "We will pick you up directly at your hotel at the agreed time."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Bosque de los monos",
+                activity_en: "Monkey forest",
+                desc: "Explora el santuario de monos en el centro de Ubud.",
+                desc_en: "Explore the monkey sanctuary in central Ubud."
+            },
+            {
+                type: 'photo',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Cascada Tegenungan",
-                activity_en: "Tegenungan Waterfall",
-                desc: "Una de las cascadas más accesibles y potentes cerca de Ubud.",
-                desc_en: "One of the most accessible and powerful waterfalls near Ubud."
+                activity_en: "Tegenungan waterfall",
+                desc: "Impresionante caída de agua rodeada de selva.",
+                desc_en: "Impressive waterfall surrounded by jungle."
             },
             {
-                time: "10:50",
-                activity: "Cueva Goa Gajah",
-                activity_en: "Goa Gajah Cave",
-                desc: "Templo del siglo IX excavado en roca con un rostro demoníaco tallado en la entrada.",
-                desc_en: "9th-century cave temple carved into rock with a demonic face carved at the entrance."
+                type: 'visit',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
+                activity: "Ritual Tirta Empul",
+                activity_en: "Tirta Empul ritual",
+                desc: "Participa en la purificación sagrada bajo las fuentes.",
+                desc_en: "Participate in the sacred purification under the fountains."
             },
             {
-                time: "14:00",
-                activity: "Ritual Purificación Tirta Empul",
-                activity_en: "Tirta Empul Purification Ritual",
-                desc: "Participa en el ritual sagrado de limpieza espiritual bajo fuentes milenarias.",
-                desc_en: "Participate in the sacred spiritual cleansing ritual under millennial fountains."
-            },
-            {
-                time: "15:45",
+                type: 'food',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Almuerzo en Tis Café",
                 activity_en: "Lunch at Tis Café",
-                desc: "Relájate con vistas directas a los arrozales infinitos.",
-                desc_en: "Relax with direct views of the infinite rice fields."
+                desc: "Relájate con vistas a los arrozales.",
+                desc_en: "Relax with rice terrace views."
             },
             {
-                time: "17:00",
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Terrazas de Tegalalang",
-                activity_en: "Tegalalang Terraces"
+                activity_en: "Tegalalang terraces"
+            },
+            {
+                type: 'dropoff',
+                activity: "Regreso al hotel",
+                activity_en: "Return to hotel"
             }
         ],
         location: "Ubud / Gianyar",
-        included: ["Transporte privado", "Conductor", "Gasolina y Parking", "Agua mineral"],
-        included_en: ["Private transport", "Driver", "Gas and Parking", "Mineral water"],
-        not_included: ["Entradas / tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / tickets", "Meals", "Travel insurance"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
+        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
         rating: 4.9,
         reviews: 62,
         reviewsList: [
@@ -488,5 +691,28 @@ export const tours = [
             { name: "Luis B.", date: "Hace 2 meses", text: "El bosque de los monos es divertidisimo, cuidado con las gafas!", date_en: "2 months ago", text_en: "The monkey forest is hilarious, watch your glasses!" },
             { name: "Clara G.", date: "Hace 3 meses", text: "Fue nuestro primer tour y nos encantó.", date_en: "3 months ago", text_en: "It was our first tour and we loved it." }
         ]
+    },
+    {
+        id: 'transfers-bali',
+        title: "Traslados Privados: Aeropuerto y Puertos",
+        title_en: "Private Transfers: Airport & Harbors",
+        description: "Transporte puntual, sin estrés y con la calidad de Cantik Tours.",
+        description_en: "Punctual, stress-free transport with Cantik Tours quality.",
+        fullDescription: "Viaja con total tranquilidad y comodidad. Evita las esperas y el estrés del transporte público o el regateo. Nuestro conductor privado te estará esperando con un cartel personalizado para llevarte directamente a tu destino en un vehículo moderno, limpio y con aire acondicionado. Servicio puntual, seguro y sin sorpresas, ideal para empezar o terminar tu viaje en Bali de la mejor manera.",
+        fullDescription_en: "Travel with complete peace of mind and comfort. Avoid the wait and stress of public transport or haggling. Our private driver will be waiting for you with a personalized sign to take you directly to your destination in a modern, clean, and air-conditioned vehicle. Punctual, safe service with no surprises, ideal for starting or ending your Bali trip the best way.",
+        price: 25,
+        duration: "Flexible",
+        duration_en: "Flexible",
+        image: "/images/tours/tanah-lot-sunset.jpg",
+        badge: "Servicio Directo",
+        badge_en: "Direct Service",
+        category: "traslados",
+        isTransfer: true,
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Ayuda con maletas"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Help with bags"],
+        not_included: ["Propinas (opcional)"],
+        not_included_en: ["Tips (optional)"],
+        rating: 5.0,
+        reviews: 120
     }
 ];

@@ -3,11 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     ChevronLeft, Share2, Star,
     Car, Languages, Droplets, Info, MapPin,
-    Clock, Check, X, Shield, Calendar, AlertCircle
+    Clock, Check, X, Shield, Calendar, AlertCircle,
+    Flag, Landmark, Utensils, Camera, Map
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tours } from '../data/tours';
 import BookingModal from '../components/BookingModal';
+import TransferModal from '../components/TransferModal';
 import ReviewsModal from '../components/ReviewsModal';
 import { formatDateAgo } from '../utils/dateUtils';
 import { useTranslation } from 'react-i18next';
@@ -18,11 +20,24 @@ const TourDetail = () => {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
     const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
     const [tour, setTour] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const l = (obj, field) => getLocalized(obj || tour, field, i18n.language);
+
+    const getItineraryIcon = (type) => {
+        switch (type) {
+            case 'pickup': return <MapPin size={20} />;
+            case 'transport': return <Car size={20} />;
+            case 'visit': return <Landmark size={20} />;
+            case 'food': return <Utensils size={20} />;
+            case 'dropoff': return <Flag size={20} />;
+            case 'photo': return <Camera size={20} />;
+            default: return <Map size={20} />;
+        }
+    };
 
     useEffect(() => {
         const foundTour = tours.find(t => t.id == id);
@@ -54,6 +69,14 @@ const TourDetail = () => {
         } else {
             alert(t('common.copied'));
             navigator.clipboard.writeText(window.location.href);
+        }
+    };
+
+    const handleOpenBooking = () => {
+        if (tour.isTransfer) {
+            setIsTransferModalOpen(true);
+        } else {
+            setIsBookingModalOpen(true);
         }
     };
 
@@ -120,32 +143,57 @@ const TourDetail = () => {
                     <section>
                         <h2 className="text-2xl font-black mb-6">{t('detail.description')}</h2>
                         <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-                            {l(tour, 'fullDescription')}
+                            {l(tour, 'fullDescription') || l(tour, 'description')}
                         </p>
                     </section>
 
-                    {/* Itinerary */}
-                    <section>
-                        <h2 className="text-2xl font-black mb-8">{t('detail.itinerary')}</h2>
-                        <div className="space-y-8">
-                            {tour.itinerary.map((item, idx) => (
-                                <div key={idx} className="flex gap-6 items-start group">
-                                    <div className="flex flex-col items-center">
-                                        <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-white/5 flex items-center justify-center font-black text-xs text-primary shadow-sm">
-                                            {item.time}
+                    {/* Itinerary (only if exists) */}
+                    {tour.itinerary && tour.itinerary.length > 0 && (
+                        <section className="relative">
+                            <h2 className="text-2xl font-black mb-10">{t('detail.itinerary')}</h2>
+
+                            {/* Vertical Line */}
+                            <div className="absolute left-[23px] top-[100px] bottom-10 w-0.5 bg-gray-100 dark:bg-white/5" />
+
+                            <div className="space-y-12">
+                                {tour.itinerary.map((item, idx) => {
+                                    const isTransport = item.type === 'transport';
+                                    const isDropoff = item.type === 'dropoff';
+                                    return (
+                                        <div key={idx} className={`relative flex gap-8 items-start ${isTransport ? 'opacity-60' : ''}`}>
+                                            {/* Icon Circle */}
+                                            <div className="relative z-10 w-12 h-12 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-white/10 flex items-center justify-center text-primary shadow-sm flex-shrink-0">
+                                                {item.type ? getItineraryIcon(item.type) : (
+                                                    <span className="text-[8px] font-black uppercase text-center leading-tight px-1">
+                                                        {l(item, 'time')}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            <div className="pt-2">
+                                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
+                                                    <h3 className={`font-black tracking-tight ${isTransport ? 'text-lg' : 'text-xl'} dark:text-gray-100`}>
+                                                        {l(item, 'activity')}
+                                                    </h3>
+                                                    {l(item, 'duration') && !isDropoff && (
+                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                                                            <Clock size={12} />
+                                                            {l(item, 'duration')}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {l(item, 'desc') && (
+                                                    <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed font-medium max-w-xl">
+                                                        {l(item, 'desc')}
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
-                                        {idx !== tour.itinerary.length - 1 && (
-                                            <div className="w-0.5 h-16 bg-gray-100 dark:bg-white/10 my-2" />
-                                        )}
-                                    </div>
-                                    <div className="pt-3">
-                                        <p className="font-bold text-lg dark:text-gray-100 mb-1">{l(item, 'activity')}</p>
-                                        <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">{l(item, 'desc')}</p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </section>
+                                    );
+                                })}
+                            </div>
+                        </section>
+                    )}
 
                     {/* Inclusions / Exclusions */}
                     <div className="grid md:grid-cols-2 gap-8 pt-8">
@@ -190,7 +238,7 @@ const TourDetail = () => {
                             </div>
                         </div>
                         <button
-                            onClick={() => setIsBookingModalOpen(true)}
+                            onClick={handleOpenBooking}
                             className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest"
                         >
                             {t('detail.book_now')}
@@ -208,7 +256,7 @@ const TourDetail = () => {
                     </div>
                 </div>
                 <button
-                    onClick={() => setIsBookingModalOpen(true)}
+                    onClick={handleOpenBooking}
                     className="btn-primary px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95"
                 >
                     {t('detail.book_now')}
@@ -220,6 +268,10 @@ const TourDetail = () => {
                 onClose={() => setIsBookingModalOpen(false)}
                 tourTitle={l(tour, 'title')}
                 whatsappNumber="376614535"
+            />
+            <TransferModal
+                isOpen={isTransferModalOpen}
+                onClose={() => setIsTransferModalOpen(false)}
             />
             <ReviewsModal
                 isOpen={isReviewsModalOpen}

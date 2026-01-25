@@ -21,8 +21,9 @@ const TourList = () => {
         const matchesSearch = tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             tour.description.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = activeCategory === 'todos' || tour.category === activeCategory;
+        const isNotTransfer = !tour.isTransfer;
 
-        return matchesSearch && matchesCategory;
+        return matchesSearch && matchesCategory && isNotTransfer;
     });
 
     return (
@@ -89,7 +90,7 @@ const TourList = () => {
                             <TourCard key={tour.id} tour={tour} index={index} />
                         ))}
 
-                        {/* Custom Itinerary Card */}
+                        {/* Custom Itinerary Card
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -112,6 +113,7 @@ const TourList = () => {
                                 <ArrowRight size={20} />
                             </button>
                         </motion.div>
+                        */}
                     </motion.div>
                 ) : (
                     <motion.div
