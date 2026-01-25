@@ -4,7 +4,7 @@ import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Languages } from 'lu
 import { useTranslation } from 'react-i18next';
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [showCoupon, setShowCoupon] = useState(false);
     const [formData, setFormData] = useState({
         date: '',
@@ -23,11 +23,20 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
         }
 
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
-        const langValue = formData.language === 'es' ? 'Español' : 'Inglés';
+
+        let langValue;
+        if (i18n.language === 'en') {
+            langValue = formData.language === 'es' ? 'Spanish' : 'English';
+        } else {
+            langValue = formData.language === 'es' ? 'Español' : 'Inglés';
+        }
 
         const basePrice = tourPrice || 0;
         const extraPrice = formData.language === 'es' ? 15 : 0;
         const totalPrice = basePrice + extraPrice;
+
+        const priceLabel = i18n.language === 'en' ? 'Price' : 'Precio';
+        const extraLabel = i18n.language === 'en' ? 'Extra' : 'Extra'; // 'Extra' works for both, but good to be explicit
 
         const message = `${t('detail.msg_greeting')}
 ${t('detail.msg_intro')}
@@ -37,7 +46,7 @@ ${t('detail.msg_intro')}
 - ${t('detail.msg_pax')}: ${paxLabel}
 - ${t('detail.msg_hotel')}: ${formData.hotel}
 - ${t('detail.booking_language')}: ${langValue}
-- Precio: ${totalPrice} € (${basePrice} €${extraPrice > 0 ? ` + ${extraPrice} € Extra` : ''})${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+- ${priceLabel}: ${totalPrice} € (${basePrice} €${extraPrice > 0 ? ` + ${extraPrice} € ${extraLabel}` : ''})${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ${t('detail.msg_confirm')}`;
 
