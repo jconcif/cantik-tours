@@ -11,14 +11,19 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
         pax: '2',
         hotel: '',
         coupon: '',
-        language: 'en'
+        language: ''
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if (!formData.language) {
+            alert(t('detail.error_language_required') || "Por favor selecciona un idioma / Please select a language");
+            return;
+        }
+
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
-        const langLabel = formData.language === 'es' ? `${t('detail.lang_spanish')} (+15€)` : t('detail.lang_english');
+        const langValue = formData.language === 'es' ? 'Español' : 'Inglés';
 
         const basePrice = tourPrice || 0;
         const extraPrice = formData.language === 'es' ? 15 : 0;
@@ -30,9 +35,9 @@ ${t('detail.msg_intro')}
 - ${t('detail.msg_tour')}: ${tourTitle}
 - ${t('detail.msg_date')}: ${formData.date}
 - ${t('detail.msg_pax')}: ${paxLabel}
-- ${t('detail.booking_language')}: ${langLabel}
-- Price: €${totalPrice} (Base: €${basePrice}${extraPrice > 0 ? ` + Extra: €${extraPrice}` : ''})
-- ${t('detail.msg_hotel')}: ${formData.hotel}${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+- ${t('detail.msg_hotel')}: ${formData.hotel}
+- ${t('detail.booking_language')}: ${langValue}
+- Precio: ${totalPrice} € (${basePrice} €${extraPrice > 0 ? ` + ${extraPrice} € Extra` : ''})${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ${t('detail.msg_confirm')}`;
 

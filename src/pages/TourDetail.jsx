@@ -253,13 +253,11 @@ const TourDetail = () => {
             {/* Mobile Booking Bar */}
             <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-bg-dark/80 backdrop-blur-xl border-t border-black/5 dark:border-white/5 p-6 z-[60] flex items-center justify-between shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
                 <div className="flex flex-col">
-                    <div className="flex items-center gap-3">
-                        <span className="text-3xl font-black text-gray-900 dark:text-white"><span className="text-xs font-bold text-gray-400 align-top mr-1">{t('detail.price_special')}</span>€{tour.price}</span>
-                        <div className="pt-1">
-                            <span className="text-gray-400 text-[9px] font-bold leading-tight uppercase block max-w-[80px]">{t('tours.per_car')}</span>
-                        </div>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">{t('detail.price_special')}</span>
+                    <div className="flex items-end gap-2">
+                        <span className="text-3xl font-black text-gray-900 dark:text-white leading-none">€{tour.price}</span>
+                        <span className="text-gray-400 text-[9px] font-bold uppercase mb-1">{t('tours.per_car')}</span>
                     </div>
-
                 </div>
                 <button
                     onClick={handleOpenBooking}
