@@ -249,7 +249,7 @@ const TourDetail = () => {
                             </div>
                             <div className="flex justify-between items-center text-xs">
                                 <span className="font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-secondary" />
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                                     🇪🇸 {t('detail.lang_spanish')}
                                 </span>
                                 <span className="text-[10px] font-black uppercase text-secondary">+15€</span>

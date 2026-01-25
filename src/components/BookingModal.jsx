@@ -156,7 +156,7 @@ ${t('detail.msg_confirm')}`;
                                         {formData.language === 'en' && <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />}
                                     </label>
 
-                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'es' ? 'border-secondary bg-secondary/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
+                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'es' ? 'border-primary bg-primary/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
                                         <input
                                             type="radio"
                                             name="language"
@@ -167,7 +167,7 @@ ${t('detail.msg_confirm')}`;
                                         />
                                         <div className="flex-1">
                                             <div className="flex items-center gap-2">
-                                                <span className={`block text-sm font-black uppercase tracking-wide ${formData.language === 'es' ? 'text-secondary' : 'text-gray-700 dark:text-gray-200'}`}>
+                                                <span className={`block text-sm font-black uppercase tracking-wide ${formData.language === 'es' ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
                                                     {t('detail.lang_spanish')}
                                                 </span>
                                                 <span className="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[9px] font-black uppercase tracking-widest">
@@ -178,7 +178,7 @@ ${t('detail.msg_confirm')}`;
                                                 {t('detail.lang_spanish_desc')}
                                             </span>
                                         </div>
-                                        {formData.language === 'es' && <div className="w-2 h-2 rounded-full bg-secondary shadow-sm" />}
+                                        {formData.language === 'es' && <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />}
                                     </label>
                                 </div>
                             </div>
