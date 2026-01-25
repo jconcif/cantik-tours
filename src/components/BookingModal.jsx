@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-const BookingModal = ({ isOpen, onClose, tourTitle }) => {
+const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
     const { t } = useTranslation();
     const [showCoupon, setShowCoupon] = useState(false);
     const [formData, setFormData] = useState({
@@ -20,6 +20,10 @@ const BookingModal = ({ isOpen, onClose, tourTitle }) => {
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
         const langLabel = formData.language === 'es' ? `${t('detail.lang_spanish')} (+15€)` : t('detail.lang_english');
 
+        const basePrice = tourPrice || 0;
+        const extraPrice = formData.language === 'es' ? 15 : 0;
+        const totalPrice = basePrice + extraPrice;
+
         const message = `${t('detail.msg_greeting')}
 ${t('detail.msg_intro')}
 
@@ -27,6 +31,7 @@ ${t('detail.msg_intro')}
 - ${t('detail.msg_date')}: ${formData.date}
 - ${t('detail.msg_pax')}: ${paxLabel}
 - ${t('detail.booking_language')}: ${langLabel}
+- Price: €${totalPrice} (Base: €${basePrice}${extraPrice > 0 ? ` + Extra: €${extraPrice}` : ''})
 - ${t('detail.msg_hotel')}: ${formData.hotel}${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ${t('detail.msg_confirm')}`;
@@ -169,9 +174,6 @@ ${t('detail.msg_confirm')}`;
                                             <div className="flex items-center gap-2">
                                                 <span className={`block text-sm font-black uppercase tracking-wide ${formData.language === 'es' ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
                                                     {t('detail.lang_spanish')}
-                                                </span>
-                                                <span className="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[9px] font-black uppercase tracking-widest">
-                                                    +15€
                                                 </span>
                                             </div>
                                             <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mt-0.5">

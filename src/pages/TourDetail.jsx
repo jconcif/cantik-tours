@@ -238,23 +238,7 @@ const TourDetail = () => {
                             </div>
                         </div>
 
-                        {/* Language Info */}
-                        <div className="mb-8 flex flex-col gap-2 bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-black/5 dark:border-white/5">
-                            <div className="flex justify-between items-center text-xs">
-                                <span className="font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                    🇬🇧 {t('detail.lang_english')}
-                                </span>
-                                <span className="text-[10px] font-black uppercase text-gray-400">{t('detail.included')}</span>
-                            </div>
-                            <div className="flex justify-between items-center text-xs">
-                                <span className="font-bold text-gray-600 dark:text-gray-300 flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                                    🇪🇸 {t('detail.lang_spanish')}
-                                </span>
-                                <span className="text-[10px] font-black uppercase text-secondary">+15€</span>
-                            </div>
-                        </div>
+
 
                         <button
                             onClick={handleOpenBooking}
@@ -270,16 +254,12 @@ const TourDetail = () => {
             <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-bg-dark/80 backdrop-blur-xl border-t border-black/5 dark:border-white/5 p-6 z-[60] flex items-center justify-between shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
                 <div className="flex flex-col">
                     <div className="flex items-center gap-3">
-                        <span className="text-3xl font-black text-gray-900 dark:text-white">€{tour.price}</span>
+                        <span className="text-3xl font-black text-gray-900 dark:text-white"><span className="text-xs font-bold text-gray-400 align-top mr-1">{t('detail.price_special')}</span>€{tour.price}</span>
                         <div className="pt-1">
                             <span className="text-gray-400 text-[9px] font-bold leading-tight uppercase block max-w-[80px]">{t('tours.per_car')}</span>
                         </div>
                     </div>
-                    {/* Compact Language Indicators Mobile */}
-                    <div className="flex gap-3 mt-1">
-                        <span className="text-[9px] font-bold text-gray-500 flex items-center gap-1">🇬🇧 {t('detail.included')}</span>
-                        <span className="text-[9px] font-bold text-secondary flex items-center gap-1">🇪🇸 +15€</span>
-                    </div>
+
                 </div>
                 <button
                     onClick={handleOpenBooking}
@@ -293,6 +273,7 @@ const TourDetail = () => {
                 isOpen={isBookingModalOpen}
                 onClose={() => setIsBookingModalOpen(false)}
                 tourTitle={l(tour, 'title')}
+                tourPrice={tour.price}
                 whatsappNumber="376614535"
             />
             <TransferModal
