@@ -17,25 +17,25 @@ const AboutPage = () => {
             name: t('about.guide_1_name'),
             role: t('about.guide_1_role'),
             desc: t('about.guide_1_desc'),
-            image: "/images/guide_wayan.png"
+            image: "/images/guides/guide_wayan.png"
         },
         {
             name: t('about.guide_2_name'),
             role: t('about.guide_2_role'),
             desc: t('about.guide_2_desc'),
-            image: "/images/guide_putu.png"
+            image: "/images/guides/guide_putu.png"
         },
         {
             name: t('about.guide_3_name'),
             role: t('about.guide_3_role'),
             desc: t('about.guide_3_desc'),
-            image: "/images/guide_komang.png"
+            image: "/images/guides/guide_komang.png"
         },
         {
             name: t('about.guide_4_name'),
             role: t('about.guide_4_role'),
             desc: t('about.guide_4_desc'),
-            image: "/images/guide_ketut.png"
+            image: "/images/guides/guide_ketut.png"
         }
     ];
 
@@ -81,7 +81,7 @@ const AboutPage = () => {
                                 className="rounded-[2rem] overflow-hidden shadow-xl"
                             >
                                 <img
-                                    src="/images/perty_portrait.png"
+                                    src="/images/guides/perty_portrait.png"
                                     alt="Pertiyani"
                                     className="w-full aspect-[4/5] object-cover"
                                 />
@@ -105,7 +105,7 @@ const AboutPage = () => {
                                 className="rounded-[2rem] overflow-hidden shadow-xl"
                             >
                                 <img
-                                    src="/images/team_spirit_bali.png"
+                                    src="/images/guides/team_spirit_bali.png"
                                     alt="Javi"
                                     className="w-full aspect-[4/5] object-cover"
                                 />

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const BookingModal = ({ isOpen, onClose, tourTitle }) => {
@@ -10,19 +10,23 @@ const BookingModal = ({ isOpen, onClose, tourTitle }) => {
         date: '',
         pax: '2',
         hotel: '',
-        coupon: ''
+        coupon: '',
+        language: 'en'
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
+        const langLabel = formData.language === 'es' ? `${t('detail.lang_spanish')} (+15€)` : t('detail.lang_english');
+
         const message = `${t('detail.msg_greeting')}
 ${t('detail.msg_intro')}
 
 - ${t('detail.msg_tour')}: ${tourTitle}
 - ${t('detail.msg_date')}: ${formData.date}
 - ${t('detail.msg_pax')}: ${paxLabel}
+- ${t('detail.booking_language')}: ${langLabel}
 - ${t('detail.msg_hotel')}: ${formData.hotel}${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ${t('detail.msg_confirm')}`;
@@ -123,6 +127,60 @@ ${t('detail.msg_confirm')}`;
                                     onChange={(e) => setFormData({ ...formData, hotel: e.target.value })}
                                     className={`${inputClasses} block w-full`}
                                 />
+                            </div>
+
+                            {/* Language Input */}
+                            <div className="space-y-4 pt-2">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                    <Languages size={14} className="text-primary" />
+                                    {t('detail.booking_language')}
+                                </label>
+                                <div className="grid gap-3">
+                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'en' ? 'border-primary bg-primary/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
+                                        <input
+                                            type="radio"
+                                            name="language"
+                                            value="en"
+                                            checked={formData.language === 'en'}
+                                            onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                                            className="hidden"
+                                        />
+                                        <div className="flex-1">
+                                            <span className={`block text-sm font-black uppercase tracking-wide ${formData.language === 'en' ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
+                                                {t('detail.lang_english')}
+                                            </span>
+                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mt-0.5">
+                                                {t('detail.lang_english_desc')}
+                                            </span>
+                                        </div>
+                                        {formData.language === 'en' && <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />}
+                                    </label>
+
+                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'es' ? 'border-secondary bg-secondary/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
+                                        <input
+                                            type="radio"
+                                            name="language"
+                                            value="es"
+                                            checked={formData.language === 'es'}
+                                            onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                                            className="hidden"
+                                        />
+                                        <div className="flex-1">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`block text-sm font-black uppercase tracking-wide ${formData.language === 'es' ? 'text-secondary' : 'text-gray-700 dark:text-gray-200'}`}>
+                                                    {t('detail.lang_spanish')}
+                                                </span>
+                                                <span className="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[9px] font-black uppercase tracking-widest">
+                                                    +15€
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mt-0.5">
+                                                {t('detail.lang_spanish_desc')}
+                                            </span>
+                                        </div>
+                                        {formData.language === 'es' && <div className="w-2 h-2 rounded-full bg-secondary shadow-sm" />}
+                                    </label>
+                                </div>
                             </div>
 
                             {/* Coupon Toggle and Input */}
