@@ -10,8 +10,15 @@ export const tours = [
         price: 55,
         duration: "8-10 horas",
         duration_en: "8-10 hours",
-        image: "/images/tours/ubud-central/ubud-central-temples-rice-terraces.jpg",
-        images: ["/images/tours/ubud-central/ubud-central-temples-rice-terraces.jpg"],
+        image: "/images/tours/ubud-central/ubud-central-columpio.webp",
+        images: [
+            "/images/tours/ubud-central/ubud-central-columpio.webp",
+            "/images/tours/ubud-central/ubud-central-rice-field.webp",
+            "/images/tours/ubud-central/ubud-central-tirta-empul.webp",
+            "/images/tours/ubud-central/ubud-central-kanto-lampo.webp",
+            "/images/tours/ubud-central/ubud-central-alas-harum.webp",
+            "/images/tours/ubud-central/ubud-central-gunung kawi-tampaksiring.webp"
+        ],
         badge: "Más Popular",
         badge_en: "Most Popular",
         category: "cultura",
