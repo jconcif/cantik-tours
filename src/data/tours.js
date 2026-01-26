@@ -16,8 +16,7 @@ export const tours = [
             "/images/tours/ubud-central/ubud-central-rice-field.webp",
             "/images/tours/ubud-central/ubud-central-tirta-empul.webp",
             "/images/tours/ubud-central/ubud-central-kanto-lampo.webp",
-            "/images/tours/ubud-central/ubud-central-alas-harum.webp",
-            "/images/tours/ubud-central/ubud-central-gunung kawi-tampaksiring.webp"
+            "/images/tours/ubud-central/ubud-central-alas-harum.webp"
         ],
         badge: "Más Popular",
         badge_en: "Most Popular",
@@ -440,35 +439,33 @@ export const tours = [
     },
     {
         id: 'north-lake-temple',
-        title: "Norte de Bali: Templos y Cascadas",
-        title_en: "North Bali: Lake Temples & Waterfalls",
+        title: "Ubud Norte: Templos y Cascadas",
+        title_en: "North Ubud: Temples & Waterfalls",
         description: "El icónico templo sobre el lago, las mayores cascadas y arrozales Patrimonio UNESCO.",
         description_en: "The iconic lake temple, biggest waterfalls and UNESCO rice terraces.",
-        fullDescription: "Descubre la exuberante naturaleza del norte. Visitaremos el templo Ulun Danu Beratan sobre el lago, la impresionante cascada Nungnung o Leke Leke, y caminaremos por los campos de arroz infinitos de Jatiluwih.",
-        fullDescription_en: "Discover the lush nature of the north. We will visit the Ulun Danu Beratan temple on the lake, the impressive Nungnung or Leke Leke waterfall, and walk through the endless rice fields of Jatiluwih.",
+        fullDescription: "Descubre la exuberante naturaleza del norte de Ubud. Visitaremos el templo Ulun Danu Beratan sobre el lago, la impresionante cascada Nungnung o Leke Leke, y caminaremos por los campos de arroz infinitos de Jatiluwih.",
+        fullDescription_en: "Discover the lush nature of north Ubud. We will visit the Ulun Danu Beratan temple on the lake, the impressive Nungnung or Leke Leke waterfall, and walk through the endless rice fields of Jatiluwih.",
         price: 65,
         duration: "10-12 horas",
         duration_en: "10-12 hours",
-        image: "/images/tours/north-lake-temple/north-bali-lake-temple-waterfalls.jpg",
-        images: ["/images/tours/north-lake-temple/north-bali-lake-temple-waterfalls.jpg"],
+        image: "/images/tours/ubud-norte/leke-leke.webp",
+        images: [
+            "/images/tours/ubud-norte/leke-leke.webp",
+            "/images/tours/ubud-norte/ulun-danu.webp",
+            "/images/tours/ubud-norte/jatiluwih.webp",
+            "/images/tours/ubud-norte/jatiluwi.webp"
+        ],
         badge: "Paisajes Únicos",
         badge_en: "Unique Landscapes",
         category: "naturaleza",
         itinerary: [
             {
                 type: 'pickup',
-                duration: "15-30 min",
-                activity: "Recogida temprana",
-                activity_en: "Early Pickup",
+                duration: "8:30 am",
+                activity: "Salida desde tu Hotel",
+                activity_en: "Departure from your Hotel",
                 desc: "Te pasaremos a recoger directamente en tu hotel a la hora acordada.",
                 desc_en: "We will pick you up directly at your hotel at the agreed time."
-            },
-            {
-                type: 'transport',
-                duration: "1 hora",
-                duration_en: "1 hour",
-                activity: "Coche",
-                activity_en: "Car"
             },
             {
                 type: 'photo',
@@ -490,40 +487,60 @@ export const tours = [
             },
             {
                 type: 'visit',
+                duration: "30 min",
+                duration_en: "30 min",
+                activity: "Mercado de Frutas local",
+                activity_en: "Local Fruit Market",
+                desc: "Pintoresco mercado de frutas donde podrás hacer una degustación de cada una de ellas.",
+                desc_en: "Picturesque fruit market where you can taste each one of them."
+            },
+            {
+                type: 'photo',
+                duration: "45 min",
+                duration_en: "45 min",
+                activity: "Handara Gates (Opcional)",
+                activity_en: "Handara Gates (Optional)",
+                desc: "Icónicas puertas balinesas con vistas a las montañas.",
+                desc_en: "Iconic Balinese gates with mountain views."
+            },
+            {
+                type: 'visit',
                 duration: "1.5 horas",
                 duration_en: "1.5 hours",
                 activity: "Terrazas de Jatiluwih (UNESCO)",
                 activity_en: "Jatiluwih Rice Terraces (UNESCO)",
-                desc: "Campos de arroz Patrimonio de la Humanidad.",
-                desc_en: "World Heritage rice fields."
+                desc: "Inmensos Campos de arroz Patrimonio de la Humanidad.",
+                desc_en: "Immense World Heritage rice fields."
             },
             {
                 type: 'food',
                 duration: "1 hora",
                 duration_en: "1 hour",
                 activity: "Almuerzo con vistas",
-                activity_en: "Lunch with views"
+                activity_en: "Lunch with views",
+                desc: "Almuerzo con vistas a los arrozales.",
+                desc_en: "Lunch with views of the rice terraces."
             },
             {
                 type: 'visit',
-                duration: "1 hora",
-                duration_en: "1 hour",
-                activity: "Templo Taman Ayun (Opcional)",
-                activity_en: "Taman Ayun Temple",
-                desc: "Templo real rodeado de jardines.",
-                desc_en: "Royal temple surrounded by gardens."
+                duration: "30 min",
+                duration_en: "30 min",
+                activity: "Plantación de Café (Opcional)",
+                activity_en: "Coffee Plantation (Optional)",
+                desc: "Disfruta de una degustación de Té y café balinés.",
+                desc_en: "Enjoy a tasting of Balinese tea and coffee."
             },
             {
                 type: 'dropoff',
-                duration: "1.5 horas",
-                duration_en: "1.5 hours",
                 activity: "Regreso al Hotel",
-                activity_en: "Return to Hotel"
+                activity_en: "Return to Hotel",
+                desc: "El horario de regreso puede variar según el tráfico y las condiciones climáticas.",
+                desc_en: "Return time may vary depending on traffic and weather conditions."
             }
         ],
         location: "Norte de Bali",
-        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
-        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking", "Agua mineral", "Snacks"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking", "Mineral water", "Snacks"],
         not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
         not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
         rating: 4.9,
