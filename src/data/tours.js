@@ -36,44 +36,44 @@ export const tours = [
                 duration_en: "1.5 hours",
                 activity: "Cascada Tibumana o Cascada Kanto Lampo",
                 activity_en: "Tibumana or Kanto Lampo waterfall",
-                desc: "Elige entre la caída perfecta de Tibumana or la belleza escalonada de Kanto Lampo.",
-                desc_en: "Choose between Tibumana's perfect drop or Kanto Lampo's stepped beauty."
+                desc: "Sumérgete en la selva tropical. Tibumana es un oasis de paz con una caída perfecta, mientras que Kanto Lampo impresiona con sus aguas escalonadas sobre rocas volcánicas.",
+                desc_en: "Immerse yourself in the tropical jungle. Tibumana is an oasis of peace with a perfect drop, while Kanto Lampo impresses with its waters cascading over volcanic rocks."
             },
             {
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Templo Gunung Kawi Tampaksiring (“Montaña Tallada\")",
-                activity_en: "Gunung Kawi Tampaksiring temple (\"Carved Mountain\")",
-                desc: "Impresionantes santuarios esculpidos directamente en el acantilado.",
-                desc_en: "Stunning shrines sculpted directly into the cliffside."
+                activity: "Templo Gunung Kawi Tampaksiring",
+                activity_en: "Gunung Kawi Tampaksiring temple",
+                desc: "Uno de los monumentos más antiguos de Bali (s. XI). Impresionantes santuarios de 7 metros de altura tallados directamente en la roca de un acantilado esmeralda.",
+                desc_en: "One of Bali's oldest monuments (11th century). Impressive 7-meter-high shrines carved directly into the rock of an emerald cliffside."
             },
             {
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Templo Pura Mengening (Templo de purificación tradicional)",
-                activity_en: "Pura Mengening temple (Traditional purification temple)",
-                desc: "Lugar de paz y espiritualidad auténtica fuera de las rutas comunes.",
-                desc_en: "A place of peace and authentic spirituality off the beaten path."
+                activity: "Pura Mengening",
+                activity_en: "Pura Mengening temple",
+                desc: "Un tesoro escondido. Este templo de purificación ofrece una atmósfera de paz absoluta y espiritualidad auténtica, lejos de las multitudes.",
+                desc_en: "A hidden treasure. This purification temple offers an atmosphere of absolute peace and authentic spirituality, far from the crowds."
             },
             {
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Pura Gunung Kawi Sebatu (Templo del siglo XI)",
-                activity_en: "Pura Gunung Kawi Sebatu (11th century temple)",
-                desc: "Joyas menos concurridas donde la espiritualidad y la naturaleza se funden.",
-                desc_en: "Less crowded gems where spirituality and nature merge."
+                activity: "Pura Gunung Kawi Sebatu",
+                activity_en: "Pura Gunung Kawi Sebatu",
+                desc: "Conocido como el templo del agua jardín, es un remanso de tranquilidad donde manantiales sagrados alimentan estanques llenos de flores de loto y peces koi.",
+                desc_en: "Known as the water garden temple, it is a haven of tranquility where sacred springs feed ponds filled with lotus flowers and koi fish."
             },
             {
                 type: 'food',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Almuerzo local",
-                activity_en: "Local lunch",
-                desc: "Tiempo para disfrutar de la gastronomía balinesa.",
-                desc_en: "Time to enjoy Balinese gastronomy."
+                activity: "Almuerzo local con vistas",
+                activity_en: "Local lunch with views",
+                desc: "Disfruta de la cocina balinesa en un entorno rural con vistas a la naturaleza exuberante de la isla.",
+                desc_en: "Enjoy Balinese cuisine in a rural setting with views of the island's lush nature."
             },
             {
                 type: 'visit',
@@ -81,26 +81,26 @@ export const tours = [
                 duration_en: "2 hours",
                 activity: "Templo Pura Tirta Empul - Ritual de purificación (Opcional)",
                 activity_en: "Pura Tirta Empul temple - Purification ritual (Optional)",
-                desc: "El templo de agua más famoso de Bali.",
-                desc_en: "Bali's most famous water temple."
+                desc: "Fundado en el año 962, es el corazón espiritual de Bali. Vive la experiencia única de su manantial sagrado donde los balineses se purifican desde hace siglos.",
+                desc_en: "Founded in 962, it is the spiritual heart of Bali. Live the unique experience of its sacred spring where Balinese people have been purifying themselves for centuries."
             },
             {
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Bali Pulina - Plantación de Café (Opcional)",
-                activity_en: "Bali Pulina - Coffee plantation (Optional)",
-                desc: "Conoce el proceso del café balinés en un entorno auténtico. Disfruta de una degustación en sus famosas terrazas de madera con vistas espectaculares a la selva.",
-                desc_en: "Learn about the authentic Balinese coffee process. Enjoy a tasting on its famous wooden terraces with spectacular jungle views."
+                activity: "Bali Pulina - El Arte del Café",
+                activity_en: "Bali Pulina - The Art of Coffee",
+                desc: "Degusta el famoso café Luwak mientras aprendes sobre su proceso artesanal en una terraza con vistas panorámicas a la selva tropical de Ubud.",
+                desc_en: "Taste the famous Luwak coffee while learning about its artisanal process on a terrace with panoramic views of the Ubud tropical jungle."
             },
             {
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Tegalalang Rice Terrace",
-                activity_en: "Tegalalang Rice Terrace",
-                desc: "Para terminar la tarde con vistas a los arrozales más icónicos.",
-                desc_en: "To end the afternoon with views of the most iconic rice terraces."
+                activity: "Tegalalang Rice Terrace (UNESCO)",
+                activity_en: "Tegalalang Rice Terrace (UNESCO)",
+                desc: "Camina entre los arrozales más famosos del mundo. Una obra maestra del sistema de riego 'Subak', que refleja la armonía entre el hombre, la naturaleza y los dioses.",
+                desc_en: "Walk among the world's most famous rice terraces. A masterpiece of the 'Subak' irrigation system, reflecting the harmony between man, nature, and the gods."
             },
             {
                 type: 'dropoff',
@@ -158,8 +158,8 @@ export const tours = [
                 duration_en: "1.5 hours",
                 activity: "Cascada Nungnung o Leke Leke",
                 activity_en: "Nungnung or Leke Leke Waterfall",
-                desc: "Enormes saltos de agua rodeados de vegetación tropical.",
-                desc_en: "Huge waterfalls surrounded by tropical vegetation."
+                desc: "Siente la fuerza de la naturaleza. Nungnung te envolverá con su potente caída de 50m, mientras que Leke Leke te cautivará con su belleza delicada escondida en un cañón tropical.",
+                desc_en: "Feel the force of nature. Nungnung will envelope you with its powerful 50m drop, while Leke Leke will captivate you with its delicate beauty hidden in a tropical canyon."
             },
             {
                 type: 'visit',
@@ -167,26 +167,26 @@ export const tours = [
                 duration_en: "1 hour",
                 activity: "Templo Ulun Danu Beratan",
                 activity_en: "Ulun Danu Beratan Temple",
-                desc: "El famoso templo flotante sobre el lago Beratan.",
-                desc_en: "The famous floating temple on Lake Beratan."
+                desc: "La imagen de postal de Bali. Este templo flotante del siglo XVII está dedicado a Dewi Danu, la diosa de los lagos, y parece emerger mágicamente de las aguas cristalinas.",
+                desc_en: "The postcard image of Bali. This 17th-century floating temple is dedicated to Dewi Danu, the goddess of the lakes, and appears to magically emerge from the crystal clear waters."
             },
             {
                 type: 'visit',
                 duration: "30 min",
                 duration_en: "30 min",
-                activity: "Mercado de Frutas local",
-                activity_en: "Local Fruit Market",
-                desc: "Pintoresco mercado de frutas donde podrás hacer una degustación de cada una de ellas.",
-                desc_en: "Picturesque fruit market where you can taste each one of them."
+                activity: "Sabores del Mercado Local",
+                activity_en: "Local Market Flavors",
+                desc: "Explora la explosión de colores y olores de las frutas exóticas de las tierras altas de Bedugul. El lugar perfecto para probar el mangostán o la fruta de la serpiente.",
+                desc_en: "Explore the explosion of colors and smells of exotic fruits from the Bedugul highlands. The perfect place to try mangosteen or snake fruit."
             },
             {
                 type: 'photo',
                 duration: "45 min",
                 duration_en: "45 min",
-                activity: "Handara Gates (Opcional)",
-                activity_en: "Handara Gates (Optional)",
-                desc: "Icónicas puertas balinesas con vistas a las montañas.",
-                desc_en: "Iconic Balinese gates with mountain views."
+                activity: "Handara Gates",
+                activity_en: "Handara Gates",
+                desc: "Cruza las 'Puertas al Camino de la Serenidad'. Estas imponentes puertas balinesas ofrecen un encuadre perfecto con las montañas llenas de niebla como telón de fondo.",
+                desc_en: "Cross the 'Gates to the Path of Serenity'. These imposing Balinese gates provide a perfect frame with the misty mountains as a backdrop."
             },
             {
                 type: 'visit',
@@ -194,17 +194,17 @@ export const tours = [
                 duration_en: "1.5 hours",
                 activity: "Terrazas de Jatiluwih (UNESCO)",
                 activity_en: "Jatiluwih Rice Terraces (UNESCO)",
-                desc: "Inmensos Campos de arroz Patrimonio de la Humanidad.",
-                desc_en: "Immense World Heritage rice fields."
+                desc: "Camina por el anfiteatro de arroz más grande de Bali. Sus inmensas terrazas esculpidas a mano son el ejemplo más puro del paisaje cultural protegido por la UNESCO.",
+                desc_en: "Walk through Bali's largest rice amphitheater. Its immense, hand-sculpted terraces are the purest example of the UNESCO-protected cultural landscape."
             },
             {
                 type: 'food',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Almuerzo con vistas",
-                activity_en: "Lunch with views",
-                desc: "Almuerzo con vistas a los arrozales.",
-                desc_en: "Lunch with views of the rice terraces."
+                activity: "Almuerzo con vistas infinitas",
+                activity_en: "Lunch with infinite views",
+                desc: "Disfruta de una comida deliciosa mientras contemplas la inmensidad verde de Jatiluwih, un festín para los sentidos.",
+                desc_en: "Enjoy a delicious meal while contemplating the green immensity of Jatiluwih, a feast for the senses."
             },
             {
                 type: 'visit',
@@ -291,8 +291,8 @@ export const tours = [
                 duration_en: "1.5 hours",
                 activity: "Cascada Banyumala",
                 activity_en: "Banyumala waterfall",
-                desc: "Darse un baño en una de las cascadas más bonitas de Bali.",
-                desc_en: "Take a swim in one of Bali's most beautiful waterfalls."
+                desc: "Refréscate en las Twin Waterfalls. Una cortina de agua mágica que se desliza por una pared de helechos y rocas hasta una piscina natural de aguas cristalinas.",
+                desc_en: "Refresh yourself at the Twin Waterfalls. A magical curtain of water that slides down a wall of ferns and rocks into a natural pool of crystal clear waters."
             },
             {
                 type: 'visit',
@@ -377,10 +377,10 @@ export const tours = [
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Palacio Tirta Gangga",
-                activity_en: "Tirta Gangga Palace",
-                desc: "Recorre los Jardines reales con fuentes y peces koi gigantes.",
-                desc_en: "Explore the royal gardens with fountains and giant koi fish."
+                activity: "Palacio de Agua Tirta Gangga",
+                activity_en: "Tirta Gangga Water Palace",
+                desc: "El legado del último Rey de Karangasem. Camina sobre las baldosas que flotan en el agua sagrada, rodeado de estatuas talladas y peces koi gigantes en un laberinto real de paz.",
+                desc_en: "The legacy of the last King of Karangasem. Walk on the tiles floating in sacred water, surrounded by carved statues and giant koi fish in a royal labyrinth of peace."
             },
             {
                 type: 'visit',
@@ -388,8 +388,8 @@ export const tours = [
                 duration_en: "1.5 hours",
                 activity: "Templo Madre Besakih",
                 activity_en: "Besakih Mother Temple",
-                desc: "El complejo de templos más grande y sagrado de Bali. Recorrerás acompañado de un guía autorizado exclusivo para ti (disponible solo en inglés).",
-                desc_en: "The largest and holiest temple complex in Bali. You will explore with an exclusive licensed guide (available in English only)."
+                desc: "El complejo más grande y sagrado de Bali. Situado en las faldas del majestuoso Volcán Agung, este templo milenario es el pilar de la fe balinesa, donde el cielo se une con la tierra.",
+                desc_en: "Bali's largest and most sacred complex. Located on the slopes of the majestic Agung Volcano, this ancient temple is the pillar of Balinese faith, where heaven meets earth."
             },
             {
                 type: 'food',
@@ -397,17 +397,17 @@ export const tours = [
                 duration_en: "1 hour",
                 activity: "Almuerzo en Kintamani",
                 activity_en: "Lunch in Kintamani",
-                desc: "Disfruta de un almuerzo con espectaculares vistas al volcán Batur.",
-                desc_en: "Enjoy lunch with spectacular views of Mount Batur."
+                desc: "Un festín visual. Degusta tu almuerzo con las vistas más espectaculares de Bali: el imponente Volcán Batur y su lago turquesa a tus pies.",
+                desc_en: "A visual feast. Enjoy your lunch with Bali's most spectacular views: the imposing Batur Volcano and its turquoise lake at your feet."
             },
             {
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Aldea Penglipuran",
-                activity_en: "Penglipuran Village",
-                desc: "Recorre una aldea tradicional balinesa perfectamente conservada, y camina por un bosque de bambú.",
-                desc_en: "Explore a perfectly preserved traditional Balinese village and walk through a bamboo forest."
+                activity: "Aldea Tradicional Penglipuran",
+                activity_en: "Penglipuran Traditional Village",
+                desc: "Viaja al pasado en una de las aldeas más limpias y hermosas del mundo. Admira su arquitectura simétrica perfectamente conservada y su místico bosque de bambú.",
+                desc_en: "Travel back in time in one of the world's cleanest and most beautiful villages. Admire its perfectly preserved symmetrical architecture and its mystical bamboo forest."
             },
             {
                 type: 'dropoff',
