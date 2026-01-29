@@ -25,7 +25,7 @@ i18n
                         badge: "Experiencias Premium en Indonesia",
                         title_1: "Bali no se visita,",
                         title_2: "se vive.",
-                        subtitle: "Descubre el alma de la isla con guías locales expertos y asistencia 100% personalizada.",
+                        subtitle: "Tours privados en Bali con guías locales y asistencia personalizada en español e inglés.",
                         btn_tours: "Ver Experiencias",
                         btn_story: "Nuestra Historia",
                         trust_1: "Guías 100% en Español",
@@ -111,6 +111,8 @@ i18n
                         msg_hotel: "Hotel/Zona",
                         msg_coupon: "Cupón",
                         msg_confirm: "¿Me confirman disponibilidad? Gracias!",
+                        faq_intro: "Las preguntas que siempre nos hacen nuestros viajeros:",
+                        availability_disclaimer: "Confirmaremos la disponibilidad del idioma elegido antes de finalizar la reserva.",
                         error_language_required: "Por favor, selecciona un idioma para continuar.",
                         lang_spanish: "Español (Guía Local)",
                         lang_spanish_desc: "Sujeto a disponibilidad (+15€)",
@@ -148,13 +150,13 @@ i18n
                         faq_title: "Preguntas Frecuentes",
                         faq_packing_q: "¿Qué debo llevar al tour?",
                         faq_info_q: "Información importante sobre el tour",
-                        view_full_route: "Ver Ruta Completa",
+                        view_full_route: "Ver el recorrido real en Google Maps",
                         benefits: {
                             private: "100% Privado",
                             flexible: "Totalmente Flexible",
                             no_rush: "Sin Prisas",
                             flexibility_title: "Flexibilidad en Entradas",
-                            flexibility_desc: "Tú decides dónde entrar. Las entradas no están incluidas para darte libertad total de cambiar de planes sobre la marcha."
+                            flexibility_desc: "Tú decides dónde entrar. No incluimos las entradas para darte libertad total de cambiar de planes sobre la marcha. Si prefieres que nosotros las gestionemos, podemos ayudarte (consultar precio)."
                         },
                         items: {
                             shoes: "Calzado cómodo",
@@ -172,7 +174,8 @@ i18n
                         subtitle: "Todo lo que necesitas saber antes de aterrizar en la Isla de los Dioses.",
                         help_title: "¿Aún tienes dudas?",
                         help_text: "Como locales, conocemos todos los secretos de la isla. Escríbenos por WhatsApp y te ayudaremos a planificar tu viaje sin compromiso.",
-                        help_btn: "Consultar ahora"
+                        help_btn: "Consultar ahora",
+                        see_tours_btn: "Ver Experiencias"
                     },
                     why: {
                         title: "¿Por qué Cantik Tours?",
@@ -244,8 +247,8 @@ i18n
                                 text: "¡La mejor decisión de nuestro viaje! Perty es una guía excepcional, nos hizo sentir como en familia. Bali es mágica, pero verla con ellos es otro nivel."
                             },
                             {
-                                name: "Andrea R.",
-                                location: "México",
+                                name: "Raquel B.",
+                                location: "España",
                                 text: "Servicio impecable. El conductor fue súper puntual y el coche muy cómodo. Nos llevaron a sitios que no salen en las guías turísticas. ¡100% recomendados!"
                             },
                             {
@@ -261,7 +264,7 @@ i18n
                         more_info: "Más información",
                         copied: "¡Enlace copiado!",
                         error: "Algo salió mal",
-                        whatsapp_tooltip: "¡Hola! Soy Perty. ¿Hablamos?",
+                        whatsapp_tooltip: "¡Hola! Soy Javi. ¿Hablamos?",
                         whatsapp_message: "Hola Cantik Tours! Me gustaría recibir más información sobre vuestros tours.",
                         language: "Idioma",
                         reviews_title: "Opiniones",
@@ -284,7 +287,7 @@ i18n
                         badge: "Premium Experiences in Indonesia",
                         title_1: "Bali isn't visited,",
                         title_2: "it's lived.",
-                        subtitle: "Discover the island's soul with expert local guides and 100% personalized assistance.",
+                        subtitle: "Private Bali tours with local guides and personalized assistance in Spanish and English.",
                         btn_tours: "See Experiences",
                         btn_story: "Our Story",
                         trust_1: "100% Spanish Speaking Guides",
@@ -404,13 +407,13 @@ i18n
                         faq_title: "Frequently Asked Questions",
                         faq_packing_q: "What should I bring to the tour?",
                         faq_info_q: "Important information about the tour",
-                        view_full_route: "View Full Route",
+                        view_full_route: "View the real route on Google Maps",
                         benefits: {
                             private: "100% Private",
                             flexible: "Totally Flexible",
                             no_rush: "No Rush",
                             flexibility_title: "Entry Fee Flexibility",
-                            flexibility_desc: "You decide where to go. Entry fees are not included to give you total freedom to change plans on the fly."
+                            flexibility_desc: "You decide where to go. We don't include entry fees to give you total freedom to change plans on the fly. If you prefer us to manage them, we can help (ask for pricing)."
                         },
                         items: {
                             shoes: "Comfortable shoes",
@@ -428,7 +431,8 @@ i18n
                         subtitle: "Everything you need to know before landing on the Island of the Gods.",
                         help_title: "Still have questions?",
                         help_text: "As locals, we know all the island's secrets. Write to us on WhatsApp and we will help you plan your trip with no strings attached.",
-                        help_btn: "Ask us now"
+                        help_btn: "Ask us now",
+                        see_tours_btn: "View Experiences"
                     },
                     why: {
                         title: "Why Cantik Tours?",
@@ -500,8 +504,8 @@ i18n
                                 text: "The best decision of our trip! Perty is an exceptional guide, she made us feel like family. Bali is magical, but seeing it with them is another level."
                             },
                             {
-                                name: "Andrea R.",
-                                location: "Mexico",
+                                name: "Raquel B.",
+                                location: "Spain",
                                 text: "Impeccable service. The driver was super punctual and the car very comfortable. They took us to places not found in travel guides. 100% recommended!"
                             },
                             {
@@ -517,7 +521,7 @@ i18n
                         more_info: "More info",
                         copied: "Link copied!",
                         error: "Something went wrong",
-                        whatsapp_tooltip: "Hi! I'm Perty. Shall we talk?",
+                        whatsapp_tooltip: "Hi! I'm Javi. Shall we talk?",
                         whatsapp_message: "Hi Cantik Tours! I would like to receive more information about your tours.",
                         language: "Language",
                         reviews_title: "Reviews",

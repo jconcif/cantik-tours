@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { Landmark, Waves, TreePine, Compass, Palette, Camera, Car } from 'lucide-react';
+import { Landmark, Waves, TreePine, Compass, Palette, Camera, Car, Droplets, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const categories = [
     { id: 'todos', nameKey: 'tours.categories.todos', icon: Compass },
     { id: 'cultura', nameKey: 'tours.categories.cultura', icon: Palette },
-    { id: 'cascadas', nameKey: 'tours.categories.cascadas', icon: Waves },
+    { id: 'cascadas', nameKey: 'tours.categories.cascadas', icon: Droplets },
     { id: 'fotografia', nameKey: 'tours.categories.fotografia', icon: Camera },
-    { id: 'playas', nameKey: 'tours.categories.playas', icon: Waves },
+    { id: 'playas', nameKey: 'tours.categories.playas', icon: Sun },
     { id: 'aventura', nameKey: 'tours.categories.aventura', icon: TreePine },
-    // { id: 'traslados', nameKey: 'tours.categories.traslados', icon: Car },
 ];
 
 const CategoryChips = ({ active = 'todos', onSelect }) => {

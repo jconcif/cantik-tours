@@ -20,7 +20,7 @@ export const tours = [
         ],
         badge: "Más Popular",
         badge_en: "Most Popular",
-        category: "cultura",
+        category: ['cultura', 'cascadas', 'fotografia', 'aventura'],
         mapUrl: "https://www.google.com/maps/d/u/0/embed?mid=1fCrSJPI-3vT05KpsVYfAOidqrc0xlNQ",
         packingList: ['shoes', 'sunscreen', 'camera', 'money'],
         importantInfo: [
@@ -62,8 +62,8 @@ export const tours = [
                 duration_en: "1 hour",
                 activity: "Templo Gunung Kawi Tampaksiring",
                 activity_en: "Gunung Kawi Tampaksiring temple",
-                desc: "Uno de los monumentos más antiguos de Bali (s. XI). Impresionantes santuarios de 7 metros de altura tallados directamente en la roca de un acantilado esmeralda.",
-                desc_en: "One of Bali's oldest monuments (11th century). Impressive 7-meter-high shrines carved directly into the rock of an emerald cliffside."
+                desc: "Admira templos centenarios esculpidos en la roca y siente la energía espiritual de uno de los monumentos más antiguos de Bali.",
+                desc_en: "Admire centuries-old temples carved into the rock and feel the spiritual energy of one of Bali's oldest monuments."
             },
             {
                 type: 'visit',
@@ -98,8 +98,8 @@ export const tours = [
                 duration_en: "2 hours",
                 activity: "Templo Pura Tirta Empul - Ritual de purificación (Opcional)",
                 activity_en: "Pura Tirta Empul temple - Purification ritual (Optional)",
-                desc: "Fundado en el año 962, es el corazón espiritual de Bali. Vive la experiencia única de su manantial sagrado donde los balineses se purifican desde hace siglos.",
-                desc_en: "Founded in 962, it is the spiritual heart of Bali. Live the unique experience of its sacred spring where Balinese people have been purifying themselves for centuries."
+                desc: "Sumerge tu alma en las aguas sagradas y vive el ritual de purificación balinés más auténtico en el corazón espiritual de la isla.",
+                desc_en: "Immerse your soul in the sacred waters and experience the most authentic Balinese purification ritual in the spiritual heart of the island."
             },
             {
                 type: 'visit',
@@ -116,8 +116,8 @@ export const tours = [
                 duration_en: "1 hour",
                 activity: "Tegalalang Rice Terrace (UNESCO)",
                 activity_en: "Tegalalang Rice Terrace (UNESCO)",
-                desc: "Camina entre los arrozales más famosos del mundo. Una obra maestra del sistema de riego 'Subak', que refleja la armonía entre el hombre, la naturaleza y los dioses.",
-                desc_en: "Walk among the world's most famous rice terraces. A masterpiece of the 'Subak' irrigation system, reflecting the harmony between man, nature, and the gods."
+                desc: "Camina entre los arrozales más famosos del mundo y siente la paz que emana de este paisaje que refleja la armonía entre el hombre y los dioses.",
+                desc_en: "Walk among the world's most famous rice terraces and feel the peace emanating from this landscape that reflects harmony between man and gods."
             },
             {
                 type: 'dropoff',
@@ -159,7 +159,7 @@ export const tours = [
         ],
         badge: "Paisajes Únicos",
         badge_en: "Unique Landscapes",
-        category: "naturaleza",
+        category: ['cascadas', 'fotografia', 'aventura'],
         mapUrl: "https://maps.google.com/maps?q=Ulun%20Danu%20Beratan%20Temple&t=&z=13&ie=UTF8&iwloc=&output=embed",
         packingList: ['shoes', 'sunscreen', 'camera', 'money'],
         importantInfo: [
@@ -286,7 +286,7 @@ export const tours = [
         ],
         badge: "Aventura Épica",
         badge_en: "Epic Adventure",
-        category: "aventura",
+        category: ['aventura', 'cascadas', 'fotografia'],
         mapUrl: "https://maps.google.com/maps?q=Lovina%20Beach%20Bali&t=&z=11&ie=UTF8&iwloc=&output=embed",
         packingList: ['swimwear', 'sunscreen', 'camera', 'shoes'],
         importantInfo: [
@@ -404,7 +404,7 @@ export const tours = [
         ],
         badge: "Imprescindible",
         badge_en: "Must See",
-        category: "cultura",
+        category: ['cultura', 'fotografia'],
         mapUrl: "https://maps.google.com/maps?q=Besakih%20Mother%20Temple%20Bali&t=&z=13&ie=UTF8&iwloc=&output=embed",
         packingList: ['shoes', 'sunscreen', 'camera', 'money'],
         importantInfo: [
@@ -441,8 +441,8 @@ export const tours = [
                 duration_en: "1.5 hours",
                 activity: "Templo Madre Besakih",
                 activity_en: "Besakih Mother Temple",
-                desc: "El complejo más grande y sagrado de Bali. Situado en las faldas del majestuoso Volcán Agung, este templo milenario es el pilar de la fe balinesa, donde el cielo se une con la tierra.",
-                desc_en: "Bali's largest and most sacred complex. Located on the slopes of the majestic Agung Volcano, this ancient temple is the pillar of Balinese faith, where heaven meets earth."
+                desc: "Toca las nubes en el Templo Madre, el centro espiritual de Bali, situado majestuosamente a los pies del imponente volcán Agung.",
+                desc_en: "Touch the clouds at the Mother Temple, Bali's spiritual heart, majestically perched at the foot of the imposing Mount Agung."
             },
             {
                 type: 'food',
@@ -505,7 +505,7 @@ export const tours = [
         ],
         badge: "Más Popular",
         badge_en: "Most Popular",
-        category: "fotografia",
+        category: ['fotografia', 'playas', 'cultura'],
         mapUrl: "https://maps.google.com/maps?q=Lempuyang%20Temple%20Bali&t=&z=13&ie=UTF8&iwloc=&output=embed",
         packingList: ['shoes', 'sunscreen', 'camera', 'swimwear', 'money'],
         importantInfo: [
@@ -533,8 +533,8 @@ export const tours = [
                 duration_en: "3 hours",
                 activity: "Templo Lempuyang (Puertas del Cielo)",
                 activity_en: "Lempuyang Temple (Gates of Heaven)",
-                desc: "Mucho más que una foto. Es uno de los 'Sad Kahyangan' (seis templos pilares) de Bali. Situado a 1,775m de altura, su nombre significa 'Luz de Dios' (Lempu-Hyang).",
-                desc_en: "Much more than a photo. It is one of Bali's 'Sad Kahyangan' (six pillar temples). Located at 1,775m altitude, its name means 'Light of God' (Lempu-Hyang)."
+                desc: "Captura la foto de tu vida en las icónicas Puertas del Cielo y déjate maravillar por las vistas épicas del volcán Agung.",
+                desc_en: "Capture the photo of a lifetime at the iconic Gates of Heaven and marvel at the epic views of Mount Agung."
             },
             {
                 type: 'visit',
@@ -542,8 +542,8 @@ export const tours = [
                 duration_en: "1.5 hours",
                 activity: "Tirta Gangga",
                 activity_en: "Tirta Gangga Water Palace",
-                desc: "Laberinto de fuentes y estatuas construido en 1948 por el Raja de Karangasem. Su nombre significa literalmente 'Agua del Gange', un lugar sagrado para los balineses.",
-                desc_en: "A maze of fountains and statues built in 1948 by the Raja of Karangasem. Its name literally means 'Water of the Ganges', a sacred site for Balinese people."
+                desc: "Camina sobre las baldosas que flotan en el agua sagrada y rodéate de peces koi gigantes en este fascinante palacio real de agua.",
+                desc_en: "Walk on tiles floating in sacred water and surround yourself with giant koi fish in this fascinating royal water palace."
             },
             {
                 type: 'food',

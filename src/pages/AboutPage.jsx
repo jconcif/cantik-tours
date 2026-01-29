@@ -173,15 +173,56 @@ const AboutPage = () => {
                 </div>
             </section>
 
-            {/* 5. Closing - Standard sizes */}
-            <section className="py-32 px-6 text-center border-t border-black/5 dark:border-white/5">
-                <div className="max-w-3xl mx-auto space-y-12">
-                    <p className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-200 leading-relaxed italic">
+            {/* 5. Closing & Additional CTAs */}
+            <section className="py-32 px-6 text-center border-t border-black/5 dark:border-white/5 bg-gray-50/30 dark:bg-white/[0.02]">
+                <div className="max-w-4xl mx-auto space-y-16">
+                    <p className="text-xl md:text-3xl font-bold text-gray-800 dark:text-gray-200 leading-relaxed italic">
                         {t('about.closing')}
                     </p>
-                    <Link to="/tours" className="btn-primary inline-flex items-center gap-2">
-                        {t('hero.btn_tours')} <ArrowRight size={18} />
-                    </Link>
+
+                    <div className="grid md:grid-cols-2 gap-8">
+                        {/* Option 1: Guide */}
+                        <Link
+                            to="/guia-bali-2026"
+                            className="group p-8 rounded-[2.5rem] bg-white dark:bg-gray-800 border border-black/5 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] flex flex-col items-center text-center"
+                        >
+                            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                                <Star size={32} />
+                            </div>
+                            <h3 className="text-2xl font-black mb-3">Prepara tu viaje</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 font-medium">
+                                Descubre consejos locales, visados y todo para tu aventura en nuestra Guía 2026.
+                            </p>
+                            <span className="btn-primary w-full py-4 text-sm tracking-widest uppercase">
+                                Ver Guía 2026
+                            </span>
+                        </Link>
+
+                        {/* Option 2: Contact */}
+                        <a
+                            href={whatsappLinkHelp}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group p-8 rounded-[2.5rem] bg-white dark:bg-gray-800 border border-black/5 dark:border-white/10 shadow-xl hover:shadow-2xl transition-all hover:scale-[1.02] flex flex-col items-center text-center"
+                        >
+                            <div className="w-16 h-16 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary mb-6 group-hover:scale-110 transition-transform">
+                                <Award size={32} />
+                            </div>
+                            <h3 className="text-2xl font-black mb-3">Habla con nosotros</h3>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm mb-8 font-medium">
+                                ¿Prefieres que te ayudemos directamente? Escríbenos por WhatsApp sin compromiso.
+                            </p>
+                            <span className="btn-secondary w-full py-4 text-sm tracking-widest uppercase">
+                                {t('guide.help_btn')}
+                            </span>
+                        </a>
+                    </div>
+
+                    <div className="pt-8">
+                        <Link to="/tours" className="inline-flex items-center gap-2 text-primary font-black uppercase tracking-widest hover:gap-4 transition-all">
+                            {t('hero.btn_tours')} <ArrowRight size={20} />
+                        </Link>
+                    </div>
                 </div>
             </section>
         </div>

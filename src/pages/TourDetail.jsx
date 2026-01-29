@@ -246,7 +246,8 @@ const TourDetail = () => {
 
                     {/* FAQ Section */}
                     <section className="pt-8">
-                        <h2 className="text-2xl font-black mb-8">{t('detail.faq_title')}</h2>
+                        <h2 className="text-2xl font-black mb-4">{t('detail.faq_title')}</h2>
+                        <p className="text-gray-500 dark:text-gray-400 font-bold mb-8">{t('detail.faq_intro')}</p>
                         <div className="space-y-4">
                             {/* Standard FAQs */}
                             {(l(tour, 'faqs') || [
@@ -384,7 +385,7 @@ const TourDetail = () => {
                             {t('detail.book_now')}
                         </button>
 
-                        {/* Full Route Button (Standalone) */}
+                        {/* Full Route Button (Standalone) - Hidden until maps are ready for all tours
                         {tour.routeUrl && (
                             <div className="mt-8">
                                 <a
@@ -403,6 +404,7 @@ const TourDetail = () => {
                                 </a>
                             </div>
                         )}
+                        */}
                     </div>
                 </div>
             </main>

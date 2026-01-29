@@ -10,10 +10,12 @@ const Testimonials = () => {
     const testimonialData = t('testimonials.data', { returnObjects: true }) || [];
 
     const images = [
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80",
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=150&q=80",
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80"
+        "/images/testimonials/testimonial_1.jpg",
+        "/images/testimonials/testimonial_2.jpg",
+        "/images/testimonials/testimonial_3.jpg"
     ];
+
+    if (!testimonialData.length) return null;
 
     return (
         <section className="py-24 px-6 bg-gray-50 dark:bg-white/5 relative overflow-hidden">

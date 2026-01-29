@@ -38,17 +38,19 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
         const priceLabel = i18n.language === 'en' ? 'Price' : 'Precio';
         const extraLabel = i18n.language === 'en' ? 'Extra' : 'Extra'; // 'Extra' works for both, but good to be explicit
 
-        const message = `${t('detail.msg_greeting')}
-${t('detail.msg_intro')}
+        const message = `Hola Cantik Tours 👋
+Me gustaría reservar este tour, por favor:
 
-- ${t('detail.msg_tour')}: ${tourTitle}
-- ${t('detail.msg_date')}: ${formData.date}
-- ${t('detail.msg_pax')}: ${paxLabel}
-- ${t('detail.msg_hotel')}: ${formData.hotel}
-- ${t('detail.booking_language')}: ${langValue}
-- ${priceLabel}: ${totalPrice} € (${basePrice} €${extraPrice > 0 ? ` + ${extraPrice} € ${extraLabel}` : ''})${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+🛕 ${t('detail.msg_tour')}: ${tourTitle}
+📅 ${t('detail.msg_date')}: ${formData.date}
+👥 ${t('detail.msg_pax')}: ${paxLabel}
+🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
+🗣️ ${i18n.language === 'en' ? 'Preferred Language' : 'Idioma preferido'}: ${langValue}
 
-${t('detail.msg_confirm')}`;
+💰 ${i18n.language === 'en' ? 'Estimated Price' : 'Precio estimado'}: ${totalPrice} € (${basePrice} €${extraPrice > 0 ? ` + ${extraPrice} € ${extraLabel}` : ''})${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+
+¿Me pueden confirmar disponibilidad y próximos pasos?
+¡Muchas gracias!`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/376614535?text=${encodedMessage}`;
@@ -197,6 +199,10 @@ ${t('detail.msg_confirm')}`;
                                         {formData.language === 'es' && <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />}
                                     </label>
                                 </div>
+                                <p className="text-[10px] text-gray-400 font-bold italic flex items-center gap-1">
+                                    <div className="w-1 h-1 rounded-full bg-primary" />
+                                    {t('detail.availability_disclaimer')}
+                                </p>
                             </div>
 
                             {/* Coupon Toggle and Input */}

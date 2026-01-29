@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     BookOpen, Map, Sun, AlertCircle,
     CreditCard, Plane, Thermometer, ShieldCheck,
-    Globe, Camera, Utensils, Info, ChevronDown
+    Globe, Camera, Utensils, Info, ChevronDown, ArrowRight
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
 
@@ -104,6 +105,10 @@ const BaliGuide = () => {
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <p><strong>Equipaje:</strong> Ropa ligera, calzado cómodo (para cascadas) y algo para cubrir hombros/rodillas al entrar en templos (Sarong).</p>
                     </li>
+                    <li className="flex gap-3 pt-2">
+                        <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                        <p className="italic text-secondary font-bold">“Nuestros tours se adaptan al clima del día para que no pierdas experiencias.”</p>
+                    </li>
                 </ul>
             )
         },
@@ -123,6 +128,10 @@ const BaliGuide = () => {
                     <li className="flex gap-3">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <p><strong>Bali Belly:</strong> Malestar estomacal común. Come en sitios con buena rotación de clientes.</p>
+                    </li>
+                    <li className="flex gap-3 pt-2">
+                        <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                        <p className="italic text-secondary font-bold">“Por eso trabajamos solo con conductores y guías verificados.”</p>
                     </li>
                 </ul>
             )
@@ -182,6 +191,15 @@ const BaliGuide = () => {
                 ))}
             </div>
 
+            <div className="mt-20 text-center max-w-2xl mx-auto">
+                <p className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-200 italic leading-relaxed">
+                    {isEs
+                        ? "“Bali es un destino increíble, pero bien planificado se disfruta el doble. Si quieres viajar sin estrés y con apoyo local, estamos aquí para ayudarte.”"
+                        : "“Bali is an amazing destination, but it's twice as enjoyable when well-planned. If you want to travel stress-free and with local support, we are here to help.”"
+                    }
+                </p>
+            </div>
+
             <motion.div
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -193,14 +211,23 @@ const BaliGuide = () => {
                     <p className="text-white/70 text-lg mb-8 font-medium">
                         {t('guide.help_text')}
                     </p>
-                    <a
-                        href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Tengo%20algunas%20dudas%20sobre%20mi%20viaje%20a%20Bali."
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-primary hover:bg-white hover:text-bg-dark text-white font-black px-8 py-4 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
-                    >
-                        {t('guide.help_btn')}
-                    </a>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <Link
+                            to="/tours"
+                            className="inline-flex items-center justify-center gap-2 bg-white text-bg-dark font-black px-8 py-4 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-xl"
+                        >
+                            {t('guide.see_tours_btn')}
+                            <ArrowRight size={20} />
+                        </Link>
+                        <a
+                            href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Tengo%20algunas%20dudas%20sobre%20mi%20viaje%20a%20Bali."
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-black px-8 py-4 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
+                        >
+                            {t('guide.help_btn')}
+                        </a>
+                    </div>
                 </div>
                 <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] -mr-32 -mt-32" />
                 <div className="absolute bottom-0 right-0 w-64 h-64 bg-secondary/10 blur-[100px] -mr-32 -mb-32" />

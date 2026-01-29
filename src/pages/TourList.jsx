@@ -20,7 +20,8 @@ const TourList = () => {
     const filteredTours = allTours.filter(tour => {
         const matchesSearch = tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             tour.description.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesCategory = activeCategory === 'todos' || tour.category === activeCategory;
+        const matchesCategory = activeCategory === 'todos' ||
+            (Array.isArray(tour.category) ? tour.category.includes(activeCategory) : tour.category === activeCategory);
         const isNotTransfer = !tour.isTransfer;
 
         return matchesSearch && matchesCategory && isNotTransfer;
