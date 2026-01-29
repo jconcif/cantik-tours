@@ -81,7 +81,7 @@ const AboutPage = () => {
                                 className="rounded-[2rem] overflow-hidden shadow-xl"
                             >
                                 <img
-                                    src="/images/team/perty_portrait.jpg"
+                                    src="/images/perti.jpg"
                                     alt="Pertiyani"
                                     className="w-full aspect-[4/5] object-cover"
                                 />

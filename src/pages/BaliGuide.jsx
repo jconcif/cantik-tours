@@ -344,6 +344,10 @@ const BaliGuide = () => {
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                         <p><strong>{t('guide.sections.safety.transport')}:</strong> {t('guide.sections.safety.transport_desc')}</p>
                     </li>
+                    <li className="flex gap-3 pt-4">
+                        <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0" />
+                        <p className="text-lg italic text-secondary font-bold leading-relaxed">{t('guide.sections.safety.promise')}</p>
+                    </li>
                 </ul>
             )
         }

@@ -283,7 +283,8 @@ i18n
                                 sockets: "Enchufes",
                                 sockets_desc: "Tipo C/F (el mismo de España o Chile). No necesitas adaptador.",
                                 transport: "Transporte",
-                                transport_desc: "No hay transporte público. Alquila moto si tienes la licencia adecuada o contrata coche con conductor."
+                                transport_desc: "No hay transporte público. Alquila moto si tienes la licencia adecuada o contrata coche con conductor.",
+                                promise: "No vendemos transporte, compartimos el Bali que llamamos hogar. Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen."
                             },
                             summary: {
                                 title: "Resumen por Nacionalidad",
@@ -324,7 +325,7 @@ i18n
                         javi_title: "Javi (Tu Enlace y Logística)",
                         javi_text: "Viajero incansable y un profundo enamorado de Bali, mi misión en Cantik es ser tu puente directo y confiable con la isla. Me encargo de que cada detalle de tu itinerario sea impecable y de resolver cualquier inquietud que surja en el camino. Estoy aquí para que te desprendas de la logística y te concentres únicamente en disfrutar, con la seguridad de saber que siempre tienes a alguien a tu lado para que todo fluya sin inconvenientes.",
                         promise_title: "",
-                        promise_text: "No vendemos transporte, compartimos nuestro hogar. Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen.",
+                        promise_text: "No vendemos transporte, compartimos el Bali que llamamos hogar. Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen.",
                         closing: "Con Cantik Tours, tu viaje no es solo una visita; es una inmersión real en Bali, diseñada para que cada instante sea, de verdad, Cantik.",
                         meet_team_title: "Nuestros Guías",
                         meet_team_subtitle: "Contamos con ellos por su conocimiento y compromiso.",
@@ -657,7 +658,8 @@ i18n
                                 sockets: "Sockets",
                                 sockets_desc: "Type C/F (same as Spain or Chile). No adapter needed.",
                                 transport: "Transport",
-                                transport_desc: "No public transport. Rent a scooter if you have the proper license or hire a car with a driver."
+                                transport_desc: "No public transport. Rent a scooter if you have the proper license or hire a car with a driver.",
+                                promise: "We don't sell transportation; we share the Bali we call home. To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us."
                             },
 
                         },
@@ -700,7 +702,7 @@ i18n
                     javi_title: "Javi (Your Link & Logistics)",
                     javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
                     promise_title: "",
-                    promise_text: "We don't sell transport, we share our home. To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
+                    promise_text: "We don't sell transportation; we share the Bali we call home. To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
                     closing: "With Cantik Tours, your trip is not just a visit; it is a real immersion in Bali, designed so that every instant is, truly, Cantik.",
                     meet_team_title: "Our Guides",
                     meet_team_subtitle: "We count on them for their knowledge and commitment.",
