@@ -79,7 +79,7 @@ const TourDetail = () => {
                     text: `${t('detail.share')} - ${l(tour, 'title')}`,
                     url: window.location.href,
                 });
-            } catch (error) { console.log('Error sharing:', error); }
+            } catch (error) { /* error ignored */ }
         } else {
             alert(t('common.copied'));
             navigator.clipboard.writeText(window.location.href);
