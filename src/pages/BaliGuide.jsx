@@ -1,24 +1,19 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    BookOpen, Map, Sun, AlertCircle,
-    CreditCard, Plane, Thermometer, ShieldCheck,
-    Globe, Camera, Utensils, Info, ChevronDown, ArrowRight
+    ChevronDown, ArrowRight, Info
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
 
-const GuideSection = ({ title, icon: Icon, children, isOpen, onToggle }) => (
+const GuideSection = ({ title, children, isOpen, onToggle }) => (
     <div className="border border-black/5 dark:border-white/5 rounded-3xl overflow-hidden bg-white dark:bg-white/5 transition-all">
         <button
             onClick={onToggle}
             className="w-full px-8 py-6 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
         >
-            <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Icon size={24} />
-                </div>
+            <div className="flex items-center gap-4 text-left">
                 <h3 className="text-xl font-bold">{title}</h3>
             </div>
             <motion.div
@@ -47,107 +42,307 @@ const GuideSection = ({ title, icon: Icon, children, isOpen, onToggle }) => (
 );
 
 const BaliGuide = () => {
-    const { t, i18n } = useTranslation();
-    const [openSection, setOpenSection] = useState(0);
-    const isEs = i18n.language.startsWith('es');
+    const { t } = useTranslation();
+    const [openSections, setOpenSections] = useState([]);
+
+    const toggleSection = (idx) => {
+        setOpenSections(prev =>
+            prev.includes(idx)
+                ? prev.filter(i => i !== idx)
+                : [...prev, idx]
+        );
+    };
 
     const sections = [
         {
-            title: isEs ? "Preparativos y Visado" : "Preparation & Visa",
-            icon: Plane,
+            title: t('guide.sections.visa.title'),
             content: (
-                <ul className="space-y-4">
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Pasaporte:</strong> Debe tener una validez mínima de 6 meses desde el día de entrada.</p>
-                    </li>
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>VoA (Visa on Arrival):</strong> La mayoría de turistas (incluyendo España y Latam) pueden obtenerla al llegar o online (e-VoA) por unos 35€ (500.000 IDR).</p>
-                    </li>
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>QR Aduana:</strong> Debes rellenar el formulario de aduana online (ECD) antes de salir del aeropuerto.</p>
-                    </li>
-                </ul>
+                <div className="space-y-8">
+                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.visa.intro')}</p>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.visa.basic_title')}</h4>
+                        <ul className="space-y-4">
+                            <li className="flex gap-3">
+                                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                                <p><strong>{t('guide.sections.visa.passport')}:</strong> {t('guide.sections.visa.passport_desc')}</p>
+                            </li>
+                            <li className="flex gap-3">
+                                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                                <p><strong>{t('guide.sections.visa.exit_ticket')}:</strong> {t('guide.sections.visa.exit_ticket_desc')}</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.visa.types_title')}</h4>
+                        <div className="grid gap-6">
+                            <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                                <h5 className="font-bold text-lg mb-2">{t('guide.sections.visa.b1_title')}</h5>
+                                <p className="text-sm mb-2 opacity-80">{t('guide.sections.visa.b1_cost')}</p>
+                                <p className="text-sm mb-4 opacity-80">{t('guide.sections.visa.b1_duration')}</p>
+                                <div className="space-y-3">
+                                    <div className="space-y-1">
+                                        <p className="text-sm font-bold">{t('guide.sections.visa.b1_mgmt')}</p>
+                                        <ul className="text-sm space-y-2 ml-4">
+                                            <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.b1_evoa')}</span></li>
+                                            <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.b1_voa')}</span></li>
+                                        </ul>
+                                    </div>
+                                    <p className="text-sm"><strong>{t('guide.sections.visa.b1_reqs')}</strong></p>
+                                    <p className="text-xs opacity-70 italic">{t('guide.sections.visa.b1_note')}</p>
+                                </div>
+                            </div>
+
+                            <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                                <h5 className="font-bold text-lg mb-2">{t('guide.sections.visa.c1_title')}</h5>
+                                <p className="text-sm mb-2 opacity-80">{t('guide.sections.visa.c1_cost')}</p>
+                                <p className="text-sm mb-4 opacity-80">{t('guide.sections.visa.c1_duration')}</p>
+                                <div className="space-y-2">
+                                    <p className="text-sm font-bold">{t('guide.sections.visa.c1_reqs')}</p>
+                                    <ul className="text-sm space-y-2 ml-4">
+                                        <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.c1_solvency')}</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.visa.levy_title')}</h4>
+                        <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
+                            <p className="text-sm leading-relaxed mb-4">{t('guide.sections.visa.levy_desc')}</p>
+                            <ul className="text-sm space-y-3 ml-4 mb-4">
+                                <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.visa.levy_mgmt').split(':')[0]}:</strong>{t('guide.sections.visa.levy_mgmt').split(':')[1]}</span></li>
+                                <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.visa.levy_qr').split(':')[0]}:</strong>{t('guide.sections.visa.levy_qr').split(':')[1]}</span></li>
+                            </ul>
+                            <p className="text-xs opacity-70 italic">{t('guide.sections.visa.levy_note')}</p>
+                        </div>
+                    </div>
+
+                    <div className="p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
+                        <h4 className="font-bold text-secondary mb-2">{t('guide.sections.visa.advice_title')}</h4>
+                        <p className="text-sm opacity-80">{t('guide.sections.visa.advice_text')}</p>
+                    </div>
+                </div>
             )
         },
         {
-            title: isEs ? "Dinero y Pagos" : "Money & Payments",
-            icon: CreditCard,
+            title: t('guide.sections.levy.title'),
             content: (
-                <ul className="space-y-4">
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Moneda:</strong> Rupia Indonesia (IDR). 1€ equivale aproximadamente a 16.000-17.000 IDR.</p>
-                    </li>
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Tarjetas:</strong> Revolut y Wise funcionan perfectamente. Evita cambiar dinero en la calle en sitios no oficiales.</p>
-                    </li>
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Efectivo:</strong> Bali sigue siendo muy dependiente del efectivo para mercadillos o propinas.</p>
-                    </li>
-                </ul>
+                <div className="space-y-8">
+                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.levy.intro')}</p>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.levy.exchange_title')}</h4>
+                        <ul className="space-y-4">
+                            <li className="flex gap-3">
+                                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                                <p><strong>{t('guide.sections.levy.exchange_rate')}</strong></p>
+                            </li>
+                            <li className="flex gap-3">
+                                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                                <p>{t('guide.sections.levy.exchange_bills')}</p>
+                            </li>
+                            <li className="flex gap-3">
+                                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                                <p>{t('guide.sections.levy.exchange_where')}</p>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.levy.cards_title')}</h4>
+                        <div className="grid gap-4">
+                            <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                                <p className="text-sm leading-relaxed mb-3">
+                                    <span className="font-bold">{t('guide.sections.levy.cards_recommended')}</span>
+                                </p>
+                                <p className="text-sm leading-relaxed mb-3">
+                                    <span className="font-bold">{t('guide.sections.levy.cards_safe')}</span>
+                                </p>
+                                <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                    {t('guide.sections.levy.cards_tip')}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.levy.budget_title')}</h4>
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <div className="p-4 rounded-xl border border-black/5 dark:border-white/5">
+                                <p className="text-sm font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
+                                    <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_food').split(':')[0]}
+                                </p>
+                                <p className="font-bold">{t('guide.sections.levy.budget_food').split(':')[1]}</p>
+                            </div>
+                            <div className="p-4 rounded-xl border border-black/5 dark:border-white/5">
+                                <p className="text-sm font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
+                                    <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_beer').split(':')[0]}
+                                </p>
+                                <p className="font-bold">{t('guide.sections.levy.budget_beer').split(':')[1]}</p>
+                            </div>
+                            <div className="p-4 rounded-xl border border-black/5 dark:border-white/5">
+                                <p className="text-sm font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
+                                    <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_massage').split(':')[0]}
+                                </p>
+                                <p className="font-bold">{t('guide.sections.levy.budget_massage').split(':')[1]}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
+                        <h4 className="font-bold text-secondary mb-2">{t('guide.sections.levy.advice_title')}</h4>
+                        <p className="text-sm opacity-80">{t('guide.sections.levy.advice_text')}</p>
+                    </div>
+                </div>
             )
         },
         {
-            title: isEs ? "Clima y Equipaje" : "Weather & Packing",
-            icon: Sun,
+            title: t('guide.sections.health.title'),
             content: (
-                <ul className="space-y-4">
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Temporadas:</strong> Seca (Abril - Octubre) y Lluvias (Noviembre - Marzo). La temperatura es siempre tropical (27-30°C).</p>
-                    </li>
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Equipaje:</strong> Ropa ligera, calzado cómodo (para cascadas) y algo para cubrir hombros/rodillas al entrar en templos (Sarong).</p>
-                    </li>
-                    <li className="flex gap-3 pt-2">
-                        <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                        <p className="italic text-secondary font-bold">“Nuestros tours se adaptan al clima del día para que no pierdas experiencias.”</p>
-                    </li>
-                </ul>
+                <div className="space-y-8">
+                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.health.intro')}</p>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.yellow_title')}</h4>
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <p className="text-sm leading-relaxed mb-4">{t('guide.sections.health.yellow_intro')}</p>
+                            <ul className="text-sm space-y-3 ml-4">
+                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_when')}</span></li>
+                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_countries')}</span></li>
+                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_europe')}</span></li>
+                            </ul>
+                            <p className="text-xs opacity-70 italic mt-4">{t('guide.sections.health.yellow_note')}</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.insurance_title')}</h4>
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <p className="text-sm leading-relaxed">{t('guide.sections.health.insurance_desc')}</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.belly_title')}</h4>
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <p className="text-sm leading-relaxed mb-4">{t('guide.sections.health.belly_intro')}</p>
+                            <ul className="text-sm space-y-3 ml-4">
+                                <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.health.belly_probiotics').split(':')[0]}:</strong>{t('guide.sections.health.belly_probiotics').split(':')[1]}</span></li>
+                                <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.health.belly_water').split(':')[0]}:</strong>{t('guide.sections.health.belly_water').split(':')[1]}</span></li>
+                                <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.health.belly_ice').split(':')[0]}:</strong>{t('guide.sections.health.belly_ice').split(':')[1]}</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.repellent_title')}</h4>
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <p className="text-sm leading-relaxed">{t('guide.sections.health.repellent_desc')}</p>
+                        </div>
+                    </div>
+                </div>
             )
         },
         {
-            title: isEs ? "Salud y Seguridad" : "Health & Safety",
-            icon: ShieldCheck,
+            title: t('guide.sections.stay.title'),
             content: (
-                <ul className="space-y-4">
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Agua:</strong> NUNCA bebas agua del grifo, ni siquiera para cepillarte los dientes si eres muy sensible. Solo agua embotellada.</p>
-                    </li>
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Seguro Médico:</strong> Imprescindible. La sanidad privada en Bali es buena pero muy cara sin seguro.</p>
-                    </li>
-                    <li className="flex gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Bali Belly:</strong> Malestar estomacal común. Come en sitios con buena rotación de clientes.</p>
-                    </li>
-                    <li className="flex gap-3 pt-2">
-                        <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                        <p className="italic text-secondary font-bold">“Por eso trabajamos solo con conductores y guías verificados.”</p>
-                    </li>
-                </ul>
+                <div className="space-y-8">
+                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.stay.intro')}</p>
+
+                    <div className="grid gap-6">
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.ubud_title')}</h5>
+                            <p className="text-sm mb-3 opacity-80">{t('guide.sections.stay.ubud_desc')}</p>
+                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                {t('guide.sections.stay.ubud_tip')}
+                            </p>
+                        </div>
+
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.uluwatu_title')}</h5>
+                            <p className="text-sm mb-3 opacity-80">{t('guide.sections.stay.uluwatu_desc')}</p>
+                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                {t('guide.sections.stay.uluwatu_tip')}
+                            </p>
+                        </div>
+
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.canggu_title')}</h5>
+                            <p className="text-sm mb-3 opacity-80">{t('guide.sections.stay.canggu_desc')}</p>
+                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                {t('guide.sections.stay.canggu_tip')}
+                            </p>
+                        </div>
+
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.sanur_title')}</h5>
+                            <p className="text-sm opacity-80">{t('guide.sections.stay.sanur_desc')}</p>
+                        </div>
+
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.lovina_title')}</h5>
+                            <p className="text-sm opacity-80">{t('guide.sections.stay.lovina_desc')}</p>
+                        </div>
+
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.amed_title')}</h5>
+                            <p className="text-sm opacity-80">{t('guide.sections.stay.amed_desc')}</p>
+                        </div>
+                    </div>
+
+                    <div className="p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
+                        <h4 className="font-bold text-secondary mb-2">{t('guide.sections.stay.advice_title')}</h4>
+                        <p className="text-sm opacity-80">{t('guide.sections.stay.advice_text')}</p>
+                    </div>
+                </div>
             )
         },
         {
-            title: isEs ? "Etiqueta Cultural" : "Cultural Etiquette",
-            icon: Globe,
+            title: t('guide.sections.apps.title'),
+            content: (
+                <div className="space-y-8">
+                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.apps.intro')}</p>
+
+                    <div className="grid gap-6">
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.apps.grab_title')}</h5>
+                            <p className="text-sm mb-3 opacity-80">{t('guide.sections.apps.grab_desc')}</p>
+                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                {t('guide.sections.apps.grab_tip')}
+                            </p>
+                        </div>
+
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.apps.internet_title')}</h5>
+                            <p className="text-sm opacity-80">{t('guide.sections.apps.internet_desc')}</p>
+                        </div>
+
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.apps.maps_title')}</h5>
+                            <p className="text-sm opacity-80">{t('guide.sections.apps.maps_desc')}</p>
+                        </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            title: t('guide.sections.safety.title'),
             content: (
                 <ul className="space-y-4">
                     <li className="flex gap-3">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Ofrendas (Canang Sari):</strong> Verás cestitas de flores por el suelo. No las pises a propósito.</p>
+                        <p><strong>{t('guide.sections.safety.water')}:</strong> {t('guide.sections.safety.water_desc')}</p>
                     </li>
                     <li className="flex gap-3">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>Templos:</strong> Debes llevar sarong. No toques la cabeza de la gente (es sagrada) y usa la mano derecha para dar o recibir cosas.</p>
+                        <p><strong>{t('guide.sections.safety.sockets')}:</strong> {t('guide.sections.safety.sockets_desc')}</p>
+                    </li>
+                    <li className="flex gap-3">
+                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <p><strong>{t('guide.sections.safety.transport')}:</strong> {t('guide.sections.safety.transport_desc')}</p>
                     </li>
                 </ul>
             )
@@ -182,9 +377,8 @@ const BaliGuide = () => {
                     <GuideSection
                         key={idx}
                         title={section.title}
-                        icon={section.icon}
-                        isOpen={openSection === idx}
-                        onToggle={() => setOpenSection(openSection === idx ? -1 : idx)}
+                        isOpen={openSections.includes(idx)}
+                        onToggle={() => toggleSection(idx)}
                     >
                         {section.content}
                     </GuideSection>
@@ -193,10 +387,7 @@ const BaliGuide = () => {
 
             <div className="mt-20 text-center max-w-2xl mx-auto">
                 <p className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-200 italic leading-relaxed">
-                    {isEs
-                        ? "“Bali es un destino increíble, pero bien planificado se disfruta el doble. Si quieres viajar sin estrés y con apoyo local, estamos aquí para ayudarte.”"
-                        : "“Bali is an amazing destination, but it's twice as enjoyable when well-planned. If you want to travel stress-free and with local support, we are here to help.”"
-                    }
+                    {t('about.closing')}
                 </p>
             </div>
 

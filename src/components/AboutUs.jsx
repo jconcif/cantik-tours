@@ -51,7 +51,7 @@ const AboutUs = () => {
                 >
                     <div className="bg-white dark:bg-white/5 p-8 rounded-[3rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10">
                         <img
-                            src="/images/team/perty_portrait.png"
+                            src="/images/team/perty_portrait.jpg"
                             alt="Cantik Tours Team"
                             className="w-full h-auto rounded-[2rem] shadow-lg mb-6"
                         />
