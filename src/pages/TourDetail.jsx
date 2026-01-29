@@ -35,9 +35,23 @@ const TourDetail = () => {
             case 'food': return <Utensils size={20} />;
             case 'dropoff': return <Flag size={20} />;
             case 'photo': return <Camera size={20} />;
+            case 'beach': return <Droplets size={20} />;
             default: return <Map size={20} />;
         }
     };
+
+    const getPackingIcon = (item) => {
+        switch (item) {
+            case 'shoes': return <Check size={20} />;
+            case 'sunscreen': return <Shield size={20} />;
+            case 'camera': return <Camera size={20} />;
+            case 'swimwear': return <Droplets size={20} />;
+            case 'money': return <Clock size={20} />; // Placeholder
+            default: return <Check size={20} />;
+        }
+    };
+
+    const [openFaq, setOpenFaq] = useState(null);
 
     useEffect(() => {
         const foundTour = tours.find(t => t.id == id);
@@ -137,7 +151,7 @@ const TourDetail = () => {
 
             <main className="max-w-7xl mx-auto px-6 mt-12 grid lg:grid-cols-3 gap-12">
                 {/* Left Column: Details */}
-                <div className="lg:col-span-2 space-y-12">
+                <div className="lg:col-span-2 space-y-16">
 
                     {/* Description */}
                     <section>
@@ -211,19 +225,142 @@ const TourDetail = () => {
                             </ul>
                         </section>
 
-                        <section className="p-8 rounded-[2rem] bg-red-50/50 dark:bg-red-500/5 border border-red-100 dark:border-red-500/10">
-                            <h3 className="text-xl font-black text-red-700 dark:text-red-500 mb-6 flex items-center gap-2">
-                                <X size={20} /> {t('detail.not_included')}
+                        <section className="p-8 rounded-[2rem] bg-blue-50/50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/10">
+                            <h3 className="text-xl font-black text-blue-700 dark:text-blue-500 mb-6 flex items-center gap-2">
+                                <Calendar size={20} /> {t('detail.benefits.flexibility_title')}
                             </h3>
+                            <p className="text-sm font-bold text-gray-600 dark:text-gray-400 mb-6">
+                                {t('detail.benefits.flexibility_desc')}
+                            </p>
+                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">{t('detail.not_included')}</h4>
                             <ul className="space-y-4">
                                 {(l(tour, 'not_included') || []).map((item, idx) => (
                                     <li key={idx} className="flex items-start gap-3">
-                                        <AlertCircle size={16} className="text-red-600 mt-1 flex-shrink-0" />
+                                        <AlertCircle size={16} className="text-blue-600 mt-1 flex-shrink-0" />
                                         <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{item}</span>
                                     </li>
                                 ))}
                             </ul>
                         </section>
+                    </div>
+
+                    {/* FAQ Section */}
+                    <section className="pt-8">
+                        <h2 className="text-2xl font-black mb-8">{t('detail.faq_title')}</h2>
+                        <div className="space-y-4">
+                            {/* Standard FAQs */}
+                            {(l(tour, 'faqs') || [
+                                { q: "¿Podemos cambiar el orden de las visitas?", a: "¡Claro! Todos nuestros tours son privados y 100% flexibles. Habla con tu guía ese mismo día.", q_en: "Can we change the order of visits?", a_en: "Sure! All our tours are private and 100% flexible. Talk to your guide that same day." },
+                                { q: "¿En qué idioma es el tour?", a: "La tarifa base es con conductor experto en Inglés. Puedes añadir Guía en Español por un suplemento.", q_en: "What language is the tour in?", a_en: "The base rate is with an expert English-speaking driver. You can add a Spanish Guide for a supplement." }
+                            ]).map((faq, idx) => (
+                                <div
+                                    key={idx}
+                                    className="rounded-[1.5rem] border border-black/5 dark:border-white/5 bg-white dark:bg-white/5 overflow-hidden"
+                                >
+                                    <button
+                                        onClick={() => setOpenFaq(`faq-${idx}`)}
+                                        className="w-full px-8 py-6 flex items-center justify-between text-left"
+                                    >
+                                        <span className="font-black text-gray-900 dark:text-gray-100">{faq.q}</span>
+                                        <ChevronLeft size={20} className={`transform transition-transform ${openFaq === `faq-${idx}` ? 'rotate-90' : '-rotate-90'}`} />
+                                    </button>
+                                    <AnimatePresence>
+                                        {openFaq === `faq-${idx}` && (
+                                            <motion.div
+                                                initial={{ height: 0 }}
+                                                animate={{ height: 'auto' }}
+                                                exit={{ height: 0 }}
+                                                className="px-8 pb-8 text-gray-500 dark:text-gray-400 font-medium leading-relaxed"
+                                            >
+                                                {faq.a}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            ))}
+
+                            {/* Packing List as FAQ */}
+                            <div className="rounded-[1.5rem] border border-black/5 dark:border-white/5 bg-white dark:bg-white/5 overflow-hidden">
+                                <button
+                                    onClick={() => setOpenFaq(openFaq === 'packing' ? null : 'packing')}
+                                    className="w-full px-8 py-6 flex items-center justify-between text-left"
+                                >
+                                    <span className="font-black text-gray-900 dark:text-gray-100">{t('detail.faq_packing_q')}</span>
+                                    <ChevronLeft size={20} className={`transform transition-transform ${openFaq === 'packing' ? 'rotate-90' : '-rotate-90'}`} />
+                                </button>
+                                <AnimatePresence>
+                                    {openFaq === 'packing' && (
+                                        <motion.div
+                                            initial={{ height: 0 }}
+                                            animate={{ height: 'auto' }}
+                                            exit={{ height: 0 }}
+                                            className="px-8 pb-8"
+                                        >
+                                            <div className="grid grid-cols-2 gap-4">
+                                                {(tour.packingList || ['shoes', 'sunscreen', 'camera', 'money']).map((item) => (
+                                                    <div key={item} className="flex items-center gap-3">
+                                                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+                                                            {getPackingIcon(item)}
+                                                        </div>
+                                                        <span className="text-xs font-bold text-gray-600 dark:text-gray-300">
+                                                            {t(`detail.items.${item}`)}
+                                                        </span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+
+                            {/* Important Info as FAQ */}
+                            <div className="rounded-[1.5rem] border border-black/5 dark:border-white/5 bg-white dark:bg-white/5 overflow-hidden">
+                                <button
+                                    onClick={() => setOpenFaq(openFaq === 'info' ? null : 'info')}
+                                    className="w-full px-8 py-6 flex items-center justify-between text-left"
+                                >
+                                    <span className="font-black text-gray-900 dark:text-gray-100">{t('detail.faq_info_q')}</span>
+                                    <ChevronLeft size={20} className={`transform transition-transform ${openFaq === 'info' ? 'rotate-90' : '-rotate-90'}`} />
+                                </button>
+                                <AnimatePresence>
+                                    {openFaq === 'info' && (
+                                        <motion.div
+                                            initial={{ height: 0 }}
+                                            animate={{ height: 'auto' }}
+                                            exit={{ height: 0 }}
+                                            className="px-8 pb-8"
+                                        >
+                                            <ul className="space-y-3">
+                                                {(l(tour, 'importantInfo') || []).map((info, idx) => (
+                                                    <li key={idx} className="flex items-start gap-3">
+                                                        <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                                                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400 leading-relaxed">
+                                                            {info}
+                                                        </span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Benefits Banner (Moved below FAQ) */}
+                    <div className="pt-8">
+                        <div className="grid grid-cols-3 gap-4 md:gap-8 bg-white dark:bg-gray-800/50 p-6 md:p-8 rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm">
+                            {[
+                                { icon: <Shield size={24} />, label: t('detail.benefits.private') },
+                                { icon: <Calendar size={24} />, label: t('detail.benefits.flexible') },
+                                { icon: <Clock size={24} />, label: t('detail.benefits.no_rush') }
+                            ].map((benefit, idx) => (
+                                <div key={idx} className="flex flex-col md:flex-row items-center justify-center gap-3 text-center md:text-left">
+                                    <div className="text-primary">{benefit.icon}</div>
+                                    <span className="text-[10px] md:text-sm font-black uppercase tracking-wider dark:text-gray-200">{benefit.label}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
@@ -242,10 +379,30 @@ const TourDetail = () => {
 
                         <button
                             onClick={handleOpenBooking}
-                            className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest"
+                            className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest mb-8"
                         >
                             {t('detail.book_now')}
                         </button>
+
+                        {/* Full Route Button (Standalone) */}
+                        {tour.routeUrl && (
+                            <div className="mt-8">
+                                <a
+                                    href={tour.routeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full bg-white dark:bg-gray-800 border border-black/5 dark:border-white/10 py-6 rounded-3xl shadow-lg flex flex-col items-center justify-center gap-3 hover:bg-primary hover:text-white transition-all group/btn"
+                                >
+                                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary group-hover/btn:bg-white group-hover/btn:text-primary transition-colors">
+                                        <Map size={24} />
+                                    </div>
+                                    <div className="text-center">
+                                        <span className="text-xs font-black uppercase tracking-widest block mb-1">{t('detail.view_full_route')}</span>
+                                        <span className="text-[10px] opacity-60 font-medium block">Google Maps Directions</span>
+                                    </div>
+                                </a>
+                            </div>
+                        )}
                     </div>
                 </div>
             </main>

@@ -21,6 +21,23 @@ export const tours = [
         badge: "Más Popular",
         badge_en: "Most Popular",
         category: "cultura",
+        mapUrl: "https://www.google.com/maps/d/u/0/embed?mid=1fCrSJPI-3vT05KpsVYfAOidqrc0xlNQ",
+        packingList: ['shoes', 'sunscreen', 'camera', 'money'],
+        importantInfo: [
+            "El código de vestimenta en templos requiere hombros cubiertos y sarong (nosotros te lo prestamos).",
+            "La mayoría de las cascadas requieren bajar/subir bastantes escalones.",
+            "Si llueve, el tour sigue adelante pero podemos ajustar paradas para mayor seguridad."
+        ],
+        importantInfo_en: [
+            "Temple dress code requires covered shoulders and a sarong (we provide it for you).",
+            "Most waterfalls require walking down/up many stairs.",
+            "If it rains, the tour continues but we can adjust stops for safety."
+        ],
+        faqs: [
+            { q: "¿Podemos cambiar el orden de las visitas?", a: "¡Claro! Todos nuestros tours son privados y 100% flexibles. Habla con tu guía ese mismo día.", q_en: "Can we change the order of visits?", a_en: "Sure! All our tours are private and 100% flexible. Talk to your guide that same day." },
+            { q: "¿En qué idioma es el tour?", a: "La tarifa base es con conductor experto en Inglés. Puedes añadir Guía en Español por un suplemento.", q_en: "What language is the tour in?", a_en: "The base rate is with an expert English-speaking driver. You can add a Spanish Guide for a supplement." }
+        ],
+        routeUrl: "https://www.google.com/maps/dir/Ubud+Palace/Kanto+Lampo+Waterfall/Tibumana+Waterfall/Gunung+Kawi+Tampaksiring/Pura+Mengening/Pura+Gunung+Kawi+Sebatu/Bali+Pulina/Tis+Cafe/Ubud+Palace/@-8.4693985,115.2153627,12z",
         itinerary: [
             {
                 type: 'pickup',
@@ -113,8 +130,8 @@ export const tours = [
         location: "Ubud Central",
         included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
         included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
-        not_included: ["Entradas / Tickets", "Comidas", "Ritual de purificación (Opcional)", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / Tickets", "Meals", "Purification ritual (Optional)", "Travel insurance"],
+        not_included: ["Entradas / Tickets", "Comidas / Bebidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals / Drinks", "Travel insurance"],
         rating: 4.9,
         reviews: 45,
         reviewsList: [
@@ -143,6 +160,18 @@ export const tours = [
         badge: "Paisajes Únicos",
         badge_en: "Unique Landscapes",
         category: "naturaleza",
+        mapUrl: "https://maps.google.com/maps?q=Ulun%20Danu%20Beratan%20Temple&t=&z=13&ie=UTF8&iwloc=&output=embed",
+        packingList: ['shoes', 'sunscreen', 'camera', 'money'],
+        importantInfo: [
+            "En las tierras altas (Bedugul) la temperatura es más fresca, recomendamos llevar una chaqueta ligera.",
+            "Jatiluwih requiere una caminata suave por senderos de arroz.",
+            "Templo Ulun Danu puede estar nublado o con neblina, lo que le da un toque místico."
+        ],
+        importantInfo_en: [
+            "In the highlands (Bedugul) the temperature is cooler, we recommend bringing a light jacket.",
+            "Jatiluwih requires a gentle walk along rice paths.",
+            "Ulun Danu Temple can be cloudy or misty, which gives it a mystical touch."
+        ],
         itinerary: [
             {
                 type: 'pickup',
@@ -226,8 +255,8 @@ export const tours = [
         location: "Norte de Bali",
         included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking", "Agua mineral", "Snacks"],
         included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking", "Mineral water", "Snacks"],
-        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
+        not_included: ["Entradas / Tickets", "Comidas / Bebidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals / Drinks", "Travel insurance"],
         rating: 4.9,
         reviews: 41,
         reviewsList: [
@@ -258,6 +287,18 @@ export const tours = [
         badge: "Aventura Épica",
         badge_en: "Epic Adventure",
         category: "aventura",
+        mapUrl: "https://maps.google.com/maps?q=Lovina%20Beach%20Bali&t=&z=11&ie=UTF8&iwloc=&output=embed",
+        packingList: ['swimwear', 'sunscreen', 'camera', 'shoes'],
+        importantInfo: [
+            "La salida en barco es muy temprano (amanecer). El mar suele estar tranquilo.",
+            "Lleva bañador y toalla para la cascada Banyumala.",
+            "El trayecto de regreso es largo, aprovechamos para descansar o ver los Lagos Gemelos."
+        ],
+        importantInfo_en: [
+            "The boat departure is very early (sunrise). The sea is usually calm.",
+            "Bring swimwear and a towel for the Banyumala waterfall.",
+            "The return journey is long, we take the opportunity to rest or see the Twin Lakes."
+        ],
         itinerary: [
             {
                 type: 'pickup',
@@ -332,8 +373,8 @@ export const tours = [
         location: "Lovina / Norte",
         included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking", "Agua mineral", "Snacks", "Barca privada para delfines (incluida bajo reserva previa)"],
         included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking", "Mineral water", "Snacks", "Private dolphin boat (included with pre-booking)"],
-        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
+        not_included: ["Entradas / Tickets", "Comidas / Bebidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals / Drinks", "Travel insurance"],
         rating: 4.8,
         reviews: 25,
         reviewsList: [
@@ -364,6 +405,18 @@ export const tours = [
         badge: "Imprescindible",
         badge_en: "Must See",
         category: "cultura",
+        mapUrl: "https://maps.google.com/maps?q=Besakih%20Mother%20Temple%20Bali&t=&z=13&ie=UTF8&iwloc=&output=embed",
+        packingList: ['shoes', 'sunscreen', 'camera', 'money'],
+        importantInfo: [
+            "Besakih es un complejo de 23 templos. Requiere caminar y subir escaleras.",
+            "Se requiere Sarong y hombros cubiertos (te lo prestamos).",
+            "Kintamani suele tener mejores vistas por la mañana antes de que suban las nubes volcánicas."
+        ],
+        importantInfo_en: [
+            "Besakih is a complex of 23 temples. Requires walking and climbing stairs.",
+            "Sarong and covered shoulders are required (we provide it for you).",
+            "Kintamani usually has better views in the morning before volcanic clouds rise."
+        ],
         itinerary: [
             {
                 type: 'pickup',
@@ -420,8 +473,8 @@ export const tours = [
         location: "Este de Bali",
         included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
         included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
-        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
+        not_included: ["Entradas / Tickets", "Comidas / Bebidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals / Drinks", "Travel insurance"],
         rating: 4.8,
         reviews: 28,
         reviewsList: [
@@ -453,6 +506,18 @@ export const tours = [
         badge: "Más Popular",
         badge_en: "Most Popular",
         category: "fotografia",
+        mapUrl: "https://maps.google.com/maps?q=Lempuyang%20Temple%20Bali&t=&z=13&ie=UTF8&iwloc=&output=embed",
+        packingList: ['shoes', 'sunscreen', 'camera', 'swimwear', 'money'],
+        importantInfo: [
+            "Lempuyang es extremadamente popular. El madrugón es esencial para no esperar horas.",
+            "En Virgin Beach hay vestuarios y duchas básicas.",
+            "El ticket de Lempuyang incluye un transporte en shuttle desde el parking hasta el templo."
+        ],
+        importantInfo_en: [
+            "Lempuyang is extremely popular. Getting up early is essential to avoid waiting hours.",
+            "At Virgin Beach there are basic changing rooms and showers.",
+            "The Lempuyang ticket includes shuttle transport from the parking lot to the temple."
+        ],
         itinerary: [
             {
                 type: 'pickup',
@@ -518,8 +583,8 @@ export const tours = [
         location: "Lempuyang",
         included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Snacks"],
         included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
-        not_included: ["Entradas / Tickets", "Comidas", "Seguro de viaje"],
-        not_included_en: ["Entrance fees / Tickets", "Meals", "Travel insurance"],
+        not_included: ["Entradas / Tickets", "Comidas / Bebidas", "Seguro de viaje"],
+        not_included_en: ["Entrance fees / Tickets", "Meals / Drinks", "Travel insurance"],
         rating: 4.9,
         reviews: 54,
         reviewsList: [

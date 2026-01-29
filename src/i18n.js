@@ -140,7 +140,30 @@ i18n
                         msg_transfer_time: "Hora",
                         msg_transfer_flight: "Vuelo/Barco",
                         msg_transfer_bags: "Maletas",
-                        msg_transfer_pax: "Pasajeros"
+                        msg_transfer_pax: "Pasajeros",
+
+                        // New Detail enhancements
+                        packing_list: "Qué llevar",
+                        important_info: "Información Importante",
+                        faq_title: "Preguntas Frecuentes",
+                        faq_packing_q: "¿Qué debo llevar al tour?",
+                        faq_info_q: "Información importante sobre el tour",
+                        view_full_route: "Ver Ruta Completa",
+                        benefits: {
+                            private: "100% Privado",
+                            flexible: "Totalmente Flexible",
+                            no_rush: "Sin Prisas",
+                            flexibility_title: "Flexibilidad en Entradas",
+                            flexibility_desc: "Tú decides dónde entrar. Las entradas no están incluidas para darte libertad total de cambiar de planes sobre la marcha."
+                        },
+                        items: {
+                            shoes: "Calzado cómodo",
+                            sunscreen: "Protector solar",
+                            camera: "Cámara / Móvil",
+                            swimwear: "Bañador y toalla",
+                            sarong: "Sarong (incluido en templos)",
+                            money: "Efectivo local (IDR)"
+                        }
                     },
                     guide: {
                         badge: "Imprescindible para tu viaje",
@@ -373,7 +396,30 @@ i18n
                         msg_transfer_time: "Time",
                         msg_transfer_flight: "Flight/Boat",
                         msg_transfer_bags: "Bags",
-                        msg_transfer_pax: "Passengers"
+                        msg_transfer_pax: "Passengers",
+
+                        // New Detail enhancements
+                        packing_list: "What to bring",
+                        important_info: "Important Information",
+                        faq_title: "Frequently Asked Questions",
+                        faq_packing_q: "What should I bring to the tour?",
+                        faq_info_q: "Important information about the tour",
+                        view_full_route: "View Full Route",
+                        benefits: {
+                            private: "100% Private",
+                            flexible: "Totally Flexible",
+                            no_rush: "No Rush",
+                            flexibility_title: "Entry Fee Flexibility",
+                            flexibility_desc: "You decide where to go. Entry fees are not included to give you total freedom to change plans on the fly."
+                        },
+                        items: {
+                            shoes: "Comfortable shoes",
+                            sunscreen: "Sunscreen",
+                            camera: "Camera / Phone",
+                            swimwear: "Swimwear & towel",
+                            sarong: "Sarong (provided at temples)",
+                            money: "Local cash (IDR)"
+                        }
                     },
                     guide: {
                         badge: "Essential for your trip",
