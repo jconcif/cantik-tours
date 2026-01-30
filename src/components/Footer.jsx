@@ -47,12 +47,17 @@ const Footer = () => {
                 </div>
 
                 <div>
-                    <h4 className="font-bold text-lg mb-6">Social</h4>
+                    <h4 className="font-bold text-lg mb-6">{t('footer.social')}</h4>
                     <div className="flex gap-4">
                         <a href="https://instagram.com/CantikToursBali" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
                             <Instagram size={24} />
                         </a>
-                        <a href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Me%20gustar%C3%ADa%20recibir%20m%C3%A1s%20informaci%C3%B3n%20sobre%20vuestros%20tours." className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                        <a
+                            href={`https://wa.me/376614535?text=${encodeURIComponent(t('common.whatsapp_message'))}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110"
+                        >
                             <MessageCircle size={24} />
                         </a>
                     </div>

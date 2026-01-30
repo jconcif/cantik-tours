@@ -19,7 +19,8 @@ i18n
                         tours: "Explorar Tours",
                         guide: "Guía Bali 2026",
                         contact: "Habla con nosotros",
-                        about: "Nosotros"
+                        about: "Nosotros",
+                        expert_choice: "Elección del Experto"
                     },
                     hero: {
                         badge: "Experiencias Premium en Indonesia",
@@ -64,7 +65,15 @@ i18n
                         title: "¿Listo para vivir Bali como un local?",
                         subtitle: "Reserva hoy y vive el Bali que siempre soñaste con guías expertos.",
                         btn_availability: "Ver Todos los Tours",
-                        btn_whatsapp: "WhatsApp directo"
+                        btn_whatsapp: "WhatsApp directo",
+                        general_inquiry: "Consulta General"
+                    },
+                    seo: {
+                        home: {
+                            title: "Tours Privados en Bali | Cantik Tours",
+                            description: "Agencia de viajes local en Bali con guías en español. Tours privados, itinerarios flexibles y experiencias auténticas con Perty y su equipo.",
+                            keywords: "bali tours, guias en español bali, turismo bali, viaje a bali, bali tours privados, cantiktours"
+                        }
                     },
                     detail: {
                         itinerary: "Itinerario",
@@ -320,6 +329,7 @@ i18n
                         team_intro_text: "Sin prisas, con seguridad y en tu idioma.",
                         perty_name: "Pertiyani",
                         perty_role: "Fundadora",
+                        local_experts: "Expertos Locales",
                         perty_title: "Pertiyani (Fundadora)",
                         perty_text: "Con profundas raíces balinesas y una vida dedicada a la educación, he tenido el honor de representar nuestra cultura en diversos países como profesora de lengua indonesia. Hoy, mi verdadera pasión es ser tu vínculo personal con el alma de Bali. Para mí, acompañarte no es solo seguir un itinerario, es invitarte a sentir la mística de nuestros templos, la devoción de nuestros rituales y esos rincones secretos que solo revelamos a quienes nos visitan con el corazón. Mi mayor deseo es que vivas esta isla con el mismo respeto y profundo amor con el que yo la llamo hogar.",
                         javi_title: "Javi (Tu Enlace y Logística)",
@@ -346,6 +356,7 @@ i18n
                         description: "Tu agencia de confianza en Bali. Experiencias privadas, auténticas y acompañamiento local.",
                         quick_links: "Enlaces rápidos",
                         contact: "Contacto",
+                        social: "Redes Sociales",
                         rights: "Todos los derechos reservados.",
                         trust_1: "Pago Seguro en Destino",
                         trust_2: "Guías Locales Verificados",
@@ -444,7 +455,15 @@ i18n
                         title: "Ready to live Bali like a local?",
                         subtitle: "Book today and experience the Bali you've always dreamed of with expert guides.",
                         btn_availability: "See All Tours",
-                        btn_whatsapp: "Direct WhatsApp"
+                        btn_whatsapp: "Direct WhatsApp",
+                        general_inquiry: "General Inquiry"
+                    },
+                    seo: {
+                        home: {
+                            title: "Private Bali Tours | Cantik Tours",
+                            description: "Local travel agency in Bali with Spanish and English speaking guides. Private tours, flexible itineraries and authentic experiences.",
+                            keywords: "bali tours, spanish guides bali, bali tourism, trip to bali, private bali tours, cantiktours"
+                        }
                     },
                     detail: {
                         itinerary: "Itinerary",
@@ -723,6 +742,7 @@ i18n
                     description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",
                     quick_links: "Quick Links",
                     contact: "Contact",
+                    social: "Social",
                     rights: "All rights reserved.",
                     trust_1: "Secure Payment on Arrival",
                     trust_2: "Verified Local Guides",

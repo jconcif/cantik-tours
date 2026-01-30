@@ -132,16 +132,17 @@ const TourDetail = () => {
                         <ChevronLeft size={28} />
                     </button>
 
-                    <div className="absolute bottom-8 left-8 right-8 flex items-end justify-between">
-                        <div>
-                            <span className="bg-primary/90 backdrop-blur text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-3 inline-block">
-                                {t(`tours.categories.${tour.category}`)}
-                            </span>
-                            <h1 className="text-3xl md:text-5xl font-black text-white drop-shadow-lg">{l(tour, 'title')}</h1>
+
+
+                    <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 flex items-end gap-4 justify-between">
+                        <div className="flex-1 min-w-0">
+                            <h1 className="text-2xl md:text-5xl font-black text-white drop-shadow-lg leading-tight break-words">
+                                {l(tour, 'title')}
+                            </h1>
                         </div>
                         <button
                             onClick={handleShare}
-                            className="hidden md:flex w-14 h-14 rounded-full bg-white/20 backdrop-blur-md items-center justify-center text-white hover:bg-primary transition-all active:scale-95"
+                            className="hidden md:flex flex-shrink-0 w-14 h-14 rounded-full bg-white/20 backdrop-blur-md items-center justify-center text-white hover:bg-primary transition-all active:scale-95"
                         >
                             <Share2 size={24} />
                         </button>
@@ -262,7 +263,7 @@ const TourDetail = () => {
                                         onClick={() => setOpenFaq(`faq-${idx}`)}
                                         className="w-full px-8 py-6 flex items-center justify-between text-left"
                                     >
-                                        <span className="font-black text-gray-900 dark:text-gray-100">{faq.q}</span>
+                                        <span className="font-black text-gray-900 dark:text-gray-100">{l(faq, 'q')}</span>
                                         <ChevronLeft size={20} className={`transform transition-transform ${openFaq === `faq-${idx}` ? 'rotate-90' : '-rotate-90'}`} />
                                     </button>
                                     <AnimatePresence>
@@ -273,7 +274,7 @@ const TourDetail = () => {
                                                 exit={{ height: 0 }}
                                                 className="px-8 pb-8 text-gray-500 dark:text-gray-400 font-medium leading-relaxed"
                                             >
-                                                {faq.a}
+                                                {l(faq, 'a')}
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
