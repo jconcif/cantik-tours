@@ -191,15 +191,8 @@ const Navbar = () => {
                                     {isDark ? <Sun size={24} /> : <Moon size={24} />}
                                 </button>
                             </div>
-                            <a
-                                href={`https://wa.me/376614535?text=${encodeURIComponent(t('common.whatsapp_message'))}`}
-                                className="w-full btn-primary flex items-center justify-center gap-3 py-4 text-lg"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {t('nav.contact')}
-                            </a>
                         </div>
+
                     </motion.div>
                 )}
             </AnimatePresence>
