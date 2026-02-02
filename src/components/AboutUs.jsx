@@ -51,8 +51,8 @@ const AboutUs = () => {
                 >
                     <div className="bg-white dark:bg-white/5 p-8 rounded-[3rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10">
                         <img
-                            src="/images/team/pertiyani-founder.webp"
-                            alt="Pertiyani - Cantik Tours"
+                            src="/images/team/perty-founder.webp"
+                            alt="Perty - Cantik Tours"
                             className="w-full aspect-[4/5] object-cover rounded-[2rem] shadow-lg mb-6"
                         />
                         <div className="flex items-center justify-between">

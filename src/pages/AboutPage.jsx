@@ -81,8 +81,8 @@ const AboutPage = () => {
                                 className="rounded-[2rem] overflow-hidden shadow-xl"
                             >
                                 <img
-                                    src="/images/team/pertiyani-founder.webp"
-                                    alt="Pertiyani"
+                                    src="/images/team/perty-founder.webp"
+                                    alt="Perty"
                                     className="w-full aspect-[4/5] object-cover"
                                 />
                             </motion.div>
