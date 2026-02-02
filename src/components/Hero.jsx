@@ -19,8 +19,8 @@ const Hero = () => {
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 2.5, ease: "easeOut" }}
-                src="/images/hero.png"
-                alt="Bali Sunrise Temple"
+                src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1920&q=80"
+                alt="Bali Landscape Landscape"
                 className="absolute inset-0 w-full h-full object-cover"
             />
 

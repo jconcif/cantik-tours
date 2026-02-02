@@ -279,17 +279,34 @@ const BaliGuide = () => {
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.sanur_title')}</h5>
-                            <p className="text-sm opacity-80">{t('guide.sections.stay.sanur_desc')}</p>
+                            <p className="text-sm opacity-80 mb-3">{t('guide.sections.stay.sanur_desc')}</p>
+                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                {t('guide.sections.stay.sanur_tip')}
+                            </p>
+                        </div>
+
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.nusadua_title')}</h5>
+                            <p className="text-sm opacity-80 mb-3">{t('guide.sections.stay.nusadua_desc')}</p>
+                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                {t('guide.sections.stay.nusadua_tip')}
+                            </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.lovina_title')}</h5>
-                            <p className="text-sm opacity-80">{t('guide.sections.stay.lovina_desc')}</p>
+                            <p className="text-sm opacity-80 mb-3">{t('guide.sections.stay.lovina_desc')}</p>
+                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                {t('guide.sections.stay.lovina_tip')}
+                            </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.amed_title')}</h5>
-                            <p className="text-sm opacity-80">{t('guide.sections.stay.amed_desc')}</p>
+                            <p className="text-sm opacity-80 mb-3">{t('guide.sections.stay.amed_desc')}</p>
+                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                {t('guide.sections.stay.amed_tip')}
+                            </p>
                         </div>
                     </div>
 
@@ -345,8 +362,8 @@ const BaliGuide = () => {
                         <p><strong>{t('guide.sections.safety.transport')}:</strong> {t('guide.sections.safety.transport_desc')}</p>
                     </li>
                     <li className="flex gap-3 pt-4">
-                        <div className="w-2 h-2 rounded-full bg-secondary mt-2 flex-shrink-0" />
-                        <p className="text-lg italic text-secondary font-bold leading-relaxed">{t('guide.sections.safety.promise')}</p>
+                        <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <p className="text-lg italic text-gray-700 dark:text-gray-300 font-bold leading-relaxed">{t('guide.sections.safety.promise')}</p>
                     </li>
                 </ul>
             )

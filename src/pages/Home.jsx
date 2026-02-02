@@ -19,9 +19,9 @@ const Home = () => {
     return (
         <div className="bg-bg-light dark:bg-bg-dark min-h-screen">
             <SEO
-                title="Tours Privados en Bali | Cantik Tours"
-                description="Agencia de viajes local en Bali con guías en español. Tours privados, itinerarios flexibles y experiencias auténticas con Perty y su equipo."
-                keywords="bali tours, guias en español bali, turismo bali, viaje a bali, bali tours privados, cantiktours"
+                title={t('seo.home.title')}
+                description={t('seo.home.description')}
+                keywords={t('seo.home.keywords')}
             />
             <Hero />
 

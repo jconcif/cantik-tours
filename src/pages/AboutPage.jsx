@@ -17,35 +17,35 @@ const AboutPage = () => {
             name: t('about.guide_1_name'),
             role: t('about.guide_1_role'),
             desc: t('about.guide_1_desc'),
-            image: "/images/guides/guide_wayan.png"
+            image: "/images/guides/guide_wayan.webp"
         },
         {
             name: t('about.guide_2_name'),
             role: t('about.guide_2_role'),
             desc: t('about.guide_2_desc'),
-            image: "/images/guides/guide_putu.png"
+            image: "/images/guides/guide_putu.webp"
         },
         {
             name: t('about.guide_3_name'),
             role: t('about.guide_3_role'),
             desc: t('about.guide_3_desc'),
-            image: "/images/guides/guide_komang.png"
+            image: "/images/guides/guide_komang.webp"
         },
         {
             name: t('about.guide_4_name'),
             role: t('about.guide_4_role'),
             desc: t('about.guide_4_desc'),
-            image: "/images/guides/guide_ketut.png"
+            image: "/images/guides/guide_ketut.webp"
         }
     ];
 
-    const whatsappLinkHelp = "https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20He%20visto%20vuestra%20historia%20y%20me%20gustar%C3%ADa%20haceros%20una%20consulta%20sobre%20mi%20viaje.";
+    const whatsappLinkHelp = `https://wa.me/376614535?text=${encodeURIComponent(t('common.whatsapp_about'))}`;
 
     return (
         <div className="pt-24 min-h-screen bg-bg-light dark:bg-bg-dark font-sans">
             <SEO
-                title="Nosotros | Cantik Tours Bali"
-                description="Conoce la historia detrás de Cantik Tours."
+                title={t('seo.about.title')}
+                description={t('seo.about.description')}
             />
 
             {/* 1. Simple & Clean Header */}
@@ -59,7 +59,7 @@ const AboutPage = () => {
                         {t('about.tag')}
                     </span>
                     <h1 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter">
-                        Nuestra <span className="text-primary italic">Esencia.</span>
+                        {t('about.our')} <span className="text-primary italic">{t('about.essence')}</span>
                     </h1>
                     <div className="max-w-3xl mx-auto">
                         <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
@@ -81,7 +81,7 @@ const AboutPage = () => {
                                 className="rounded-[2rem] overflow-hidden shadow-xl"
                             >
                                 <img
-                                    src="/images/perti.jpg"
+                                    src="/images/team/pertiyani-founder.webp"
                                     alt="Pertiyani"
                                     className="w-full aspect-[4/5] object-cover"
                                 />
@@ -105,7 +105,7 @@ const AboutPage = () => {
                                 className="rounded-[2rem] overflow-hidden shadow-xl"
                             >
                                 <img
-                                    src="/images/team/team_spirit_bali.png"
+                                    src="/images/team/team_spirit_bali.webp"
                                     alt="Javi"
                                     className="w-full aspect-[4/5] object-cover"
                                 />
@@ -192,7 +192,7 @@ const AboutPage = () => {
                             to="/guia-bali"
                             className="w-full md:w-auto px-10 py-5 rounded-2xl bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 font-black uppercase tracking-widest text-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-all"
                         >
-                            Ver Guía Bali 2026
+                            {t('nav.view_guide')}
                         </Link>
 
                         <Link

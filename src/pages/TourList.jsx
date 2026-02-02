@@ -39,7 +39,7 @@ const TourList = () => {
                     animate={{ y: 0, opacity: 1 }}
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-black text-[10px] uppercase tracking-widest mb-6 border border-primary/20"
                 >
-                    <Sparkles size={14} /> Elige tu propia aventura
+                    <Sparkles size={14} /> {t('tours.badge')}
                 </motion.div>
                 <motion.h1
                     initial={{ y: 20, opacity: 0 }}

@@ -18,6 +18,7 @@ i18n
                         home: "Inicio",
                         tours: "Explorar Tours",
                         guide: "Guía Bali 2026",
+                        view_guide: "Ver Guía Bali 2026",
                         contact: "Habla con nosotros",
                         about: "Nosotros",
                         expert_choice: "Elección del Experto"
@@ -59,7 +60,8 @@ i18n
                             aventura: "Aventura",
                             naturaleza: "Naturaleza",
                             traslados: "Traslados"
-                        }
+                        },
+                        badge: "Elige tu propia aventura"
                     },
                     cta: {
                         title: "¿Listo para vivir Bali como un local?",
@@ -73,6 +75,10 @@ i18n
                             title: "Tours Privados en Bali | Cantik Tours",
                             description: "Agencia de viajes local en Bali con guías en español. Tours privados, itinerarios flexibles y experiencias auténticas con Perty y su equipo.",
                             keywords: "bali tours, guias en español bali, turismo bali, viaje a bali, bali tours privados, cantiktours"
+                        },
+                        about: {
+                            title: "Nosotros | Cantik Tours Bali",
+                            description: "Conoce la historia detrás de Cantik Tours."
                         }
                     },
                     detail: {
@@ -265,12 +271,18 @@ i18n
                                 canggu_title: "Canggu (Vanguardia y Vida Nocturna)",
                                 canggu_desc: "El epicentro del ambiente nocturno: beach clubs, cafeterías aesthetic, boutiques de diseño y mucha fiesta.",
                                 canggu_tip: "Consejo: El tráfico en Canggu puede ser un reto. Si buscas algo más tranquilo pero cerca, prueba en la zona de Seminyak o Pererenan.",
-                                sanur_title: "Sanur & Nusa Dua (Relax y Familiar)",
-                                sanur_desc: "Playas de aguas tranquilas y resorts de lujo. Es la zona ideal para familias o para quienes buscan un descanso total sin complicaciones.",
+                                sanur_title: "Sanur (Familiar y Amaneceres)",
+                                sanur_desc: "Playas de aguas tranquilas protegidas por arrecife. Un ambiente clásico y muy familiar con un paseo marítimo único.",
+                                sanur_tip: "Consejo: Alquila una bici al amanecer para recorrer todo el paseo costero. Es mágico.",
+                                nusadua_title: "Nusa Dua (Lujo y Resorts)",
+                                nusadua_desc: "La zona más exclusiva de la isla. Grandes resorts internacionales y playas de arena blanca inmaculadas.",
+                                nusadua_tip: "Consejo: Ideal si buscas un 'todo incluido' y descanso absoluto sin moverte demasiado del hotel.",
                                 lovina_title: "Lovina (Delfines y Relax)",
                                 lovina_desc: "Famosa por sus playas de arena negra volcánica y los avistamientos de delfines al amanecer. Un ambiente mucho más pausado y auténtico.",
+                                lovina_tip: "Consejo: El norte es la zona más auténtica para ver la \"Bali real\" lejos del turismo masivo.",
                                 amed_title: "Amed (Buceo y Vistas al Volcán)",
                                 amed_desc: "El paraíso para el snorkel y el buceo. Sus puestas de sol con vistas al volcán Agung son, posiblemente, de las mejores de Bali.",
+                                amed_tip: "Consejo: Trae escarpines. Las playas son de piedra/coral, pero la visibilidad bajo el agua es la mejor de la isla.",
                                 advice_title: "💡 El Consejo de Cantik Tours",
                                 advice_text: "Si tu viaje es de más de una semana, te recomendamos dividir tu estancia: unos días en cada sector te permitirá disfrutar de los distintos panoramas que Bali te puede entregar."
                             },
@@ -293,7 +305,7 @@ i18n
                                 sockets_desc: "Tipo C/F (el mismo de España o Chile). No necesitas adaptador.",
                                 transport: "Transporte",
                                 transport_desc: "No hay transporte público. Alquila moto si tienes la licencia adecuada o contrata coche con conductor.",
-                                promise: "No vendemos transporte, compartimos el Bali que llamamos hogar. Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen."
+                                promise: "Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen."
                             },
                             summary: {
                                 title: "Resumen por Nacionalidad",
@@ -331,14 +343,16 @@ i18n
                         perty_role: "Fundadora",
                         local_experts: "Expertos Locales",
                         perty_title: "Pertiyani (Fundadora)",
-                        perty_text: "Con profundas raíces balinesas y una vida dedicada a la educación, he tenido el honor de representar nuestra cultura en diversos países como profesora de lengua indonesia. Hoy, mi verdadera pasión es ser tu vínculo personal con el alma de Bali. Para mí, acompañarte no es solo seguir un itinerario, es invitarte a sentir la mística de nuestros templos, la devoción de nuestros rituales y esos rincones secretos que solo revelamos a quienes nos visitan con el corazón. Mi mayor deseo es que vivas esta isla con el mismo respeto y profundo amor con el que yo la llamo hogar.",
+                        perty_text: "Con un Magister en Educación y una vida dedicada a la enseñanza, he tenido el honor de representar nuestra cultura en diversos países como profesora de lengua indonesia. Hoy, mi verdadera pasión es ser tu vínculo personal con el alma de Bali. Para mí, acompañarte no es solo seguir un itinerario, es invitarte a sentir la mística de nuestros templos, la devoción de nuestros rituales y esos rincones secretos que solo revelamos a quienes nos visitan con el corazón. Mi mayor deseo es que vivas esta isla con el mismo respeto y profundo amor con el que yo la llamo hogar.",
                         javi_title: "Javi (Tu Enlace y Logística)",
                         javi_text: "Viajero incansable y un profundo enamorado de Bali, mi misión en Cantik es ser tu puente directo y confiable con la isla. Me encargo de que cada detalle de tu itinerario sea impecable y de resolver cualquier inquietud que surja en el camino. Estoy aquí para que te desprendas de la logística y te concentres únicamente en disfrutar, con la seguridad de saber que siempre tienes a alguien a tu lado para que todo fluya sin inconvenientes.",
                         promise_title: "",
-                        promise_text: "No vendemos transporte, compartimos el Bali que llamamos hogar. Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen.",
+                        promise_text: "Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen.",
                         closing: "Con Cantik Tours, tu viaje no es solo una visita; es una inmersión real en Bali, diseñada para que cada instante sea, de verdad, Cantik.",
                         meet_team_title: "Nuestros Guías",
                         meet_team_subtitle: "Contamos con ellos por su conocimiento y compromiso.",
+                        our: "Nuestra",
+                        essence: "Esencia.",
                         guide_1_name: "Wayan",
                         guide_1_role: "Cultura y Templos",
                         guide_1_desc: "Experto en historia y arquitectura balinesa.",
@@ -399,7 +413,8 @@ i18n
                         reviews_title: "Opiniones",
                         reviews_about: "Sobre",
                         reviews_showing: "Mostrando",
-                        reviews_verified: "opiniones verificadas"
+                        reviews_verified: "opiniones verificadas",
+                        whatsapp_about: "Hola Cantik Tours! He visto vuestra historia y me gustaría haceros una consulta sobre mi viaje."
                     }
                 }
             },
@@ -409,6 +424,7 @@ i18n
                         home: "Home",
                         tours: "Explore Tours",
                         guide: "Bali Guide 2026",
+                        view_guide: "View Bali Guide 2026",
                         contact: "Talk to us",
                         about: "About Us"
                     },
@@ -449,7 +465,8 @@ i18n
                             aventura: "Adventure",
                             naturaleza: "Nature",
                             traslados: "Transfers"
-                        }
+                        },
+                        badge: "Choose your own adventure"
                     },
                     cta: {
                         title: "Ready to live Bali like a local?",
@@ -463,6 +480,10 @@ i18n
                             title: "Private Bali Tours | Cantik Tours",
                             description: "Local travel agency in Bali with Spanish and English speaking guides. Private tours, flexible itineraries and authentic experiences.",
                             keywords: "bali tours, spanish guides bali, bali tourism, trip to bali, private bali tours, cantiktours"
+                        },
+                        about: {
+                            title: "About Us | Cantik Tours Bali",
+                            description: "Get to know the story behind Cantik Tours."
                         }
                     },
                     detail: {
@@ -650,12 +671,18 @@ i18n
                                 canggu_title: "Canggu (Trend & Nightlife)",
                                 canggu_desc: "The epicenter of the nightlife: beach clubs, aesthetic cafes, designer boutiques, and plenty of parties.",
                                 canggu_tip: "Tip: Traffic in Canggu can be a challenge. If you're looking for something quieter but nearby, try the Seminyak or Pererenan area.",
-                                sanur_title: "Sanur & Nusa Dua (Relax & Family Friendly)",
-                                sanur_desc: "Calm water beaches and luxury resorts. It's the ideal zone for families or those looking for total relaxation without complications.",
+                                sanur_title: "Sanur (Family & Sunrise)",
+                                sanur_desc: "Calm waters protected by a reef. A classic and very family-friendly atmosphere with a unique beach promenade.",
+                                sanur_tip: "Tip: Rent a bike at sunrise to ride along the entire coastal path. It's magical.",
+                                nusadua_title: "Nusa Dua (Luxury & Resorts)",
+                                nusadua_desc: "The most exclusive area of the island. Large international resorts and immaculate white sand beaches.",
+                                nusadua_tip: "Tip: Ideal if you are looking for an 'all-inclusive' experience and total relaxation without moving too much from the hotel.",
                                 lovina_title: "Lovina (Dolphins & Relax)",
                                 lovina_desc: "Famous for its volcanic black sand beaches and sunrise dolphin watching. A much slower and more authentic atmosphere.",
+                                lovina_tip: "Tip: The north is the most authentic area to see the \"real Bali\" away from mass tourism.",
                                 amed_title: "Amed (Diving & Volcano Views)",
                                 amed_desc: "A paradise for snorkeling and diving. Its sunsets with views of Mount Agung are arguably among the best in Bali.",
+                                amed_tip: "Tip: Bring water shoes. The beaches have rocks/coral, but the underwater visibility is the best on the island.",
                                 advice_title: "💡 Cantik Tours Advice",
                                 advice_text: "If your trip is more than a week, we recommend splitting your stay: a few days in each sector will allow you to enjoy the different panoramas that Bali can offer you."
                             },
@@ -678,7 +705,7 @@ i18n
                                 sockets_desc: "Type C/F (same as Spain or Chile). No adapter needed.",
                                 transport: "Transport",
                                 transport_desc: "No public transport. Rent a scooter if you have the proper license or hire a car with a driver.",
-                                promise: "We don't sell transportation; we share the Bali we call home. To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us."
+                                promise: "To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us."
                             },
                             summary: {
                                 title: "Nationality Summary",
@@ -715,14 +742,16 @@ i18n
                         perty_name: "Pertiyani",
                         perty_role: "Founder",
                         perty_title: "Pertiyani (Founder)",
-                        perty_text: "With deep Balinese roots and a life dedicated to education, I have had the honor of representing our culture in various countries as an Indonesian language teacher. Today, my true passion is being your personal connection to the soul of Bali. For me, guiding you is not just following an itinerary; it's about inviting you to feel the mysticism of our temples, the devotion of our rituals, and those secret spots we only share with those who visit us with an open heart. My greatest wish is for you to experience this island with the same respect and profound love with which I call it home.",
+                        perty_text: "With a Master's degree in Education and a lifetime dedicated to teaching, I have had the honor of representing our culture in various countries as an Indonesian language teacher. Today, my true passion is being your personal connection to the soul of Bali. For me, guiding you is not just following an itinerary; it's about inviting you to feel the mysticism of our temples, the devotion of our rituals, and those secret spots we only share with those who visit us with an open heart. My greatest wish is for you to experience this island with the same respect and profound love with which I call it home.",
                         javi_title: "Javi (Your Link & Logistics)",
                         javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
                         promise_title: "",
-                        promise_text: "We don't sell transportation; we share the Bali we call home. To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
+                        promise_text: "To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
                         closing: "With Cantik Tours, your trip is not just a visit; it is a real immersion in Bali, designed so that every instant is, truly, Cantik.",
                         meet_team_title: "Our Guides",
                         meet_team_subtitle: "We count on them for their knowledge and commitment.",
+                        our: "Our",
+                        essence: "Essence.",
                         guide_1_name: "Wayan",
                         guide_1_role: "History & Temples",
                         guide_1_desc: "Expert in Balinese history and architecture.",
@@ -783,7 +812,8 @@ i18n
                         reviews_title: "Reviews",
                         reviews_about: "About",
                         reviews_showing: "Showing",
-                        reviews_verified: "verified reviews"
+                        reviews_verified: "verified reviews",
+                        whatsapp_about: "Hi Cantik Tours! I've seen your story and would like to ask you a question about my trip."
                     }
                 }
             }

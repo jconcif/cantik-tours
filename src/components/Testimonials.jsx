@@ -10,9 +10,9 @@ const Testimonials = () => {
     const testimonialData = t('testimonials.data', { returnObjects: true }) || [];
 
     const images = [
-        "/images/testimonials/testimonial_1.jpg",
-        "/images/testimonials/testimonial_2.jpg",
-        "/images/testimonials/testimonial_3.jpg"
+        "/images/testimonials/testimonial_1.webp",
+        "/images/testimonials/testimonial_2.webp",
+        "/images/testimonials/testimonial_3.webp"
     ];
 
     if (!testimonialData.length) return null;
