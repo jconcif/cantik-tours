@@ -105,7 +105,7 @@ const AboutPage = () => {
                                 className="rounded-[2rem] overflow-hidden shadow-xl"
                             >
                                 <img
-                                    src="/images/team/team_spirit_bali.webp"
+                                    src="/images/team/javier-cofounder.webp"
                                     alt="Javi"
                                     className="w-full aspect-[4/5] object-cover"
                                 />
