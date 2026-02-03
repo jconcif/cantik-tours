@@ -10,9 +10,37 @@ const AboutUs = () => {
     return (
         <section id="nosotros" className="py-24 px-6 max-w-7xl mx-auto overflow-hidden">
             <div className="grid lg:grid-cols-2 gap-16 items-center">
-                {/* Left Column: Text & CTA */}
+                {/* Left Column: Visual */}
                 <motion.div
-                    initial={{ opacity: 0, x: -50 }}
+                    initial={{ opacity: 0, scale: 0.95, x: -30 }}
+                    whileInView={{ opacity: 1, scale: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2 }}
+                    className="relative"
+                >
+                    <div className="bg-white dark:bg-white/5 p-8 rounded-[3rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10">
+                        <img
+                            src="/images/team/perty-founder.webp"
+                            alt="Perty - Cantik Tours"
+                            className="w-full aspect-[4/5] object-cover rounded-[2rem] shadow-lg mb-6"
+                        />
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h4 className="font-black text-xl text-primary">{t('about.perty_name')}</h4>
+                                <p className="text-sm font-medium opacity-60">{t('about.perty_role')}</p>
+                            </div>
+                            <div className="px-4 py-2 bg-primary/10 rounded-full text-primary font-bold text-xs uppercase tracking-widest">
+                                {t('about.local_experts')}
+                            </div>
+                        </div>
+                    </div>
+                    {/* Decorative Blob */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-full blur-[100px] -z-10" />
+                </motion.div>
+
+                {/* Right Column: Text & CTA */}
+                <motion.div
+                    initial={{ opacity: 0, x: 50 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     className="relative"
@@ -39,34 +67,6 @@ const AboutUs = () => {
                     >
                         {t('hero.btn_story')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                     </Link>
-                </motion.div>
-
-                {/* Right Column: Visual */}
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
-                    className="relative"
-                >
-                    <div className="bg-white dark:bg-white/5 p-8 rounded-[3rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10">
-                        <img
-                            src="/images/team/perty-founder.webp"
-                            alt="Perty - Cantik Tours"
-                            className="w-full aspect-[4/5] object-cover rounded-[2rem] shadow-lg mb-6"
-                        />
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h4 className="font-black text-xl text-primary">{t('about.perty_name')}</h4>
-                                <p className="text-sm font-medium opacity-60">{t('about.perty_role')}</p>
-                            </div>
-                            <div className="px-4 py-2 bg-primary/10 rounded-full text-primary font-bold text-xs uppercase tracking-widest">
-                                {t('about.local_experts')}
-                            </div>
-                        </div>
-                    </div>
-                    {/* Decorative Blob */}
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-primary/10 to-secondary/10 rounded-full blur-[100px] -z-10" />
                 </motion.div>
             </div>
         </section>

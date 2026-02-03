@@ -67,10 +67,6 @@ const BaliGuide = () => {
                                 <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
                                 <p><strong>{t('guide.sections.visa.passport')}:</strong> {t('guide.sections.visa.passport_desc')}</p>
                             </li>
-                            <li className="flex gap-3">
-                                <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                                <p><strong>{t('guide.sections.visa.exit_ticket')}:</strong> {t('guide.sections.visa.exit_ticket_desc')}</p>
-                            </li>
                         </ul>
                     </div>
 
@@ -89,7 +85,13 @@ const BaliGuide = () => {
                                             <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.b1_voa')}</span></li>
                                         </ul>
                                     </div>
-                                    <p className="text-sm"><strong>{t('guide.sections.visa.b1_reqs')}</strong></p>
+                                    <div className="space-y-1">
+                                        <p className="text-sm font-bold">{t('guide.sections.visa.b1_reqs')}</p>
+                                        <ul className="text-sm space-y-2 ml-4">
+                                            <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.b1_exit_desc')}</span></li>
+                                        </ul>
+                                        <p className="text-xs text-primary font-medium mt-2">{t('guide.sections.visa.b1_exit_tip')}</p>
+                                    </div>
                                     <p className="text-xs opacity-70 italic">{t('guide.sections.visa.b1_note')}</p>
                                 </div>
                             </div>
@@ -206,19 +208,6 @@ const BaliGuide = () => {
                     <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.health.intro')}</p>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.yellow_title')}</h4>
-                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
-                            <p className="text-sm leading-relaxed mb-4">{t('guide.sections.health.yellow_intro')}</p>
-                            <ul className="text-sm space-y-3 ml-4">
-                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_when')}</span></li>
-                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_countries')}</span></li>
-                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_europe')}</span></li>
-                            </ul>
-                            <p className="text-xs opacity-70 italic mt-4">{t('guide.sections.health.yellow_note')}</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
                         <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.insurance_title')}</h4>
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <p className="text-sm leading-relaxed">{t('guide.sections.health.insurance_desc')}</p>
@@ -241,6 +230,19 @@ const BaliGuide = () => {
                         <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.repellent_title')}</h4>
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <p className="text-sm leading-relaxed">{t('guide.sections.health.repellent_desc')}</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.yellow_title')}</h4>
+                        <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                            <p className="text-sm leading-relaxed mb-4">{t('guide.sections.health.yellow_intro')}</p>
+                            <ul className="text-sm space-y-3 ml-4">
+                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_when')}</span></li>
+                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_countries')}</span></li>
+                                <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_europe')}</span></li>
+                            </ul>
+                            <p className="text-xs opacity-70 italic mt-4">{t('guide.sections.health.yellow_note')}</p>
                         </div>
                     </div>
                 </div>
