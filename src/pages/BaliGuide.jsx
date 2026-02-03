@@ -32,7 +32,7 @@ const GuideSection = ({ title, children, isOpen, onToggle }) => (
                     transition={{ duration: 0.3 }}
                     className="px-8 pb-8"
                 >
-                    <div className="pt-4 border-t border-black/5 dark:border-white/5 text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
+                    <div className="pt-4 border-t border-black/5 dark:border-white/5 text-gray-600 dark:text-gray-300 leading-relaxed font-medium text-lg">
                         {children}
                     </div>
                 </motion.div>
@@ -58,10 +58,10 @@ const BaliGuide = () => {
             title: t('guide.sections.visa.title'),
             content: (
                 <div className="space-y-8">
-                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.visa.intro')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 italic text-lg">{t('guide.sections.visa.intro')}</p>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.visa.basic_title')}</h4>
+                        <h4 className="font-black text-primary uppercase tracking-wider text-base">{t('guide.sections.visa.basic_title')}</h4>
                         <ul className="space-y-4">
                             <li className="flex gap-3">
                                 <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
@@ -71,38 +71,38 @@ const BaliGuide = () => {
                     </div>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.visa.types_title')}</h4>
+                        <h4 className="font-black text-primary uppercase tracking-wider text-base">{t('guide.sections.visa.types_title')}</h4>
                         <div className="grid gap-6">
                             <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                                 <h5 className="font-bold text-lg mb-2">{t('guide.sections.visa.b1_title')}</h5>
-                                <p className="text-sm mb-2 opacity-80">{t('guide.sections.visa.b1_cost')}</p>
-                                <p className="text-sm mb-4 opacity-80">{t('guide.sections.visa.b1_duration')}</p>
+                                <p className="text-base mb-2 opacity-80">{t('guide.sections.visa.b1_cost')}</p>
+                                <p className="text-base mb-4 opacity-80">{t('guide.sections.visa.b1_duration')}</p>
                                 <div className="space-y-3">
                                     <div className="space-y-1">
-                                        <p className="text-sm font-bold">{t('guide.sections.visa.b1_mgmt')}</p>
-                                        <ul className="text-sm space-y-2 ml-4">
+                                        <p className="text-base font-bold">{t('guide.sections.visa.b1_mgmt')}</p>
+                                        <ul className="text-base space-y-2 ml-4">
                                             <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.b1_evoa')}</span></li>
                                             <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.b1_voa')}</span></li>
                                         </ul>
                                     </div>
                                     <div className="space-y-1">
-                                        <p className="text-sm font-bold">{t('guide.sections.visa.b1_reqs')}</p>
-                                        <ul className="text-sm space-y-2 ml-4">
+                                        <p className="text-base font-bold">{t('guide.sections.visa.b1_reqs')}</p>
+                                        <ul className="text-base space-y-2 ml-4">
                                             <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.b1_exit_desc')}</span></li>
                                         </ul>
-                                        <p className="text-xs text-primary font-medium mt-2">{t('guide.sections.visa.b1_exit_tip')}</p>
+                                        <p className="text-sm text-primary font-medium mt-2">{t('guide.sections.visa.b1_exit_tip')}</p>
                                     </div>
-                                    <p className="text-xs opacity-70 italic">{t('guide.sections.visa.b1_note')}</p>
+                                    <p className="text-sm opacity-70 italic">{t('guide.sections.visa.b1_note')}</p>
                                 </div>
                             </div>
 
                             <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                                 <h5 className="font-bold text-lg mb-2">{t('guide.sections.visa.c1_title')}</h5>
-                                <p className="text-sm mb-2 opacity-80">{t('guide.sections.visa.c1_cost')}</p>
-                                <p className="text-sm mb-4 opacity-80">{t('guide.sections.visa.c1_duration')}</p>
+                                <p className="text-base mb-2 opacity-80">{t('guide.sections.visa.c1_cost')}</p>
+                                <p className="text-base mb-4 opacity-80">{t('guide.sections.visa.c1_duration')}</p>
                                 <div className="space-y-2">
-                                    <p className="text-sm font-bold">{t('guide.sections.visa.c1_reqs')}</p>
-                                    <ul className="text-sm space-y-2 ml-4">
+                                    <p className="text-base font-bold">{t('guide.sections.visa.c1_reqs')}</p>
+                                    <ul className="text-base space-y-2 ml-4">
                                         <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.visa.c1_solvency')}</span></li>
                                     </ul>
                                 </div>
@@ -111,20 +111,20 @@ const BaliGuide = () => {
                     </div>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.visa.levy_title')}</h4>
+                        <h4 className="font-black text-primary uppercase tracking-wider text-base">{t('guide.sections.visa.levy_title')}</h4>
                         <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20">
-                            <p className="text-sm leading-relaxed mb-4">{t('guide.sections.visa.levy_desc')}</p>
-                            <ul className="text-sm space-y-3 ml-4 mb-4">
+                            <p className="text-base leading-relaxed mb-4">{t('guide.sections.visa.levy_desc')}</p>
+                            <ul className="text-base space-y-3 ml-4 mb-4">
                                 <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.visa.levy_mgmt').split(':')[0]}:</strong>{t('guide.sections.visa.levy_mgmt').split(':')[1]}</span></li>
                                 <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.visa.levy_qr').split(':')[0]}:</strong>{t('guide.sections.visa.levy_qr').split(':')[1]}</span></li>
                             </ul>
-                            <p className="text-xs opacity-70 italic">{t('guide.sections.visa.levy_note')}</p>
+                            <p className="text-sm opacity-70 italic">{t('guide.sections.visa.levy_note')}</p>
                         </div>
                     </div>
 
                     <div className="p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
                         <h4 className="font-bold text-secondary mb-2">{t('guide.sections.visa.advice_title')}</h4>
-                        <p className="text-sm opacity-80">{t('guide.sections.visa.advice_text')}</p>
+                        <p className="text-base opacity-80">{t('guide.sections.visa.advice_text')}</p>
                     </div>
                 </div>
             )
@@ -133,14 +133,14 @@ const BaliGuide = () => {
             title: t('guide.sections.levy.title'),
             content: (
                 <div className="space-y-8">
-                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.levy.intro')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 italic text-lg">{t('guide.sections.levy.intro')}</p>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.levy.exchange_title')}</h4>
+                        <h4 className="font-black text-primary uppercase tracking-wider text-base">{t('guide.sections.levy.exchange_title')}</h4>
                         <ul className="space-y-4">
                             <li className="flex gap-3">
                                 <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                                <p><strong>{t('guide.sections.levy.exchange_rate')}</strong></p>
+                                <p className="text-base"><strong>{t('guide.sections.levy.exchange_rate')}</strong></p>
                             </li>
                             <li className="flex gap-3">
                                 <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
@@ -157,13 +157,13 @@ const BaliGuide = () => {
                         <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.levy.cards_title')}</h4>
                         <div className="grid gap-4">
                             <div className="p-5 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
-                                <p className="text-sm leading-relaxed mb-3">
+                                <p className="text-base leading-relaxed mb-3">
                                     <span className="font-bold">{t('guide.sections.levy.cards_recommended')}</span>
                                 </p>
-                                <p className="text-sm leading-relaxed mb-3">
+                                <p className="text-base leading-relaxed mb-3">
                                     <span className="font-bold">{t('guide.sections.levy.cards_safe')}</span>
                                 </p>
-                                <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                                <p className="text-base bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                     {t('guide.sections.levy.cards_tip')}
                                 </p>
                             </div>
@@ -174,19 +174,19 @@ const BaliGuide = () => {
                         <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.levy.budget_title')}</h4>
                         <div className="grid sm:grid-cols-2 gap-4">
                             <div className="p-4 rounded-xl border border-black/5 dark:border-white/5">
-                                <p className="text-sm font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
+                                <p className="text-base font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
                                     <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_food').split(':')[0]}
                                 </p>
                                 <p className="font-bold">{t('guide.sections.levy.budget_food').split(':')[1]}</p>
                             </div>
                             <div className="p-4 rounded-xl border border-black/5 dark:border-white/5">
-                                <p className="text-sm font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
+                                <p className="text-base font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
                                     <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_beer').split(':')[0]}
                                 </p>
                                 <p className="font-bold">{t('guide.sections.levy.budget_beer').split(':')[1]}</p>
                             </div>
                             <div className="p-4 rounded-xl border border-black/5 dark:border-white/5">
-                                <p className="text-sm font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
+                                <p className="text-base font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
                                     <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_massage').split(':')[0]}
                                 </p>
                                 <p className="font-bold">{t('guide.sections.levy.budget_massage').split(':')[1]}</p>
@@ -196,7 +196,7 @@ const BaliGuide = () => {
 
                     <div className="p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
                         <h4 className="font-bold text-secondary mb-2">{t('guide.sections.levy.advice_title')}</h4>
-                        <p className="text-sm opacity-80">{t('guide.sections.levy.advice_text')}</p>
+                        <p className="text-base opacity-80">{t('guide.sections.levy.advice_text')}</p>
                     </div>
                 </div>
             )
@@ -205,20 +205,20 @@ const BaliGuide = () => {
             title: t('guide.sections.health.title'),
             content: (
                 <div className="space-y-8">
-                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.health.intro')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 italic text-lg">{t('guide.sections.health.intro')}</p>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.insurance_title')}</h4>
+                        <h4 className="font-black text-primary uppercase tracking-wider text-base">{t('guide.sections.health.insurance_title')}</h4>
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
-                            <p className="text-sm leading-relaxed">{t('guide.sections.health.insurance_desc')}</p>
+                            <p className="text-base leading-relaxed">{t('guide.sections.health.insurance_desc')}</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.belly_title')}</h4>
+                        <h4 className="font-black text-primary uppercase tracking-wider text-base">{t('guide.sections.health.belly_title')}</h4>
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <p className="text-sm leading-relaxed mb-4">{t('guide.sections.health.belly_intro')}</p>
-                            <ul className="text-sm space-y-3 ml-4">
+                            <ul className="text-base space-y-3 ml-4">
                                 <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.health.belly_probiotics').split(':')[0]}:</strong>{t('guide.sections.health.belly_probiotics').split(':')[1]}</span></li>
                                 <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.health.belly_water').split(':')[0]}:</strong>{t('guide.sections.health.belly_water').split(':')[1]}</span></li>
                                 <li className="flex gap-2"><span>•</span> <span><strong>{t('guide.sections.health.belly_ice').split(':')[0]}:</strong>{t('guide.sections.health.belly_ice').split(':')[1]}</span></li>
@@ -227,22 +227,22 @@ const BaliGuide = () => {
                     </div>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.repellent_title')}</h4>
+                        <h4 className="font-black text-primary uppercase tracking-wider text-base">{t('guide.sections.health.repellent_title')}</h4>
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
-                            <p className="text-sm leading-relaxed">{t('guide.sections.health.repellent_desc')}</p>
+                            <p className="text-base leading-relaxed">{t('guide.sections.health.repellent_desc')}</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
-                        <h4 className="font-black text-primary uppercase tracking-wider text-sm">{t('guide.sections.health.yellow_title')}</h4>
+                        <h4 className="font-black text-primary uppercase tracking-wider text-base">{t('guide.sections.health.yellow_title')}</h4>
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <p className="text-sm leading-relaxed mb-4">{t('guide.sections.health.yellow_intro')}</p>
-                            <ul className="text-sm space-y-3 ml-4">
+                            <ul className="text-base space-y-3 ml-4">
                                 <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_when')}</span></li>
                                 <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_countries')}</span></li>
                                 <li className="flex gap-2"><span>•</span> <span>{t('guide.sections.health.yellow_europe')}</span></li>
                             </ul>
-                            <p className="text-xs opacity-70 italic mt-4">{t('guide.sections.health.yellow_note')}</p>
+                            <p className="text-sm opacity-70 italic mt-4">{t('guide.sections.health.yellow_note')}</p>
                         </div>
                     </div>
                 </div>
@@ -252,61 +252,61 @@ const BaliGuide = () => {
             title: t('guide.sections.stay.title'),
             content: (
                 <div className="space-y-8">
-                    <p className="text-gray-600 dark:text-gray-300 italic">{t('guide.sections.stay.intro')}</p>
+                    <p className="text-gray-600 dark:text-gray-300 italic text-lg">{t('guide.sections.stay.intro')}</p>
 
                     <div className="grid gap-6">
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.ubud_title')}</h5>
-                            <p className="text-sm mb-3 opacity-80">{t('guide.sections.stay.ubud_desc')}</p>
-                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                            <p className="text-base mb-3 opacity-80">{t('guide.sections.stay.ubud_desc')}</p>
+                            <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                 {t('guide.sections.stay.ubud_tip')}
                             </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.uluwatu_title')}</h5>
-                            <p className="text-sm mb-3 opacity-80">{t('guide.sections.stay.uluwatu_desc')}</p>
-                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                            <p className="text-base mb-3 opacity-80">{t('guide.sections.stay.uluwatu_desc')}</p>
+                            <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                 {t('guide.sections.stay.uluwatu_tip')}
                             </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.canggu_title')}</h5>
-                            <p className="text-sm mb-3 opacity-80">{t('guide.sections.stay.canggu_desc')}</p>
-                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                            <p className="text-base mb-3 opacity-80">{t('guide.sections.stay.canggu_desc')}</p>
+                            <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                 {t('guide.sections.stay.canggu_tip')}
                             </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.sanur_title')}</h5>
-                            <p className="text-sm opacity-80 mb-3">{t('guide.sections.stay.sanur_desc')}</p>
-                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                            <p className="text-base opacity-80 mb-3">{t('guide.sections.stay.sanur_desc')}</p>
+                            <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                 {t('guide.sections.stay.sanur_tip')}
                             </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.nusadua_title')}</h5>
-                            <p className="text-sm opacity-80 mb-3">{t('guide.sections.stay.nusadua_desc')}</p>
-                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                            <p className="text-base opacity-80 mb-3">{t('guide.sections.stay.nusadua_desc')}</p>
+                            <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                 {t('guide.sections.stay.nusadua_tip')}
                             </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.lovina_title')}</h5>
-                            <p className="text-sm opacity-80 mb-3">{t('guide.sections.stay.lovina_desc')}</p>
-                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                            <p className="text-base opacity-80 mb-3">{t('guide.sections.stay.lovina_desc')}</p>
+                            <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                 {t('guide.sections.stay.lovina_tip')}
                             </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.stay.amed_title')}</h5>
-                            <p className="text-sm opacity-80 mb-3">{t('guide.sections.stay.amed_desc')}</p>
-                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                            <p className="text-base opacity-80 mb-3">{t('guide.sections.stay.amed_desc')}</p>
+                            <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                 {t('guide.sections.stay.amed_tip')}
                             </p>
                         </div>
@@ -314,7 +314,7 @@ const BaliGuide = () => {
 
                     <div className="p-6 rounded-2xl bg-secondary/5 border border-secondary/20">
                         <h4 className="font-bold text-secondary mb-2">{t('guide.sections.stay.advice_title')}</h4>
-                        <p className="text-sm opacity-80">{t('guide.sections.stay.advice_text')}</p>
+                        <p className="text-base opacity-80">{t('guide.sections.stay.advice_text')}</p>
                     </div>
                 </div>
             )
@@ -328,20 +328,20 @@ const BaliGuide = () => {
                     <div className="grid gap-6">
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.apps.grab_title')}</h5>
-                            <p className="text-sm mb-3 opacity-80">{t('guide.sections.apps.grab_desc')}</p>
-                            <p className="text-xs bg-primary/10 text-primary p-3 rounded-xl font-medium">
+                            <p className="text-base mb-3 opacity-80">{t('guide.sections.apps.grab_desc')}</p>
+                            <p className="text-sm bg-primary/10 text-primary p-3 rounded-xl font-medium">
                                 {t('guide.sections.apps.grab_tip')}
                             </p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.apps.internet_title')}</h5>
-                            <p className="text-sm opacity-80">{t('guide.sections.apps.internet_desc')}</p>
+                            <p className="text-base opacity-80">{t('guide.sections.apps.internet_desc')}</p>
                         </div>
 
                         <div className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
                             <h5 className="font-bold text-lg mb-2">{t('guide.sections.apps.maps_title')}</h5>
-                            <p className="text-sm opacity-80">{t('guide.sections.apps.maps_desc')}</p>
+                            <p className="text-base opacity-80">{t('guide.sections.apps.maps_desc')}</p>
                         </div>
                     </div>
                 </div>
@@ -353,19 +353,19 @@ const BaliGuide = () => {
                 <ul className="space-y-4">
                     <li className="flex gap-3">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>{t('guide.sections.safety.water')}:</strong> {t('guide.sections.safety.water_desc')}</p>
+                        <p className="text-base"><strong>{t('guide.sections.safety.water')}:</strong> {t('guide.sections.safety.water_desc')}</p>
                     </li>
                     <li className="flex gap-3">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>{t('guide.sections.safety.sockets')}:</strong> {t('guide.sections.safety.sockets_desc')}</p>
+                        <p className="text-base"><strong>{t('guide.sections.safety.sockets')}:</strong> {t('guide.sections.safety.sockets_desc')}</p>
                     </li>
                     <li className="flex gap-3">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p><strong>{t('guide.sections.safety.transport')}:</strong> {t('guide.sections.safety.transport_desc')}</p>
+                        <p className="text-base"><strong>{t('guide.sections.safety.transport')}:</strong> {t('guide.sections.safety.transport_desc')}</p>
                     </li>
                     <li className="flex gap-3 pt-4">
                         <div className="w-2 h-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                        <p className="text-lg italic text-gray-700 dark:text-gray-300 font-bold leading-relaxed">{t('guide.sections.safety.promise')}</p>
+                        <p className="text-xl italic text-gray-700 dark:text-gray-300 font-bold leading-relaxed">{t('guide.sections.safety.promise')}</p>
                     </li>
                 </ul>
             )
