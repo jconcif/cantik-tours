@@ -1,6 +1,7 @@
-import React, { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { initGA, trackPageView } from './utils/analytics';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -22,6 +23,16 @@ const PageLoader = () => (
 );
 
 function App() {
+    const location = useLocation();
+
+    useEffect(() => {
+        initGA();
+    }, []);
+
+    useEffect(() => {
+        trackPageView(location.pathname + location.search);
+    }, [location]);
+
     return (
         <DarkModeProvider>
             <ScrollToTop />

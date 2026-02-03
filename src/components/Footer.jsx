@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { Instagram, Heart, MessageCircle, ShieldCheck, Users, Banknote } from 'lucide-react';
+import { trackEvent } from '../utils/analytics';
 
 const Footer = () => {
     const { t } = useTranslation();
@@ -56,6 +57,7 @@ const Footer = () => {
                             href={`https://wa.me/376614535?text=${encodeURIComponent(t('common.whatsapp_message'))}`}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => trackEvent('Conversion', 'WhatsApp Click', 'Footer Button')}
                             className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110"
                         >
                             <MessageCircle size={24} />

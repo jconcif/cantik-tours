@@ -6,6 +6,7 @@ import {
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
+import { trackEvent } from '../utils/analytics';
 
 const GuideSection = ({ title, children, isOpen, onToggle }) => (
     <div className="border border-black/5 dark:border-white/5 rounded-3xl overflow-hidden bg-white dark:bg-white/5 transition-all">
@@ -437,6 +438,7 @@ const BaliGuide = () => {
                             href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Tengo%20algunas%20dudas%20sobre%20mi%20viaje%20a%20Bali."
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => trackEvent('Conversion', 'WhatsApp Click', 'Bali Guide Footer')}
                             className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-black px-8 py-4 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
                         >
                             {t('guide.help_btn')}
