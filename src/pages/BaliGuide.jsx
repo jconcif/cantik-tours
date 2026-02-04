@@ -188,9 +188,15 @@ const BaliGuide = () => {
                             </div>
                             <div className="p-4 rounded-xl border border-black/5 dark:border-white/5">
                                 <p className="text-base font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
-                                    <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_massage').split(':')[0]}
+                                    <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_massage').split(':')[0] || 'Massage'}
                                 </p>
-                                <p className="font-bold">{t('guide.sections.levy.budget_massage').split(':')[1]}</p>
+                                <p className="font-bold">{t('guide.sections.levy.budget_massage').split(':')[1] || '6€ - 10€'}</p>
+                            </div>
+                            <div className="p-4 rounded-xl border border-black/5 dark:border-white/5">
+                                <p className="text-base font-bold opacity-60 uppercase flex items-center gap-2 mb-1">
+                                    <div className="w-1 h-1 rounded-full bg-primary" /> {t('guide.sections.levy.budget_scooter').split(':')[0] || 'Scooter'}
+                                </p>
+                                <p className="font-bold">{t('guide.sections.levy.budget_scooter').split(':')[1] || 'From 80K'}</p>
                             </div>
                         </div>
                     </div>

@@ -236,9 +236,10 @@ i18n
                                 cards_safe: "Cajeros Seguros: Utiliza siempre cajeros situados dentro de sucursales bancarias (BCA, Mandiri, BNI o CIMB Niaga). Son más seguros frente al skimming (duplicado de tarjetas).",
                                 cards_tip: "Pro Tip: Al sacar dinero, elige siempre \"cobrar en moneda local\" (IDR) en lugar de en euros para que sea tu banco quien haga la conversión, y no el cajero.",
                                 budget_title: "3. Presupuesto Orientativo (Precios 2026)",
-                                budget_food: "Comida local: Un plato de Nasi Goreng en un warung cuesta unos 2€ - 4€.",
-                                budget_beer: "Café/Cerveza: Una cerveza local Bintang cuesta unos 2€ - 3€.",
-                                budget_massage: "Masaje: 1 hora de masaje balinés suele rondar los 6€ - 10€.",
+                                budget_food: "Gastronomía Local: Un almuerzo típico (Nasi Goreng) en un warung cuesta entre 2€ y 4€.",
+                                budget_beer: "Café o Cerveza: Una Bintang fría o un Latte artesanal rondan los 1,5€ y 3€.",
+                                budget_massage: "Pausa Relax: 60 min de masaje balinés tradicional suele costar entre 6€ y 10€.",
+                                budget_scooter: "Arriendo de Moto: Alquiler de scooter por día desde 4€ - 5€ (dependiendo del modelo).",
                                 advice_title: "💡 El Consejo de Cantik Tours",
                                 advice_text: "Lleva siempre billetes pequeños (de 10.000 o 20.000 IDR) a mano. Son ideales para propinas, parkings en las playas o pequeñas compras donde no aceptan tarjetas."
                             },
@@ -259,7 +260,7 @@ i18n
                                 belly_water: "Agua: Bebe siempre agua embotellada o filtrada (nunca del grifo, ni para lavarte los dientes).",
                                 belly_ice: "Hielo: En zonas turísticas es de agua purificada (tiene un agujero en medio), pero si tienes dudas, puedes pedirlo en un vaso a parte o sin él.",
                                 repellent_title: "3. Repelente de Mosquitos",
-                                repellent_desc: "Siempre es mejor comprar un repelente en el destino; en Bali encuentras Soffell, bueno y barato."
+                                repellent_desc: "Siempre es mejor comprar un repelente en el destino; en Bali encuentras Soffell, es muy efectivo y barato (aprox. 1€)."
                             },
                             stay: {
                                 title: "¿Dónde alojarse?",
@@ -639,9 +640,10 @@ i18n
                                 cards_safe: "Safe ATMs: Always use ATMs located inside bank branches (BCA, Mandiri, BNI, or CIMB Niaga). They are safer against skimming (card duplication).",
                                 cards_tip: "Pro Tip: When withdrawing money, always choose to \"charge in local currency\" (IDR) instead of in dollars so that your bank does the conversion, not the ATM.",
                                 budget_title: "3. Budget Orientation (2026 Prices)",
-                                budget_food: "Local food: A plate of Nasi Goreng at a warung costs about $2 - $4.",
-                                budget_beer: "Coffee/Beer: A local Bintang beer costs about $2 - $3.",
-                                budget_massage: "Massage: 1 hour of Balinese massage usually costs around $6 - $10.",
+                                budget_food: "Local Gastronomy: A typical lunch (Nasi Goreng) in a warung costs between €2 and €4.",
+                                budget_beer: "Coffee or Beer: A cold Bintang or a craft Latte is around €1.5 and €3.",
+                                budget_massage: "Relax Pause: 60 min of traditional Balinese massage usually costs between €6 and €10.",
+                                budget_scooter: "Scooter Rental: Daily scooter rental starting from €4 - €5 (depending on the model).",
                                 advice_title: "💡 Cantik Tours Advice",
                                 advice_text: "Always carry small bills (10,000 or 20,000 IDR). They are ideal for tips, beach parking, or small purchases where cards are not accepted."
                             },
@@ -662,7 +664,7 @@ i18n
                                 belly_water: "Water: Always drink bottled or filtered water (never tap water, not even for brushing teeth).",
                                 belly_ice: "Ice: In tourist areas, it's purified water (tube-shaped with a hole), but if you have doubts, you can ask for it in a separate glass or without it.",
                                 repellent_title: "3. Mosquito Repellent",
-                                repellent_desc: "It's always better to buy repellent at the destination; in Bali you find Soffell, good and cheap."
+                                repellent_desc: "It's always better to buy repellent at the destination; in Bali you find Soffell, very effective and cheap (approx. 1€)."
                             },
                             stay: {
                                 title: "Where to Stay",
