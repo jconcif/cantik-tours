@@ -8,8 +8,16 @@ const AboutUs = () => {
     const { t } = useTranslation();
 
     return (
-        <section id="nosotros" className="py-24 px-6 max-w-7xl mx-auto overflow-hidden">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <section id="nosotros" className="py-20 md:py-32 px-6 max-w-7xl mx-auto overflow-hidden">
+            <div className="text-center mb-12 md:hidden">
+                <span className="text-primary font-bold tracking-[0.3em] uppercase text-[10px] mb-3 block">
+                    {t('about.tag')}
+                </span>
+                <h2 className="text-4xl font-black tracking-tighter text-gray-900 dark:text-white leading-none">
+                    {t('about.our')} <span className="text-primary italic">{t('about.essence')}</span>
+                </h2>
+            </div>
+            <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-center">
                 {/* Left Column: Visual */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95, x: -30 }}
@@ -18,19 +26,16 @@ const AboutUs = () => {
                     transition={{ delay: 0.2 }}
                     className="relative"
                 >
-                    <div className="bg-white dark:bg-white/5 p-8 rounded-[3rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10">
+                    <div className="bg-white dark:bg-white/5 p-4 sm:p-6 md:p-8 rounded-[2.5rem] md:rounded-[3.5rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10 transition-transform hover:scale-[1.02] duration-500">
                         <img
                             src="/images/team/perty-founder.webp"
                             alt="Perty - Cantik Tours"
-                            className="w-full aspect-[4/5] object-cover rounded-[2rem] shadow-lg mb-6"
+                            className="w-full aspect-[4/5] object-cover rounded-[1.8rem] md:rounded-[2.5rem] shadow-lg mb-6"
                         />
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center px-2">
                             <div>
-                                <h4 className="font-black text-xl text-primary">{t('about.perty_name')}</h4>
-                                <p className="text-sm font-medium opacity-60">{t('about.perty_role')}</p>
-                            </div>
-                            <div className="px-4 py-2 bg-primary/10 rounded-full text-primary font-bold text-xs uppercase tracking-widest">
-                                {t('about.local_experts')}
+                                <h4 className="font-black text-xl md:text-2xl text-primary leading-tight">{t('about.perty_name')}</h4>
+                                <p className="text-sm md:text-base font-medium opacity-60 uppercase tracking-wider">{t('about.perty_role')}</p>
                             </div>
                         </div>
                     </div>
@@ -45,18 +50,18 @@ const AboutUs = () => {
                     viewport={{ once: true }}
                     className="relative"
                 >
-                    <span className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-4 block">
+                    <span className="text-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs mb-4 hidden md:block">
                         {t('about.tag')}
                     </span>
-                    <h2 className="text-4xl md:text-6xl font-black mb-8 tracking-tighter text-gray-900 dark:text-white">
+                    <h2 className="text-4xl lg:text-7xl font-black mb-8 tracking-tighter text-gray-900 dark:text-white leading-none hidden md:block">
                         {t('about.title')}
                     </h2>
 
-                    <div className="prose dark:prose-invert mb-10">
-                        <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-medium leading-relaxed italic mb-6">
+                    <div className="prose dark:prose-invert mb-12">
+                        <p className="text-lg md:text-xl lg:text-2xl text-gray-700 dark:text-gray-300 font-medium leading-relaxed italic mb-8 border-l-4 border-primary/30 pl-6">
                             "{t('about.meaning_text')}"
                         </p>
-                        <p className="text-lg text-gray-500 font-medium">
+                        <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
                             {t('about.team_intro_text')}
                         </p>
                     </div>
