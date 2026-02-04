@@ -112,17 +112,6 @@ const AboutPage = () => {
                             <p className="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-[0.3em] mb-8">({t('about.javi_role') || 'Logística & Enlace'})</p>
                             <div className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed border-l-4 lg:border-l-0 lg:border-r-4 border-primary/20 pl-8 lg:pl-0 lg:pr-8">
                                 {t('about.javi_text')}
-                                <div className="pt-10 flex lg:justify-end">
-                                    <a
-                                        href={whatsappLinkHelp}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="btn-primary w-full md:w-auto text-center justify-center inline-flex items-center gap-2 group"
-                                    >
-                                        {t('guide.help_btn')}
-                                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                                    </a>
-                                </div>
                             </div>
                         </div>
                     </div>
