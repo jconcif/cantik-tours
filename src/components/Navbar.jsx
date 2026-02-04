@@ -60,14 +60,32 @@ const Navbar = () => {
                             <ChevronLeft size={24} />
                         </button>
                     )}
-                    <Link to="/" className="flex items-center gap-1.5 group">
+                    <Link
+                        to="/"
+                        onClick={(e) => {
+                            if (isHome) {
+                                e.preventDefault();
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        }}
+                        className="flex items-center gap-1.5 group"
+                    >
                         <span className="text-xl sm:text-2xl font-black tracking-tighter text-primary group-hover:scale-105 transition-transform">CANTIK</span>
                         <span className={`text-xl sm:text-2xl font-light tracking-widest uppercase transition-colors ${textColorClass}`}>Tours</span>
                     </Link>
                 </div>
 
                 <div className="hidden md:flex items-center gap-8 font-semibold">
-                    <Link to="/" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
+                    <Link
+                        to="/"
+                        onClick={(e) => {
+                            if (isHome) {
+                                e.preventDefault();
+                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }
+                        }}
+                        className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}
+                    >
                         {t('nav.home')}
                         {isHome && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
                     </Link>
@@ -145,7 +163,13 @@ const Navbar = () => {
                         <div className="flex flex-col p-8 gap-6 text-2xl font-black">
                             <Link
                                 to="/"
-                                onClick={() => setIsMobileMenuOpen(false)}
+                                onClick={(e) => {
+                                    setIsMobileMenuOpen(false);
+                                    if (isHome) {
+                                        e.preventDefault();
+                                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                                    }
+                                }}
                                 className="flex items-center justify-between py-4 border-b border-black/5 dark:border-white/5"
                             >
                                 <span className={isHome ? 'text-primary' : 'dark:text-white text-gray-900'}>{t('nav.home')}</span>

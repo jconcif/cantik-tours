@@ -159,7 +159,7 @@ const AboutPage = () => {
                             <div className="p-4 md:p-5">
                                 <h4 className="text-base md:text-lg font-black mb-0.5">{guide.name}</h4>
                                 <p className="text-primary font-bold text-[10px] uppercase tracking-widest mb-2">{guide.role}</p>
-                                <p className="text-gray-500 dark:text-gray-400 text-[11px] leading-relaxed line-clamp-2 md:line-clamp-none">
+                                <p className="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm leading-relaxed line-clamp-2 md:line-clamp-none">
                                     {guide.desc}
                                 </p>
                             </div>
