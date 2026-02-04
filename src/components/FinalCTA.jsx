@@ -73,9 +73,13 @@ const FinalCTA = () => {
                         {/* Image Side */}
                         <div className="lg:w-2/5 relative min-h-[300px] lg:min-h-full overflow-hidden">
                             <img
-                                src="/images/ubud.png"
+                                src="images/ubud.png?v=2"
                                 alt="Ubud Landscape"
                                 className="absolute inset-0 w-full h-full object-cover"
+                                onError={(e) => {
+                                    console.log('Error loading ubud.png, using Ubud Tegalalang fallback...');
+                                    e.target.src = 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=1200&q=80';
+                                }}
                             />
                             {/* Gradient overlays to blend */}
                             <div className="absolute inset-0 bg-gradient-to-t from-bg-light dark:from-surface-dark via-transparent to-transparent lg:hidden" />
