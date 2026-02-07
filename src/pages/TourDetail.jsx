@@ -14,6 +14,7 @@ import ReviewsModal from '../components/ReviewsModal';
 import { formatDateAgo } from '../utils/dateUtils';
 import { useTranslation } from 'react-i18next';
 import { getLocalized } from '../utils/i18nUtils';
+import SEO from '../components/SEO';
 
 const TourDetail = () => {
     const { id } = useParams();
@@ -94,12 +95,42 @@ const TourDetail = () => {
         }
     };
 
+    const tourSchema = tour ? {
+        "@context": "https://schema.org",
+        "@type": "Tour",
+        "name": l(tour, 'title'),
+        "description": l(tour, 'description'),
+        "image": `https://www.cantiktours.com${tour.image}`,
+        "provider": {
+            "@type": "TravelAgency",
+            "name": "Cantik Tours Bali",
+            "url": "https://www.cantiktours.com"
+        },
+        "offers": {
+            "@type": "Offer",
+            "price": tour.price,
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock"
+        },
+        "itinerary": tour.itinerary?.map(item => ({
+            "@type": "HowToStep",
+            "name": l(item, 'activity'),
+            "text": l(item, 'desc')
+        }))
+    } : null;
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="bg-bg-light dark:bg-bg-dark min-h-screen pb-32 pt-20"
         >
+            <SEO
+                title={l(tour, 'title')}
+                description={l(tour, 'description')}
+                image={tour.image}
+                schema={tourSchema}
+            />
             {/* Header Image Gallery */}
             <div className="max-w-7xl mx-auto px-0 md:px-6">
                 <div className="relative aspect-[4/3] md:aspect-[21/9] overflow-hidden md:rounded-[3rem] shadow-2xl group">
@@ -253,7 +284,7 @@ const TourDetail = () => {
                             {/* Standard FAQs */}
                             {(l(tour, 'faqs') || [
                                 { q: "¿Podemos cambiar el orden de las visitas?", a: "¡Claro! Todos nuestros tours son privados y 100% flexibles. Habla con tu guía ese mismo día.", q_en: "Can we change the order of visits?", a_en: "Sure! All our tours are private and 100% flexible. Talk to your guide that same day." },
-                                { q: "¿En qué idioma es el tour?", a: "La tarifa base es con conductor experto en Inglés. Puedes añadir Guía en Español por un suplemento.", q_en: "What language is the tour in?", a_en: "The base rate is with an expert English-speaking driver. You can add a Spanish Guide for a supplement." }
+                                { q: "¿En qué idioma es el tour?", a: "La tarifa base es con conductor experto en Inglés. El español está disponible bajo solicitud y sujeto a disponibilidad. En caso de no haber guía en español ese día, te lo confirmamos antes de cerrar la reserva.", q_en: "What language is the tour in?", a_en: "The base rate is with an expert English-speaking driver. Spanish is available upon request and subject to availability. If no Spanish-speaking guide is available on that day, we will confirm it before closing the reservation." }
                             ]).map((faq, idx) => (
                                 <div
                                     key={idx}

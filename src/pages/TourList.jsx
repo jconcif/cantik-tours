@@ -11,21 +11,22 @@ const TourList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('todos');
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     useEffect(() => {
         document.title = `${t('nav.tours')} | Cantik Tours Bali`;
     }, [t]);
 
-    const filteredTours = allTours.filter(tour => {
-        const matchesSearch = tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            tour.description.toLowerCase().includes(searchQuery.toLowerCase());
-        const matchesCategory = activeCategory === 'todos' ||
-            (Array.isArray(tour.category) ? tour.category.includes(activeCategory) : tour.category === activeCategory);
-        const isNotTransfer = !tour.isTransfer;
+    const filteredTours = allTours
+        .filter(tour => {
+            const matchesSearch = tour.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                tour.description.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesCategory = activeCategory === 'todos' ||
+                (Array.isArray(tour.category) ? tour.category.includes(activeCategory) : tour.category === activeCategory);
+            const isNotTransfer = !tour.isTransfer;
 
-        return matchesSearch && matchesCategory && isNotTransfer;
-    });
+            return matchesSearch && matchesCategory && isNotTransfer;
+        });
 
     return (
         <motion.div

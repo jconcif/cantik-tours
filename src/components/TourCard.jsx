@@ -70,10 +70,12 @@ const TourCard = ({ tour, index }) => {
                     </div>
                     <Link
                         to={`/tour/${tour.id}`}
-                        className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-110 transition-all active:scale-95 bg-gradient-to-r from-primary to-[#109db8] text-white"
-                        title={t('detail.view_details')}
+                        className="px-6 py-3 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-all active:scale-95 bg-gradient-to-r from-primary to-[#109db8] text-white selection:bg-white/20"
                     >
-                        <ArrowRight size={22} />
+                        <span className="text-[11px] font-black uppercase tracking-[0.15em] whitespace-nowrap">
+                            <span className="hidden md:inline">{t('detail.view_details')}</span>
+                            <span className="md:hidden">{t('detail.view_details_short')}</span>
+                        </span>
                     </Link>
                 </div>
             </div>

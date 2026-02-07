@@ -14,6 +14,46 @@ import { useTranslation } from 'react-i18next';
 
 const Home = () => {
     const { t } = useTranslation();
+    const businessSchema = {
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "name": "Cantik Tours Bali",
+        "image": "https://www.cantiktours.com/images/hero.png",
+        "@id": "https://www.cantiktours.com",
+        "url": "https://www.cantiktours.com",
+        "telephone": "+6281572451127",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Ubud",
+            "addressLocality": "Gianyar",
+            "addressRegion": "Bali",
+            "postalCode": "80571",
+            "addressCountry": "ID"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": -8.5069,
+            "longitude": 115.2625
+        },
+        "openingHoursSpecification": {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday"
+            ],
+            "opens": "00:00",
+            "closes": "23:59"
+        },
+        "sameAs": [
+            "https://www.instagram.com/cantiktoursbali"
+        ]
+    };
+
     const featuredTours = tours.slice(0, 3);
 
     return (
@@ -22,6 +62,7 @@ const Home = () => {
                 title={t('seo.home.title')}
                 description={t('seo.home.description')}
                 keywords={t('seo.home.keywords')}
+                schema={businessSchema}
             />
             <Hero />
 

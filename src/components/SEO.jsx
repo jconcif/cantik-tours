@@ -2,13 +2,19 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 
-const SEO = ({ title, description, keywords, image, url }) => {
+const SEO = ({ title, description, keywords, image, url, schema }) => {
     const { t } = useTranslation();
     const siteTitle = "Cantik Tours Bali";
     const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle;
-    const defaultDescription = t('hero.subtitle'); // Fallback description
+    const defaultDescription = t('hero.subtitle');
     const metaDescription = description || defaultDescription;
-    const metaImage = image || "https://cantiktours.com/images/hero.png"; // Fallback image (needs absolute URL ideally)
+
+    // Use absolute URL for image
+    const baseUrl = "https://www.cantiktours.com";
+    const metaImage = image
+        ? (image.startsWith('http') ? image : `${baseUrl}${image}`)
+        : `${baseUrl}/images/hero.png`;
+
     const metaUrl = url || window.location.href;
 
     return (
@@ -31,6 +37,13 @@ const SEO = ({ title, description, keywords, image, url }) => {
             <meta property="twitter:title" content={fullTitle} />
             <meta property="twitter:description" content={metaDescription} />
             <meta property="twitter:image" content={metaImage} />
+
+            {/* JSON-LD Structured Data */}
+            {schema && (
+                <script type="application/ld+json">
+                    {JSON.stringify(schema)}
+                </script>
+            )}
         </Helmet>
     );
 };
