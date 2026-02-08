@@ -36,7 +36,7 @@ const TourCard = ({ tour, index }) => {
 
             <div className="p-8 flex-grow flex flex-col">
                 <h3 className="text-2xl font-black mb-3 group-hover:text-primary transition-colors leading-tight">{l('title')}</h3>
-                <p className="text-gray-500 dark:text-gray-400 mb-8 line-clamp-2 text-sm leading-relaxed">
+                <p className="text-gray-500 dark:text-gray-400 mb-8 line-clamp-3 text-sm leading-relaxed">
                     {l('description')}
                 </p>
 
@@ -55,9 +55,15 @@ const TourCard = ({ tour, index }) => {
                     </div>
                     <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                            <Star size={14} className="fill-primary/20" />
+                        </div>
+                        <span>{i18n.language.startsWith('es') ? 'Tour Privado' : 'Private Tour'}</span>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                             <Users size={14} />
                         </div>
-                        <span>{t('detail.private')}</span>
+                        <span>{i18n.language.startsWith('es') ? '1-5 pasajeros' : '1-5 passengers'}</span>
                     </div>
                 </div>
 

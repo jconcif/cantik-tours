@@ -4,7 +4,7 @@ import {
     ChevronLeft, Share2, Star,
     Car, Languages, Droplets, Info, MapPin,
     Clock, Check, X, Shield, Calendar, AlertCircle,
-    Flag, Landmark, Utensils, Camera, Map
+    Flag, Landmark, Utensils, Camera, Map, TreeDeciduous, Repeat
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tours } from '../data/tours';
@@ -166,7 +166,7 @@ const TourDetail = () => {
 
 
                     <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 flex items-end gap-4 justify-between">
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 space-y-3">
                             <h1 className="text-2xl md:text-5xl font-black text-white drop-shadow-lg leading-tight break-words">
                                 {l(tour, 'title')}
                             </h1>
@@ -188,9 +188,75 @@ const TourDetail = () => {
                     {/* Description */}
                     <section>
                         <h2 className="text-2xl font-black mb-6">{t('detail.description')}</h2>
+                        {l(tour, 'heroSubtitle') && (
+                            <p className="text-xl font-medium text-primary mb-4 italic leading-relaxed">
+                                {l(tour, 'heroSubtitle')}
+                            </p>
+                        )}
                         <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
                             {l(tour, 'fullDescription') || l(tour, 'description')}
                         </p>
+                    </section>
+
+                    {/* Day Summary - NEW */}
+                    <section className="bg-primary/5 rounded-[2rem] p-8 border border-primary/10">
+                        <h3 className="text-base font-black uppercase tracking-widest text-primary mb-6 flex items-center gap-2">
+                            <Info size={18} /> {i18n.language.startsWith('es') ? 'Resumen del día' : 'Day Summary'}
+                        </h3>
+                        <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-white dark:bg-white/10 flex items-center justify-center text-primary flex-shrink-0">
+                                    <Clock size={16} />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                                        {t('detail.duration')}
+                                    </span>
+                                    <span className="font-bold text-gray-900 dark:text-white text-sm">
+                                        {l(tour, 'duration')}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-white dark:bg-white/10 flex items-center justify-center text-primary flex-shrink-0">
+                                    <Car size={16} />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                                        {i18n.language.startsWith('es') ? 'Transporte' : 'Transport'}
+                                    </span>
+                                    <span className="font-bold text-gray-900 dark:text-white text-sm">
+                                        {i18n.language.startsWith('es') ? 'Privado + AC' : 'Private + AC'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-white dark:bg-white/10 flex items-center justify-center text-primary flex-shrink-0">
+                                    <TreeDeciduous size={16} />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                                        {i18n.language.startsWith('es') ? 'Estilo' : 'Style'}
+                                    </span>
+                                    <span className="font-bold text-gray-900 dark:text-white text-sm capitalize">
+                                        {tour.category[0]} + {tour.category[1] || (i18n.language.startsWith('es') ? 'Relax' : 'Relax')}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex items-start gap-3">
+                                <div className="w-8 h-8 rounded-full bg-white dark:bg-white/10 flex items-center justify-center text-primary flex-shrink-0">
+                                    <Repeat size={16} />
+                                </div>
+                                <div>
+                                    <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">
+                                        {i18n.language.startsWith('es') ? 'Flexibilidad' : 'Flexibility'}
+                                    </span>
+                                    <span className="font-bold text-gray-900 dark:text-white text-sm">
+                                        100% {i18n.language.startsWith('es') ? 'Personalizable' : 'Customizable'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
                     </section>
 
                     {/* Itinerary (only if exists) */}
@@ -412,10 +478,13 @@ const TourDetail = () => {
 
                         <button
                             onClick={handleOpenBooking}
-                            className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest mb-8"
+                            className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest mb-4"
                         >
                             {t('detail.book_now')}
                         </button>
+                        <p className="text-center text-xs font-bold text-gray-400">
+                            {i18n.language.startsWith('es') ? 'Sin compromiso hasta confirmar disponibilidad' : 'No commitment until availability is confirmed'}
+                        </p>
 
                         {/* Full Route Button (Standalone) - Hidden until maps are ready for all tours
                         {tour.routeUrl && (
@@ -452,9 +521,12 @@ const TourDetail = () => {
                 </div>
                 <button
                     onClick={handleOpenBooking}
-                    className="btn-primary px-8 py-4 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95"
+                    className="btn-primary px-8 py-3 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95 flex flex-col items-center justify-center"
                 >
-                    {t('detail.book_now')}
+                    <span>{t('detail.book_now')}</span>
+                    <span className="text-[8px] opacity-80 font-normal normal-case mt-0.5">
+                        {i18n.language.startsWith('es') ? 'Consultar disponibilidad' : 'Check availability'}
+                    </span>
                 </button>
             </div>
 
