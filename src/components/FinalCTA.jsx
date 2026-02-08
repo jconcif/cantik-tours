@@ -73,7 +73,7 @@ const FinalCTA = () => {
                         {/* Image Side */}
                         <div className="lg:w-2/5 relative min-h-[300px] lg:min-h-full overflow-hidden">
                             <img
-                                src="images/ubud.png?v=2"
+                                src="images/ubud.jpg"
                                 alt="Ubud Rice Terraces - Cantik Tours Bali"
                                 width="800"
                                 height="600"

@@ -19,7 +19,7 @@ const Hero = () => {
                 initial={{ scale: 1.1 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 2.5, ease: "easeOut" }}
-                src="/images/hero.png"
+                src="/images/hero.jpg"
                 alt="Bali Tours - Templos sagrados, arrozales y cascadas en Ubud - Cantik Tours"
                 width="1920"
                 height="1080"
