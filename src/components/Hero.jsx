@@ -20,7 +20,10 @@ const Hero = () => {
                 animate={{ scale: 1 }}
                 transition={{ duration: 2.5, ease: "easeOut" }}
                 src="/images/hero.png"
-                alt="Bali Landscape"
+                alt="Bali Tours - Templos sagrados, arrozales y cascadas en Ubud - Cantik Tours"
+                width="1920"
+                height="1080"
+                fetchpriority="high"
                 className="absolute inset-0 w-full h-full object-cover"
             />
 

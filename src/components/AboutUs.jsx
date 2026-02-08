@@ -29,7 +29,10 @@ const AboutUs = () => {
                     <div className="bg-white dark:bg-white/5 p-4 sm:p-6 md:p-8 rounded-[2.5rem] md:rounded-[3.5rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10 transition-transform hover:scale-[1.02] duration-500">
                         <img
                             src="/images/team/perty-founder.webp"
-                            alt="Perty - Cantik Tours"
+                            alt={`${t('about.perty_name')} - ${t('about.perty_role')} - Cantik Tours Bali`}
+                            width="600"
+                            height="750"
+                            loading="lazy"
                             className="w-full aspect-[4/5] object-cover rounded-[1.8rem] md:rounded-[2.5rem] shadow-lg mb-6"
                         />
                         <div className="flex items-center px-2">

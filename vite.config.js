@@ -9,12 +9,37 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks(id) {
+                    // Split vendor libraries into separate chunks for better caching
                     if (id.includes('node_modules')) {
+                        // Separate large libraries into their own chunks
+                        if (id.includes('framer-motion')) {
+                            return 'framer-motion';
+                        }
+                        if (id.includes('react-router-dom')) {
+                            return 'react-router';
+                        }
+                        if (id.includes('i18next') || id.includes('react-i18next')) {
+                            return 'i18n';
+                        }
+                        // Everything else goes to vendor
                         return 'vendor';
                     }
                 }
             }
         },
-        chunkSizeWarningLimit: 1000
+        // Optimize chunk size
+        chunkSizeWarningLimit: 1000,
+        // Enable minification and compression
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true, // Remove console.logs in production
+                drop_debugger: true
+            }
+        },
+        // Optimize CSS
+        cssCodeSplit: true,
+        // Source maps for production debugging (optional, can be disabled for smaller builds)
+        sourcemap: false
     }
 })

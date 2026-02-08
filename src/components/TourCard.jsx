@@ -19,7 +19,10 @@ const TourCard = ({ tour, index }) => {
             <div className="relative h-72 overflow-hidden">
                 <img
                     src={tour.image}
-                    alt={l('title')}
+                    alt={`${l('title')} - ${l('description')}`}
+                    width="800"
+                    height="600"
+                    loading={index > 2 ? "lazy" : "eager"}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                 />
 

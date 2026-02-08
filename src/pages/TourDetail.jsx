@@ -142,8 +142,11 @@ const TourDetail = () => {
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.5 }}
                             src={images[currentImageIndex]}
+                            alt={`${l(tour, 'title')} - Imagen ${currentImageIndex + 1} de ${images.length}`}
+                            width="1920"
+                            height="1080"
+                            fetchpriority={currentImageIndex === 0 ? "high" : "auto"}
                             className="w-full h-full object-cover"
-                            alt={tour.title}
                         />
                     </AnimatePresence>
 

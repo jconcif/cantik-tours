@@ -74,10 +74,12 @@ const FinalCTA = () => {
                         <div className="lg:w-2/5 relative min-h-[300px] lg:min-h-full overflow-hidden">
                             <img
                                 src="images/ubud.png?v=2"
-                                alt="Ubud Landscape"
+                                alt="Ubud Rice Terraces - Cantik Tours Bali"
+                                width="800"
+                                height="600"
+                                loading="lazy"
                                 className="absolute inset-0 w-full h-full object-cover"
                                 onError={(e) => {
-                                    console.log('Error loading ubud.png, using Ubud Tegalalang fallback...');
                                     e.target.src = 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=1200&q=80';
                                 }}
                             />
