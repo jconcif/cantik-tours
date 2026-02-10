@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Camera, Trash2, Star, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Check, X, Camera, Trash2, Star, Lock, Eye, EyeOff, CheckCircle2, Languages } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const AdminReviews = () => {
+    const { i18n } = useTranslation();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
     const [reviews, setReviews] = useState([]);
@@ -12,7 +14,7 @@ const AdminReviews = () => {
     const fetchReviews = async () => {
         setLoading(true);
         try {
-            const response = await fetch('/api/admin_get_reviews.php', {
+            const response = await fetch(`/api/admin_get_reviews.php?token=${password}`, {
                 headers: { 'Authorization': password }
             });
             const result = await response.json();
@@ -29,10 +31,7 @@ const AdminReviews = () => {
         }
     };
 
-    const toggleApproval = async (id, currentStatus) => {
-        // En JS "0" es true, así que comparamos explícitamente
-        const newStatus = (currentStatus === "1" || currentStatus === 1) ? 0 : 1;
-
+    const updateReview = async (id, data) => {
         try {
             const response = await fetch('/api/admin_update_review.php', {
                 method: 'POST',
@@ -40,20 +39,22 @@ const AdminReviews = () => {
                     'Authorization': password,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ id, aprobado: newStatus })
+                body: JSON.stringify({ id, token: password, ...data })
             });
             const result = await response.json();
             if (result.status === 'success') {
+                setMessage({ type: 'success', text: 'Reseña actualizada' });
                 fetchReviews();
             }
         } catch (error) {
-            console.error(error);
+            setMessage({ type: 'error', text: 'Error al actualizar' });
         }
     };
 
     const handleUpload = async (id, file) => {
         const formData = new FormData();
         formData.append('id', id);
+        formData.append('token', password);
         formData.append('photo', file);
 
         try {
@@ -167,7 +168,46 @@ const AdminReviews = () => {
                                         <Star key={i} size={14} fill={i < review.estrellas ? "currentColor" : "transparent"} />
                                     ))}
                                 </div>
-                                <p className="text-gray-600 dark:text-gray-400 italic">"{review.comentario}"</p>
+                                <div className="mt-8 space-y-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest flex items-center gap-2">
+                                            Original (ES)
+                                        </label>
+                                        <textarea
+                                            id={`orig-${review.id}`}
+                                            className="w-full p-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary h-24 italic"
+                                            defaultValue={review.comentario || ''}
+                                            placeholder="Comentario original..."
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase text-pink-500 tracking-widest flex items-center gap-2">
+                                            <Languages size={12} />
+                                            {i18n?.language === 'en' ? 'Translation (EN)' : 'Traducción (EN)'}
+                                        </label>
+                                        <div className="flex gap-2">
+                                            <textarea
+                                                id={`trans-${review.id}`}
+                                                className="w-full p-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary h-24 italic"
+                                                defaultValue={review.comentario_en || ''}
+                                                placeholder="Traduce el comentario aquí..."
+                                            />
+                                            <button
+                                                onClick={() => {
+                                                    const origText = document.getElementById(`orig-${review.id}`).value;
+                                                    const transText = document.getElementById(`trans-${review.id}`).value;
+                                                    updateReview(review.id, { aprobado: review.aprobado, comentario: origText, comentario_en: transText });
+                                                }}
+                                                className="self-end p-4 bg-primary/10 text-primary rounded-xl hover:bg-primary hover:text-white transition-all shadow-sm"
+                                                title="Guardar Cambios"
+                                            >
+                                                <CheckCircle2 size={20} />
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 {review.ig_user && (
                                     <p className="text-xs text-primary font-bold mt-2">IG: @{review.ig_user.replace('@', '')}</p>
                                 )}
@@ -182,7 +222,12 @@ const AdminReviews = () => {
                             {/* Actions Section */}
                             <div className="flex gap-3 shrink-0">
                                 <button
-                                    onClick={() => toggleApproval(review.id, review.aprobado)}
+                                    onClick={() => {
+                                        const origText = document.getElementById(`orig-${review.id}`).value;
+                                        const transText = document.getElementById(`trans-${review.id}`).value;
+                                        const newStatus = (review.aprobado === "1" || review.aprobado === 1) ? 0 : 1;
+                                        updateReview(review.id, { aprobado: newStatus, comentario: origText, comentario_en: transText });
+                                    }}
                                     className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${review.aprobado === "1" || review.aprobado === 1 ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                                 >
                                     {(review.aprobado === "1" || review.aprobado === 1) ? (

@@ -34,7 +34,7 @@ function checkAuth() {
     
     $auth = '';
     
-    // Check various sources for the Authorization header
+    // 1. Check Authorization header (Standard)
     if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
         $auth = $_SERVER['HTTP_AUTHORIZATION'];
     } elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
@@ -43,6 +43,24 @@ function checkAuth() {
         $headers = apache_request_headers();
         if (isset($headers['Authorization'])) {
             $auth = $headers['Authorization'];
+        }
+    }
+
+    // 2. Fallback: Check Query Parameter (if header is blocked by hosting)
+    if (empty($auth) && isset($_GET['token'])) {
+        $auth = $_GET['token'];
+    }
+
+    // 3. Fallback: Check POST parameter (for multipart/form-data or regular POST)
+    if (empty($auth) && isset($_POST['token'])) {
+        $auth = $_POST['token'];
+    }
+
+    // 4. Fallback: Check JSON POST body
+    if (empty($auth)) {
+        $data = json_decode(file_get_contents("php://input"));
+        if (isset($data->token)) {
+            $auth = $data->token;
         }
     }
 

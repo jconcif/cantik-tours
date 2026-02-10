@@ -26,9 +26,9 @@ const TourDetail = () => {
     const [tour, setTour] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [tourReviews, setTourReviews] = useState([]);
+    const [isGlobalReviews, setIsGlobalReviews] = useState(false);
 
     const fetchTourReviews = async (tourId) => {
-        // Map tour.js id to review system's id used in database
         const reviewIdMap = {
             'ubud-central': 'ubud_central',
             'north-lake-temple': 'ubud_north',
@@ -40,19 +40,32 @@ const TourDetail = () => {
         const apiTourId = reviewIdMap[tourId] || tourId;
 
         try {
-            const response = await fetch(`/api/get_reviews.php?tour_id=${apiTourId}`);
-            const result = await response.json();
+            // First attempt: Specific reviews
+            let response = await fetch(`/api/get_reviews.php?tour_id=${apiTourId}`);
+            let result = await response.json();
+
+            // If no specific reviews, fetch ALL (global)
+            if (result.status === 'success' && (!result.data || result.data.length === 0)) {
+                response = await fetch(`/api/get_reviews.php`);
+                result = await response.json();
+                setIsGlobalReviews(true);
+            } else {
+                setIsGlobalReviews(false);
+            }
+
             if (result.status === 'success' && result.data) {
                 const formatted = result.data.map(r => ({
                     name: r.nombre,
                     rating: parseInt(r.estrellas),
                     text: r.comentario,
+                    text_en: r.comentario_en || r.comentario,
                     date: r.fecha,
                     date_en: r.fecha,
                     image: r.foto_url,
                     pais: r.pais,
                     ig_user: r.ig_user,
-                    authorized: r.autorizacion_fotos === "1" || r.autorizacion_fotos === 1
+                    authorized: r.autorizacion_fotos === "1" || r.autorizacion_fotos === 1,
+                    location: r.tour_id // Keep original tour id for context
                 }));
                 setTourReviews(formatted);
             }
@@ -488,10 +501,21 @@ const TourDetail = () => {
                         </div>
                     </section>
 
-                    {/* Tour Specific Reviews */}
                     <section className="pt-8">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-2xl font-black">{t('testimonials.title')}</h2>
+                            <div>
+                                <h2 className="text-2xl font-black">
+                                    {isGlobalReviews
+                                        ? (i18n.language.startsWith('es') ? 'Opiniones sobre Cantik Tours' : 'Reviews about Cantik Tours')
+                                        : (i18n.language.startsWith('es') ? 'Experiencias en este tour' : 'Experiences on this tour')
+                                    }
+                                </h2>
+                                {isGlobalReviews && (
+                                    <p className="text-xs text-gray-400 font-bold mt-1 uppercase tracking-widest">
+                                        {i18n.language.startsWith('es') ? 'Lo que dicen otros viajeros' : 'What other travelers say'}
+                                    </p>
+                                )}
+                            </div>
                             <button
                                 onClick={() => setIsReviewsModalOpen(true)}
                                 className="text-sm font-bold text-primary hover:underline"
@@ -504,25 +528,25 @@ const TourDetail = () => {
                             <div className="grid gap-6">
                                 {tourReviews.slice(0, 3).map((rev, idx) => (
                                     <div key={idx} className="p-6 rounded-3xl bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-sm">
-                                        <div className="flex items-center gap-3 mb-4">
-                                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20">
                                                 {rev.image ? (
                                                     <img src={rev.image} alt={rev.name} className="w-full h-full object-cover" />
                                                 ) : (
                                                     <User className="text-primary" size={20} />
                                                 )}
                                             </div>
-                                            <div>
-                                                <div className="flex flex-wrap items-center gap-2 mb-1">
-                                                    <h4 className="font-bold text-sm leading-none">{rev.name}</h4>
+                                            <div className="flex flex-col gap-1">
+                                                <h4 className="font-bold text-sm leading-none">{rev.name}</h4>
+                                                <div className="flex flex-wrap items-center gap-2">
                                                     {rev.ig_user && rev.authorized && (
-                                                        <span className="flex items-center gap-1 text-[9px] text-pink-500 font-bold bg-pink-50 dark:bg-pink-500/10 px-2 py-0.5 rounded-full border border-pink-100 dark:border-pink-500/20">
+                                                        <span className="flex items-center gap-1 text-[9px] text-pink-500 font-bold bg-pink-50 dark:bg-pink-500/10 px-2 py-0.5 rounded-lg border border-pink-100 dark:border-pink-500/20">
                                                             <Instagram size={8} />
                                                             @{rev.ig_user.replace('@', '')}
                                                         </span>
                                                     )}
                                                     {rev.pais && (
-                                                        <span className="text-[10px] text-gray-400 font-bold bg-gray-50 dark:bg-white/5 px-2 py-0.5 rounded-full border border-black/5 dark:border-white/5">
+                                                        <span className="text-[9px] text-gray-500 font-black uppercase tracking-wider bg-gray-50 dark:bg-white/5 px-2 py-0.5 rounded-lg border border-black/5 dark:border-white/5">
                                                             {(() => {
                                                                 const flags = { ar: '🇦🇷', cl: '🇨🇱', co: '🇨🇴', es: '🇪🇸', mx: '🇲🇽', pe: '🇵🇪', uy: '🇺🇾', us: '🇺🇸' };
                                                                 const flag = flags[rev.pais] || '🌐';
@@ -532,14 +556,16 @@ const TourDetail = () => {
                                                         </span>
                                                     )}
                                                 </div>
-                                                <div className="flex gap-0.5 text-yellow-400">
+                                                <div className="flex gap-0.5 text-yellow-400 mt-0.5">
                                                     {[...Array(5)].map((_, i) => (
                                                         <Star key={i} size={10} fill={i < rev.rating ? "currentColor" : "transparent"} />
                                                     ))}
                                                 </div>
                                             </div>
                                         </div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400 font-medium italic">"{rev.text}"</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 font-medium italic leading-relaxed">
+                                            "{i18n.language.startsWith('es') ? rev.text : (rev.text_en || rev.text)}"
+                                        </p>
                                     </div>
                                 ))}
                             </div>

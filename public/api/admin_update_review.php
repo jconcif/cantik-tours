@@ -9,9 +9,11 @@ $data = json_decode(file_get_contents("php://input"));
 
 if (!empty($data->id)) {
     try {
-        $query = "UPDATE reviews SET aprobado = :aprobado WHERE id = :id";
+        $query = "UPDATE reviews SET aprobado = :aprobado, comentario = :comentario, comentario_en = :comentario_en WHERE id = :id";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(":aprobado", $data->aprobado, PDO::PARAM_INT);
+        $stmt->bindParam(":comentario", $data->comentario, PDO::PARAM_STR);
+        $stmt->bindParam(":comentario_en", $data->comentario_en, PDO::PARAM_STR);
         $stmt->bindParam(":id", $data->id, PDO::PARAM_INT);
 
         if($stmt->execute()) {

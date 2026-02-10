@@ -73,9 +73,6 @@ const ReviewsModal = ({ isOpen, onClose, tourTitle, reviews = [] }) => {
                                                         </span>
                                                     )}
                                                 </div>
-                                                <span className="text-xs text-gray-400">
-                                                    {i18n.language.startsWith('es') ? review.date : review.date_en}
-                                                </span>
                                             </div>
                                         </div>
                                         <div className="flex gap-0.5 text-yellow-500">

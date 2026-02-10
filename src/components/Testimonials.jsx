@@ -20,6 +20,7 @@ const Testimonials = () => {
                     const formatted = result.data.map(r => ({
                         name: r.nombre,
                         text: r.comentario,
+                        text_en: r.comentario_en,
                         location: r.tour_id,
                         country: r.pais || 'es',
                         stars: parseInt(r.estrellas),
@@ -97,7 +98,7 @@ const Testimonials = () => {
                             </div>
 
                             <p className="text-gray-600 dark:text-gray-300 font-medium leading-relaxed mb-8 relative z-10 italic">
-                                "{item.text}"
+                                "{i18n.language.startsWith('es') ? item.text : (item.text_en || item.text)}"
                             </p>
 
                             <div className="flex items-center gap-4">
@@ -108,30 +109,43 @@ const Testimonials = () => {
                                         <User className="text-gray-400" size={24} />
                                     )}
                                 </div>
-                                <div className="flex-1">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        <h4 className="font-bold text-gray-900 dark:text-white leading-none">{item.name}</h4>
-                                        {item.ig_user && item.authorized && (
-                                            <span className="flex items-center gap-1 text-[9px] text-pink-500 font-bold bg-pink-50 dark:bg-pink-500/10 px-2 py-0.5 rounded-full border border-pink-100 dark:border-pink-500/20">
-                                                <Instagram size={8} />
-                                                @{item.ig_user.replace('@', '')}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <p className="text-[10px] text-primary font-black uppercase tracking-widest mt-1">
+                                <div className="flex flex-col gap-1">
+                                    <h4 className="font-bold text-gray-900 dark:text-white leading-none text-base">
+                                        {item.name}
+                                    </h4>
+
+                                    {/* Instagram handle - Sub-row */}
+                                    {item.ig_user && item.authorized && (
+                                        <div className="flex items-center gap-1.5 text-[10px] text-pink-500 font-bold mb-1">
+                                            <Instagram size={12} />
+                                            <span>@{item.ig_user.replace('@', '')}</span>
+                                        </div>
+                                    )}
+
+                                    {/* Origin & Tour Metadata - Separate Badges */}
+                                    <div className="flex flex-wrap items-center gap-2 mt-1">
                                         {(() => {
                                             if (item.country) {
                                                 const flags = { ar: '🇦🇷', cl: '🇨🇱', co: '🇨🇴', es: '🇪🇸', mx: '🇲🇽', pe: '🇵🇪', uy: '🇺🇾', us: '🇺🇸' };
                                                 const flag = flags[item.country] || '🌐';
                                                 const countryName = t(`reviews_page.form.countries.${item.country}`);
-                                                const tourName = i18n.exists(`reviews_page.form.tours.${item.location}`)
-                                                    ? t(`reviews_page.form.tours.${item.location}`)
-                                                    : item.location;
-                                                return `${flag} ${countryName} • ${tourName}`;
+                                                const tourKey = `reviews_page.form.tours.${item.location}`;
+                                                const tourName = i18n.exists(tourKey) ? t(tourKey) : item.location;
+
+                                                return (
+                                                    <>
+                                                        <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-gray-500 bg-gray-100 dark:bg-white/5 px-2 py-1 rounded-lg border border-black/5 dark:border-white/5">
+                                                            {flag} {countryName}
+                                                        </span>
+                                                        <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-primary bg-primary/5 px-2 py-1 rounded-lg border border-primary/10">
+                                                            {tourName}
+                                                        </span>
+                                                    </>
+                                                );
                                             }
-                                            return item.location;
+                                            return <span className="text-[10px] text-primary font-black uppercase tracking-widest">{item.location}</span>;
                                         })()}
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>

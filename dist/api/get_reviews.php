@@ -21,7 +21,7 @@ try {
     $tour_id = isset($_GET['tour_id']) ? $_GET['tour_id'] : null;
     
     // Only fetch approved reviews
-    $query = "SELECT id, nombre, estrellas, tour_id, comentario, ig_user, foto_url, pais, autorizacion_fotos, fecha 
+    $query = "SELECT id, nombre, estrellas, tour_id, comentario, comentario_en, ig_user, foto_url, pais, autorizacion_fotos, fecha 
               FROM reviews 
               WHERE aprobado = 1";
               

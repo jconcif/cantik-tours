@@ -5,7 +5,7 @@ import { Star, Send, CheckCircle2, Instagram, MapPin, ExternalLink } from 'lucid
 import SEO from '../components/SEO';
 
 const ReviewsPage = () => {
-    const { t } = useTranslation();
+    const { t, i18n } = useTranslation();
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [rating, setRating] = useState(5);
     const [hoverRating, setHoverRating] = useState(0);
@@ -26,7 +26,7 @@ const ReviewsPage = () => {
             const response = await fetch('/api/save_review.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...formData, rating })
+                body: JSON.stringify({ ...formData, rating, lang: i18n.language })
             });
 
             if (!response.ok) throw new Error('Failed to submit');

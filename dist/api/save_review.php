@@ -28,8 +28,8 @@ $data = json_decode(file_get_contents("php://input"));
 
 if (!empty($data->name) && !empty($data->rating) && !empty($data->comment)) {
     try {
-        $query = "INSERT INTO reviews (nombre, estrellas, tour_id, comentario, ig_user, pais, autorizacion_fotos, aprobado) 
-                  VALUES (:nombre, :estrellas, :tour_id, :comentario, :ig_user, :pais, :autorizacion_fotos, :aprobado)";
+        $query = "INSERT INTO reviews (nombre, estrellas, tour_id, comentario, comentario_en, ig_user, pais, autorizacion_fotos, aprobado) 
+                  VALUES (:nombre, :estrellas, :tour_id, :comentario, :comentario_en, :ig_user, :pais, :autorizacion_fotos, :aprobado)";
         
         $stmt = $conn->prepare($query);
 
@@ -37,6 +37,11 @@ if (!empty($data->name) && !empty($data->rating) && !empty($data->comment)) {
         $stmt->bindParam(":estrellas", $data->rating);
         $stmt->bindParam(":tour_id", $data->tour_type);
         $stmt->bindParam(":comentario", $data->comment);
+        
+        // If the review was submitted in English, save it also to the English column
+        $comentario_en = (isset($data->lang) && strpos($data->lang, 'en') === 0) ? $data->comment : null;
+        $stmt->bindParam(":comentario_en", $comentario_en);
+        
         $stmt->bindParam(":ig_user", $data->ig_user);
         $pais = !empty($data->country) ? $data->country : 'es';
         $stmt->bindParam(":pais", $pais);
