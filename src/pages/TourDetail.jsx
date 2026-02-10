@@ -4,7 +4,7 @@ import {
     ChevronLeft, Share2, Star,
     Car, Languages, Droplets, Info, MapPin,
     Clock, Check, X, Shield, Calendar, AlertCircle,
-    Flag, Landmark, Utensils, Camera, Map, TreeDeciduous, Repeat
+    Flag, Landmark, Utensils, Camera, Map, TreeDeciduous, Repeat, User, Instagram
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tours } from '../data/tours';
@@ -25,6 +25,41 @@ const TourDetail = () => {
     const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
     const [tour, setTour] = useState(null);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [tourReviews, setTourReviews] = useState([]);
+
+    const fetchTourReviews = async (tourId) => {
+        // Map tour.js id to review system's id used in database
+        const reviewIdMap = {
+            'ubud-central': 'ubud_central',
+            'north-lake-temple': 'ubud_north',
+            'lovina-dolphins': 'lovina',
+            'east-bali-besakih': 'east',
+            'lempuyang-gates': 'lempuyang',
+            'transfers-bali': 'transfer'
+        };
+        const apiTourId = reviewIdMap[tourId] || tourId;
+
+        try {
+            const response = await fetch(`/api/get_reviews.php?tour_id=${apiTourId}`);
+            const result = await response.json();
+            if (result.status === 'success' && result.data) {
+                const formatted = result.data.map(r => ({
+                    name: r.nombre,
+                    rating: parseInt(r.estrellas),
+                    text: r.comentario,
+                    date: r.fecha,
+                    date_en: r.fecha,
+                    image: r.foto_url,
+                    pais: r.pais,
+                    ig_user: r.ig_user,
+                    authorized: r.autorizacion_fotos === "1" || r.autorizacion_fotos === 1
+                }));
+                setTourReviews(formatted);
+            }
+        } catch (error) {
+            console.error("Error fetching tour reviews:", error);
+        }
+    };
 
     const l = (obj, field) => getLocalized(obj || tour, field, i18n.language);
 
@@ -59,6 +94,7 @@ const TourDetail = () => {
         if (foundTour) {
             setTour(foundTour);
             document.title = `${l(foundTour, 'title')} | Cantik Tours Bali`;
+            fetchTourReviews(foundTour.id);
         } else {
             setTour(tours[0]);
         }
@@ -452,6 +488,70 @@ const TourDetail = () => {
                         </div>
                     </section>
 
+                    {/* Tour Specific Reviews */}
+                    <section className="pt-8">
+                        <div className="flex items-center justify-between mb-8">
+                            <h2 className="text-2xl font-black">{t('testimonials.title')}</h2>
+                            <button
+                                onClick={() => setIsReviewsModalOpen(true)}
+                                className="text-sm font-bold text-primary hover:underline"
+                            >
+                                {i18n.language.startsWith('es') ? 'Ver todas' : 'View all'}
+                            </button>
+                        </div>
+
+                        {tourReviews.length > 0 ? (
+                            <div className="grid gap-6">
+                                {tourReviews.slice(0, 3).map((rev, idx) => (
+                                    <div key={idx} className="p-6 rounded-3xl bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-sm">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
+                                                {rev.image ? (
+                                                    <img src={rev.image} alt={rev.name} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <User className="text-primary" size={20} />
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                                    <h4 className="font-bold text-sm leading-none">{rev.name}</h4>
+                                                    {rev.ig_user && rev.authorized && (
+                                                        <span className="flex items-center gap-1 text-[9px] text-pink-500 font-bold bg-pink-50 dark:bg-pink-500/10 px-2 py-0.5 rounded-full border border-pink-100 dark:border-pink-500/20">
+                                                            <Instagram size={8} />
+                                                            @{rev.ig_user.replace('@', '')}
+                                                        </span>
+                                                    )}
+                                                    {rev.pais && (
+                                                        <span className="text-[10px] text-gray-400 font-bold bg-gray-50 dark:bg-white/5 px-2 py-0.5 rounded-full border border-black/5 dark:border-white/5">
+                                                            {(() => {
+                                                                const flags = { ar: '🇦🇷', cl: '🇨🇱', co: '🇨🇴', es: '🇪🇸', mx: '🇲🇽', pe: '🇵🇪', uy: '🇺🇾', us: '🇺🇸' };
+                                                                const flag = flags[rev.pais] || '🌐';
+                                                                const countryName = t(`reviews_page.form.countries.${rev.pais}`);
+                                                                return `${flag} ${countryName}`;
+                                                            })()}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="flex gap-0.5 text-yellow-400">
+                                                    {[...Array(5)].map((_, i) => (
+                                                        <Star key={i} size={10} fill={i < rev.rating ? "currentColor" : "transparent"} />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 font-medium italic">"{rev.text}"</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-10 rounded-3xl bg-gray-50 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 text-center">
+                                <p className="text-sm text-gray-400 font-bold">
+                                    {i18n.language.startsWith('es') ? 'Aún no hay reseñas para este tour específico.' : 'No reviews for this specific tour yet.'}
+                                </p>
+                            </div>
+                        )}
+                    </section>
+
                     {/* Benefits Banner (Moved below FAQ) */}
                     <div className="pt-8">
                         <div className="grid grid-cols-3 gap-4 md:gap-8 bg-white dark:bg-gray-800/50 p-6 md:p-8 rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm">
@@ -551,7 +651,7 @@ const TourDetail = () => {
                 isOpen={isReviewsModalOpen}
                 onClose={() => setIsReviewsModalOpen(false)}
                 tourTitle={l(tour, 'title')}
-                reviews={tour.reviewsList || []}
+                reviews={tourReviews.length > 0 ? tourReviews : (tour.reviewsList || [])}
             />
         </motion.div>
     );

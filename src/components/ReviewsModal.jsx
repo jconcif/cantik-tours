@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Star } from 'lucide-react';
+import { X, Star, Instagram } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalized } from '../utils/i18nUtils';
@@ -54,7 +54,25 @@ const ReviewsModal = ({ isOpen, onClose, tourTitle, reviews = [] }) => {
                                                 {review.name[0]}
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-sm">{review.name}</h4>
+                                                <div className="flex flex-wrap items-center gap-2 mb-0.5">
+                                                    <h4 className="font-bold text-sm leading-none">{review.name}</h4>
+                                                    {review.ig_user && (review.authorized || review.autorizacion_fotos == 1) && (
+                                                        <span className="flex items-center gap-1 text-[9px] text-pink-500 font-black bg-pink-50 dark:bg-pink-500/10 px-2 py-0.5 rounded-full border border-pink-100 dark:border-pink-500/20">
+                                                            <Instagram size={8} />
+                                                            @{review.ig_user.replace('@', '')}
+                                                        </span>
+                                                    )}
+                                                    {review.pais && (
+                                                        <span className="text-[9px] text-gray-400 font-bold bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-full">
+                                                            {(() => {
+                                                                const flags = { ar: '🇦🇷', cl: '🇨🇱', co: '🇨🇴', es: '🇪🇸', mx: '🇲🇽', pe: '🇵🇪', uy: '🇺🇾', us: '🇺🇸' };
+                                                                const flag = flags[review.pais] || '🌐';
+                                                                const countryName = t(`reviews_page.form.countries.${review.pais}`);
+                                                                return `${flag} ${countryName}`;
+                                                            })()}
+                                                        </span>
+                                                    )}
+                                                </div>
                                                 <span className="text-xs text-gray-400">
                                                     {i18n.language.startsWith('es') ? review.date : review.date_en}
                                                 </span>

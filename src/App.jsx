@@ -8,12 +8,17 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import WhatsAppButton from './components/WhatsAppButton';
 
-// Lazy load pages
-const Home = lazy(() => import('./pages/Home'));
-const TourList = lazy(() => import('./pages/TourList'));
-const TourDetail = lazy(() => import('./pages/TourDetail'));
+// Main pages (loaded directly for reliability)
+import Home from './pages/Home';
+import TourList from './pages/TourList';
+import TourDetail from './pages/TourDetail';
+
+// Secondary pages (lazy loaded)
 const BaliGuide = lazy(() => import('./pages/BaliGuide'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
+const ReviewsPage = lazy(() => import('./pages/ReviewsPage'));
+const AdminReviews = lazy(() => import('./pages/AdminReviews'));
+
 
 // Minimal loading component to avoid layout shifts
 const PageLoader = () => (
@@ -44,11 +49,13 @@ function App() {
                             <Route path="/tour/:id" element={<TourDetail />} />
                             <Route path="/guia-bali" element={<BaliGuide />} />
                             <Route path="/nosotros" element={<AboutPage />} />
+                            <Route path="/reviews" element={<ReviewsPage />} />
+                            <Route path="/cantik-admin" element={<AdminReviews />} />
                         </Routes>
                     </Suspense>
                 </main>
                 <Footer />
-                <WhatsAppButton />
+                {!['/reviews', '/cantik-admin'].includes(location.pathname) && <WhatsAppButton />}
             </div>
         </DarkModeProvider>
     );

@@ -8,7 +8,8 @@ const staticRoutes = [
     { url: '/', priority: 1.0 },
     { url: '/tours', priority: 0.8 },
     { url: '/guia-bali', priority: 0.8 },
-    { url: '/nosotros', priority: 0.7 }
+    { url: '/nosotros', priority: 0.7 },
+    { url: '/reviews', priority: 0.6 }
 ];
 
 const tourRoutes = tours.map(tour => ({

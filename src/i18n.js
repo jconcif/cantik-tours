@@ -79,6 +79,10 @@ i18n
                         about: {
                             title: "Nosotros | Cantik Tours Bali",
                             description: "Conoce la historia detrás de Cantik Tours."
+                        },
+                        reviews: {
+                            title: "Comparte tu Experiencia | Cantik Tours",
+                            description: "Cuéntanos qué tal fue tu tour en Bali con nosotros. Tu opinión nos ayuda a mejorar."
                         }
                     },
                     detail: {
@@ -425,13 +429,55 @@ i18n
                         copied: "¡Enlace copiado!",
                         error: "Algo salió mal",
                         whatsapp_tooltip: "¡Hola! ¿Hablamos?",
-                        whatsapp_message: "Hola Cantik Tours! Me gustaría recibir más información sobre vuestros tours.",
+                        whatsapp_message: "Hola Cantik Tours! Me gustaría recibir más información sobre sus tours.",
                         language: "Idioma",
                         reviews_title: "Opiniones",
                         reviews_about: "Sobre",
                         reviews_showing: "Mostrando",
                         reviews_verified: "opiniones verificadas",
-                        whatsapp_about: "Hola Cantik Tours! He visto vuestra historia y me gustaría haceros una consulta sobre mi viaje."
+                        whatsapp_about: "Hola Cantik Tours! He visto su historia y me gustaría hacer una consulta sobre mi viaje."
+                    },
+                    reviews_page: {
+                        title: "Tu Experiencia en",
+                        title_accent: "Bali",
+                        subtitle: "Gracias por confiar en Cantik Tours. Tu opinión nos ayuda a crecer y a inspirar a otros viajeros.",
+                        form: {
+                            name: "Nombre completo",
+                            rating: "Tu valoración",
+                            tour_type: "¿Qué tour realizaste?",
+                            tours: {
+                                ubud_central: "Ubud Central",
+                                ubud_north: "Ubud Norte",
+                                lovina: "Lovina / Delfines",
+                                east: "Este / Besakih",
+                                lempuyang: "Lempuyang",
+                                transfer: "Traslado",
+                                custom: "Personalizado / Otro"
+                            },
+                            country: "País de origen",
+                            countries: {
+                                es: "España",
+                                cl: "Chile",
+                                ar: "Argentina",
+                                mx: "México",
+                                co: "Colombia",
+                                pe: "Perú",
+                                uy: "Uruguay",
+                                other: "Otro"
+                            },
+                            comment: "Tu comentario",
+                            comment_placeholder: "Comparte qué fue lo que más te gustó...",
+                            ig_user: "Usuario de Instagram (Opcional)",
+                            ig_placeholder: "@tuusuario",
+                            auth: "Me encantaría formar parte de la Familia Cantik en Instagram y autorizo compartir mi experiencia en sus redes sociales.",
+                            implicit_consent: "Al enviar mi reseña, acepto su publicación en la web de Cantik Tours y la política de privacidad.",
+                            submit: "Enviar Reseña",
+                            success_title: "¡Gracias por tu reseña!",
+                            success_text: "Tu mensaje se ha guardado correctamente. Lo revisaremos y aparecerá muy pronto en la web.",
+                            ig_follow_text: "¡No te pierdas nada! Síguenos en Instagram para ver más de la magia de Bali:",
+                            ig_follow_btn: "Seguir en Instagram",
+                            wsp_groups_text: "¿Estás en los grupos de WhatsApp de la comunidad en Bali? Recomiéndanos allí, ¡nos ayudaría muchísimo a seguir creciendo! Muchas gracias por elegir Cantik Tours!",
+                        }
                     }
                 }
             },
@@ -501,6 +547,10 @@ i18n
                         about: {
                             title: "About Us | Cantik Tours Bali",
                             description: "Get to know the story behind Cantik Tours."
+                        },
+                        reviews: {
+                            title: "Share your Experience | Cantik Tours",
+                            description: "Tell us about your tour in Bali. Your review helps us grow."
                         }
                     },
                     detail: {
@@ -704,7 +754,7 @@ i18n
                                 lovina_tip: "Tip: The north is the most authentic area to see the \"real Bali\" away from mass tourism.",
                                 amed_title: "Amed (Diving & Volcano Views)",
                                 amed_desc: "A paradise for snorkeling and diving. Its sunsets with views of Mount Agung are arguably among the best in Bali.",
-                                amed_tip: "Tip: Bring water shoes. The beaches have rocks/coral, but the underwater visibility is the best on the island.",
+                                amed_tip: "Tip: Children's feet? Bring water shoes. The beaches have rocks/coral, but the underwater visibility is the best on the island.",
                                 advice_title: "💡 Cantik Tours Advice",
                                 advice_text: "If your trip is more than a week, we recommend splitting your stay: a few days in each sector will allow you to enjoy the different panoramas that Bali can offer you."
                             },
@@ -849,6 +899,48 @@ i18n
                         reviews_showing: "Showing",
                         reviews_verified: "verified reviews",
                         whatsapp_about: "Hi Cantik Tours! I've seen your story and would like to ask you a question about my trip."
+                    },
+                    reviews_page: {
+                        title: "Your Experience in",
+                        title_accent: "Bali",
+                        subtitle: "Thank you for trusting Cantik Tours. Your opinion helps us grow and inspire other travelers.",
+                        form: {
+                            name: "Full Name",
+                            rating: "Your rating",
+                            tour_type: "Which tour did you take?",
+                            tours: {
+                                ubud_central: "Ubud Central",
+                                ubud_north: "Ubud North",
+                                lovina: "Lovina / Dolphins",
+                                east: "East / Besakih",
+                                lempuyang: "Lempuyang",
+                                transfer: "Transfer",
+                                custom: "Custom / Other"
+                            },
+                            country: "Country of origin",
+                            countries: {
+                                es: "Spain",
+                                cl: "Chile",
+                                ar: "Argentina",
+                                mx: "Mexico",
+                                co: "Colombia",
+                                pe: "Peru",
+                                uy: "Uruguay",
+                                other: "Other"
+                            },
+                            comment: "Your comment",
+                            comment_placeholder: "Share what you liked the most...",
+                            ig_user: "Instagram User (Optional)",
+                            ig_placeholder: "@youruser",
+                            auth: "I'd love to be part of the Cantik Family in Instagram and I authorize sharing my experience on your social media.",
+                            implicit_consent: "By submitting my review, I accept its publication on the Cantik Tours website and the privacy policy.",
+                            submit: "Send Review",
+                            success_title: "Thank you for your review!",
+                            success_text: "Your message has been successfully saved. We will review it and it will appear on the website soon.",
+                            ig_follow_text: "Don't miss a thing! Follow us on Instagram to see more of Bali's magic:",
+                            ig_follow_btn: "Follow on Instagram",
+                            wsp_groups_text: "Are you in the community WhatsApp groups in Bali? Recommend us there, it would help us a lot to keep growing! Thank you so much for choosing Cantik Tours!",
+                        }
                     }
                 }
             }

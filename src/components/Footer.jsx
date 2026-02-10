@@ -35,6 +35,7 @@ const Footer = () => {
                         <li><Link to="/" className="hover:text-primary transition-colors">{t('nav.home')}</Link></li>
                         <li><Link to="/tours" className="hover:text-primary transition-colors">{t('nav.tours')}</Link></li>
                         <li><Link to="/guia-bali" className="hover:text-primary transition-colors">{t('nav.guide')}</Link></li>
+                        <li><Link to="/reviews" className="hover:text-primary transition-colors">{t('common.reviews_title')}</Link></li>
                     </ul>
                 </div>
 
@@ -50,7 +51,7 @@ const Footer = () => {
                 <div>
                     <h3 className="font-bold text-lg mb-6">{t('footer.social')}</h3>
                     <div className="flex gap-4">
-                        <a href="https://instagram.com/CantikToursBali" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
+                        <a href="https://instagram.com/cantiktours" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
                             <Instagram size={24} />
                         </a>
                         <a
