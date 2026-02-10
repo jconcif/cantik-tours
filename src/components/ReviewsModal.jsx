@@ -34,7 +34,7 @@ const ReviewsModal = ({ isOpen, onClose, tourTitle, reviews = [] }) => {
                         <div className="p-6 border-b border-black/5 dark:border-white/5 flex items-center justify-between bg-white dark:bg-bg-dark z-10">
                             <div>
                                 <h3 className="text-xl font-black">{t('common.reviews_title')}</h3>
-                                <p className="text-sm text-gray-500 font-medium">{t('common.reviews_about')} {tourTitle}</p>
+                                <p className="text-sm text-gray-600 font-medium">{t('common.reviews_about')} {tourTitle}</p>
                             </div>
                             <button
                                 onClick={onClose}

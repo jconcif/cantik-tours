@@ -38,6 +38,7 @@ const WhatsAppButton = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => trackEvent('Conversion', 'WhatsApp Click', 'Floating Button')}
+                        aria-label={t('common.whatsapp_tooltip')}
                         className="bg-[#25D366] text-white p-5 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform group relative"
                     >
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">

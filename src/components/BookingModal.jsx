@@ -87,6 +87,7 @@ Me gustaría reservar este tour, por favor:
                             <h3 className="text-xl font-black text-primary uppercase tracking-tight">{t('detail.booking_title')}</h3>
                             <button
                                 onClick={onClose}
+                                aria-label={t('common.close') || "Cerrar"}
                                 className="w-8 h-8 rounded-full bg-white/50 dark:bg-white/10 hover:bg-white flex items-center justify-center transition-colors"
                             >
                                 <X size={20} className="text-gray-600 dark:text-gray-400" />
@@ -98,11 +99,15 @@ Me gustaría reservar este tour, por favor:
 
                             {/* Date Input */}
                             <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                <label
+                                    htmlFor="booking-date"
+                                    className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                >
                                     <Calendar size={14} className="text-primary" />
                                     {t('detail.booking_date')}
                                 </label>
                                 <input
+                                    id="booking-date"
                                     type="date"
                                     required
                                     min={new Date().toISOString().split('T')[0]}
@@ -114,11 +119,15 @@ Me gustaría reservar este tour, por favor:
 
                             {/* Pax Input */}
                             <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                <label
+                                    htmlFor="booking-pax"
+                                    className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                >
                                     <Users size={14} className="text-primary" />
                                     {t('detail.booking_pax')}
                                 </label>
                                 <select
+                                    id="booking-pax"
                                     value={formData.pax}
                                     onChange={(e) => setFormData({ ...formData, pax: e.target.value })}
                                     className={`${inputClasses} appearance-none block w-full cursor-pointer`}
@@ -136,11 +145,15 @@ Me gustaría reservar este tour, por favor:
 
                             {/* Hotel Input */}
                             <div className="space-y-2">
-                                <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                <label
+                                    htmlFor="booking-hotel"
+                                    className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                >
                                     <MapPin size={14} className="text-primary" />
                                     {t('detail.booking_hotel')}
                                 </label>
                                 <input
+                                    id="booking-hotel"
                                     type="text"
                                     required
                                     placeholder={t('detail.booking_hotel_placeholder')}
@@ -157,14 +170,14 @@ Me gustaría reservar este tour, por favor:
                                     {t('detail.booking_language')}
                                 </label>
                                 <div className="grid gap-3">
-                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'en' ? 'border-primary bg-primary/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
+                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'en' ? 'border-primary bg-primary/5' : 'border-black/5 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
                                         <input
                                             type="radio"
                                             name="language"
                                             value="en"
                                             checked={formData.language === 'en'}
                                             onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                                            className="hidden"
+                                            className="sr-only"
                                         />
                                         <div className="flex-1">
                                             <span className={`block text-sm font-black uppercase tracking-wide ${formData.language === 'en' ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
@@ -177,14 +190,14 @@ Me gustaría reservar este tour, por favor:
                                         {formData.language === 'en' && <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />}
                                     </label>
 
-                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'es' ? 'border-primary bg-primary/5' : 'border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
+                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'es' ? 'border-primary bg-primary/5' : 'border-black/5 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
                                         <input
                                             type="radio"
                                             name="language"
                                             value="es"
                                             checked={formData.language === 'es'}
                                             onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                                            className="hidden"
+                                            className="sr-only"
                                         />
                                         <div className="flex-1">
                                             <div className="flex items-center gap-2">
@@ -199,10 +212,10 @@ Me gustaría reservar este tour, por favor:
                                         {formData.language === 'es' && <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />}
                                     </label>
                                 </div>
-                                <p className="text-[10px] text-gray-400 font-bold italic flex items-center gap-1">
+                                <div className="text-[10px] text-gray-400 font-bold italic flex items-center gap-1">
                                     <div className="w-1 h-1 rounded-full bg-primary" />
                                     {t('detail.availability_disclaimer')}
-                                </p>
+                                </div>
                             </div>
 
                             {/* Coupon Toggle and Input */}
@@ -210,7 +223,8 @@ Me gustaría reservar este tour, por favor:
                                 <button
                                     type="button"
                                     onClick={() => setShowCoupon(!showCoupon)}
-                                    className="flex items-center gap-2 text-[10px] font-black text-gray-500 hover:text-primary transition-colors uppercase tracking-widest"
+                                    className="flex items-center gap-2 text-[10px] font-black text-gray-600 hover:text-primary transition-colors uppercase tracking-widest"
+                                    aria-expanded={showCoupon}
                                 >
                                     <Ticket size={14} className={showCoupon ? 'text-secondary' : 'text-gray-400'} />
                                     {t('detail.coupon')}
@@ -225,7 +239,9 @@ Me gustaría reservar este tour, por favor:
                                             className="overflow-hidden"
                                         >
                                             <div className="pt-3">
+                                                <label htmlFor="booking-coupon" className="sr-only">{t('detail.coupon')}</label>
                                                 <input
+                                                    id="booking-coupon"
                                                     type="text"
                                                     placeholder={t('detail.coupon_placeholder')}
                                                     value={formData.coupon}
@@ -247,7 +263,7 @@ Me gustaría reservar este tour, por favor:
                                 {t('detail.booking_submit')}
                             </button>
 
-                            <p className="text-center text-[10px] text-gray-500 font-bold uppercase tracking-widest opacity-80 leading-relaxed px-4">
+                            <p className="text-center text-[10px] text-gray-600 font-bold uppercase tracking-widest opacity-80 leading-relaxed px-4">
                                 {t('detail.booking_payment_info')}
                             </p>
                         </form>

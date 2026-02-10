@@ -155,12 +155,14 @@ const TourDetail = () => {
                     {/* Navigation Buttons */}
                     <button
                         onClick={prevImage}
+                        aria-label={i18n.language.startsWith('es') ? "Imagen anterior" : "Previous image"}
                         className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all active:scale-95"
                     >
                         <ChevronLeft size={28} />
                     </button>
                     <button
                         onClick={nextImage}
+                        aria-label={i18n.language.startsWith('es') ? "Siguiente imagen" : "Next image"}
                         className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all active:scale-95 rotate-180"
                     >
                         <ChevronLeft size={28} />
@@ -176,6 +178,7 @@ const TourDetail = () => {
                         </div>
                         <button
                             onClick={handleShare}
+                            aria-label={t('detail.share')}
                             className="hidden md:flex flex-shrink-0 w-14 h-14 rounded-full bg-white/20 backdrop-blur-md items-center justify-center text-white hover:bg-primary transition-all active:scale-95"
                         >
                             <Share2 size={24} />
@@ -298,7 +301,7 @@ const TourDetail = () => {
                                                     )}
                                                 </div>
                                                 {l(item, 'desc') && (
-                                                    <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed font-medium max-w-xl">
+                                                    <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed font-medium max-w-xl">
                                                         {l(item, 'desc')}
                                                     </p>
                                                 )}
@@ -348,7 +351,7 @@ const TourDetail = () => {
                     {/* FAQ Section */}
                     <section className="pt-8">
                         <h2 className="text-2xl font-black mb-4">{t('detail.faq_title')}</h2>
-                        <p className="text-gray-500 dark:text-gray-400 font-bold mb-8">{t('detail.faq_intro')}</p>
+                        <p className="text-gray-600 dark:text-gray-400 font-bold mb-8">{t('detail.faq_intro')}</p>
                         <div className="space-y-4">
                             {/* Standard FAQs */}
                             {(l(tour, 'faqs') || [
@@ -372,7 +375,7 @@ const TourDetail = () => {
                                                 initial={{ height: 0 }}
                                                 animate={{ height: 'auto' }}
                                                 exit={{ height: 0 }}
-                                                className="px-8 pb-8 text-gray-500 dark:text-gray-400 font-medium leading-relaxed"
+                                                className="px-8 pb-8 text-gray-600 dark:text-gray-400 font-medium leading-relaxed"
                                             >
                                                 {l(faq, 'a')}
                                             </motion.div>
@@ -436,7 +439,7 @@ const TourDetail = () => {
                                                 {(l(tour, 'importantInfo') || []).map((info, idx) => (
                                                     <li key={idx} className="flex items-start gap-3">
                                                         <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                                                        <span className="text-sm font-bold text-gray-500 dark:text-gray-400 leading-relaxed">
+                                                        <span className="text-sm font-bold text-gray-600 dark:text-gray-400 leading-relaxed">
                                                             {info}
                                                         </span>
                                                     </li>

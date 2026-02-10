@@ -8,14 +8,16 @@ import { useTranslation } from 'react-i18next';
 import SEO from '../components/SEO';
 import { trackEvent } from '../utils/analytics';
 
-const GuideSection = ({ title, children, isOpen, onToggle }) => (
+const GuideSection = ({ title, children, isOpen, onToggle, id }) => (
     <div className="border border-black/5 dark:border-white/5 rounded-3xl overflow-hidden bg-white dark:bg-white/5 transition-all">
         <button
             onClick={onToggle}
+            aria-expanded={isOpen}
+            aria-controls={`section-content-${id}`}
             className="w-full px-8 py-6 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors group"
         >
             <div className="flex items-center gap-4 text-left">
-                <h3 className="text-xl font-bold">{title}</h3>
+                <span className="text-xl font-bold">{title}</span>
             </div>
             <motion.div
                 animate={{ rotate: isOpen ? 180 : 0 }}
@@ -27,6 +29,7 @@ const GuideSection = ({ title, children, isOpen, onToggle }) => (
         <AnimatePresence>
             {isOpen && (
                 <motion.div
+                    id={`section-content-${id}`}
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
@@ -397,7 +400,7 @@ const BaliGuide = () => {
                 <h1 className="text-5xl md:text-7xl font-black mb-8 tracking-tighter leading-none">
                     {t('guide.title')} <span className="text-primary italic">{t('guide.title_accent')}</span>
                 </h1>
-                <p className="text-xl text-gray-500 dark:text-gray-400 max-w-2xl mx-auto font-medium leading-relaxed">
+                <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium leading-relaxed">
                     {t('guide.subtitle')}
                 </p>
             </motion.div>
@@ -406,6 +409,7 @@ const BaliGuide = () => {
                 {sections.map((section, idx) => (
                     <GuideSection
                         key={idx}
+                        id={idx}
                         title={section.title}
                         isOpen={openSections.includes(idx)}
                         onToggle={() => toggleSection(idx)}

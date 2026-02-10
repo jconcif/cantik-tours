@@ -9,6 +9,7 @@ export default {
     extend: {
       colors: {
         primary: '#13c8ec',
+        'primary-dark': '#0088a3',
         secondary: '#ec138a', // Vibrant pink for gradients/accents
         accent: '#facc15', // Gold/Yellow for highlights
         'bg-light': '#f6f8f8',

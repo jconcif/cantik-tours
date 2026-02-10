@@ -11,11 +11,11 @@ const Feature = ({ icon: Icon, title, description, index }) => (
         transition={{ delay: index * 0.1 }}
         className="bg-white dark:bg-white/5 p-8 rounded-3xl border border-black/5 dark:border-white/5 hover:shadow-xl transition-all group"
     >
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+        <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary-dark flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
             <Icon size={28} />
         </div>
         <h3 className="text-xl font-bold mb-3">{title}</h3>
-        <p className="text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+        <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
             {description}
         </p>
     </motion.div>
@@ -54,7 +54,7 @@ const FeaturesGrid = () => {
                     {t('features.title')}{' '}
                     <span className="text-primary italic">{t('features.title_accent')}</span>
                 </h2>
-                <p className="text-gray-500 max-w-xl mx-auto font-medium">
+                <p className="text-gray-600 max-w-xl mx-auto font-medium">
                     {t('features.subtitle')}
                 </p>
             </div>

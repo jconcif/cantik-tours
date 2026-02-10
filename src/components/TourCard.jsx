@@ -38,32 +38,32 @@ const TourCard = ({ tour, index }) => {
             </div>
 
             <div className="p-8 flex-grow flex flex-col">
-                <h3 className="text-2xl font-black mb-3 group-hover:text-primary transition-colors leading-tight">{l('title')}</h3>
-                <p className="text-gray-500 dark:text-gray-400 mb-8 line-clamp-3 text-sm leading-relaxed">
+                <h3 className="text-2xl font-black mb-3 group-hover:text-primary-dark transition-colors leading-tight">{l('title')}</h3>
+                <p className="text-gray-600 dark:text-gray-400 mb-8 line-clamp-3 text-sm leading-relaxed">
                     {l('description')}
                 </p>
 
                 <div className="grid grid-cols-2 gap-y-4 mb-8">
                     <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary-dark">
                             <Clock size={14} />
                         </div>
                         <span>{l('duration')}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary-dark">
                             <Languages size={14} />
                         </div>
                         <span>{i18n.language.startsWith('es') ? 'Español/Inglés' : 'ES / EN Guide'}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary-dark">
                             <Star size={14} className="fill-primary/20" />
                         </div>
                         <span>{i18n.language.startsWith('es') ? 'Tour Privado' : 'Private Tour'}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-xs font-bold text-gray-700 dark:text-gray-300">
-                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary-dark">
                             <Users size={14} />
                         </div>
                         <span>{i18n.language.startsWith('es') ? '1-5 pasajeros' : '1-5 passengers'}</span>

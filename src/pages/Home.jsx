@@ -73,7 +73,7 @@ const Home = () => {
                         <h2 className="text-4xl md:text-5xl font-black mb-4 capitalize">
                             {t('tours.title')} <span className="text-primary italic">{t('tours.title_accent')}</span>
                         </h2>
-                        <p className="text-gray-500 dark:text-gray-400 max-w-lg font-medium">
+                        <p className="text-gray-600 dark:text-gray-400 max-w-lg font-medium">
                             {t('tours.subtitle')}
                         </p>
                     </div>

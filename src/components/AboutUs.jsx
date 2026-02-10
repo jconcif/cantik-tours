@@ -37,7 +37,7 @@ const AboutUs = () => {
                         />
                         <div className="flex items-center px-2">
                             <div>
-                                <h4 className="font-black text-xl md:text-2xl text-primary leading-tight">{t('about.perty_name')}</h4>
+                                <h3 className="font-black text-xl md:text-2xl text-primary-dark leading-tight">{t('about.perty_name')}</h3>
                                 <p className="text-sm md:text-base font-medium opacity-60 uppercase tracking-wider">{t('about.perty_role')}</p>
                             </div>
                         </div>
@@ -64,7 +64,7 @@ const AboutUs = () => {
                         <p className="text-lg md:text-xl lg:text-2xl text-gray-700 dark:text-gray-300 font-medium leading-relaxed italic mb-8 border-l-4 border-primary/30 pl-6">
                             "{t('about.meaning_text')}"
                         </p>
-                        <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+                        <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
                             {t('about.team_intro_text')}
                         </p>
                     </div>

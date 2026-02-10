@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cantik Tours | Bali no se visita, se vive</title>
     <meta name="description"
         content="Tours privados en Bali con guías locales en español. Vive la esencia de Bali con Perty y su equipo." />
@@ -13,19 +13,21 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Preload critical font weights to avoid FOUT (Flash of Unstyled Text) -->
-    <link rel="preload" as="style"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+    <!-- Load critical fonts normally to prevent CLS from font swapping -->
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-        media="print" onload="this.media='all'">
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
 
-    <!-- Preload hero image for instant LCP -->
-    <link rel="preload" as="image" href="/images/hero.jpg" fetchpriority="high">
+    <!-- Preload hero image for instant LCP (Adaptive) -->
+    <link rel="preload" as="image" href="/images/hero-mobile.jpg" media="(max-width: 768px)" fetchpriority="high">
+    <link rel="preload" as="image" href="/images/hero.jpg" media="(min-width: 769px)" fetchpriority="high">
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+    <meta name="theme-color" content="#13c8ec" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 </head>
 
 <body>

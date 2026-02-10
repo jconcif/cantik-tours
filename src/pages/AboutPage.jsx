@@ -55,7 +55,7 @@ const AboutPage = () => {
                     </h1>
 
                     {/* New Authority Subtitle */}
-                    <p className="text-lg md:text-xl font-medium text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+                    <p className="text-lg md:text-xl font-medium text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
                         {t('about.authority_subtitle')}
                     </p>
 
@@ -71,7 +71,7 @@ const AboutPage = () => {
                             <ShieldCheck size={32} />
                         </div>
                         <h3 className="text-xl font-black mb-3">{t('about.trust_local_title')}</h3>
-                        <p className="text-gray-500 font-medium leading-relaxed text-sm">
+                        <p className="text-gray-600 font-medium leading-relaxed text-sm">
                             {t('about.trust_local_desc')}
                         </p>
                     </div>
@@ -80,7 +80,7 @@ const AboutPage = () => {
                             <Star size={32} />
                         </div>
                         <h3 className="text-xl font-black mb-3">{t('about.trust_direct_title')}</h3>
-                        <p className="text-gray-500 font-medium leading-relaxed text-sm">
+                        <p className="text-gray-600 font-medium leading-relaxed text-sm">
                             {t('about.trust_direct_desc')}
                         </p>
                     </div>
@@ -89,7 +89,7 @@ const AboutPage = () => {
                             <Award size={32} />
                         </div>
                         <h3 className="text-xl font-black mb-3">{t('about.trust_boutique_title')}</h3>
-                        <p className="text-gray-500 font-medium leading-relaxed text-sm">
+                        <p className="text-gray-600 font-medium leading-relaxed text-sm">
                             {t('about.trust_boutique_desc')}
                         </p>
                     </div>
@@ -206,7 +206,7 @@ const AboutPage = () => {
                             <div className="p-4 md:p-5">
                                 <h4 className="text-base md:text-lg font-black mb-0.5">{guide.name}</h4>
                                 <p className="text-primary font-bold text-[10px] uppercase tracking-widest mb-2">{guide.role}</p>
-                                <p className="text-gray-500 dark:text-gray-400 text-[11px] md:text-sm leading-relaxed line-clamp-2 md:line-clamp-none">
+                                <p className="text-gray-600 dark:text-gray-400 text-[11px] md:text-sm leading-relaxed line-clamp-2 md:line-clamp-none">
                                     {guide.desc}
                                 </p>
                             </div>

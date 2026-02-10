@@ -37,7 +37,7 @@ const FinalCTA = () => {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: 0.1 }}
-                                className="text-gray-500 dark:text-gray-400 text-lg md:text-xl max-w-2xl mb-12 font-medium leading-relaxed"
+                                className="text-gray-600 dark:text-gray-400 text-lg md:text-xl max-w-2xl mb-12 font-medium leading-relaxed"
                             >
                                 {t('cta.subtitle')}
                             </motion.p>
@@ -73,7 +73,7 @@ const FinalCTA = () => {
                         {/* Image Side */}
                         <div className="lg:w-2/5 relative min-h-[300px] lg:min-h-full overflow-hidden">
                             <img
-                                src="images/ubud.jpg"
+                                src="/images/ubud.jpg"
                                 alt="Ubud Rice Terraces - Cantik Tours Bali"
                                 width="800"
                                 height="600"

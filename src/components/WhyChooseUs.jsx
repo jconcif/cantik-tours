@@ -35,7 +35,7 @@ const WhyChooseUs = () => {
                     className="text-center mb-16"
                 >
                     <h2 className="text-4xl font-black mb-4">{t('why.title')}</h2>
-                    <p className="text-gray-500 max-w-xl mx-auto">{t('why.subtitle')}</p>
+                    <p className="text-gray-600 max-w-xl mx-auto">{t('why.subtitle')}</p>
                 </motion.div>
 
                 <div className="grid md:grid-cols-3 gap-12">
@@ -48,11 +48,11 @@ const WhyChooseUs = () => {
                             transition={{ duration: 0.5, delay: idx * 0.2 }}
                             className="flex flex-col items-center text-center p-8 rounded-3xl hover:bg-bg-light dark:hover:bg-white/5 transition-colors group"
                         >
-                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary-dark mb-6 group-hover:scale-110 transition-transform">
                                 <reason.icon size={32} />
                             </div>
                             <h3 className="text-xl font-bold mb-3">{reason.title}</h3>
-                            <p className="text-gray-500 dark:text-gray-400">{reason.text}</p>
+                            <p className="text-gray-600 dark:text-gray-400">{reason.text}</p>
                         </motion.div>
                     ))}
                 </div>

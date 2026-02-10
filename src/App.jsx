@@ -15,11 +15,9 @@ const TourDetail = lazy(() => import('./pages/TourDetail'));
 const BaliGuide = lazy(() => import('./pages/BaliGuide'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 
-// Loading component
+// Minimal loading component to avoid layout shifts
 const PageLoader = () => (
-    <div className="min-h-[60vh] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-    </div>
+    <div className="h-screen w-full bg-bg-light dark:bg-bg-dark" />
 );
 
 function App() {
@@ -36,7 +34,7 @@ function App() {
     return (
         <DarkModeProvider>
             <ScrollToTop />
-            <div className="min-h-screen flex flex-col pb-20 md:pb-0">
+            <div className="min-h-screen flex flex-col">
                 <Navbar />
                 <main className="flex-grow">
                     <Suspense fallback={<PageLoader />}>

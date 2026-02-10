@@ -70,7 +70,7 @@ const Navbar = () => {
                         }}
                         className="flex items-center gap-1.5 group"
                     >
-                        <span className="text-xl sm:text-2xl font-black tracking-tighter text-primary group-hover:scale-105 transition-transform">CANTIK</span>
+                        <span className="text-xl sm:text-2xl font-black tracking-tighter text-primary-dark group-hover:scale-105 transition-transform">CANTIK</span>
                         <span className={`text-xl sm:text-2xl font-light tracking-widest uppercase transition-colors ${textColorClass}`}>Tours</span>
                     </Link>
                 </div>
@@ -114,6 +114,7 @@ const Navbar = () => {
                             onClick={toggleLanguage}
                             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all font-black text-[10px] uppercase tracking-tighter border ${textColorClass} ${useDarkText ? 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5' : 'border-white/30 bg-white/10 backdrop-blur-sm'
                                 } hover:scale-105 active:scale-95`}
+                            aria-label={i18n.language.startsWith('es') ? "Change language to English" : "Cambiar idioma a Español"}
                         >
                             <Languages size={14} className="opacity-70" />
                             <span>{i18n.language.startsWith('es') ? 'ES' : 'EN'}</span>
@@ -122,6 +123,7 @@ const Navbar = () => {
                         <button
                             onClick={toggleDarkMode}
                             className={`p-2 rounded-full transition-colors ${textColorClass} hover:bg-black/5 dark:hover:bg-white/5`}
+                            aria-label={isDark ? "Activar modo claro" : "Activar modo oscuro"}
                         >
                             {isDark ? <Sun size={20} /> : <Moon size={20} />}
                         </button>
@@ -131,14 +133,16 @@ const Navbar = () => {
                     <button
                         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                         className={`md:hidden p-2 rounded-full hover:bg-white/10 transition-colors ${textColorClass}`}
+                        aria-label={isMobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+                        aria-expanded={isMobileMenuOpen}
                     >
-                        <Menu size={28} />
+                        {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
                     </button>
                 </div>
             </nav>
 
             {/* Mobile Menu Overlay */}
-            <AnimatePresence>
+            < AnimatePresence >
                 {isMobileMenuOpen && (
                     <motion.div
                         initial={{ opacity: 0, x: '100%' }}
@@ -219,7 +223,7 @@ const Navbar = () => {
 
                     </motion.div>
                 )}
-            </AnimatePresence>
+            </AnimatePresence >
         </>
     );
 };

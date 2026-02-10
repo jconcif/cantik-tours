@@ -53,7 +53,7 @@ const TourList = () => {
                     initial={{ y: 20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.1 }}
-                    className="text-xl text-gray-500 dark:text-gray-400 font-medium leading-relaxed"
+                    className="text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed"
                 >
                     {t('tours.subtitle')}
                 </motion.p>
@@ -104,7 +104,7 @@ const TourList = () => {
                                 <Map size={40} />
                             </div>
                             <h3 className="text-2xl font-black mb-4 tracking-tight">{t('tours.custom.title')}</h3>
-                            <p className="text-gray-500 dark:text-gray-400 font-medium leading-relaxed mb-8">
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">
                                 {t('tours.custom.description')}
                             </p>
                             <button

@@ -28,7 +28,7 @@ const Testimonials = () => {
                     <h2 className="text-3xl md:text-5xl font-black mb-4">
                         {t('testimonials.title')} <span className="text-primary italic">{t('testimonials.title_accent')}</span>
                     </h2>
-                    <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
                         {t('testimonials.subtitle')}
                     </p>
                 </div>
@@ -61,7 +61,7 @@ const Testimonials = () => {
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-gray-900 dark:text-white">{item.name}</h4>
-                                    <p className="text-xs text-gray-500 font-bold uppercase tracking-wider">{item.location}</p>
+                                    <p className="text-xs text-gray-600 font-bold uppercase tracking-wider">{item.location}</p>
                                 </div>
                             </div>
                         </motion.div>

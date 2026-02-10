@@ -7,6 +7,8 @@
 @layer base {
   :root {
     --primary: #13c8ec;
+    --primary-dark: #0088a3;
+    /* Darker shade for accessible text on light backgrounds */
     --secondary: #ec138a;
   }
 
@@ -61,9 +63,24 @@
   }
 }
 
+@keyframes gentle-zoom {
+  from {
+    transform: scale(1.05);
+  }
+
+  to {
+    transform: scale(1);
+  }
+}
+
+.animate-gentle-zoom {
+  animation: gentle-zoom 3s ease-out forwards;
+}
+
 /* Fix iOS date input styling */
 input[type="date"] {
   -webkit-appearance: none;
+  appearance: none;
   min-height: 58px;
   display: block;
   position: relative;

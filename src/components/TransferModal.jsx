@@ -66,6 +66,7 @@ ${t('detail.msg_confirm')}`;
                             <h3 className="text-xl font-black text-primary uppercase tracking-tight">{t('detail.transfer_title')}</h3>
                             <button
                                 onClick={onClose}
+                                aria-label={t('common.close') || "Cerrar"}
                                 className="w-8 h-8 rounded-full bg-white/50 dark:bg-white/10 hover:bg-white flex items-center justify-center transition-colors"
                             >
                                 <X size={20} className="text-gray-600 dark:text-gray-400" />
@@ -77,11 +78,15 @@ ${t('detail.msg_confirm')}`;
 
                             {/* Transfer Route Selector */}
                             <div className="space-y-2">
-                                <label className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                <label
+                                    htmlFor="transfer-type"
+                                    className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                >
                                     <MapPin size={14} className="text-primary mt-0.5" />
                                     {t('detail.transfer_type')}
                                 </label>
                                 <select
+                                    id="transfer-type"
                                     required
                                     value={formData.type}
                                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
@@ -136,7 +141,9 @@ ${t('detail.msg_confirm')}`;
                                         exit={{ height: 0, opacity: 0 }}
                                         className="overflow-hidden"
                                     >
+                                        <label htmlFor="transfer-other-type" className="sr-only">{t('detail.transfer_type_placeholder')}</label>
                                         <input
+                                            id="transfer-other-type"
                                             type="text"
                                             required
                                             placeholder={t('detail.transfer_type_placeholder')}
@@ -151,11 +158,15 @@ ${t('detail.msg_confirm')}`;
                             {/* Date & Time Row */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                    <label
+                                        htmlFor="transfer-date"
+                                        className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                    >
                                         <Calendar size={14} className="text-primary mt-0.5" />
                                         {t('detail.booking_date')}
                                     </label>
                                     <input
+                                        id="transfer-date"
                                         type="date"
                                         required
                                         min={new Date().toISOString().split('T')[0]}
@@ -165,11 +176,15 @@ ${t('detail.msg_confirm')}`;
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                    <label
+                                        htmlFor="transfer-time"
+                                        className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                    >
                                         <Clock size={14} className="text-primary mt-0.5" />
                                         {t('detail.transfer_time')}
                                     </label>
                                     <input
+                                        id="transfer-time"
                                         type="time"
                                         required
                                         value={formData.time}
@@ -182,11 +197,15 @@ ${t('detail.msg_confirm')}`;
                             {/* Pax & Bags Row */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                    <label className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                    <label
+                                        htmlFor="transfer-pax"
+                                        className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                    >
                                         <Users size={14} className="text-primary mt-0.5" />
                                         {t('detail.booking_pax')}
                                     </label>
                                     <select
+                                        id="transfer-pax"
                                         value={formData.pax}
                                         onChange={(e) => setFormData({ ...formData, pax: e.target.value })}
                                         className={inputClasses}
@@ -198,11 +217,15 @@ ${t('detail.msg_confirm')}`;
                                     </select>
                                 </div>
                                 <div className="space-y-2">
-                                    <label className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                    <label
+                                        htmlFor="transfer-bags"
+                                        className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                    >
                                         <Luggage size={14} className="text-primary mt-0.5" />
                                         {t('detail.transfer_bags')}
                                     </label>
                                     <select
+                                        id="transfer-bags"
                                         value={formData.bags}
                                         onChange={(e) => setFormData({ ...formData, bags: e.target.value })}
                                         className={inputClasses}
@@ -217,11 +240,15 @@ ${t('detail.msg_confirm')}`;
 
                             {/* Flight Number */}
                             <div className="space-y-2">
-                                <label className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                <label
+                                    htmlFor="transfer-flight"
+                                    className="flex items-start gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer"
+                                >
                                     <Plane size={14} className="text-primary mt-0.5" />
                                     {t('detail.transfer_flight')}
                                 </label>
                                 <input
+                                    id="transfer-flight"
                                     type="text"
                                     placeholder={t('detail.transfer_flight_placeholder')}
                                     value={formData.flight}

@@ -14,27 +14,27 @@ const Hero = () => {
 
     return (
         <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-            {/* Background Image */}
-            <motion.img
-                initial={{ scale: 1.1 }}
-                animate={{ scale: 1 }}
-                transition={{ duration: 2.5, ease: "easeOut" }}
-                src="/images/hero.jpg"
-                alt="Bali Tours - Templos sagrados, arrozales y cascadas en Ubud - Cantik Tours"
-                width="1920"
-                height="1080"
-                fetchpriority="high"
-                className="absolute inset-0 w-full h-full object-cover"
-            />
+            {/* Background Image - Non-motion for instant LCP */}
+            <picture className="absolute inset-0 w-full h-full">
+                <source srcSet="/images/hero-mobile.jpg" media="(max-width: 768px)" />
+                <img
+                    src="/images/hero.jpg"
+                    alt="Bali Tours - Templos sagrados, arrozales y cascadas en Ubud - Cantik Tours"
+                    width="1920"
+                    height="1080"
+                    fetchpriority="high"
+                    className="absolute inset-0 w-full h-full object-cover animate-gentle-zoom"
+                />
+            </picture>
 
             {/* Overlay Gradient */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-bg-light dark:to-bg-dark" />
             <div className="absolute inset-0 bg-black/20 pointer-events-none" />
 
-            <div className="relative z-10 px-6 text-center max-w-5xl mx-auto flex flex-col items-center pt-20">
+            <div className="relative z-10 px-6 text-center max-w-5xl mx-auto flex flex-col items-center pt-24 md:pt-32">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 0.8 }}
                 >
                     <span className="inline-block py-2 px-5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-white text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-10 shadow-2xl">
@@ -49,8 +49,8 @@ const Hero = () => {
                 </motion.div>
 
                 <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
                     className="text-lg md:text-2xl text-white/90 mb-12 max-w-2xl mx-auto font-medium drop-shadow-lg leading-relaxed"
                 >
