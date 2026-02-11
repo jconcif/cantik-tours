@@ -33,7 +33,7 @@ const AboutUs = () => {
                             width="600"
                             height="750"
                             loading="lazy"
-                            className="w-full aspect-[4/5] object-cover rounded-[1.8rem] md:rounded-[2.5rem] shadow-lg mb-6"
+                            className="w-full h-[350px] md:h-[500px] object-cover object-top rounded-[1.8rem] md:rounded-[2.5rem] shadow-lg mb-6"
                         />
                         <div className="flex items-center px-2">
                             <div>

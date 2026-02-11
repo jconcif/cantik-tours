@@ -59,17 +59,18 @@ const Testimonials = () => {
     if (!allReviews.length) return null;
 
     return (
-        <section className="py-24 px-6 bg-gray-50 dark:bg-white/5 relative overflow-hidden">
+        <section className="py-24 px-6 bg-gray-50 dark:bg-black/20 relative overflow-hidden">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-blue-500/5 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/4 pointer-events-none" />
 
             <div className="max-w-7xl mx-auto relative z-10">
                 <div className="text-center mb-16">
                     <span className="text-primary font-bold tracking-widest uppercase text-xs mb-2 block">{t('testimonials.badge')}</span>
-                    <h2 className="text-3xl md:text-5xl font-black mb-4">
+                    <h2 className="text-3xl md:text-5xl font-black mb-4 text-gray-900 dark:text-white">
                         {t('testimonials.title')} <span className="text-primary italic">{t('testimonials.title_accent')}</span>
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+                    <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
                         {t('testimonials.subtitle')}
                     </p>
                 </div>
@@ -82,70 +83,70 @@ const Testimonials = () => {
                             viewport={{ once: true }}
                             transition={{ delay: index * 0.1 }}
                             key={index}
-                            className="bg-white dark:bg-gray-800 p-8 rounded-[2rem] shadow-xl shadow-black/5 relative border border-black/5 dark:border-white/5 hover:-translate-y-2 transition-transform duration-300"
+                            className="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 dark:shadow-none relative border border-white/50 dark:border-white/5 hover:-translate-y-2 transition-all duration-300 group overflow-hidden"
                         >
-                            <Quote className="absolute top-8 right-8 text-primary/20 rotate-180" size={40} />
-
-                            <div className="flex items-center gap-1 text-yellow-400 mb-6">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        size={18}
-                                        fill={i < (item.stars || 5) ? "currentColor" : "transparent"}
-                                        className={i < (item.stars || 5) ? "" : "text-gray-300 dark:text-gray-600"}
-                                    />
-                                ))}
-                            </div>
-
-                            <p className="text-gray-600 dark:text-gray-300 font-medium leading-relaxed mb-8 relative z-10 italic">
-                                "{i18n.language.startsWith('es') ? item.text : (item.text_en || item.text)}"
-                            </p>
-
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/20 bg-gray-100 dark:bg-white/5 flex items-center justify-center">
-                                    {item.image ? (
-                                        <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User className="text-gray-400" size={24} />
-                                    )}
-                                </div>
-                                <div className="flex flex-col gap-1">
-                                    <h4 className="font-bold text-gray-900 dark:text-white leading-none text-base">
-                                        {item.name}
-                                    </h4>
-
-                                    {/* Instagram handle - Sub-row */}
-                                    {item.ig_user && item.authorized && (
-                                        <div className="flex items-center gap-1.5 text-[10px] text-pink-500 font-bold mb-1">
-                                            <Instagram size={12} />
-                                            <span>@{item.ig_user.replace('@', '')}</span>
+                            <div className="relative z-10 flex flex-col h-full">
+                                {/* Header: User Info */}
+                                <div className="flex items-center gap-4 mb-6">
+                                    <div className="w-14 h-14 rounded-full bg-gray-50 dark:bg-white/10 p-1 shrink-0">
+                                        <div className="w-full h-full rounded-full overflow-hidden relative">
+                                            {item.image ? (
+                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <div className="w-full h-full bg-primary/10 flex items-center justify-center">
+                                                    <User className="text-primary w-6 h-6" />
+                                                </div>
+                                            )}
                                         </div>
-                                    )}
-
-                                    {/* Origin & Tour Metadata - Separate Badges */}
-                                    <div className="flex flex-wrap items-center gap-2 mt-1">
-                                        {(() => {
-                                            if (item.country) {
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900 dark:text-white leading-tight text-lg">
+                                            {item.name}
+                                        </h4>
+                                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
+                                            {item.country && (() => {
                                                 const flags = { ar: '🇦🇷', cl: '🇨🇱', co: '🇨🇴', es: '🇪🇸', mx: '🇲🇽', pe: '🇵🇪', uy: '🇺🇾', us: '🇺🇸' };
                                                 const flag = flags[item.country] || '🌐';
                                                 const countryName = t(`reviews_page.form.countries.${item.country}`);
-                                                const tourKey = `reviews_page.form.tours.${item.location}`;
-                                                const tourName = i18n.exists(tourKey) ? t(tourKey) : item.location;
+                                                return <span className="text-xs font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">{flag} {countryName}</span>;
+                                            })()}
 
-                                                return (
-                                                    <>
-                                                        <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-gray-500 bg-gray-100 dark:bg-white/5 px-2 py-1 rounded-lg border border-black/5 dark:border-white/5">
-                                                            {flag} {countryName}
-                                                        </span>
-                                                        <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wider text-primary bg-primary/5 px-2 py-1 rounded-lg border border-primary/10">
-                                                            {tourName}
-                                                        </span>
-                                                    </>
-                                                );
-                                            }
-                                            return <span className="text-[10px] text-primary font-black uppercase tracking-widest">{item.location}</span>;
-                                        })()}
+                                            {/* Instagram Badge - Moved here */}
+                                            {item.ig_user && item.authorized && (
+                                                <a
+                                                    href={`https://instagram.com/${item.ig_user.replace('@', '')}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1 text-[11px] font-bold text-pink-500 hover:text-pink-600 transition-colors bg-pink-50 dark:bg-pink-500/10 px-2 py-0.5 rounded-md"
+                                                >
+                                                    <Instagram size={12} />
+                                                    <span>@{item.ig_user.replace('@', '')}</span>
+                                                </a>
+                                            )}
+                                        </div>
                                     </div>
+                                </div>
+
+                                {/* Rating */}
+                                <div className="flex gap-1 mb-4">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star
+                                            key={i}
+                                            size={16}
+                                            fill={i < (item.stars || 5) ? "#FBBF24" : "transparent"} // Amber-400
+                                            className={i < (item.stars || 5) ? "text-amber-400" : "text-gray-200 dark:text-gray-700"}
+                                        />
+                                    ))}
+                                </div>
+
+                                {/* Review Text */}
+                                <div className="flex-grow">
+                                    <p className="text-gray-600 dark:text-gray-300 text-[15px] leading-7 italic relative mb-4">
+                                        <span className="text-primary text-xl font-serif mr-1">"</span>
+                                        {i18n.language.startsWith('es') ? item.text : (item.text_en || item.text)}
+                                        <span className="text-primary text-xl font-serif ml-1">"</span>
+                                    </p>
+
                                 </div>
                             </div>
                         </motion.div>
