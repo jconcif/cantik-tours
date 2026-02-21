@@ -545,44 +545,35 @@ const BaliGuide = () => {
                 ))}
             </div>
 
-            <div className="mt-20 text-center max-w-2xl mx-auto">
-                <p className="text-xl md:text-2xl font-bold text-gray-800 dark:text-gray-200 italic leading-relaxed">
-                    {t('about.closing')}
-                </p>
-            </div>
+
 
             <motion.div
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="mt-20 p-10 rounded-[3rem] bg-bg-dark text-white relative overflow-hidden group shadow-2xl"
+                className="mt-24 p-12 md:p-16 rounded-[3.5rem] bg-bg-dark text-white relative overflow-hidden group shadow-2xl text-center"
             >
-                <div className="relative z-10 max-w-2xl">
-                    <h2 className="text-3xl font-black mb-6">{t('guide.help_title')}</h2>
-                    <p className="text-white/70 text-lg mb-8 font-medium">
+                <div className="relative z-10 max-w-3xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">
+                        {t('guide.help_title')}
+                    </h2>
+                    <p className="text-white/70 text-lg md:text-xl mb-10 font-medium leading-relaxed max-w-2xl mx-auto">
                         {t('guide.help_text')}
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex justify-center">
                         <Link
                             to="/tours"
-                            className="inline-flex items-center justify-center gap-2 bg-white text-bg-dark font-black px-8 py-4 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-xl"
+                            className="inline-flex items-center justify-center gap-3 bg-primary hover:bg-white text-white hover:text-bg-dark font-black px-10 py-5 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-2xl shadow-primary/20 text-lg group"
                         >
                             {t('guide.see_tours_btn')}
-                            <ArrowRight size={20} />
+                            <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
                         </Link>
-                        <a
-                            href="https://wa.me/376614535?text=Hola%20Cantik%20Tours!%20Tengo%20algunas%20dudas%20sobre%20mi%20viaje%20a%20Bali."
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => trackEvent('Conversion', 'WhatsApp Click', 'Bali Guide Footer')}
-                            className="inline-flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-black px-8 py-4 rounded-full transition-all transform hover:scale-105 active:scale-95 shadow-xl shadow-primary/20"
-                        >
-                            {t('guide.help_btn')}
-                        </a>
                     </div>
                 </div>
-                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-[100px] -mr-32 -mt-32" />
-                <div className="absolute bottom-0 right-0 w-64 h-64 bg-secondary/10 blur-[100px] -mr-32 -mb-32" />
+                {/* Dynamic Background Elements */}
+                <div className="absolute top-0 right-0 w-80 h-80 bg-primary/30 blur-[120px] -mr-40 -mt-40 animate-pulse" />
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-secondary/20 blur-[120px] -ml-40 -mb-40 animate-pulse" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(19,200,236,0.05)_0%,transparent_70%)]" />
             </motion.div>
         </div>
     );

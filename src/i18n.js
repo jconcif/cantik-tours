@@ -193,10 +193,9 @@ i18n
                         title: "Guía Bali",
                         title_accent: "2026.",
                         subtitle: "Todo lo que necesitas saber antes de aterrizar en la Isla de los Dioses.",
-                        help_title: "¿Aún tienes dudas?",
-                        help_text: "Como locales, conocemos todos los secretos de la isla. Escríbenos por WhatsApp y te ayudaremos a planificar tu viaje sin compromiso.",
-                        help_btn: "Consultar ahora",
-                        see_tours_btn: "Ver Experiencias",
+                        help_title: "¿Listo para convertir esta guía en realidad?",
+                        help_text: "Ahora que conoces los secretos de Bali, es hora de vivirlos. Únete a nosotros en una aventura privada y déjanos mostrarte la verdadera magia de nuestra isla, sin prisas y a tu ritmo.",
+                        see_tours_btn: "Explorar Experiencias",
                         sections: {
                             visa: {
                                 title: "Visado e Ingreso",
@@ -448,7 +447,7 @@ i18n
                         javi_text: "Viajero incansable y un profundo enamorado de Bali, mi misión en Cantik es ser tu puente directo y confiable con la isla. Me encargo de que cada detalle de tu itinerario sea impecable y de resolver cualquier inquietud que surja en el camino. Estoy aquí para que te desprendas de la logística y te concentres únicamente en disfrutar, con la seguridad de saber que siempre tienes a alguien a tu lado para que todo fluya sin inconvenientes.",
                         promise_title: "",
                         promise_text: "Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen.",
-                        closing: "Con Cantik Tours, tu viaje no es solo una visita; es una inmersión real en Bali, diseñada para que cada instante sea, de verdad, Cantik.",
+
                         meet_team_title: "Nuestros Guías",
                         team_reinforced_text: "Para asegurar que siempre tengas la mejor experiencia, trabajamos con una red de conductores locales de total confianza, elegidos por nosotros mismos por su profesionalidad, carisma y honestidad.",
                         our: "Nuestra",
@@ -736,10 +735,9 @@ i18n
                         title: "Bali Guide",
                         title_accent: "2026.",
                         subtitle: "Everything you need to know before landing on the Island of the Gods.",
-                        help_title: "Still have questions?",
-                        help_text: "As locals, we know all the island's secrets. Write to us on WhatsApp and we will help you plan your trip with no strings attached.",
-                        help_btn: "Ask us now",
-                        see_tours_btn: "View Experiences",
+                        help_title: "Ready to turn this guide into reality?",
+                        help_text: "Now that you know Bali's secrets, it's time to live them. Join us on a private adventure and let us show you the true magic of our island, without the rush and at your own pace.",
+                        see_tours_btn: "Explore Experiences",
                         sections: {
                             visa: {
                                 title: "Visa & Entry",
@@ -990,7 +988,7 @@ i18n
                         javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
                         promise_title: "",
                         promise_text: "To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
-                        closing: "With Cantik Tours, your trip is not just a visit; it is a real immersion in Bali, designed so that every instant is, truly, Cantik.",
+
                         meet_team_title: "Our Guides",
                         team_reinforced_text: "To ensure you always have the best experience, we work with a network of fully trusted local drivers, chosen by ourselves for their professionalism, charisma, and honesty.",
                         our: "Our",
