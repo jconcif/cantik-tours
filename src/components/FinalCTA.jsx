@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MessageCircle, Compass, ArrowRight } from 'lucide-react';
+import { MessageCircle, Compass, ArrowRight, BookOpen } from 'lucide-react';
 import BookingModal from './BookingModal';
 
 const FinalCTA = () => {
@@ -59,15 +59,13 @@ const FinalCTA = () => {
                                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                                 </Link>
 
-                                <a
-                                    href={whatsappLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                <Link
+                                    to="/guia-bali"
                                     className="btn-outline w-full sm:w-auto flex items-center justify-center gap-2 group shadow-lg"
                                 >
-                                    <MessageCircle size={20} className="group-hover:scale-110 transition-transform" />
-                                    {t('cta.btn_whatsapp')}
-                                </a>
+                                    <BookOpen size={20} className="group-hover:scale-110 transition-transform" />
+                                    {t('cta.btn_guide')}
+                                </Link>
                             </motion.div>
                         </div>
 

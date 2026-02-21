@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import TourCard from '../components/TourCard';
-import { Search, Sparkles, Map, ArrowRight } from 'lucide-react';
+import { Search, Sparkles, Map, ArrowRight, BookOpen } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tours as allTours } from '../data/tours';
 import CategoryChips from '../components/CategoryChips';
@@ -135,6 +136,47 @@ const TourList = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Guide 2026 CTA Section */}
+            <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="mt-32 relative group"
+            >
+                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+
+                <div className="bg-bg-light dark:bg-surface-dark rounded-[3rem] overflow-hidden flex flex-col md:flex-row items-center border border-black/5 dark:border-white/5 shadow-xl">
+                    <div className="flex-1 p-10 md:p-16 text-center md:text-left">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 text-secondary-dark font-black text-[10px] uppercase tracking-widest mb-6 border border-secondary/20">
+                            <BookOpen size={14} /> {t('guide.badge')}
+                        </div>
+                        <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight tracking-tight">
+                            {t('guide.title')} <span className="text-primary italic">{t('guide.title_accent')}</span>
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl font-medium mb-10 max-w-xl">
+                            {t('guide.subtitle')}
+                        </p>
+                        <Link
+                            to="/guia-bali"
+                            className="btn-primary inline-flex items-center gap-2 group/btn"
+                        >
+                            {t('nav.view_guide')}
+                            <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+                        </Link>
+                    </div>
+
+                    <div className="md:w-2/5 w-full aspect-[4/3] md:aspect-auto self-stretch relative overflow-hidden">
+                        <img
+                            src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80"
+                            alt="Guía Bali 2026"
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-bg-light dark:from-surface-dark via-transparent to-transparent md:bg-gradient-to-r" />
+                    </div>
+                </div>
+            </motion.div>
 
             <BookingModal
                 isOpen={isBookingModalOpen}
