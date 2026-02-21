@@ -10,11 +10,15 @@ const TourCard = ({ tour, index }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="glass-card overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
+            initial={{ opacity: 0, y: 30, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, margin: "50px" }}
+            transition={{
+                duration: 0.7,
+                delay: index * 0.1,
+                ease: [0.23, 1, 0.32, 1]
+            }}
+            className="glass-card motion-safe overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
         >
             <div className="relative h-72 overflow-hidden">
                 <img

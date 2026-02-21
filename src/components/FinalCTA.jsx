@@ -25,6 +25,7 @@ const FinalCTA = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
+                                transition={{ duration: 0.6 }}
                                 className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 leading-tight tracking-tight"
                             >
                                 <span className="text-gradient">
@@ -36,22 +37,22 @@ const FinalCTA = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: 0.1 }}
+                                transition={{ duration: 0.6, delay: 0.1 }}
                                 className="text-gray-600 dark:text-gray-400 text-lg md:text-xl max-w-2xl mb-12 font-medium leading-relaxed"
                             >
                                 {t('cta.subtitle')}
                             </motion.p>
 
                             <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: 0.2 }}
+                                transition={{ duration: 0.6, delay: 0.2 }}
                                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5"
                             >
                                 <Link
                                     to="/tours"
-                                    className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2 group"
+                                    className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2 group shadow-xl"
                                 >
                                     <Compass size={20} />
                                     {t('cta.btn_availability')}
@@ -62,17 +63,21 @@ const FinalCTA = () => {
                                     href={whatsappLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="btn-outline w-full sm:w-auto flex items-center justify-center gap-2"
+                                    className="btn-outline w-full sm:w-auto flex items-center justify-center gap-2 group shadow-lg"
                                 >
-                                    <MessageCircle size={20} />
+                                    <MessageCircle size={20} className="group-hover:scale-110 transition-transform" />
                                     {t('cta.btn_whatsapp')}
                                 </a>
                             </motion.div>
                         </div>
 
                         {/* Image Side */}
-                        <div className="lg:w-2/5 relative min-h-[300px] lg:min-h-full overflow-hidden">
-                            <img
+                        <div className="lg:w-2/5 relative min-h-[300px] lg:min-h-full overflow-hidden group">
+                            <motion.img
+                                initial={{ scale: 1.1 }}
+                                whileInView={{ scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ duration: 1.5 }}
                                 src="/images/ubud.jpg"
                                 alt="Ubud Rice Terraces - Cantik Tours Bali"
                                 width="800"

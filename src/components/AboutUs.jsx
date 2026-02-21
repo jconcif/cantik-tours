@@ -20,13 +20,13 @@ const AboutUs = () => {
             <div className="grid md:grid-cols-[40%_60%] gap-10 lg:gap-20 items-center">
                 {/* Left Column: Visual */}
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, x: -30 }}
-                    whileInView={{ opacity: 1, scale: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.2 }}
+                    initial={false}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, margin: "100px" }}
+                    transition={{ duration: 0.5 }}
                     className="relative"
                 >
-                    <div className="bg-white dark:bg-white/5 p-4 sm:p-6 md:p-8 rounded-[2.5rem] md:rounded-[3.5rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10 transition-transform hover:scale-[1.02] duration-500 max-w-[480px] mx-auto">
+                    <div className="bg-white dark:bg-white/5 p-4 sm:p-6 md:p-8 rounded-[2.5rem] md:rounded-[3.5rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10 max-w-[480px] mx-auto">
                         <img
                             src="/images/team/perty-founder.webp"
                             alt={`${t('about.perty_name')} - ${t('about.perty_role')} - Cantik Tours Bali`}
@@ -48,33 +48,46 @@ const AboutUs = () => {
 
                 {/* Right Column: Text & CTA */}
                 <motion.div
-                    initial={{ opacity: 0, x: 50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    className="relative"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, margin: "100px" }}
+                    variants={{
+                        visible: { transition: { staggerChildren: 0.1 } }
+                    }}
                 >
-                    <span className="text-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs mb-4 hidden md:block">
+                    <motion.span
+                        variants={{ hidden: { opacity: 0, x: -10 }, visible: { opacity: 1, x: 0 } }}
+                        className="text-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs mb-4 hidden md:block"
+                    >
                         {t('about.tag')}
-                    </span>
-                    <h2 className="text-4xl lg:text-7xl font-black mb-8 tracking-tighter text-gray-900 dark:text-white leading-none hidden md:block">
+                    </motion.span>
+                    <motion.h2
+                        variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                        className="text-4xl lg:text-7xl font-black mb-8 tracking-tighter text-gray-900 dark:text-white leading-none hidden md:block"
+                    >
                         {t('about.title')}
-                    </h2>
+                    </motion.h2>
 
-                    <div className="prose dark:prose-invert mb-12">
+                    <motion.div
+                        variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
+                        className="prose dark:prose-invert mb-12"
+                    >
                         <p className="text-lg md:text-xl lg:text-2xl text-gray-700 dark:text-gray-300 font-medium leading-relaxed italic mb-8 border-l-4 border-primary/30 pl-6">
                             "{t('about.meaning_text')}"
                         </p>
                         <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
                             {t('about.team_intro_text')}
                         </p>
-                    </div>
+                    </motion.div>
 
-                    <Link
-                        to="/nosotros"
-                        className="btn-primary inline-flex items-center gap-3 text-lg group"
-                    >
-                        {t('hero.btn_story')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}>
+                        <Link
+                            to="/nosotros"
+                            className="btn-primary inline-flex items-center gap-3 text-lg group"
+                        >
+                            {t('hero.btn_story')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                    </motion.div>
                 </motion.div>
             </div>
         </section>

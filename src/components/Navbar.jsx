@@ -70,8 +70,8 @@ const Navbar = () => {
                         }}
                         className="flex items-center gap-1.5 group"
                     >
-                        <span className="text-xl sm:text-2xl font-black tracking-tighter text-primary-dark group-hover:scale-105 transition-transform">CANTIK</span>
-                        <span className={`text-xl sm:text-2xl font-light tracking-widest uppercase transition-colors ${textColorClass}`}>Tours</span>
+                        <span className="text-xl sm:text-2xl font-black tracking-tighter text-primary-dark transition-transform">CANTIK</span>
+                        <span className={`text-xl sm:text-2xl font-light tracking-widest uppercase transition-all group-hover:tracking-[0.2em] ${textColorClass}`}>Tours</span>
                     </Link>
                 </div>
 
@@ -87,17 +87,17 @@ const Navbar = () => {
                         className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}
                     >
                         {t('nav.home')}
-                        {isHome && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
+                        <span className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${isHome ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                     </Link>
 
                     <Link to="/tours" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
                         {t('nav.tours')}
-                        {isTourList && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
+                        <span className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${isTourList ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                     </Link>
 
                     <Link to="/nosotros" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
                         {t('nav.about')}
-                        {isAbout && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
+                        <span className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${isAbout ? 'w-full' : 'w-0 group-hover:w-full'}`} />
                     </Link>
 
                     <Link to="/guia-bali" className={`hover:text-primary transition-colors relative group py-2 flex items-center gap-2 ${textColorClass}`}>

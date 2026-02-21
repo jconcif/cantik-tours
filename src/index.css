@@ -18,12 +18,19 @@
 
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    @apply bg-bg-light text-bg-dark antialiased transition-colors duration-300;
+    @apply bg-bg-light text-bg-dark antialiased;
   }
 
   .dark body {
     @apply bg-bg-dark text-bg-light;
   }
+}
+
+/* Fix mobile flickering for animations */
+.motion-safe {
+  backface-visibility: hidden;
+  perspective: 1000px;
+  transform: translateZ(0);
 }
 
 @layer utilities {
@@ -32,7 +39,8 @@
   }
 
   .glass-card {
-    @apply backdrop-blur-xl bg-white/80 dark:bg-surface-dark/80 border border-white/20 dark:border-white/5 shadow-xl rounded-2xl;
+    @apply backdrop-blur-xl bg-white/80 dark:bg-surface-dark/80 border border-white/40 dark:border-white/5 shadow-xl rounded-[2rem];
+    transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s ease;
   }
 
   .text-gradient {

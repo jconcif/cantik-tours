@@ -7,11 +7,11 @@ const Feature = ({ icon: Icon, title, description, index }) => (
     <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: index * 0.1 }}
-        className="bg-white dark:bg-white/5 p-8 rounded-3xl border border-black/5 dark:border-white/5 hover:shadow-xl transition-all group"
+        viewport={{ once: true, margin: "50px" }}
+        transition={{ duration: 0.5, delay: index * 0.1, ease: "easeOut" }}
+        className="bg-white dark:bg-white/5 p-8 rounded-[2rem] border border-black/5 dark:border-white/5 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300 group motion-safe"
     >
-        <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary-dark flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+        <div className="w-14 h-14 rounded-2xl bg-primary/10 text-primary-dark flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500">
             <Icon size={28} />
         </div>
         <h3 className="text-xl font-bold mb-3">{title}</h3>

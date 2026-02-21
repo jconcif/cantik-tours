@@ -1,10 +1,13 @@
 import React from 'react';
 import { Search } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const Hero = () => {
     const { t } = useTranslation();
+    const { scrollY } = useScroll();
+    const y1 = useTransform(scrollY, [0, 500], [0, 200]);
+
     const scrollTo = (id) => {
         const element = document.getElementById(id);
         if (element) {
@@ -14,18 +17,20 @@ const Hero = () => {
 
     return (
         <div className="relative h-screen w-full flex items-center justify-center overflow-hidden">
-            {/* Background Image - Non-motion for instant LCP */}
-            <picture className="absolute inset-0 w-full h-full">
-                <source srcSet="/images/hero-mobile.jpg" media="(max-width: 768px)" />
-                <img
-                    src="/images/hero.jpg"
-                    alt="Bali Tours - Templos sagrados, arrozales y cascadas en Ubud - Cantik Tours"
-                    width="1920"
-                    height="1080"
-                    fetchpriority="high"
-                    className="absolute inset-0 w-full h-full object-cover animate-gentle-zoom"
-                />
-            </picture>
+            {/* Background Image - With Parallax */}
+            <motion.div style={{ y: y1 }} className="absolute inset-0 w-full h-full">
+                <picture className="w-full h-full">
+                    <source srcSet="/images/hero-mobile.jpg" media="(max-width: 768px)" />
+                    <img
+                        src="/images/hero.jpg"
+                        alt="Bali Tours - Templos sagrados, arrozales y cascadas en Ubud - Cantik Tours"
+                        width="1920"
+                        height="1080"
+                        fetchpriority="high"
+                        className="absolute inset-0 w-full h-full object-cover animate-gentle-zoom"
+                    />
+                </picture>
+            </motion.div>
 
             {/* Overlay Gradient */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-bg-light dark:to-bg-dark" />
@@ -58,24 +63,31 @@ const Hero = () => {
                 </motion.p>
 
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={false}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.4 }}
                     className="flex flex-col sm:flex-row gap-5 justify-center"
                 >
-                    <button
+                    <motion.button
+                        whileHover={{ scale: 1.05, y: -4, shadow: "0 25px 50px -12px rgba(19,200,236,0.5)" }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => scrollTo('tours')}
-                        className="btn-primary group flex items-center gap-2 px-10 py-5 text-lg"
+                        className="btn-primary group flex items-center justify-center gap-2 px-10 py-5 text-lg shadow-[0_20px_40px_-15px_rgba(19,200,236,0.4)] relative overflow-hidden"
                     >
-                        {t('hero.btn_tours')}
-                        <Search size={20} className="group-hover:translate-y-1 transition-transform" />
-                    </button>
-                    <button
+                        <span className="relative z-10 flex items-center gap-2">
+                            {t('hero.btn_tours')}
+                            <Search size={20} className="group-hover:rotate-12 transition-transform duration-300" />
+                        </span>
+                        {/* Magnetic Glow Effect */}
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                    </motion.button>
+                    <motion.button
+                        whileHover={{ scale: 1.05, y: -4, backgroundColor: 'rgba(255,255,255,1)', color: '#000' }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => scrollTo('nosotros')}
-                        className="bg-white/10 backdrop-blur-md border border-white/30 text-white font-black px-10 py-5 rounded-full text-lg hover:bg-white hover:text-bg-dark transition-all shadow-xl"
+                        className="bg-white/10 backdrop-blur-md border border-white/30 text-white font-black px-10 py-5 rounded-full text-lg transition-all shadow-xl"
                     >
                         {t('hero.btn_story')}
-                    </button>
+                    </motion.button>
                 </motion.div>
             </div>
         </div>

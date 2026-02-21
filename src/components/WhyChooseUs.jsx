@@ -42,17 +42,17 @@ const WhyChooseUs = () => {
                     {reasons.map((reason, idx) => (
                         <motion.div
                             key={idx}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: idx * 0.2 }}
-                            className="flex flex-col items-center text-center p-8 rounded-3xl hover:bg-bg-light dark:hover:bg-white/5 transition-colors group"
+                            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                            viewport={{ once: true, margin: "50px" }}
+                            transition={{ duration: 0.6, delay: idx * 0.1, ease: [0.23, 1, 0.32, 1] }}
+                            className="flex flex-col items-center text-center p-8 rounded-[2.5rem] hover:bg-bg-light dark:hover:bg-white/5 transition-all duration-300 group motion-safe"
                         >
-                            <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary-dark mb-6 group-hover:scale-110 transition-transform">
-                                <reason.icon size={32} />
+                            <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center text-primary-dark mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                                <reason.icon size={36} />
                             </div>
-                            <h3 className="text-xl font-bold mb-3">{reason.title}</h3>
-                            <p className="text-gray-600 dark:text-gray-400">{reason.text}</p>
+                            <h3 className="text-2xl font-black mb-4 tracking-tight">{reason.title}</h3>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed">{reason.text}</p>
                         </motion.div>
                     ))}
                 </div>

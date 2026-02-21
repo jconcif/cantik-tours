@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Instagram } from 'lucide-react';
+import { Star, Instagram, Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import ReviewsModal from './ReviewsModal';
@@ -78,20 +78,25 @@ const Testimonials = () => {
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
                     {displayReviews.map((item, index) => (
                         <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: index * 0.1 }}
+                            initial={index < 3 ? false : { opacity: 0, y: 20, scale: 0.98 }}
+                            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                            viewport={{ once: true, margin: "50px" }}
+                            transition={{
+                                duration: 0.6,
+                                delay: (index < 3) ? 0 : (index % 3 * 0.1),
+                                ease: [0.23, 1, 0.32, 1]
+                            }}
                             key={index}
-                            className="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 dark:shadow-none relative border border-white/50 dark:border-white/5 hover:-translate-y-2 transition-all duration-300 group overflow-hidden"
+                            className={`bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-xl shadow-gray-200/50 dark:shadow-none relative border border-white/50 dark:border-white/5 hover:-translate-y-2 transition-all duration-300 group overflow-hidden motion-safe ${index >= 3 ? 'hidden md:block' : ''}`}
                         >
+
                             <div className="relative z-10 flex flex-col h-full">
                                 {/* Header: User Info */}
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-2xl shrink-0 border-2 border-primary/5">
+                                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-2xl shrink-0 border-2 border-primary/5 group-hover:scale-110 transition-transform duration-500">
                                         {item.name ? item.name[0].toUpperCase() : 'U'}
                                     </div>
                                     <div>

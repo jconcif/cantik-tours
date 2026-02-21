@@ -220,9 +220,14 @@ const TourDetail = () => {
 
                     <div className="absolute bottom-6 left-6 right-6 md:bottom-8 md:left-8 md:right-8 flex items-end gap-4 justify-between">
                         <div className="flex-1 min-w-0 space-y-3">
-                            <h1 className="text-2xl md:text-5xl font-black text-white drop-shadow-lg leading-tight break-words">
+                            <motion.h1
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 0.2 }}
+                                className="text-2xl md:text-5xl font-black text-white drop-shadow-lg leading-tight break-words"
+                            >
                                 {l(tour, 'title')}
-                            </h1>
+                            </motion.h1>
                         </div>
                         <button
                             onClick={handleShare}
