@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Star, Quote, User, Instagram } from 'lucide-react';
+import { Star, Instagram } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import ReviewsModal from './ReviewsModal';
 
 const Testimonials = () => {
     const { t, i18n } = useTranslation();
     const [apiReviews, setApiReviews] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Get testimonials data from translations
     const testimonialData = t('testimonials.data', { returnObjects: true }) || [];
@@ -16,14 +18,16 @@ const Testimonials = () => {
                 const response = await fetch('/api/get_reviews.php');
                 const result = await response.json();
                 if (result.status === 'success' && result.data) {
-                    // Map API fields to match component needs
+                    // Map API fields to match component needs and modal needs
                     const formatted = result.data.map(r => ({
                         name: r.nombre,
                         text: r.comentario,
                         text_en: r.comentario_en,
                         location: r.tour_id,
                         country: r.pais || 'es',
+                        pais: r.pais || 'es', // For ReviewsModal
                         stars: parseInt(r.estrellas),
+                        rating: parseInt(r.estrellas), // For ReviewsModal
                         image: r.foto_url,
                         ig_user: r.ig_user,
                         authorized: r.autorizacion_fotos === "1" || r.autorizacion_fotos === 1
@@ -38,25 +42,24 @@ const Testimonials = () => {
     }, []);
 
     // Combine static and API reviews, prioritizing API ones if they exist
-    // Ideal: 6 reviews for a perfect 3-column grid (2 rows)
-    let allReviews = [];
-    if (apiReviews.length >= 3) {
-        // Si tenemos 3 o más reales, mostramos solo las reales (hasta 6)
-        allReviews = apiReviews.slice(0, 6);
+    const staticReviews = testimonialData.map((rev, idx) => ({
+        ...rev,
+        stars: 5,
+        rating: 5,
+        authorized: true,
+        country: 'es',
+        pais: 'es'
+    }));
+
+    let displayReviews = [];
+    if (apiReviews.length >= 6) {
+        displayReviews = apiReviews.slice(0, 6);
     } else {
-        // Si hay pocas reales, las mezclamos con las estáticas para no dejar huecos
-        allReviews = [...apiReviews, ...testimonialData].slice(0, 6);
+        // Fill up to 6 with static reviews
+        displayReviews = [...apiReviews, ...staticReviews].slice(0, 6);
     }
 
-    const images = [
-        "/images/testimonials/testimonial_1.webp",
-        "/images/testimonials/testimonial_2.webp",
-        "/images/testimonials/testimonial_3.webp",
-        "/images/testimonials/testimonial_4.webp",
-        "/images/testimonials/testimonial_5.webp"
-    ];
-
-    if (!allReviews.length) return null;
+    if (!displayReviews.length) return null;
 
     return (
         <section className="py-24 px-6 bg-gray-50 dark:bg-black/20 relative overflow-hidden">
@@ -75,8 +78,8 @@ const Testimonials = () => {
                     </p>
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {allReviews.map((item, index) => (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                    {displayReviews.map((item, index) => (
                         <motion.div
                             initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -88,30 +91,31 @@ const Testimonials = () => {
                             <div className="relative z-10 flex flex-col h-full">
                                 {/* Header: User Info */}
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="w-14 h-14 rounded-full bg-gray-50 dark:bg-white/10 p-1 shrink-0">
-                                        <div className="w-full h-full rounded-full overflow-hidden relative">
-                                            {item.image ? (
-                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="w-full h-full bg-primary/10 flex items-center justify-center">
-                                                    <User className="text-primary w-6 h-6" />
-                                                </div>
-                                            )}
-                                        </div>
+                                    <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-2xl shrink-0 border-2 border-primary/5">
+                                        {item.name ? item.name[0].toUpperCase() : 'U'}
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-gray-900 dark:text-white leading-tight text-lg">
                                             {item.name}
                                         </h4>
                                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
-                                            {item.country && (() => {
+                                            {(item.location || item.country) && (() => {
+                                                const countryCode = item.country || item.pais || 'es';
                                                 const flags = { ar: '🇦🇷', cl: '🇨🇱', co: '🇨🇴', es: '🇪🇸', mx: '🇲🇽', pe: '🇵🇪', uy: '🇺🇾', us: '🇺🇸' };
-                                                const flag = flags[item.country] || '🌐';
-                                                const countryName = t(`reviews_page.form.countries.${item.country}`);
-                                                return <span className="text-xs font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">{flag} {countryName}</span>;
+                                                const flag = flags[countryCode] || '🌐';
+
+                                                // Try to get country name, fallback to location
+                                                let locationText = '';
+                                                try {
+                                                    locationText = t(`reviews_page.form.countries.${countryCode}`);
+                                                } catch (e) {
+                                                    locationText = item.location;
+                                                }
+
+                                                return <span className="text-xs font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">{flag} {locationText}</span>;
                                             })()}
 
-                                            {/* Instagram Badge - Moved here */}
+                                            {/* Instagram Badge */}
                                             {item.ig_user && item.authorized && (
                                                 <a
                                                     href={`https://instagram.com/${item.ig_user.replace('@', '')}`}
@@ -146,13 +150,34 @@ const Testimonials = () => {
                                         {i18n.language.startsWith('es') ? item.text : (item.text_en || item.text)}
                                         <span className="text-primary text-xl font-serif ml-1">"</span>
                                     </p>
-
                                 </div>
                             </div>
                         </motion.div>
                     ))}
                 </div>
+
+                {/* See All Button */}
+                <div className="flex justify-center">
+                    <motion.button
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        onClick={() => setIsModalOpen(true)}
+                        className="group bg-white dark:bg-white/10 px-10 py-5 rounded-2xl border border-black/5 dark:border-white/10 font-black text-sm uppercase tracking-widest hover:bg-primary hover:text-white transition-all shadow-xl shadow-black/5 flex items-center gap-3"
+                    >
+                        {i18n.language.startsWith('es') ? 'Ver todas las reseñas' : 'View all reviews'}
+                        <Star size={16} className="group-hover:rotate-45 transition-transform" />
+                    </motion.button>
+                </div>
             </div>
+
+            {/* All Reviews Modal */}
+            <ReviewsModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                tourTitle="Cantik Tours"
+                reviews={apiReviews.length > 0 ? apiReviews : staticReviews}
+            />
         </section>
     );
 };

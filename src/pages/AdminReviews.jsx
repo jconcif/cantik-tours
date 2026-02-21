@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Camera, Trash2, Star, Lock, Eye, EyeOff, CheckCircle2, Languages } from 'lucide-react';
+import { Check, X, Trash2, Star, Lock, Eye, EyeOff, CheckCircle2, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const AdminReviews = () => {
@@ -51,29 +51,6 @@ const AdminReviews = () => {
         }
     };
 
-    const handleUpload = async (id, file) => {
-        const formData = new FormData();
-        formData.append('id', id);
-        formData.append('token', password);
-        formData.append('photo', file);
-
-        try {
-            const response = await fetch('/api/admin_upload_photo.php', {
-                method: 'POST',
-                headers: { 'Authorization': password },
-                body: formData
-            });
-            const result = await response.json();
-            if (result.status === 'success') {
-                fetchReviews();
-                setMessage({ type: 'success', text: 'Foto subida correctamente' });
-            } else {
-                setMessage({ type: 'error', text: result.message });
-            }
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Error al subir la foto' });
-        }
-    };
 
     if (!isAuthenticated) {
         return (
@@ -131,24 +108,9 @@ const AdminReviews = () => {
                             animate={{ opacity: 1, y: 0 }}
                             className="bg-white dark:bg-white/5 p-6 rounded-[2rem] border border-black/5 flex flex-col md:flex-row gap-8 items-start md:items-center shadow-lg"
                         >
-                            {/* Photo Section */}
-                            <div className="relative group shrink-0">
-                                <div className="w-24 h-24 rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/10 flex items-center justify-center border-2 border-primary/20">
-                                    {review.foto_url ? (
-                                        <img src={review.foto_url} className="w-full h-full object-cover" alt="" />
-                                    ) : (
-                                        <Camera size={32} className="text-gray-300" />
-                                    )}
-                                </div>
-                                <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer rounded-2xl">
-                                    <Camera className="text-white" size={24} />
-                                    <input
-                                        type="file"
-                                        hidden
-                                        accept="image/*"
-                                        onChange={(e) => handleUpload(review.id, e.target.files[0])}
-                                    />
-                                </label>
+                            {/* Avatar Section */}
+                            <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-black text-2xl shrink-0 border-2 border-primary/5">
+                                {review.nombre ? review.nombre[0].toUpperCase() : 'U'}
                             </div>
 
                             {/* Info Section */}

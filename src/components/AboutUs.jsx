@@ -17,7 +17,7 @@ const AboutUs = () => {
                     {t('about.our')} <span className="text-primary italic">{t('about.essence')}</span>
                 </h2>
             </div>
-            <div className="grid md:grid-cols-2 gap-10 lg:gap-20 items-center">
+            <div className="grid md:grid-cols-[40%_60%] gap-10 lg:gap-20 items-center">
                 {/* Left Column: Visual */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95, x: -30 }}
@@ -26,14 +26,14 @@ const AboutUs = () => {
                     transition={{ delay: 0.2 }}
                     className="relative"
                 >
-                    <div className="bg-white dark:bg-white/5 p-4 sm:p-6 md:p-8 rounded-[2.5rem] md:rounded-[3.5rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10 transition-transform hover:scale-[1.02] duration-500">
+                    <div className="bg-white dark:bg-white/5 p-4 sm:p-6 md:p-8 rounded-[2.5rem] md:rounded-[3.5rem] border border-black/5 dark:border-white/10 shadow-2xl relative z-10 transition-transform hover:scale-[1.02] duration-500 max-w-[480px] mx-auto">
                         <img
                             src="/images/team/perty-founder.webp"
                             alt={`${t('about.perty_name')} - ${t('about.perty_role')} - Cantik Tours Bali`}
                             width="600"
                             height="750"
                             loading="lazy"
-                            className="w-full h-[350px] md:h-[500px] object-cover object-top rounded-[1.8rem] md:rounded-[2.5rem] shadow-lg mb-6"
+                            className="w-full aspect-[3/4] object-cover rounded-[1.8rem] md:rounded-[2.5rem] shadow-lg mb-6"
                         />
                         <div className="flex items-center px-2">
                             <div>

@@ -4,14 +4,13 @@ import {
     ChevronLeft, Share2, Star,
     Car, Languages, Droplets, Info, MapPin,
     Clock, Check, X, Shield, Calendar, AlertCircle,
-    Flag, Landmark, Utensils, Camera, Map, TreeDeciduous, Repeat, User, Instagram
+    Flag, Landmark, Utensils, Camera, Map, TreeDeciduous, Repeat, Instagram
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tours } from '../data/tours';
 import BookingModal from '../components/BookingModal';
 import TransferModal from '../components/TransferModal';
 import ReviewsModal from '../components/ReviewsModal';
-import { formatDateAgo } from '../utils/dateUtils';
 import { useTranslation } from 'react-i18next';
 import { getLocalized } from '../utils/i18nUtils';
 import SEO from '../components/SEO';
@@ -529,12 +528,8 @@ const TourDetail = () => {
                                 {tourReviews.slice(0, 3).map((rev, idx) => (
                                     <div key={idx} className="p-6 rounded-3xl bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-sm">
                                         <div className="flex items-center gap-4 mb-4">
-                                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20">
-                                                {rev.image ? (
-                                                    <img src={rev.image} alt={rev.name} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <User className="text-primary" size={20} />
-                                                )}
+                                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-black text-xl border border-primary/20 shrink-0">
+                                                {rev.name ? rev.name[0].toUpperCase() : 'U'}
                                             </div>
                                             <div className="flex flex-col gap-1">
                                                 <h4 className="font-bold text-sm leading-none">{rev.name}</h4>
