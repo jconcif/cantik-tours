@@ -331,50 +331,63 @@ const TourDetail = () => {
                         </div>
                     </section>
 
-                    {/* Itinerary (only if exists) */}
+                    {/* Itinerary (The Route) */}
                     {tour.itinerary && tour.itinerary.length > 0 && (
                         <section className="relative">
-                            <h2 className="text-2xl font-black mb-10">{t('detail.itinerary')}</h2>
+                            <h2 className="text-2xl font-black mb-10 flex items-center gap-3">
+                                <div className="w-2 h-8 bg-primary rounded-full" />
+                                {t('detail.itinerary')}
+                            </h2>
 
-                            {/* Vertical Line */}
-                            <div className="absolute left-[23px] top-[100px] bottom-10 w-0.5 bg-gray-100 dark:bg-white/5" />
+                            <div className="relative ml-6">
+                                {/* Vertical Line with Gradient */}
+                                <div className="absolute left-[23px] top-[20px] bottom-0 w-1 bg-gradient-to-b from-primary/30 via-gray-100 to-transparent dark:from-primary/30 dark:via-white/5 dark:to-transparent" />
 
-                            <div className="space-y-12">
-                                {tour.itinerary.map((item, idx) => {
-                                    const isTransport = item.type === 'transport';
-                                    const isDropoff = item.type === 'dropoff';
-                                    return (
-                                        <div key={idx} className={`relative flex gap-8 items-start ${isTransport ? 'opacity-60' : ''}`}>
-                                            {/* Icon Circle */}
-                                            <div className="relative z-10 w-12 h-12 rounded-full bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-white/10 flex items-center justify-center text-primary shadow-sm flex-shrink-0">
-                                                {item.type ? getItineraryIcon(item.type) : (
-                                                    <span className="text-[8px] font-black uppercase text-center leading-tight px-1">
-                                                        {l(item, 'time')}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <div className="pt-2">
-                                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
-                                                    <h3 className={`font-black tracking-tight ${isTransport ? 'text-lg' : 'text-xl'} dark:text-gray-100`}>
-                                                        {l(item, 'activity')}
-                                                    </h3>
-                                                    {l(item, 'duration') && !isDropoff && (
-                                                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                                                            <Clock size={12} />
-                                                            {l(item, 'duration')}
+                                <div className="space-y-12">
+                                    {tour.itinerary.map((item, idx) => {
+                                        const isTransport = item.type === 'transport';
+                                        const isDropoff = item.type === 'dropoff';
+                                        return (
+                                            <motion.div
+                                                key={idx}
+                                                initial={{ opacity: 0, x: -10 }}
+                                                whileInView={{ opacity: 1, x: 0 }}
+                                                viewport={{ once: true }}
+                                                transition={{ delay: idx * 0.1 }}
+                                                className={`relative flex gap-8 items-start ${isTransport ? 'opacity-70' : ''}`}
+                                            >
+                                                {/* Icon Circle with Pulse for first item */}
+                                                <div className="relative z-10 w-12 h-12 rounded-full bg-white dark:bg-gray-800 border-2 border-primary/20 dark:border-white/10 flex items-center justify-center text-primary shadow-sm flex-shrink-0">
+                                                    {item.type ? getItineraryIcon(item.type) : (
+                                                        <span className="text-[8px] font-black uppercase text-center leading-tight px-1">
+                                                            {l(item, 'time')}
                                                         </span>
                                                     )}
+                                                    {idx === 0 && <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping -z-10" />}
                                                 </div>
-                                                {l(item, 'desc') && (
-                                                    <p className="text-gray-600 dark:text-gray-400 text-base leading-relaxed font-medium max-w-xl">
-                                                        {l(item, 'desc')}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
+
+                                                <div className="pt-2">
+                                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
+                                                        <h3 className={`font-black tracking-tight ${isTransport ? 'text-lg text-gray-500' : 'text-xl'} dark:text-gray-100`}>
+                                                            {l(item, 'activity')}
+                                                        </h3>
+                                                        {l(item, 'duration') && !isDropoff && (
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/5 text-[10px] font-black text-primary uppercase tracking-widest border border-primary/10">
+                                                                <Clock size={12} />
+                                                                {l(item, 'duration')}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    {l(item, 'desc') && (
+                                                        <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base leading-relaxed font-medium max-w-xl">
+                                                            {l(item, 'desc')}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </section>
                     )}
@@ -397,10 +410,10 @@ const TourDetail = () => {
 
                         <section className="p-8 rounded-[2rem] bg-blue-50/50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/10">
                             <h3 className="text-xl font-black text-blue-700 dark:text-blue-500 mb-6 flex items-center gap-2">
-                                <Calendar size={20} /> {t('detail.benefits.flexibility_title')}
+                                <Shield size={20} /> {t('detail.benefits.cancellation_title')}
                             </h3>
-                            <p className="text-sm font-bold text-gray-600 dark:text-gray-400 mb-6">
-                                {t('detail.benefits.flexibility_desc')}
+                            <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-6">
+                                {t('detail.benefits.cancellation_desc')}
                             </p>
                             <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">{t('detail.not_included')}</h4>
                             <ul className="space-y-4">
@@ -623,12 +636,23 @@ const TourDetail = () => {
 
                         <button
                             onClick={handleOpenBooking}
-                            className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest mb-4"
+                            className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest mb-4 flex flex-col items-center justify-center gap-1"
                         >
-                            {t('detail.book_now')}
+                            <span>{t('detail.book_now')}</span>
+                            <span className="text-[10px] opacity-80 font-normal normal-case">
+                                {i18n.language.startsWith('es') ? 'Consultar disponibilidad' : 'Check availability'}
+                            </span>
                         </button>
-                        <p className="text-center text-xs font-bold text-gray-400">
-                            {i18n.language.startsWith('es') ? 'Sin compromiso hasta confirmar disponibilidad' : 'No commitment until availability is confirmed'}
+
+                        <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-500 mb-2">
+                            <Shield size={14} />
+                            <span className="text-[10px] font-black uppercase tracking-wider">
+                                {t('detail.benefits.cancellation_title')}
+                            </span>
+                        </div>
+
+                        <p className="text-center text-[10px] font-bold text-gray-400">
+                            {i18n.language.startsWith('es') ? 'Sin compromiso hasta confirmar' : 'No commitment until confirmed'}
                         </p>
 
                         {/* Full Route Button (Standalone) - Hidden until maps are ready for all tours
@@ -655,25 +679,12 @@ const TourDetail = () => {
                 </div>
             </main>
 
-            {/* Mobile Booking Bar */}
-            <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-bg-dark/80 backdrop-blur-xl border-t border-black/5 dark:border-white/5 p-6 z-[60] flex items-center justify-between shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.1)]">
-                <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">{t('detail.price_special')}</span>
-                    <div className="flex items-end gap-2">
-                        <span className="text-3xl font-black text-gray-900 dark:text-white leading-none">€{tour.price}</span>
-                        <span className="text-gray-400 text-[9px] font-bold uppercase mb-1">{t('tours.per_car')}</span>
-                    </div>
-                </div>
-                <button
-                    onClick={handleOpenBooking}
-                    className="btn-primary px-8 py-3 rounded-2xl text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/20 transition-all active:scale-95 flex flex-col items-center justify-center"
-                >
-                    <span>{t('detail.book_now')}</span>
-                    <span className="text-[8px] opacity-80 font-normal normal-case mt-0.5">
-                        {i18n.language.startsWith('es') ? 'Consultar disponibilidad' : 'Check availability'}
-                    </span>
-                </button>
-            </div>
+            {/* Only show the non-sticky bar if user hasn't scrolled far enough, but wait, 
+                let's just use the sticky one for all mobile cases to keep it clean, 
+                OR let's have a static one in the content and a sticky one that appears later.
+                
+                Actually, let's remove this fixed one and keep only the sticky one.
+            */}
 
             <BookingModal
                 isOpen={isBookingModalOpen}
@@ -703,17 +714,24 @@ const TourDetail = () => {
                     >
                         <div className="flex items-center justify-between gap-6 max-w-lg mx-auto">
                             <div className="flex-shrink-0">
-                                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-gray-400 block mb-0.5">{t('detail.price_per_car') || 'Por coche'}</span>
+                                <span className="text-[8px] uppercase font-black tracking-[0.2em] text-gray-400 block mb-0.5">{t('detail.price_per_car') || 'Por coche'}</span>
                                 <div className="flex items-baseline gap-1">
                                     <span className="text-2xl font-black text-primary">{tour?.price}€</span>
-                                    <span className="text-[10px] font-bold opacity-60">/ {t('detail.private_label')}</span>
+                                    <span className="text-[10px] font-bold opacity-40">/ {t('detail.private_label')}</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-green-600 dark:text-green-400 leading-none mt-1">
+                                    <Shield size={10} />
+                                    <span className="text-[8px] font-black uppercase tracking-widest">Free Cancel</span>
                                 </div>
                             </div>
                             <button
-                                onClick={() => setIsBookingModalOpen(true)}
-                                className="flex-1 bg-primary text-white py-4 rounded-[1.25rem] font-black uppercase tracking-widest text-[11px] shadow-lg shadow-primary/20 active:scale-95 transition-all"
+                                onClick={handleOpenBooking}
+                                className="flex-1 btn-primary py-4 rounded-[1.25rem] font-black uppercase tracking-widest text-[11px] shadow-lg shadow-primary/20 active:scale-95 transition-all flex flex-col items-center justify-center"
                             >
-                                {t('detail.book_now')}
+                                <span>{t('detail.book_now')}</span>
+                                <span className="text-[8px] opacity-80 font-normal normal-case">
+                                    {i18n.language.startsWith('es') ? 'Confirmar vía WhatsApp' : 'Confirm via WhatsApp'}
+                                </span>
                             </button>
                         </div>
                     </motion.div>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    Bike, Car, Smartphone, Utensils, Languages, MessageCircle, Briefcase
+    Bike, Car, Smartphone, Utensils, Languages, MessageCircle, Briefcase,
+    Sun, CloudRain, Calendar, Thermometer, ChevronDown, Info, ArrowRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';

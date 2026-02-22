@@ -177,7 +177,9 @@ i18n
                             flexible: "Totalmente Flexible",
                             no_rush: "Sin Prisas",
                             flexibility_title: "Flexibilidad en Entradas",
-                            flexibility_desc: "Tú decides dónde entrar. No incluimos las entradas para darte libertad total de cambiar de planes sobre la marcha. Si prefieres que nosotros las gestionemos, podemos ayudarte (consultar precio)."
+                            flexibility_desc: "Tú decides dónde entrar. No incluimos las entradas para darte libertad total de cambiar de planes sobre la marcha. Si prefieres que nosotros las gestionemos, podemos ayudarte (consultar precio).",
+                            cancellation_title: "Política de Cancelación",
+                            cancellation_desc: "Cancelación gratuita hasta 24h antes del tour. Sin depósitos complicados."
                         },
                         items: {
                             shoes: "Calzado cómodo",
@@ -727,7 +729,9 @@ i18n
                             flexible: "Totally Flexible",
                             no_rush: "No Rush",
                             flexibility_title: "Entry Fee Flexibility",
-                            flexibility_desc: "You decide where to go. We don't include entry fees to give you total freedom to change plans on the fly. If you prefer us to manage them, we can help (ask for pricing)."
+                            flexibility_desc: "You decide where to go. We don't include entry fees to give you total freedom to change plans on the fly. If you prefer us to manage them, we can help (ask for pricing).",
+                            cancellation_title: "Cancellation Policy",
+                            cancellation_desc: "Free cancellation up to 24h before the tour. No complicated deposits."
                         },
                         items: {
                             shoes: "Comfortable shoes",
