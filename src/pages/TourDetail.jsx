@@ -211,6 +211,22 @@ const TourDetail = () => {
                         />
                     </AnimatePresence>
 
+                    {/* Social Proof Badge */}
+                    <div className="absolute top-4 left-4 md:top-6 md:left-6 z-10">
+                        <div className="bg-white/10 backdrop-blur-md border border-white/20 px-3 py-1.5 md:px-4 md:py-2 rounded-full flex items-center gap-2 shadow-lg">
+                            <div className="flex gap-0.5 text-yellow-400 drop-shadow-sm">
+                                <Star size={12} fill="currentColor" />
+                                <Star size={12} fill="currentColor" />
+                                <Star size={12} fill="currentColor" />
+                                <Star size={12} fill="currentColor" />
+                                <Star size={12} fill="currentColor" />
+                            </div>
+                            <span className="text-white text-[10px] md:text-sm font-black uppercase tracking-widest drop-shadow-sm">
+                                {i18n.language.startsWith('es') ? 'Top Reseñas' : 'Top Rated'}
+                            </span>
+                        </div>
+                    </div>
+
                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent" />
 
                     {/* Navigation Buttons */}
@@ -331,6 +347,20 @@ const TourDetail = () => {
                         </div>
                     </section>
 
+                    {/* Benefits Banner (Moved up for visibility) */}
+                    <div className="grid grid-cols-3 gap-2 md:gap-4 bg-primary/5 dark:bg-primary/10 p-4 md:p-6 rounded-[2rem] border border-primary/10 mt-6 shadow-sm">
+                        {[
+                            { icon: <Shield size={20} />, label: t('detail.benefits.private') },
+                            { icon: <Calendar size={20} />, label: t('detail.benefits.flexible') },
+                            { icon: <Clock size={20} />, label: t('detail.benefits.no_rush') }
+                        ].map((benefit, idx) => (
+                            <div key={idx} className="flex flex-col items-center justify-center gap-2 text-center">
+                                <div className="text-primary">{benefit.icon}</div>
+                                <span className="text-[9px] md:text-xs font-black uppercase tracking-widest text-primary/80 dark:text-primary leading-tight">{benefit.label}</span>
+                            </div>
+                        ))}
+                    </div>
+
                     {/* Itinerary (The Route) */}
                     {tour.itinerary && tour.itinerary.length > 0 && (
                         <section className="relative">
@@ -407,19 +437,15 @@ const TourDetail = () => {
                             </ul>
                         </section>
 
-                        <section className="p-8 rounded-[2rem] bg-blue-50/50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/10">
-                            <h3 className="text-xl font-black text-blue-700 dark:text-blue-500 mb-6 flex items-center gap-2">
-                                <Shield size={20} /> {t('detail.benefits.cancellation_title')}
+                        <section className="p-8 rounded-[2rem] bg-gray-50/80 dark:bg-white/5 border border-black/5 dark:border-white/10">
+                            <h3 className="text-xl font-black text-gray-800 dark:text-gray-200 mb-6 flex items-center gap-2">
+                                <AlertCircle size={20} className="text-gray-400" /> {t('detail.not_included')}
                             </h3>
-                            <p className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-6">
-                                {t('detail.benefits.cancellation_desc')}
-                            </p>
-                            <h4 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">{t('detail.not_included')}</h4>
                             <ul className="space-y-4">
                                 {(l(tour, 'not_included') || []).map((item, idx) => (
                                     <li key={idx} className="flex items-start gap-3">
-                                        <AlertCircle size={16} className="text-blue-600 mt-1 flex-shrink-0" />
-                                        <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{item}</span>
+                                        <X size={16} className="text-red-400 dark:text-red-500 mt-1 flex-shrink-0" />
+                                        <span className="text-sm font-bold text-gray-600 dark:text-gray-400">{item}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -603,35 +629,26 @@ const TourDetail = () => {
                         )}
                     </section>
 
-                    {/* Benefits Banner (Moved below FAQ) */}
-                    <div className="pt-8">
-                        <div className="grid grid-cols-3 gap-4 md:gap-8 bg-white dark:bg-gray-800/50 p-6 md:p-8 rounded-[2rem] border border-black/5 dark:border-white/5 shadow-sm">
-                            {[
-                                { icon: <Shield size={24} />, label: t('detail.benefits.private') },
-                                { icon: <Calendar size={24} />, label: t('detail.benefits.flexible') },
-                                { icon: <Clock size={24} />, label: t('detail.benefits.no_rush') }
-                            ].map((benefit, idx) => (
-                                <div key={idx} className="flex flex-col md:flex-row items-center justify-center gap-3 text-center md:text-left">
-                                    <div className="text-primary">{benefit.icon}</div>
-                                    <span className="text-[10px] md:text-sm font-black uppercase tracking-wider dark:text-gray-200">{benefit.label}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                 </div>
 
                 {/* Right Column: Booking Card (Desktop) */}
                 <div className="hidden lg:block">
                     <div className="sticky top-32 p-10 rounded-[2.5rem] bg-white dark:bg-bg-dark border border-black/5 dark:border-white/5 shadow-xl">
                         <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2 block">{t('detail.price_special')}</span>
-                        <div className="flex items-center gap-3 mb-8">
+                        <div className="flex items-center gap-3 mb-6">
                             <span className="text-5xl font-black text-gray-900 dark:text-white">€{tour.price}</span>
                             <div className="pt-2">
                                 <span className="text-gray-400 font-bold text-[11px] uppercase leading-tight block">{t('tours.per_car')}</span>
                             </div>
                         </div>
 
-
+                        {/* FOMO Message */}
+                        <div className="mb-6 flex items-center gap-3 p-4 rounded-2xl bg-orange-50/80 dark:bg-orange-500/10 border border-orange-100/50 dark:border-orange-500/20 text-orange-800 dark:text-orange-400">
+                            <Clock size={18} className="flex-shrink-0 animate-pulse" />
+                            <span className="text-[11px] font-bold leading-tight">
+                                {i18n.language.startsWith('es') ? 'Fechas limitadas para guía en español pronto.' : 'Limited dates for Spanish guide soon.'}
+                            </span>
+                        </div>
 
                         <button
                             onClick={handleOpenBooking}
