@@ -150,94 +150,78 @@ const AboutPage = () => {
                         </div>
                     </div>
                 </div>
+            </section>
 
-                {/* Philosophy Text Moved Here */}
-                <div className="mt-20 md:mt-32 max-w-4xl mx-auto text-center px-6">
-                    <span className="text-primary font-bold tracking-[0.3em] uppercase text-xs mb-8 block">
-                        {t('about.tag')}
-                    </span>
-                    <p className="text-xl md:text-3xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic border-y border-primary/20 py-10 md:py-16">
-                        "{t('about.meaning_text')}"
-                    </p>
-                </div>
-
-                {/* New Mid-Page Emotional CTA */}
-                <div className="mt-24 md:mt-32 max-w-3xl mx-auto text-center bg-primary/5 rounded-[3rem] p-10 md:p-16 border border-primary/10">
-                    <h3 className="text-2xl md:text-4xl font-black mb-6 leading-tight">
-                        {t('about.cta_emotional_title')}
-                    </h3>
-                    <p className="text-lg text-gray-600 dark:text-gray-400 font-medium mb-10">
-                        {t('about.cta_emotional_text')}
-                    </p>
-                    <a
-                        href={whatsappLinkHelp}
-                        target="_blank"
-                        className="inline-flex items-center gap-3 bg-white dark:bg-white/10 px-8 py-4 rounded-full font-black text-sm uppercase tracking-widest shadow-xl shadow-black/5 hover:scale-105 transition-all text-primary"
+            {/* 3. Philosophy - The Bridge (True Full Width Band) */}
+            <section className="bg-primary/5 dark:bg-primary/[0.03] border-y border-primary/10 py-24 md:py-40 overflow-hidden">
+                <div className="max-w-5xl mx-auto text-center px-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="relative"
                     >
-                        {t('about.cta_emotional_btn')} <ArrowRight size={18} />
-                    </a>
+                        {/* Decorative Quotes - Subtly balanced */}
+                        <div className="hidden md:block absolute top-0 left-0 text-7xl font-serif text-primary opacity-20 pointer-events-none -translate-x-16 lg:-translate-x-24">“</div>
+                        <div className="hidden md:block absolute bottom-0 right-0 text-7xl font-serif text-primary opacity-20 pointer-events-none translate-x-16 lg:translate-x-24 translate-y-4">”</div>
+
+                        <span className="text-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs mb-8 block relative z-10">
+                            {t('about.tag')}
+                        </span>
+                        <p className="text-lg md:text-2xl text-gray-800 dark:text-white font-medium italic leading-relaxed relative z-10 max-w-4xl mx-auto">
+                            {t('about.meaning_text')}
+                        </p>
+                    </motion.div>
                 </div>
             </section>
 
-            {/* 4. Team - Simplified with reinforced text */}
-            <section className="py-32 px-6 max-w-4xl mx-auto text-center border-t border-black/5 dark:border-white/5">
-                <ShieldCheck className="mx-auto text-primary opacity-30 mb-8" size={48} />
-                <h3 className="text-3xl font-black mb-6 uppercase tracking-tighter">{t('about.meet_team_title')}</h3>
-                <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-medium leading-relaxed px-4">
-                    {t('about.team_reinforced_text')}
-                </p>
-                {/* Guides profiles temporarily hidden until defined */}
-                {/* <div className="flex md:grid md:grid-cols-3 gap-6 overflow-x-auto pb-8 snap-x snap-mandatory no-scrollbar -mx-6 px-6">
-                    {guides.map((guide, idx) => (
-                        <motion.div
-                            key={idx}
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            className="flex-shrink-0 w-64 md:w-auto bg-white dark:bg-white/5 rounded-2xl overflow-hidden shadow-sm border border-black/5 dark:border-white/5 group snap-center"
-                        >
-                            <div className="relative overflow-hidden aspect-[4/5]">
-                                <img
-                                    src={guide.image}
-                                    alt={guide.name}
-                                    className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all duration-500"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-60" />
+            {/* 5. Final Conversion CTA - High Impact */}
+            <section className="relative py-24 px-6 overflow-hidden">
+                <div className="max-w-5xl mx-auto">
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="relative bg-bg-dark text-white rounded-[3.5rem] p-12 md:p-24 text-center overflow-hidden border border-white/5"
+                    >
+                        {/* Interactive Background Glows */}
+                        <div className="absolute top-0 left-0 w-96 h-96 bg-primary/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2" />
+                        <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2" />
+
+                        <div className="relative z-10">
+                            <h2 className="text-3xl md:text-6xl font-black mb-8 leading-[0.95] tracking-tighter">
+                                {t('about.cta_emotional_title')}
+                            </h2>
+
+                            <p className="text-lg md:text-2xl text-white/60 font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
+                                {t('about.cta_emotional_text')}
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                                <Link
+                                    to="/tours"
+                                    className="group relative w-full sm:w-auto px-12 py-6 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl shadow-primary/40 flex items-center justify-center gap-3"
+                                >
+                                    {t('hero.btn_tours')}
+                                    <ArrowRight className="group-hover:translate-x-1 transition-transform" />
+                                </Link>
+
+                                <Link
+                                    to="/guia-bali"
+                                    className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 font-black uppercase tracking-widest text-xs transition-all text-white flex items-center justify-center gap-3"
+                                >
+                                    {t('nav.view_guide')}
+                                </Link>
                             </div>
-                            <div className="p-4 md:p-5">
-                                <h4 className="text-base md:text-lg font-black mb-0.5">{guide.name}</h4>
-                                <p className="text-primary font-bold text-[10px] uppercase tracking-widest mb-2">{guide.role}</p>
-                                <p className="text-gray-600 dark:text-gray-400 text-[11px] md:text-sm leading-relaxed line-clamp-2 md:line-clamp-none">
-                                    {guide.desc}
-                                </p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div> */}
-            </section>
 
-            {/* 5. Closing & Simplified CTAs */}
-            <section className="py-24 px-6 md:py-32 border-t border-black/5 dark:border-white/5">
-                <div className="max-w-4xl mx-auto text-center">
-
-
-                    <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-                        <Link
-                            to="/guia-bali"
-                            className="w-full md:w-auto px-10 py-5 rounded-2xl bg-white dark:bg-white/5 border border-black/5 dark:border-white/10 font-black uppercase tracking-widest text-sm hover:bg-gray-50 dark:hover:bg-white/10 transition-all"
-                        >
-                            {t('nav.view_guide')}
-                        </Link>
-
-                        <Link
-                            to="/tours"
-                            className="w-full md:w-auto px-10 py-5 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-sm hover:scale-105 transition-all shadow-lg shadow-primary/20"
-                        >
-                            {t('hero.btn_tours')}
-                        </Link>
-                    </div>
+                            <p className="mt-10 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
+                                Reservas 2026 Abiertas
+                            </p>
+                        </div>
+                    </motion.div>
                 </div>
             </section>
-        </div >
+        </div>
     );
 };
 
