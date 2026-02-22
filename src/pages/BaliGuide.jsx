@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-    ChevronDown, ArrowRight, Info, Sun, CloudRain, Calendar, Thermometer,
-    Bike, Car, Smartphone, Utensils, Languages, MessageCircle
+    Bike, Car, Smartphone, Utensils, Languages, MessageCircle, Briefcase
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -100,16 +99,28 @@ const BaliGuide = () => {
                                 { m: 'sep', icon: <Sun size={16} /> },
                                 { m: 'oct', icon: <Thermometer size={16} /> },
                                 { m: 'nov', icon: <CloudRain size={16} /> },
-                                { m: 'dec', icon: <Calendar size={16} /> }
-                            ].map((item, idx) => (
-                                <div key={idx} className="p-4 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5 flex flex-col gap-2">
-                                    <div className="flex items-center justify-between">
-                                        <span className="font-bold text-gray-900 dark:text-white uppercase text-xs tracking-widest">{t(`guide.sections.weather.month_${item.m}`)}</span>
-                                        <span className="text-primary">{item.icon}</span>
-                                    </div>
-                                    <p className="text-sm opacity-70 leading-snug">{t(`guide.sections.weather.month_desc_${item.m}`)}</p>
+                                { m: 'dec', icon: <CloudRain size={16} /> }
+                            ].map((month, idx) => (
+                                <div key={idx} className="flex flex-col items-center gap-2 p-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                                    <span className="text-xs font-black uppercase tracking-widest text-primary/60">{t(`guide.sections.weather.month_${month.m}`)}</span>
+                                    <div className="text-primary">{month.icon}</div>
+                                    <span className="text-[10px] text-center opacity-60 font-medium leading-tight">{t(`guide.sections.weather.month_desc_${month.m}`)}</span>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+
+                    <div className="p-5 rounded-2xl bg-blue-50/50 dark:bg-blue-500/5 border border-blue-100 dark:border-blue-500/10 flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
+                        <div className="w-12 h-12 rounded-full bg-white dark:bg-white/10 flex items-center justify-center text-blue-500 shadow-sm flex-shrink-0">
+                            <CloudRain size={24} />
+                        </div>
+                        <div>
+                            <p className="text-sm md:text-base font-medium text-gray-700 dark:text-gray-300">
+                                ¿Llueve hoy? Tenemos rutas diseñadas especialmente para disfrutar de Bali incluso bajo la lluvia.
+                            </p>
+                            <Link to="/tours" className="text-primary font-bold text-sm hover:underline mt-1 inline-block">
+                                Ver tours recomendados →
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -361,6 +372,26 @@ const BaliGuide = () => {
                             </div>
                             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl -mr-16 -mt-16" />
                         </div>
+                    </div>
+                </div>
+            )
+        },
+        {
+            title: t('guide.sections.packing.title'),
+            content: (
+                <div className="space-y-8">
+                    <p className="text-gray-600 dark:text-gray-300 italic text-base md:text-lg">{t('guide.sections.packing.intro')}</p>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        {[1, 2, 3, 4].map((num) => (
+                            <div key={num} className="p-6 rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/5 dark:border-white/5">
+                                <h5 className="font-bold text-primary uppercase tracking-wider text-[10px] mb-2">
+                                    {t(`guide.sections.packing.category_${num}`)}
+                                </h5>
+                                <p className="text-base font-medium opacity-80 leading-relaxed text-gray-700 dark:text-gray-300">
+                                    {t(`guide.sections.packing.items_${num}`)}
+                                </p>
+                            </div>
+                        ))}
                     </div>
                 </div>
             )

@@ -226,8 +226,8 @@ i18n
                                 levy_mgmt: "Gestión: Exclusivamente en el sitio web/app oficial Love Bali o al llegar en aeropuertos/puertos. Se recomienda realizar el pago online con antelación para evitar colas.",
                                 levy_qr: "Comprobante: Tras el pago, recibirás un código QR por correo electrónico que debes guardar (digital o impreso) para mostrarlo en puntos de control en la isla.",
                                 levy_note: "Entradas y salidas: Si viajas a las Islas Gili o Lombok y regresas a Bali, es posible que debas volver a mostrar el comprobante, aunque la tasa es por viaje.",
-                                advice_title: "💡 El Consejo de Cantik Tours",
-                                advice_text: "Las normativas migratorias pueden variar sin previo aviso. Te recomendamos confirmar siempre los detalles en la web oficial o si tienes dudas puedes consultarnos directamente antes de iniciar tu solicitud."
+                                advice_title: "💡 Consejo Local",
+                                advice_text: "Las normativas pueden variar. Te recomendamos confirmar siempre en la web oficial o consultarnos si tienes dudas.",
                             },
                             levy: {
                                 title: "Dinero",
@@ -245,8 +245,8 @@ i18n
                                 budget_beer: "Café o Cerveza: Una Bintang fría o un Latte artesanal rondan los 1,5€ y 3€.",
                                 budget_massage: "Pausa Relax: 60 min de masaje balinés tradicional suele costar entre 6€ y 10€.",
                                 budget_scooter: "Arriendo de Moto: Alquiler de scooter por día desde 4€ - 5€ (dependiendo del modelo).",
-                                advice_title: "💡 El Consejo de Cantik Tours",
-                                advice_text: "Lleva siempre billetes pequeños (de 10.000 o 20.000 IDR) a mano. Son ideales para propinas, parkings en las playas o pequeñas compras donde no aceptan tarjetas."
+                                advice_title: "💡 Consejo Local",
+                                advice_text: "Lleva siempre billetes pequeños (10k o 20k IDR). Son ideales para propinas, parkings en playas o pequeñas compras.",
                             },
                             health: {
                                 title: "Salud y Bienestar",
@@ -291,8 +291,8 @@ i18n
                                 amed_title: "Amed (Buceo y Vistas al Volcán)",
                                 amed_desc: "El paraíso para el snorkel y el buceo. Sus puestas de sol con vistas al volcán Agung son, posiblemente, de las mejores de Bali.",
                                 amed_tip: "Consejo: Trae escarpines. Las playas son de piedra/coral, pero la visibilidad bajo el agua es la mejor de la isla.",
-                                advice_title: "💡 El Consejo de Cantik Tours",
-                                advice_text: "Si tu viaje es de más de una semana, te recomendamos dividir tu estancia: unos días en cada sector te permitirá disfrutar de los distintos panoramas que Bali te puede entregar."
+                                advice_title: "💡 Consejo Local",
+                                advice_text: "Si tu viaje es de más de una semana, divide tu estancia entre 2 o 3 zonas para disfrutar de los distintos ambientes de la isla.",
                             },
                             weather: {
                                 title: "Clima y Cuándo Viajar",
@@ -344,15 +344,23 @@ i18n
                                 rental_tip: "Tip: Antes de arrancar, saca fotos o video a la moto para registrar cualquier daño previo.",
                                 driver_title: "3. Coche con Conductor Privado",
                                 driver_desc: "La opción más cómoda y segura para excursiones de día completo, especialmente con clima impredecible o grupos.",
-                                driver_highlight: "En Cantik Tours contamos con una red de conductores locales de total confianza para que solo te preocupes de disfrutar."
+                                driver_highlight: "Contamos con una red de conductores locales de total confianza para que solo te preocupes de disfrutar."
                             },
                             apps: {
                                 title: "Conectividad: Internet",
-                                intro: "Estar conectado es fundamental para moverte con seguridad.",
-                                internet_title: "Internet (SIM / eSIM)",
-                                internet_desc: "Telkomsel tiene la mejor cobertura. Recomendamos comprar una eSIM antes de viajar para tener datos nada más aterrizar. Tip: Puedes comprar la sim directamente en el aeropuerto o preguntar a tu conductor donde puedes hacerlo camino a tu alojamiento.",
-                                maps_title: "Navegación",
                                 maps_desc: "Google Maps funciona bien, pero cuidado: a veces intenta meter coches por caminos de cabras. Si vas en moto, elige la ruta 'Moto' si está disponible."
+                            },
+                            packing: {
+                                title: "Qué llevar: Tu Mochila",
+                                intro: "Preparar la mochila para Bali es fácil si te enfocas en lo ligero y lo práctico. Aquí tienes los imprescindibles.",
+                                category_1: "Imprescindibles",
+                                items_1: "Pasaporte, Seguro de viaje, Adaptador de corriente (Tipo C/F), Efectivo y Tarjetas (tipo Revolut).",
+                                category_2: "Ropa & Calzado",
+                                items_2: "Ropa ligera de algodón/lino, Calzado cómodo para caminar, Sandalias, Bañador y una sudadera fina si subes al norte.",
+                                category_3: "Botiquín & Cuidado",
+                                items_3: "Protector solar (es caro allí), Repelente de mosquitos (Soffell), Medicamentos básicos (Paracetamol, Fortasec).",
+                                category_4: "Varios",
+                                items_4: "Sarong para templos (puedes comprarlo allí), Mochila pequeña de día, Botella de agua reutilizable."
                             },
                             safety: {
                                 title: "Consejos de Supervivencia",
@@ -768,8 +776,8 @@ i18n
                                 levy_mgmt: "Management: Exclusively on the official Love Bali website/app or upon arrival at airports/ports. Online payment in advance is recommended to avoid queues.",
                                 levy_qr: "Proof: After payment, you will receive a QR code by email that you must save (digital or print) to show at checkpoints on the island.",
                                 levy_note: "Entries and Exits: If you travel to the Gili Islands or Lombok and return to Bali, you may need to show your proof again, although the fee is per trip.",
-                                advice_title: "💡 Cantik Tours Advice",
-                                advice_text: "Immigration regulations can vary without prior notice. We recommend always confirming details on the official website or consulting us directly if you have any doubts before starting your application."
+                                advice_title: "💡 Local Tip",
+                                advice_text: "Regulations can change. We recommend always confirming on the official website or asking us if you have questions.",
                             },
                             levy: {
                                 title: "Money",
@@ -787,8 +795,8 @@ i18n
                                 budget_beer: "Coffee or Beer: A cold Bintang or a craft Latte is around €1.5 and €3.",
                                 budget_massage: "Relax Pause: 60 min of traditional Balinese massage usually costs between €6 and €10.",
                                 budget_scooter: "Scooter Rental: Daily scooter rental starting from €4 - €5 (depending on the model).",
-                                advice_title: "💡 Cantik Tours Advice",
-                                advice_text: "Always carry small bills (10,000 or 20,000 IDR). They are ideal for tips, beach parking, or small purchases where cards are not accepted."
+                                advice_title: "💡 Local Tip",
+                                advice_text: "Always carry small bills (10k or 20k IDR). They are ideal for tips, beach parking, or small purchases.",
                             },
                             health: {
                                 title: "Health & Wellness",
@@ -833,8 +841,8 @@ i18n
                                 amed_title: "Amed (Diving & Volcano Views)",
                                 amed_desc: "A paradise for snorkeling and diving. Its sunsets with views of Mount Agung are arguably among the best in Bali.",
                                 amed_tip: "Tip: Children's feet? Bring water shoes. The beaches have rocks/coral, but the underwater visibility is the best on the island.",
-                                advice_title: "💡 Cantik Tours Advice",
-                                advice_text: "If your trip is more than a week, we recommend splitting your stay: a few days in each sector will allow you to enjoy the different panoramas that Bali can offer you."
+                                advice_title: "💡 Local Tip",
+                                advice_text: "If your trip is more than a week, divide your stay between 2 or 3 areas to enjoy the different vibes of the island.",
                             },
                             weather: {
                                 title: "Weather & Best Time",
@@ -886,7 +894,7 @@ i18n
                                 rental_tip: "Tip: Before starting, take photos or video of the scooter to record any previous damage.",
                                 driver_title: "3. Private Driver",
                                 driver_desc: "The most comfortable and safe option for full-day excursions, especially with unpredictable weather or groups.",
-                                driver_highlight: "At Cantik Tours we have a network of fully trusted local drivers so you only have to worry about enjoying."
+                                driver_highlight: "We have a network of fully trusted local drivers so you only worry about enjoying."
                             },
                             apps: {
                                 title: "Connectivity: Internet",
@@ -894,7 +902,19 @@ i18n
                                 internet_title: "Internet (SIM / eSIM)",
                                 internet_desc: "Telkomsel has the best coverage. We recommend buying an eSIM before traveling to have data as soon as you land. Tip: You can buy the SIM directly at the airport or ask your driver where you can do it on the way to your accommodation.",
                                 maps_title: "Navigation",
-                                maps_desc: "Google Maps works well, but be careful: sometimes it tries to take cars through goat paths. If you're on a scooter, choose the 'Moto' route if available."
+                                maps_desc: "Google Maps works well, but be careful: sometimes it tries to take cars through goat paths. If you're on a scooter, choose the 'Scooter' route if available."
+                            },
+                            packing: {
+                                title: "What to Pack: Your Backpack",
+                                intro: "Packing for Bali is easy if you focus on light and practical items. Here are the essentials.",
+                                category_1: "Essentials",
+                                items_1: "Passport, Travel Insurance, Power Adapter (Type C/F), Cash and Cards (like Revolut).",
+                                category_2: "Clothing & Footwear",
+                                items_2: "Light cotton/linen clothes, Comfortable walking shoes, Sandals, Swimwear, and a light sweatshirt if you head north.",
+                                category_3: "First Aid & Care",
+                                items_3: "Sunscreen (expensive there), Mosquito repellent (Soffell), Basic medications (Paracetamol, Fortasec).",
+                                category_4: "Miscellaneous",
+                                items_4: "Sarong for temples (can be bought there), Small day backpack, Reusable water bottle."
                             },
                             safety: {
                                 title: "Survival Tips",

@@ -26,6 +26,19 @@ const TourDetail = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [tourReviews, setTourReviews] = useState([]);
     const [isGlobalReviews, setIsGlobalReviews] = useState(false);
+    const [showSticky, setShowSticky] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 800) {
+                setShowSticky(true);
+            } else {
+                setShowSticky(false);
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     const fetchTourReviews = async (tourId) => {
         const reviewIdMap = {
@@ -679,6 +692,33 @@ const TourDetail = () => {
                 tourTitle={l(tour, 'title')}
                 reviews={tourReviews.length > 0 ? tourReviews : (tour.reviewsList || [])}
             />
+            {/* Sticky Mobile CTA */}
+            <AnimatePresence>
+                {showSticky && (
+                    <motion.div
+                        initial={{ y: 100 }}
+                        animate={{ y: 0 }}
+                        exit={{ y: 100 }}
+                        className="fixed bottom-0 left-0 right-0 z-50 p-4 md:hidden bg-white/90 dark:bg-bg-dark/90 backdrop-blur-xl border-t border-black/5 dark:border-white/10"
+                    >
+                        <div className="flex items-center justify-between gap-6 max-w-lg mx-auto">
+                            <div className="flex-shrink-0">
+                                <span className="text-[10px] uppercase font-black tracking-[0.2em] text-gray-400 block mb-0.5">{t('detail.price_per_car') || 'Por coche'}</span>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-2xl font-black text-primary">{tour?.price}€</span>
+                                    <span className="text-[10px] font-bold opacity-60">/ {t('detail.private_label')}</span>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsBookingModalOpen(true)}
+                                className="flex-1 bg-primary text-white py-4 rounded-[1.25rem] font-black uppercase tracking-widest text-[11px] shadow-lg shadow-primary/20 active:scale-95 transition-all"
+                            >
+                                {t('detail.book_now')}
+                            </button>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </motion.div>
     );
 };

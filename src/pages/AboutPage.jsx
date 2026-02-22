@@ -66,30 +66,30 @@ const AboutPage = () => {
             {/* New Trust Section */}
             <section className="px-6 pb-20 max-w-6xl mx-auto">
                 <div className="grid md:grid-cols-3 gap-8">
-                    <div className="p-8 rounded-[2rem] bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 text-center">
-                        <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6">
+                    <div className="p-10 rounded-[2.5rem] bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 text-center flex flex-col items-center">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6">
                             <ShieldCheck size={32} />
                         </div>
-                        <h3 className="text-xl font-black mb-3">{t('about.trust_local_title')}</h3>
-                        <p className="text-gray-600 font-medium leading-relaxed text-sm">
+                        <h3 className="text-xl font-black mb-4">{t('about.trust_local_title')}</h3>
+                        <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed text-sm">
                             {t('about.trust_local_desc')}
                         </p>
                     </div>
-                    <div className="p-8 rounded-[2rem] bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 text-center">
-                        <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6">
+                    <div className="p-10 rounded-[2.5rem] bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 text-center flex flex-col items-center">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6">
                             <Star size={32} />
                         </div>
-                        <h3 className="text-xl font-black mb-3">{t('about.trust_direct_title')}</h3>
-                        <p className="text-gray-600 font-medium leading-relaxed text-sm">
+                        <h3 className="text-xl font-black mb-4">{t('about.trust_direct_title')}</h3>
+                        <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed text-sm">
                             {t('about.trust_direct_desc')}
                         </p>
                     </div>
-                    <div className="p-8 rounded-[2rem] bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 text-center">
-                        <div className="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6">
+                    <div className="p-10 rounded-[2.5rem] bg-white dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-xl shadow-black/5 text-center flex flex-col items-center">
+                        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-6">
                             <Award size={32} />
                         </div>
-                        <h3 className="text-xl font-black mb-3">{t('about.trust_boutique_title')}</h3>
-                        <p className="text-gray-600 font-medium leading-relaxed text-sm">
+                        <h3 className="text-xl font-black mb-4">{t('about.trust_boutique_title')}</h3>
+                        <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed text-sm">
                             {t('about.trust_boutique_desc')}
                         </p>
                     </div>
@@ -118,8 +118,8 @@ const AboutPage = () => {
                         <div className="flex-1">
                             <h3 className="text-3xl md:text-4xl font-black text-secondary mb-2">{t('about.perty_name')}</h3>
                             <p className="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-[0.3em] mb-8">({t('about.perty_role')})</p>
-                            <div className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed border-l-4 border-secondary/20 pl-8">
-                                <p className="mb-4">{t('about.perty_text_1')}</p>
+                            <div className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed border-l-4 border-secondary/20 pl-8 space-y-6">
+                                <p>{t('about.perty_text_1')}</p>
                                 <p>{t('about.perty_text_2')}</p>
                             </div>
                         </div>
