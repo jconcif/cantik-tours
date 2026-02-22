@@ -356,14 +356,13 @@ const TourDetail = () => {
                                                 transition={{ delay: idx * 0.1 }}
                                                 className={`relative flex gap-8 items-start ${isTransport ? 'opacity-70' : ''}`}
                                             >
-                                                {/* Icon Circle with Pulse for first item */}
+                                                {/* Icon Circle */}
                                                 <div className="relative z-10 w-12 h-12 rounded-full bg-white dark:bg-gray-800 border-2 border-primary/20 dark:border-white/10 flex items-center justify-center text-primary shadow-sm flex-shrink-0">
                                                     {item.type ? getItineraryIcon(item.type) : (
                                                         <span className="text-[8px] font-black uppercase text-center leading-tight px-1">
                                                             {l(item, 'time')}
                                                         </span>
                                                     )}
-                                                    {idx === 0 && <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping -z-10" />}
                                                 </div>
 
                                                 <div className="pt-2">
@@ -640,7 +639,7 @@ const TourDetail = () => {
                         >
                             <span>{t('detail.book_now')}</span>
                             <span className="text-[10px] opacity-80 font-normal normal-case">
-                                {i18n.language.startsWith('es') ? 'Consultar disponibilidad' : 'Check availability'}
+                                {i18n.language.startsWith('es') ? 'Confirmación vía WhatsApp' : 'Confirmation via WhatsApp'}
                             </span>
                         </button>
 
@@ -713,24 +712,20 @@ const TourDetail = () => {
                         className="fixed bottom-0 left-0 right-0 z-50 p-4 md:hidden bg-white/90 dark:bg-bg-dark/90 backdrop-blur-xl border-t border-black/5 dark:border-white/10"
                     >
                         <div className="flex items-center justify-between gap-6 max-w-lg mx-auto">
-                            <div className="flex-shrink-0">
-                                <span className="text-[8px] uppercase font-black tracking-[0.2em] text-gray-400 block mb-0.5">{t('detail.price_per_car') || 'Por coche'}</span>
+                            <div className="flex-shrink-0 flex flex-col justify-center">
+                                <span className="text-[9px] uppercase font-black tracking-[0.2em] text-gray-400 block -mb-0.5">{t('detail.price_special') || t('tours.per_car')}</span>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-2xl font-black text-primary">{tour?.price}€</span>
-                                    <span className="text-[10px] font-bold opacity-40">/ {t('detail.private_label')}</span>
-                                </div>
-                                <div className="flex items-center gap-1 text-green-600 dark:text-green-400 leading-none mt-1">
-                                    <Shield size={10} />
-                                    <span className="text-[8px] font-black uppercase tracking-widest">Free Cancel</span>
+                                    <span className="text-3xl font-black text-gray-900 dark:text-white">€{tour?.price}</span>
+                                    <span className="text-[10px] font-bold text-gray-400">/car</span>
                                 </div>
                             </div>
                             <button
                                 onClick={handleOpenBooking}
-                                className="flex-1 btn-primary py-4 rounded-[1.25rem] font-black uppercase tracking-widest text-[11px] shadow-lg shadow-primary/20 active:scale-95 transition-all flex flex-col items-center justify-center"
+                                className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-primary/20 active:scale-95 transition-all flex flex-col items-center justify-center"
                             >
                                 <span>{t('detail.book_now')}</span>
-                                <span className="text-[8px] opacity-80 font-normal normal-case">
-                                    {i18n.language.startsWith('es') ? 'Confirmar vía WhatsApp' : 'Confirm via WhatsApp'}
+                                <span className="text-[8px] opacity-70 font-bold uppercase tracking-tighter">
+                                    {i18n.language.startsWith('es') ? 'Confirmación vía WhatsApp' : 'Confirmation via WhatsApp'}
                                 </span>
                             </button>
                         </div>
