@@ -635,24 +635,20 @@ const TourDetail = () => {
 
                         <button
                             onClick={handleOpenBooking}
-                            className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest mb-4 flex flex-col items-center justify-center gap-1"
+                            className="w-full btn-primary py-5 rounded-2xl text-xl uppercase tracking-widest mb-6 flex flex-col items-center justify-center gap-1"
                         >
                             <span>{t('detail.book_now')}</span>
-                            <span className="text-[10px] opacity-80 font-normal normal-case">
-                                {i18n.language.startsWith('es') ? 'Confirmación vía WhatsApp' : 'Confirmation via WhatsApp'}
-                            </span>
                         </button>
 
-                        <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-500 mb-2">
-                            <Shield size={14} />
-                            <span className="text-[10px] font-black uppercase tracking-wider">
-                                {t('detail.benefits.cancellation_title')}
-                            </span>
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-500 font-black uppercase tracking-[0.15em] text-[9px]">
+                                <Shield size={12} strokeWidth={3} />
+                                <span>{i18n.language.startsWith('es') ? 'Reserva Flexible' : 'Flexible Booking'}</span>
+                            </div>
+                            <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
+                                {i18n.language.startsWith('es') ? 'Confirmación vía WhatsApp' : 'WhatsApp Confirmation'}
+                            </p>
                         </div>
-
-                        <p className="text-center text-[10px] font-bold text-gray-400">
-                            {i18n.language.startsWith('es') ? 'Sin compromiso hasta confirmar' : 'No commitment until confirmed'}
-                        </p>
 
                         {/* Full Route Button (Standalone) - Hidden until maps are ready for all tours
                         {tour.routeUrl && (
@@ -724,8 +720,8 @@ const TourDetail = () => {
                                 className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-primary/20 active:scale-95 transition-all flex flex-col items-center justify-center"
                             >
                                 <span>{t('detail.book_now')}</span>
-                                <span className="text-[8px] opacity-70 font-bold uppercase tracking-tighter">
-                                    {i18n.language.startsWith('es') ? 'Confirmación vía WhatsApp' : 'Confirmation via WhatsApp'}
+                                <span className="text-[7px] md:text-[8px] opacity-80 font-bold uppercase tracking-widest mt-0.5">
+                                    {i18n.language.startsWith('es') ? 'Reserva Flexible · Sin Depósitos' : 'Flexible Booking · No Deposits'}
                                 </span>
                             </button>
                         </div>

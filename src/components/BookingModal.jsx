@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Languages } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
@@ -11,32 +11,41 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
         pax: '2',
         hotel: '',
         coupon: '',
-        language: ''
+        experience: 'comfort' // Default to middle tier for anchoring
     });
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!formData.language) {
-            alert(t('detail.error_language_required') || "Por favor selecciona un idioma / Please select a language");
+        if (!formData.experience) {
+            alert(i18n.language.startsWith('es') ? "Por favor selecciona un nivel de experiencia." : "Please select an experience level.");
             return;
         }
 
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
 
-        let langValue;
-        if (i18n.language === 'en') {
-            langValue = formData.language === 'es' ? 'Spanish' : 'English';
-        } else {
-            langValue = formData.language === 'es' ? 'Español' : 'Inglés';
+        let expName;
+        let extraPrice = 0;
+
+        switch (formData.experience) {
+            case 'economy':
+                expName = t('detail.exp_economy_title');
+                extraPrice = 0;
+                break;
+            case 'comfort':
+                expName = t('detail.exp_comfort_title');
+                extraPrice = 10;
+                break;
+            case 'elite':
+                expName = t('detail.exp_elite_title');
+                extraPrice = 25;
+                break;
+            default:
+                expName = '';
         }
 
         const basePrice = tourPrice || 0;
-        const extraPrice = formData.language === 'es' ? 15 : 0;
         const totalPrice = basePrice + extraPrice;
-
-        const priceLabel = i18n.language === 'en' ? 'Price' : 'Precio';
-        const extraLabel = i18n.language === 'en' ? 'Extra' : 'Extra'; // 'Extra' works for both, but good to be explicit
 
         const message = `Hola Cantik Tours 👋
 Me gustaría reservar este tour, por favor:
@@ -45,9 +54,9 @@ Me gustaría reservar este tour, por favor:
 📅 ${t('detail.msg_date')}: ${formData.date}
 👥 ${t('detail.msg_pax')}: ${paxLabel}
 🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
-🗣️ ${i18n.language === 'en' ? 'Preferred Language' : 'Idioma preferido'}: ${langValue}
+✨ Experiencia: ${expName}
 
-💰 ${i18n.language === 'en' ? 'Estimated Price' : 'Precio estimado'}: ${totalPrice} € (${basePrice} €${extraPrice > 0 ? ` + ${extraPrice} € ${extraLabel}` : ''})${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+💰 ${i18n.language === 'en' ? 'Estimated Price' : 'Precio estimado'}: ${totalPrice} € (${basePrice} €${extraPrice > 0 ? ` + ${extraPrice} € Extra` : ''})${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ¿Me pueden confirmar disponibilidad y próximos pasos?
 ¡Muchas gracias!`;
@@ -163,58 +172,85 @@ Me gustaría reservar este tour, por favor:
                                 />
                             </div>
 
-                            {/* Language Input */}
-                            <div className="space-y-4 pt-2">
+                            {/* Experience Tiers Input */}
+                            <div className="space-y-4 pt-4">
                                 <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                                    <Languages size={14} className="text-primary" />
-                                    {t('detail.booking_language')}
+                                    <Star size={14} className="text-primary" />
+                                    {t('detail.booking_experience')}
                                 </label>
                                 <div className="grid gap-3">
-                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'en' ? 'border-primary bg-primary/5' : 'border-black/5 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
-                                        <input
-                                            type="radio"
-                                            name="language"
-                                            value="en"
-                                            checked={formData.language === 'en'}
-                                            onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                                            className="sr-only"
-                                        />
-                                        <div className="flex-1">
-                                            <span className={`block text-sm font-black uppercase tracking-wide ${formData.language === 'en' ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
-                                                {t('detail.lang_english')}
-                                            </span>
-                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mt-0.5">
-                                                {t('detail.lang_english_desc')}
-                                            </span>
+                                    {/* Economy */}
+                                    <label className={`relative flex items-start p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.experience === 'economy' ? 'border-gray-400 bg-gray-50 dark:bg-white/5 shadow-md shadow-gray-200/50 dark:shadow-none z-10' : 'border-black/5 dark:border-white/5 bg-transparent hover:border-gray-200 opacity-80 hover:opacity-100'}`}>
+                                        <input type="radio" name="experience" value="economy" checked={formData.experience === 'economy'} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} className="sr-only" />
+                                        <div className="mt-0.5 mr-3 flex-shrink-0">
+                                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${formData.experience === 'economy' ? 'border-gray-500' : 'border-gray-300 dark:border-gray-600'}`}>
+                                                {formData.experience === 'economy' && <div className="w-2 h-2 rounded-full bg-gray-500" />}
+                                            </div>
                                         </div>
-                                        {formData.language === 'en' && <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />}
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'economy' ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
+                                                    {t('detail.exp_economy_title')}
+                                                </span>
+                                                <span className="text-[10px] font-bold text-gray-400">Tarifa Base</span>
+                                            </div>
+                                            <span className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_economy_sub')}</span>
+                                            <span className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight block">{t('detail.exp_economy_desc')}</span>
+                                        </div>
                                     </label>
 
-                                    <label className={`relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.language === 'es' ? 'border-primary bg-primary/5' : 'border-black/5 dark:border-white/5 bg-gray-50 dark:bg-white/5 hover:border-gray-200'}`}>
-                                        <input
-                                            type="radio"
-                                            name="language"
-                                            value="es"
-                                            checked={formData.language === 'es'}
-                                            onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                                            className="sr-only"
-                                        />
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className={`block text-sm font-black uppercase tracking-wide ${formData.language === 'es' ? 'text-primary' : 'text-gray-700 dark:text-gray-200'}`}>
-                                                    {t('detail.lang_spanish')}
-                                                </span>
-                                            </div>
-                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider block mt-0.5">
-                                                {t('detail.lang_spanish_desc')}
-                                            </span>
+                                    {/* Comfort (Default / Recommended) */}
+                                    <label className={`relative flex items-start p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.experience === 'comfort' ? 'border-primary bg-primary/5 shadow-lg shadow-primary/10 z-10' : 'border-black/5 dark:border-white/5 bg-transparent hover:border-gray-200 opacity-80 hover:opacity-100'}`}>
+                                        <input type="radio" name="experience" value="comfort" checked={formData.experience === 'comfort'} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} className="sr-only" />
+                                        <div className="absolute -top-2.5 right-4 bg-primary text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">
+                                            Recomendado
                                         </div>
-                                        {formData.language === 'es' && <div className="w-2 h-2 rounded-full bg-primary shadow-sm" />}
+                                        <div className="mt-0.5 mr-3 flex-shrink-0">
+                                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${formData.experience === 'comfort' ? 'border-primary' : 'border-gray-300 dark:border-gray-600'}`}>
+                                                {formData.experience === 'comfort' && <div className="w-2 h-2 rounded-full bg-primary" />}
+                                            </div>
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'comfort' ? 'text-primary' : 'text-gray-500'}`}>
+                                                    {t('detail.exp_comfort_title')}
+                                                </span>
+                                                <span className="text-[10px] font-bold text-primary">+10€</span>
+                                            </div>
+                                            <span className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_comfort_sub')}</span>
+                                            <span className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight block">{t('detail.exp_comfort_desc')}</span>
+                                        </div>
                                     </label>
-                                </div>
-                                <div className="text-[10px] text-gray-400 font-bold italic flex items-center gap-1">
-                                    <div className="w-1 h-1 rounded-full bg-primary" />
-                                    {t('detail.availability_disclaimer')}
+
+                                    {/* Elite */}
+                                    <label className={`relative flex items-start p-4 rounded-2xl border-2 transition-all cursor-pointer group ${formData.experience === 'elite' ? 'border-[#D4AF37] bg-[#D4AF37]/5 shadow-lg shadow-[#D4AF37]/10 z-10' : 'border-black/5 dark:border-white/5 bg-transparent hover:border-gray-200 opacity-80 hover:opacity-100'}`}>
+                                        <input type="radio" name="experience" value="elite" checked={formData.experience === 'elite'} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} className="sr-only" />
+                                        <div className="mt-0.5 mr-3 flex-shrink-0">
+                                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${formData.experience === 'elite' ? 'border-[#D4AF37]' : 'border-gray-300 dark:border-gray-600'}`}>
+                                                {formData.experience === 'elite' && <div className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
+                                            </div>
+                                        </div>
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between mb-1">
+                                                <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'elite' ? 'text-[#D4AF37]' : 'text-gray-500'}`}>
+                                                    {t('detail.exp_elite_title')}
+                                                </span>
+                                                <span className="text-[10px] font-bold text-[#D4AF37]">+25€</span>
+                                            </div>
+                                            <span className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_elite_sub')}</span>
+                                            <span className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight block">{t('detail.exp_elite_desc')}</span>
+
+                                            <AnimatePresence>
+                                                {formData.experience === 'elite' && (
+                                                    <motion.div initial={{ opacity: 0, height: 0, marginTop: 0 }} animate={{ opacity: 1, height: 'auto', marginTop: 12 }} exit={{ opacity: 0, height: 0, marginTop: 0 }} className="overflow-hidden">
+                                                        <div className="p-2.5 rounded-xl bg-[#D4AF37]/10 text-[#B8860B] dark:text-[#D4AF37] text-[9px] font-medium leading-relaxed border border-[#D4AF37]/20">
+                                                            {t('detail.exp_elite_warning')}
+                                                        </div>
+                                                    </motion.div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
+                                    </label>
                                 </div>
                             </div>
 
