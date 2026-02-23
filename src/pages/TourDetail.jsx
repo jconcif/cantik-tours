@@ -735,17 +735,10 @@ const TourDetail = () => {
                         exit={{ y: 100 }}
                         className="fixed bottom-0 left-0 right-0 z-50 p-4 md:hidden bg-white/90 dark:bg-bg-dark/90 backdrop-blur-xl border-t border-black/5 dark:border-white/10"
                     >
-                        <div className="flex items-center justify-between gap-6 max-w-lg mx-auto">
-                            <div className="flex-shrink-0 flex flex-col justify-center">
-                                <span className="text-[9px] uppercase font-black tracking-[0.2em] text-gray-400 block -mb-0.5">{t('detail.price_special') || t('tours.per_car')}</span>
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-3xl font-black text-gray-900 dark:text-white">€{tour?.price}</span>
-                                    <span className="text-[10px] font-bold text-gray-400">/car</span>
-                                </div>
-                            </div>
+                        <div className="flex items-center justify-center max-w-lg mx-auto">
                             <button
                                 onClick={handleOpenBooking}
-                                className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center"
+                                className="w-full bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center"
                             >
                                 <span>{t('detail.book_now')}</span>
                             </button>

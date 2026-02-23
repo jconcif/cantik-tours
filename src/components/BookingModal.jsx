@@ -192,10 +192,10 @@ Me gustaría reservar este tour, por favor:
                                                 <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'economy' ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
                                                     {t('detail.exp_economy_title')}
                                                 </span>
-                                                <span className="text-[10px] font-bold text-gray-400">Tarifa Base</span>
+                                                <span className="text-sm font-black text-gray-900 dark:text-gray-100">{tourPrice}€</span>
                                             </div>
-                                            <span className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_economy_sub')}</span>
-                                            <span className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight block">{t('detail.exp_economy_desc')}</span>
+                                            <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_economy_sub')}</span>
+                                            <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_economy_desc')}</span>
                                         </div>
                                     </label>
 
@@ -215,10 +215,10 @@ Me gustaría reservar este tour, por favor:
                                                 <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'comfort' ? 'text-primary' : 'text-gray-500'}`}>
                                                     {t('detail.exp_comfort_title')}
                                                 </span>
-                                                <span className="text-[10px] font-bold text-primary">+10€</span>
+                                                <span className="text-sm font-black text-primary">{tourPrice + 10}€</span>
                                             </div>
-                                            <span className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_comfort_sub')}</span>
-                                            <span className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight block">{t('detail.exp_comfort_desc')}</span>
+                                            <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_comfort_sub')}</span>
+                                            <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_comfort_desc')}</span>
                                         </div>
                                     </label>
 
@@ -235,15 +235,15 @@ Me gustaría reservar este tour, por favor:
                                                 <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'elite' ? 'text-[#D4AF37]' : 'text-gray-500'}`}>
                                                     {t('detail.exp_elite_title')}
                                                 </span>
-                                                <span className="text-[10px] font-bold text-[#D4AF37]">+25€</span>
+                                                <span className="text-sm font-black text-[#D4AF37]">{tourPrice + 25}€</span>
                                             </div>
-                                            <span className="text-xs font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_elite_sub')}</span>
-                                            <span className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight block">{t('detail.exp_elite_desc')}</span>
+                                            <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_elite_sub')}</span>
+                                            <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_elite_desc')}</span>
 
                                             <AnimatePresence>
                                                 {formData.experience === 'elite' && (
                                                     <motion.div initial={{ opacity: 0, height: 0, marginTop: 0 }} animate={{ opacity: 1, height: 'auto', marginTop: 12 }} exit={{ opacity: 0, height: 0, marginTop: 0 }} className="overflow-hidden">
-                                                        <div className="p-2.5 rounded-xl bg-[#D4AF37]/10 text-[#B8860B] dark:text-[#D4AF37] text-[9px] font-medium leading-relaxed border border-[#D4AF37]/20">
+                                                        <div className="p-3 md:p-3.5 rounded-xl bg-[#D4AF37]/10 text-[#B8860B] dark:text-[#D4AF37] text-[10px] md:text-xs font-bold leading-relaxed border border-[#D4AF37]/20">
                                                             {t('detail.exp_elite_warning')}
                                                         </div>
                                                     </motion.div>
