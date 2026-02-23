@@ -40,7 +40,7 @@ i18n
                         subtitle: "Todas nuestras rutas son privadas y 100% flexibles. Dinos qué te interesa y nosotros lo haremos realidad.",
                         search_placeholder: "Buscar aventura (ej. Ubud, cascadas...)",
                         from: "Desde",
-                        per_car: "Precio por coche (1-5 pers.)",
+                        per_car: "Precio por coche (1-4 pers.)",
                         no_matches: "No hay coincidencias",
                         see_all: "Ver todos los tours",
                         custom: {
@@ -602,7 +602,7 @@ i18n
                         subtitle: "All our routes are private and 100% customizable. Tell us what you are interested in and we will make it happen.",
                         search_placeholder: "Search adventure (eg. Ubud, waterfalls...)",
                         from: "From",
-                        per_car: "Price per car (1-5 people)",
+                        per_car: "Price per car (1-4 people)",
                         no_matches: "No matches found",
                         see_all: "See all tours",
                         custom: {

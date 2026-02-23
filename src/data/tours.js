@@ -71,15 +71,6 @@ export const tours = [
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Pura Mengening",
-                activity_en: "Pura Mengening temple",
-                desc: "Un tesoro escondido. Este templo de purificación ofrece una atmósfera de paz absoluta y espiritualidad auténtica, lejos de las multitudes.",
-                desc_en: "A hidden treasure. This purification temple offers an atmosphere of absolute peace and authentic spirituality, far from the crowds."
-            },
-            {
-                type: 'visit',
-                duration: "1 hora",
-                duration_en: "1 hour",
                 activity: "Pura Gunung Kawi Sebatu",
                 activity_en: "Pura Gunung Kawi Sebatu",
                 desc: "Conocido como el templo del agua jardín, es un remanso de tranquilidad donde manantiales sagrados alimentan estanques llenos de flores de loto y peces koi.",

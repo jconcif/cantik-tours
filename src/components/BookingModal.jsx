@@ -47,7 +47,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
         const basePrice = tourPrice || 0;
         const totalPrice = basePrice + extraPrice;
 
-        const message = `Hola Cantik Tours 👋
+        const message = `¡Hola Cantik Tours!
 Me gustaría reservar este tour, por favor:
 
 🛕 ${t('detail.msg_tour')}: ${tourTitle}

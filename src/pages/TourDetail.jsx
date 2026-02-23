@@ -442,13 +442,21 @@ const TourDetail = () => {
                                 <AlertCircle size={20} className="text-gray-400" /> {t('detail.not_included')}
                             </h3>
                             <ul className="space-y-4">
-                                {(l(tour, 'not_included') || []).map((item, idx) => (
+                                {[
+                                    i18n.language.startsWith('es') ? 'Entradas y Tickets' : 'Entrance fees & Tickets',
+                                    i18n.language.startsWith('es') ? 'Almuerzo o Comidas' : 'Lunch or Meals',
+                                    i18n.language.startsWith('es') ? 'Propinas' : 'Tips',
+                                    i18n.language.startsWith('es') ? 'Seguro de viaje' : 'Travel Insurance'
+                                ].map((item, idx) => (
                                     <li key={idx} className="flex items-start gap-3">
                                         <X size={16} className="text-red-400 dark:text-red-500 mt-1 flex-shrink-0" />
                                         <span className="text-sm font-bold text-gray-600 dark:text-gray-400">{item}</span>
                                     </li>
                                 ))}
                             </ul>
+                            <p className="mt-6 text-[10px] uppercase font-bold text-gray-400">
+                                *{i18n.language.startsWith('es') ? 'deberás pagarlo por tu cuenta en cada lugar.' : 'to be paid on your own at each place.'}
+                            </p>
                         </section>
                     </div>
 
@@ -458,10 +466,10 @@ const TourDetail = () => {
                         <p className="text-gray-600 dark:text-gray-400 font-bold mb-8">{t('detail.faq_intro')}</p>
                         <div className="space-y-4">
                             {/* Standard FAQs */}
-                            {(l(tour, 'faqs') || [
-                                { q: "¿Podemos cambiar el orden de las visitas?", a: "¡Claro! Todos nuestros tours son privados y 100% flexibles. Habla con tu guía ese mismo día.", q_en: "Can we change the order of visits?", a_en: "Sure! All our tours are private and 100% flexible. Talk to your guide that same day." },
-                                { q: "¿En qué idioma es el tour?", a: "La tarifa base es con conductor experto en Inglés. El español está disponible bajo solicitud y sujeto a disponibilidad. En caso de no haber guía en español ese día, te lo confirmamos antes de cerrar la reserva.", q_en: "What language is the tour in?", a_en: "The base rate is with an expert English-speaking driver. Spanish is available upon request and subject to availability. If no Spanish-speaking guide is available on that day, we will confirm it before closing the reservation." }
-                            ]).map((faq, idx) => (
+                            {[
+                                { q: "¿Podemos cambiar el orden o lugares del itinerario?", a: "¡Claro! Todos nuestros tours son privados y 100% flexibles. Habla con nosostros y te haremos las mejores recomendaciones segun tus intereses.", q_en: "Can we change the order or places of the itinerary?", a_en: "Sure! All our tours are private and 100% flexible. Talk to us and we will give you the best recommendations based on your interests." },
+                                { q: "¿En qué idioma es el tour?", a: "La tarifa base es acompañado de un conductor local que habla en Inglés. Puedes añadir Guía certificado en ingles o Español por un suplemento adicional.", q_en: "What language is the tour in?", a_en: "The base rate is accompanied by a local driver who speaks English. You can add a certified English or Spanish Guide for an additional supplement." }
+                            ].map((faq, idx) => (
                                 <div
                                     key={idx}
                                     className="rounded-[1.5rem] border border-black/5 dark:border-white/5 bg-white dark:bg-white/5 overflow-hidden"
@@ -540,7 +548,11 @@ const TourDetail = () => {
                                             className="px-8 pb-8"
                                         >
                                             <ul className="space-y-3">
-                                                {(l(tour, 'importantInfo') || []).map((info, idx) => (
+                                                {[
+                                                    i18n.language.startsWith('es') ? "El código de vestimenta en templos requiere hombros cubiertos y sarong (en la mayoria de los templos te lo facilitan en la entrada)." : "The temple dress code requires covered shoulders and a sarong (provided at the entrance of most temples).",
+                                                    i18n.language.startsWith('es') ? "La mayoría de las cascadas requieren bajar/subir bastantes escalones." : "Most waterfalls require walking down/up many stairs.",
+                                                    i18n.language.startsWith('es') ? "Si llueve, el tour sigue adelante pero podemos ajustar paradas para mayor seguridad." : "If it rains, the tour proceeds but we can adjust stops for enhanced safety."
+                                                ].map((info, idx) => (
                                                     <li key={idx} className="flex items-start gap-3">
                                                         <div className="h-1.5 w-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
                                                         <span className="text-sm font-bold text-gray-600 dark:text-gray-400 leading-relaxed">
@@ -571,12 +583,6 @@ const TourDetail = () => {
                                     </p>
                                 )}
                             </div>
-                            <button
-                                onClick={() => setIsReviewsModalOpen(true)}
-                                className="text-sm font-bold text-primary hover:underline"
-                            >
-                                {i18n.language.startsWith('es') ? 'Ver todas' : 'View all'}
-                            </button>
                         </div>
 
                         {tourReviews.length > 0 ? (
@@ -627,6 +633,15 @@ const TourDetail = () => {
                                 </p>
                             </div>
                         )}
+
+                        <div className="mt-8 flex justify-center">
+                            <button
+                                onClick={() => setIsReviewsModalOpen(true)}
+                                className="px-8 py-3 rounded-2xl border-2 border-primary/20 text-primary font-black uppercase tracking-widest text-xs hover:bg-primary/5 hover:border-primary/40 transition-all"
+                            >
+                                {i18n.language.startsWith('es') ? 'Ver Todas' : 'View All'}
+                            </button>
+                        </div>
                     </section>
 
                 </div>
@@ -646,7 +661,7 @@ const TourDetail = () => {
                         <div className="mb-6 flex items-center gap-3 p-4 rounded-2xl bg-orange-50/80 dark:bg-orange-500/10 border border-orange-100/50 dark:border-orange-500/20 text-orange-800 dark:text-orange-400">
                             <Clock size={18} className="flex-shrink-0 animate-pulse" />
                             <span className="text-[11px] font-bold leading-tight">
-                                {i18n.language.startsWith('es') ? 'Fechas limitadas para guía en español pronto.' : 'Limited dates for Spanish guide soon.'}
+                                {i18n.language.startsWith('es') ? '*Fechas limitadas para guía en español.' : '*Limited dates for Spanish guide.'}
                             </span>
                         </div>
 
@@ -657,11 +672,7 @@ const TourDetail = () => {
                             <span>{t('detail.book_now')}</span>
                         </button>
 
-                        <div className="space-y-2">
-                            <div className="flex items-center justify-center gap-2 text-green-600 dark:text-green-500 font-black uppercase tracking-[0.15em] text-[9px]">
-                                <Shield size={12} strokeWidth={3} />
-                                <span>{i18n.language.startsWith('es') ? 'Reserva Flexible' : 'Flexible Booking'}</span>
-                            </div>
+                        <div className="space-y-2 mt-4">
                             <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
                                 {i18n.language.startsWith('es') ? 'Confirmación vía WhatsApp' : 'WhatsApp Confirmation'}
                             </p>
@@ -734,12 +745,9 @@ const TourDetail = () => {
                             </div>
                             <button
                                 onClick={handleOpenBooking}
-                                className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-primary/20 active:scale-95 transition-all flex flex-col items-center justify-center"
+                                className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-primary/20 active:scale-95 transition-all flex items-center justify-center"
                             >
                                 <span>{t('detail.book_now')}</span>
-                                <span className="text-[7px] md:text-[8px] opacity-80 font-bold uppercase tracking-widest mt-0.5">
-                                    {i18n.language.startsWith('es') ? 'Reserva Flexible · Sin Depósitos' : 'Flexible Booking · No Deposits'}
-                                </span>
                             </button>
                         </div>
                     </motion.div>
