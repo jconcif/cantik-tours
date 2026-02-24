@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShieldCheck, Award, ArrowRight, Star } from 'lucide-react';
+import { ShieldCheck, Award, ArrowRight, Star, HeartHandshake } from 'lucide-react';
 import SEO from '../components/SEO';
 
 const AboutPage = () => {
@@ -173,6 +173,25 @@ const AboutPage = () => {
                         </p>
                     </motion.div>
                 </div>
+            </section>
+
+            {/* 4. Impact - Short & Powerful */}
+            <section className="px-6 py-20 max-w-4xl mx-auto text-center">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    className="bg-white dark:bg-white/5 border border-primary/20 p-10 md:p-16 rounded-[3rem] shadow-xl relative overflow-hidden"
+                >
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10" />
+                    <HeartHandshake size={48} className="text-primary mx-auto mb-6 opacity-80" />
+                    <h2 className="text-3xl md:text-5xl font-black mb-6 tracking-tight">
+                        {t('about.impact_title')}
+                    </h2>
+                    <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed max-w-2xl mx-auto">
+                        {t('about.impact_desc')}
+                    </p>
+                </motion.div>
             </section>
 
             {/* 5. Final Conversion CTA - High Impact */}

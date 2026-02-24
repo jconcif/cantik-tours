@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../context/CurrencyContext';
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
     const { t, i18n } = useTranslation();
+    const { formatPrice } = useCurrency();
     const [showCoupon, setShowCoupon] = useState(false);
     const [formData, setFormData] = useState({
         date: '',
@@ -192,7 +194,7 @@ Me gustaría reservar este tour, por favor:
                                                 <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'economy' ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
                                                     {t('detail.exp_economy_title')}
                                                 </span>
-                                                <span className="text-sm font-black text-gray-900 dark:text-gray-100">{tourPrice}€</span>
+                                                <span className="text-sm font-black text-gray-900 dark:text-gray-100">{(() => { const p = formatPrice(tourPrice); return `${p.symbol}${p.amount}`; })()}</span>
                                             </div>
                                             <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_economy_sub')}</span>
                                             <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_economy_desc')}</span>
@@ -215,7 +217,7 @@ Me gustaría reservar este tour, por favor:
                                                 <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'comfort' ? 'text-primary' : 'text-gray-500'}`}>
                                                     {t('detail.exp_comfort_title')}
                                                 </span>
-                                                <span className="text-sm font-black text-primary">{tourPrice + 10}€</span>
+                                                <span className="text-sm font-black text-primary">{(() => { const p = formatPrice(tourPrice + 10); return `${p.symbol}${p.amount}`; })()}</span>
                                             </div>
                                             <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_comfort_sub')}</span>
                                             <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_comfort_desc')}</span>
@@ -235,7 +237,7 @@ Me gustaría reservar este tour, por favor:
                                                 <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'elite' ? 'text-[#D4AF37]' : 'text-gray-500'}`}>
                                                     {t('detail.exp_elite_title')}
                                                 </span>
-                                                <span className="text-sm font-black text-[#D4AF37]">{tourPrice + 25}€</span>
+                                                <span className="text-sm font-black text-[#D4AF37]">{(() => { const p = formatPrice(tourPrice + 25); return `${p.symbol}${p.amount}`; })()}</span>
                                             </div>
                                             <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_elite_sub')}</span>
                                             <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_elite_desc')}</span>
@@ -299,9 +301,16 @@ Me gustaría reservar este tour, por favor:
                                 {t('detail.booking_submit')}
                             </button>
 
-                            <p className="text-center text-[10px] text-gray-600 font-bold uppercase tracking-widest opacity-80 leading-relaxed px-4">
-                                {t('detail.booking_payment_info')}
-                            </p>
+                            {/* Trust Box: Pago Consciente */}
+                            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex flex-col items-center text-center gap-1.5 mt-2">
+                                <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-[0.2em] mb-1">
+                                    <Heart size={14} className="animate-pulse" />
+                                    {t('detail.fair_payment_title')}
+                                </div>
+                                <p className="text-[10px] text-gray-600 dark:text-gray-400 font-medium leading-relaxed opacity-90">
+                                    {t('detail.fair_payment_desc')}
+                                </p>
+                            </div>
                         </form>
                     </motion.div>
                 </div>

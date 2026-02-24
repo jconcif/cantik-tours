@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Wifi, ShieldCheck } from 'lucide-react';
+import { GraduationCap, Wifi, ShieldCheck, HeartHandshake } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -21,6 +21,11 @@ const WhyChooseUs = () => {
             icon: ShieldCheck,
             title: t('why.reason3.title'),
             text: t('why.reason3.text')
+        },
+        {
+            icon: HeartHandshake,
+            title: t('why.reason4.title'),
+            text: t('why.reason4.text')
         }
     ];
 
@@ -38,7 +43,7 @@ const WhyChooseUs = () => {
                     <p className="text-gray-600 max-w-xl mx-auto">{t('why.subtitle')}</p>
                 </motion.div>
 
-                <div className="grid md:grid-cols-3 gap-12">
+                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
                     {reasons.map((reason, idx) => (
                         <motion.div
                             key={idx}

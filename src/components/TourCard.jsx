@@ -4,9 +4,12 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { getLocalized } from '../utils/i18nUtils';
+import { useCurrency } from '../context/CurrencyContext';
 const TourCard = ({ tour, index }) => {
     const { t, i18n } = useTranslation();
+    const { formatPrice } = useCurrency();
     const l = (field) => getLocalized(tour, field, i18n.language);
+    const price = formatPrice(tour.price);
 
     return (
         <motion.div
@@ -78,7 +81,7 @@ const TourCard = ({ tour, index }) => {
                     <div>
                         <span className="text-sm text-gray-400 block mb-1">{t('tours.from')}</span>
                         <div className="flex items-baseline gap-1">
-                            <span className="text-3xl font-black text-bg-dark dark:text-bg-light">€{tour.price}</span>
+                            <span className="text-3xl font-black text-bg-dark dark:text-bg-light">{price.symbol}{price.amount}</span>
                         </div>
                     </div>
                     <Link

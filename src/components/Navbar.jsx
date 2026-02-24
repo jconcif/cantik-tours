@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Sun, Moon, Menu, X, BookOpen, ChevronLeft, Languages } from 'lucide-react';
+import { Sun, Moon, Menu, X, BookOpen, ChevronLeft, Globe } from 'lucide-react';
 import { useDarkMode } from '../context/DarkModeContext';
+import { useCurrency } from '../context/CurrencyContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
     const { isDark, toggleDarkMode } = useDarkMode();
+    const { currency, toggleCurrency } = useCurrency();
     const { t, i18n } = useTranslation();
     const [scrolled, setScrolled] = useState(false);
     const location = useLocation();
@@ -46,6 +48,19 @@ const Navbar = () => {
 
     const positionClass = 'fixed top-0 left-0 right-0 z-50 transition-all duration-300';
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isGlobeOpen, setIsGlobeOpen] = useState(false);
+    const globeRef = useRef(null);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (globeRef.current && !globeRef.current.contains(e.target)) {
+                setIsGlobeOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     return (
         <>
@@ -109,17 +124,77 @@ const Navbar = () => {
 
                 <div className="flex items-center gap-1 sm:gap-4">
                     {/* Desktop Toggles */}
-                    <div className="hidden md:flex items-center gap-4">
-                        <button
-                            onClick={toggleLanguage}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all font-black text-[10px] uppercase tracking-tighter border ${textColorClass} ${useDarkText ? 'border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5' : 'border-white/30 bg-white/10 backdrop-blur-sm'
-                                } hover:scale-105 active:scale-95`}
-                            aria-label={i18n.language.startsWith('es') ? "Change language to English" : "Cambiar idioma a Español"}
-                        >
-                            <Languages size={14} className="opacity-70" />
-                            <span>{i18n.language.startsWith('es') ? 'ES' : 'EN'}</span>
-                        </button>
+                    <div className="hidden md:flex items-center gap-3">
 
+                        {/* Globe Dropdown */}
+                        <div className="relative" ref={globeRef}>
+                            <button
+                                onClick={() => setIsGlobeOpen(!isGlobeOpen)}
+                                className={`p-2 rounded-full transition-all ${textColorClass} hover:bg-black/5 dark:hover:bg-white/5 ${isGlobeOpen ? 'bg-black/5 dark:bg-white/10' : ''}`}
+                                aria-label="Preferencias de idioma y moneda"
+                                aria-expanded={isGlobeOpen}
+                            >
+                                <Globe size={20} />
+                            </button>
+
+                            <AnimatePresence>
+                                {isGlobeOpen && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                                        transition={{ duration: 0.15 }}
+                                        className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-black/5 dark:border-white/10 overflow-hidden z-50"
+                                    >
+                                        {/* Language */}
+                                        <div className="px-4 pt-4 pb-2">
+                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">
+                                                {i18n.language.startsWith('es') ? 'Idioma' : 'Language'}
+                                            </p>
+                                            <div className="flex gap-2">
+                                                {['es', 'en'].map((lang) => (
+                                                    <button
+                                                        key={lang}
+                                                        onClick={() => { i18n.changeLanguage(lang); }}
+                                                        className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${i18n.language.startsWith(lang)
+                                                            ? 'bg-primary text-white shadow-md shadow-primary/30'
+                                                            : 'bg-gray-100 dark:bg-white/5 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10'
+                                                            }`}
+                                                    >
+                                                        {lang === 'es' ? '🇪🇸 ES' : '🇬🇧 EN'}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+
+                                        <div className="h-px bg-black/5 dark:bg-white/5 mx-4" />
+
+                                        {/* Currency */}
+                                        <div className="px-4 pt-2 pb-4">
+                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">
+                                                {i18n.language.startsWith('es') ? 'Moneda' : 'Currency'}
+                                            </p>
+                                            <div className="flex gap-2">
+                                                {['EUR', 'USD'].map((cur) => (
+                                                    <button
+                                                        key={cur}
+                                                        onClick={() => { if (currency !== cur) toggleCurrency(); }}
+                                                        className={`flex-1 py-2 rounded-xl text-xs font-black tracking-wider transition-all ${currency === cur
+                                                            ? 'bg-primary text-white shadow-md shadow-primary/30'
+                                                            : 'bg-gray-100 dark:bg-white/5 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10'
+                                                            }`}
+                                                    >
+                                                        {cur === 'EUR' ? '€ EUR' : '$ USD'}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* Dark mode */}
                         <button
                             onClick={toggleDarkMode}
                             className={`p-2 rounded-full transition-colors ${textColorClass} hover:bg-black/5 dark:hover:bg-white/5`}
@@ -141,91 +216,131 @@ const Navbar = () => {
                 </div>
             </nav>
 
-            {/* Mobile Menu Overlay */}
-            < AnimatePresence >
+            {/* Mobile Menu — Full Screen */}
+            <AnimatePresence>
                 {isMobileMenuOpen && (
                     <motion.div
-                        initial={{ opacity: 0, x: '100%' }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: '100%' }}
-                        transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                        className="fixed inset-0 z-[110] bg-white dark:bg-bg-dark flex flex-col"
+                        initial={{ opacity: 0, clipPath: 'circle(0% at calc(100% - 48px) 32px)' }}
+                        animate={{ opacity: 1, clipPath: 'circle(150% at calc(100% - 48px) 32px)' }}
+                        exit={{ opacity: 0, clipPath: 'circle(0% at calc(100% - 48px) 32px)' }}
+                        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                        className="fixed inset-0 z-[110] bg-white dark:bg-gray-950 flex flex-col"
                     >
-                        <div className="flex justify-between items-center p-6 border-b border-black/5 dark:border-white/10">
-                            <div className="flex items-center gap-2">
-                                <span className="text-2xl font-black tracking-tighter text-gradient">CANTIK</span>
+                        {/* Top bar */}
+                        <div className="flex justify-between items-center px-6 pt-safe-top pt-6 pb-4 flex-shrink-0">
+                            <div className="flex items-center gap-1.5">
+                                <span className="text-2xl font-black tracking-tighter text-primary-dark">CANTIK</span>
                                 <span className="text-2xl font-light tracking-widest uppercase dark:text-white text-gray-900">Tours</span>
                             </div>
                             <button
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className="p-2 rounded-full bg-black/5 dark:bg-white/10 text-bg-dark dark:text-bg-light"
+                                className="w-10 h-10 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-gray-700 dark:text-gray-300"
+                                aria-label="Cerrar menú"
                             >
-                                <X size={28} />
+                                <X size={22} />
                             </button>
                         </div>
 
-                        <div className="flex flex-col p-8 gap-6 text-2xl font-black">
-                            <Link
-                                to="/"
-                                onClick={(e) => {
-                                    setIsMobileMenuOpen(false);
-                                    if (isHome) {
-                                        e.preventDefault();
-                                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                                    }
-                                }}
-                                className="flex items-center justify-between py-4 border-b border-black/5 dark:border-white/5"
-                            >
-                                <span className={isHome ? 'text-primary' : 'dark:text-white text-gray-900'}>{t('nav.home')}</span>
-                            </Link>
-                            <Link
-                                to="/tours"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="flex items-center justify-between py-4 border-b border-black/5 dark:border-white/5"
-                            >
-                                <span className={isTourList ? 'text-primary' : 'dark:text-white text-gray-900'}>{t('nav.tours')}</span>
-                                <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-bold tracking-widest uppercase">Expert Choice</span>
-                            </Link>
-                            <Link
-                                to="/nosotros"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="flex items-center justify-between py-4 border-b border-black/5 dark:border-white/5"
-                            >
-                                <span className={isAbout ? 'text-primary' : 'dark:text-white text-gray-900'}>{t('nav.about')}</span>
-                            </Link>
-                            <Link
-                                to="/guia-bali"
-                                onClick={() => setIsMobileMenuOpen(false)}
-                                className="flex items-center justify-between py-4 border-b border-black/5 dark:border-white/5"
-                            >
-                                <span className={isBaliGuide ? 'text-primary' : 'dark:text-white text-gray-900'}>{t('nav.guide')}</span>
-                                <BookOpen size={20} className="text-primary" />
-                            </Link>
+                        {/* Nav links — centered in lower half for thumb reach */}
+                        <div className="flex-1 flex flex-col justify-center px-6 pb-8 space-y-1">
+                            {[
+                                {
+                                    to: '/', label: t('nav.home'), active: isHome,
+                                    onClick: (e) => { setIsMobileMenuOpen(false); if (isHome) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); } }
+                                },
+                                { to: '/tours', label: t('nav.tours'), active: isTourList, badge: 'Expert Choice', onClick: () => setIsMobileMenuOpen(false) },
+                                { to: '/nosotros', label: t('nav.about'), active: isAbout, onClick: () => setIsMobileMenuOpen(false) },
+                                { to: '/guia-bali', label: t('nav.guide'), active: isBaliGuide, onClick: () => setIsMobileMenuOpen(false) },
+                            ].map((item, idx) => (
+                                <motion.div
+                                    key={item.to}
+                                    initial={{ opacity: 0, x: 30 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.1 + idx * 0.07, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
+                                >
+                                    <Link
+                                        to={item.to}
+                                        onClick={item.onClick}
+                                        className="flex items-center justify-between py-5 group transition-all active:scale-98"
+                                    >
+                                        <div className="flex items-baseline gap-4">
+                                            <span className={`text-2xl font-black tracking-tight transition-colors ${item.active ? 'text-primary' : 'text-gray-900 dark:text-white group-active:text-primary'
+                                                }`}>
+                                                {item.label}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                            {item.badge && (
+                                                <span className="text-[8px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold tracking-widest uppercase">
+                                                    {item.badge}
+                                                </span>
+                                            )}
+                                            {item.active && (
+                                                <div className="w-2 h-2 rounded-full bg-primary" />
+                                            )}
+                                        </div>
+                                    </Link>
+                                </motion.div>
+                            ))}
                         </div>
 
-                        <div className="mt-auto p-8 bg-gray-50 dark:bg-black/20 m-6 rounded-3xl space-y-4">
-                            <div className="flex gap-4">
-                                <button
-                                    onClick={toggleLanguage}
-                                    className="flex-1 flex items-center justify-between p-4 bg-white dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10"
-                                >
-                                    <span className="text-xs font-bold opacity-50 uppercase tracking-widest">{t('common.language')}</span>
-                                    <span className="text-primary font-black uppercase">{i18n.language.split('-')[0]}</span>
-                                </button>
+                        {/* Settings row — fixed at bottom */}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.35, duration: 0.3 }}
+                            className="flex-shrink-0 px-6 pb-12 bg-gray-50/50 dark:bg-white/[0.02] border-t border-black/5 dark:border-white/10 pt-6"
+                        >
+                            <div className="flex gap-2">
+                                {/* Language */}
+                                <div className="flex flex-1 gap-1 bg-gray-100 dark:bg-white/5 rounded-2xl p-1.5">
+                                    {['es', 'en'].map((lang) => (
+                                        <button
+                                            key={lang}
+                                            onClick={() => i18n.changeLanguage(lang)}
+                                            className={`flex-1 py-3 rounded-xl text-xs font-black uppercase transition-all ${i18n.language.startsWith(lang)
+                                                ? 'bg-white dark:bg-gray-800 text-primary shadow-sm'
+                                                : 'text-gray-400 dark:text-gray-500'
+                                                }`}
+                                        >
+                                            {lang === 'es' ? '🇪🇸 ES' : '🇬🇧 EN'}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Currency */}
+                                <div className="flex flex-1 gap-1 bg-gray-100 dark:bg-white/5 rounded-2xl p-1.5">
+                                    {['EUR', 'USD'].map((cur) => (
+                                        <button
+                                            key={cur}
+                                            onClick={() => { if (currency !== cur) toggleCurrency(); }}
+                                            className={`flex-1 py-3 rounded-xl text-xs font-black transition-all ${currency === cur
+                                                ? 'bg-white dark:bg-gray-800 text-primary shadow-sm'
+                                                : 'text-gray-400 dark:text-gray-500'
+                                                }`}
+                                        >
+                                            {cur === 'EUR' ? '€ EUR' : '$ USD'}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Dark mode */}
                                 <button
                                     onClick={toggleDarkMode}
-                                    className="p-4 bg-white dark:bg-white/5 rounded-2xl border border-black/5 dark:border-white/10 text-primary"
+                                    className="w-14 flex items-center justify-center bg-gray-100 dark:bg-white/5 rounded-2xl text-gray-500 dark:text-gray-400"
                                 >
-                                    {isDark ? <Sun size={24} /> : <Moon size={24} />}
+                                    {isDark ? <Sun size={18} /> : <Moon size={18} />}
                                 </button>
                             </div>
-                        </div>
+                        </motion.div>
 
                     </motion.div>
                 )}
-            </AnimatePresence >
+            </AnimatePresence>
         </>
     );
 };
 
+
 export default Navbar;
+

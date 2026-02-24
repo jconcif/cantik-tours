@@ -14,11 +14,13 @@ import ReviewsModal from '../components/ReviewsModal';
 import { useTranslation } from 'react-i18next';
 import { getLocalized } from '../utils/i18nUtils';
 import SEO from '../components/SEO';
+import { useCurrency } from '../context/CurrencyContext';
 
 const TourDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
+    const { formatPrice, currency } = useCurrency();
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
     const [isReviewsModalOpen, setIsReviewsModalOpen] = useState(false);
@@ -468,7 +470,8 @@ const TourDetail = () => {
                             {/* Standard FAQs */}
                             {[
                                 { q: "¿Podemos cambiar el orden o lugares del itinerario?", a: "¡Claro! Todos nuestros tours son privados y 100% flexibles. Habla con nosostros y te haremos las mejores recomendaciones segun tus intereses.", q_en: "Can we change the order or places of the itinerary?", a_en: "Sure! All our tours are private and 100% flexible. Talk to us and we will give you the best recommendations based on your interests." },
-                                { q: "¿En qué idioma es el tour?", a: "La tarifa base es acompañado de un conductor local que habla en Inglés. Puedes añadir Guía certificado en ingles o Español por un suplemento adicional.", q_en: "What language is the tour in?", a_en: "The base rate is accompanied by a local driver who speaks English. You can add a certified English or Spanish Guide for an additional supplement." }
+                                { q: "¿En qué idioma es el tour?", a: "La tarifa base es acompañado de un conductor local que habla en Inglés. Puedes añadir Guía certificado en ingles o Español por un suplemento adicional.", q_en: "What language is the tour in?", a_en: "The base rate is accompanied by a local driver who speaks English. You can add a certified English or Spanish Guide for an additional supplement." },
+                                { q: "¿Por qué hay un anticipo (vía Wise)?", a: "Fomentamos el turismo consciente. El adelanto financia directamente a tu guía para preparar el coche y su jornada, sin que tenga que poner dinero de su bolsillo.", q_en: "Why is there an advance payment?", a_en: "We promote conscious tourism. The advance directly funds your guide to prepare the car and their day, without them having to pay out of pocket upfront." }
                             ].map((faq, idx) => (
                                 <div
                                     key={idx}
@@ -651,7 +654,11 @@ const TourDetail = () => {
                     <div className="sticky top-32 p-10 rounded-[2.5rem] bg-white dark:bg-bg-dark border border-black/5 dark:border-white/5 shadow-xl">
                         <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2 block">{t('detail.price_special')}</span>
                         <div className="flex items-center gap-3 mb-6">
-                            <span className="text-5xl font-black text-gray-900 dark:text-white">€{tour.price}</span>
+                            {(() => {
+                                const p = formatPrice(tour.price); return (
+                                    <span className="text-5xl font-black text-gray-900 dark:text-white">{p.symbol}{p.amount}</span>
+                                );
+                            })()}
                             <div className="pt-2">
                                 <span className="text-gray-400 font-bold text-[11px] uppercase leading-tight block">{t('tours.per_car')}</span>
                             </div>

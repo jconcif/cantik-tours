@@ -24,10 +24,10 @@ i18n
                         expert_choice: "Elección del Experto"
                     },
                     hero: {
-                        badge: "Experiencias Premium en Indonesia",
+                        badge: "Experiencias Premium en Indonesia.",
                         title_1: "Bali no se visita,",
                         title_2: "se vive.",
-                        subtitle: "Tours privados en Bali con guías locales y asistencia personalizada en español e inglés.",
+                        subtitle: "Descubre la esencia de Bali con guías que hablan tu idioma, un servicio honesto y una experiencia diseñada exclusivamente para ti.",
                         btn_tours: "Ver Experiencias",
                         btn_story: "Nuestra Historia",
                         trust_1: "Guías 100% en Español",
@@ -180,6 +180,8 @@ i18n
                         faq_title: "Preguntas Frecuentes",
                         faq_packing_q: "¿Qué debo llevar al tour?",
                         faq_info_q: "Información importante sobre el tour",
+                        fair_payment_title: "Pago Consciente",
+                        fair_payment_desc: "La cuota de reservación cubre directamente los gastos de tu guía o conductor (combustible y preparativos). Así aseguramos un trato justo, para que recibas un servicio con la mejor disposición.",
                         view_full_route: "Ver el recorrido real en Google Maps",
                         benefits: {
                             private: "100% Privado",
@@ -426,7 +428,8 @@ i18n
                         subtitle: "No somos una agencia masiva. Somos locales especializados en crear recuerdos que duran toda la vida.",
                         reason1: { title: "Expertos en Cultura Local", text: "No solo te llevamos, te sumergimos. Todo nuestro equipo comparte la misma pasión por explicarte el 'por qué' de cada tradición, templo y paisaje." },
                         reason2: { title: "Confort sin Compromisos", text: "Vehículos premium, climatizados y con todas las facilidades para que Bali sea un placer de principio a fin." },
-                        reason3: { title: "Confianza de Amigos", text: "Sin letras pequeñas. Reserva con un pequeño depósito y paga el resto al finalizar. Tu satisfacción es nuestra prioridad." }
+                        reason3: { title: "Confianza de Amigos", text: "Sin letras pequeñas. Reserva con un pequeño depósito y paga el resto al finalizar. Tu satisfacción es nuestra prioridad." },
+                        reason4: { title: "Turismo Consciente", text: "Al reservar, garantizas un pago justo y sin retrasos a nuestro equipo local, impulsando directamente a las familias de Bali." }
                     },
                     features: {
                         title: "Detalles que marcan la",
@@ -452,6 +455,9 @@ i18n
                         cta_emotional_title: "¿Te imaginas tu viaje así?",
                         cta_emotional_text: "Lejos de lo convencional. Cerca de la auténtica magia de Bali.",
                         cta_emotional_btn: "Hablemos por WhatsApp",
+
+                        impact_title: "Tu viaje impacta",
+                        impact_desc: "Cada reserva financia sin comisiones abusivas a los conductores y sus familias, gracias a un pago justo y sin demoras.",
 
                         team_intro_title: "El Equipo",
                         team_intro_text: "Sin prisas, con seguridad y en tu idioma.",
@@ -589,10 +595,10 @@ i18n
                         about: "About Us"
                     },
                     hero: {
-                        badge: "Premium Experiences in Indonesia",
-                        title_1: "Bali isn't visited,",
-                        title_2: "it's lived.",
-                        subtitle: "Private Bali tours with local guides and personalized assistance in Spanish and English.",
+                        badge: "Premium Experiences in Indonesia.",
+                        title_1: "Don't just visit Bali.",
+                        title_2: "Live it.",
+                        subtitle: "Uncover the island's true soul through the eyes of those who call it home — a personalized, honest journey designed just for you.",
                         btn_tours: "See Experiences",
                         btn_story: "Our Story",
                         trust_1: "100% Spanish Speaking Guides",
@@ -741,6 +747,8 @@ i18n
                         faq_title: "Frequently Asked Questions",
                         faq_packing_q: "What should I bring to the tour?",
                         faq_info_q: "Important information about the tour",
+                        fair_payment_title: "Conscious Payment",
+                        fair_payment_desc: "The booking fee directly covers your guide or driver's expenses (fuel and preparation). This ensures fair treatment so you receive a service with the best attitude.",
                         view_full_route: "View the real route on Google Maps",
                         benefits: {
                             private: "100% Private",
@@ -991,7 +999,8 @@ i18n
                         subtitle: "We are not a mass-market agency. We are locals specialized in creating memories that last a lifetime.",
                         reason1: { title: "Local Culture Experts", text: "We don't just take you there, we immerse you. Our entire team shares the same passion for explaining the 'why' of every tradition, temple, and landscape." },
                         reason2: { title: "Uncompromising Comfort", text: "Premium, air-conditioned vehicles with all the facilities to make Bali a pleasure from start to finish." },
-                        reason3: { title: "Friends' Trust", text: "No fine print. Book with a small deposit and pay the rest at the end. Your satisfaction is our priority." }
+                        reason3: { title: "Friends' Trust", text: "No fine print. Book with a small deposit and pay the rest at the end. Your satisfaction is our priority." },
+                        reason4: { title: "Conscious Tourism", text: "When you book, you ensure fair and immediate payment to our local team, directly supporting Balinese families." }
                     },
                     features: {
                         title: "Details that make a",
@@ -1017,6 +1026,9 @@ i18n
                         cta_emotional_title: "Can you imagine your trip like this?",
                         cta_emotional_text: "Far from the conventional. Close to the authentic magic of Bali.",
                         cta_emotional_btn: "Let's talk on WhatsApp",
+
+                        impact_title: "Your trip creates impact",
+                        impact_desc: "Every booking funds our drivers directly, avoiding unfair agency fees, through prompt, fair payments.",
 
                         team_intro_title: "The Team",
                         team_intro_text: "No rush, safely, and in your language.",

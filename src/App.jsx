@@ -1,6 +1,7 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { CurrencyProvider } from './context/CurrencyContext';
 import { initGA, trackPageView } from './utils/analytics';
 
 import Navbar from './components/Navbar';
@@ -37,27 +38,29 @@ function App() {
     }, [location]);
 
     return (
-        <DarkModeProvider>
-            <ScrollToTop />
-            <div className="min-h-screen flex flex-col">
-                <Navbar />
-                <main className="flex-grow">
-                    <Suspense fallback={<PageLoader />}>
-                        <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/tours" element={<TourList />} />
-                            <Route path="/tour/:id" element={<TourDetail />} />
-                            <Route path="/guia-bali" element={<BaliGuide />} />
-                            <Route path="/nosotros" element={<AboutPage />} />
-                            <Route path="/reviews" element={<ReviewsPage />} />
-                            <Route path="/cantik-admin" element={<AdminReviews />} />
-                        </Routes>
-                    </Suspense>
-                </main>
-                <Footer />
-                {!['/reviews', '/cantik-admin'].includes(location.pathname) && <WhatsAppButton />}
-            </div>
-        </DarkModeProvider>
+        <CurrencyProvider>
+            <DarkModeProvider>
+                <ScrollToTop />
+                <div className="min-h-screen flex flex-col">
+                    <Navbar />
+                    <main className="flex-grow">
+                        <Suspense fallback={<PageLoader />}>
+                            <Routes>
+                                <Route path="/" element={<Home />} />
+                                <Route path="/tours" element={<TourList />} />
+                                <Route path="/tour/:id" element={<TourDetail />} />
+                                <Route path="/guia-bali" element={<BaliGuide />} />
+                                <Route path="/nosotros" element={<AboutPage />} />
+                                <Route path="/reviews" element={<ReviewsPage />} />
+                                <Route path="/cantik-admin" element={<AdminReviews />} />
+                            </Routes>
+                        </Suspense>
+                    </main>
+                    <Footer />
+                    {!['/reviews', '/cantik-admin'].includes(location.pathname) && <WhatsAppButton />}
+                </div>
+            </DarkModeProvider>
+        </CurrencyProvider>
     );
 }
 
