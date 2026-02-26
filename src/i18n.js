@@ -500,7 +500,8 @@ i18n
                         trust_2: "Guías Locales Verificados",
                         trust_3: "Soporte Personalizado",
                         made_with: "Hecho con",
-                        in_bali: "en Bali"
+                        in_bali: "en Bali",
+                        policies: "Políticas de reserva"
                     },
                     testimonials: {
                         badge: "Testimonios",
@@ -580,6 +581,80 @@ i18n
                             ig_follow_text: "¡No te pierdas nada! Síguenos en Instagram para ver más de la magia de Bali:",
                             ig_follow_btn: "Seguir en Instagram",
                             wsp_groups_text: "¿Estás en los grupos de WhatsApp de la comunidad en Bali? Recomiéndanos allí, ¡nos ayudaría muchísimo a seguir creciendo! Muchas gracias por elegir Cantik Tours!",
+                        }
+                    },
+                    policies_page: {
+                        seo_title: "Términos y Condiciones | Cantik Tours Bali",
+                        seo_desc: "Consulta los términos y condiciones de servicio de Cantik Tours para asegurar tu mejor experiencia en Bali.",
+                        badge: "Cantik Tours Bali",
+                        title: "Términos y",
+                        title_accent: "Condiciones",
+                        intro: "Bienvenido a Cantik Tours. Al realizar una reserva con nosotros, usted acepta los siguientes términos y condiciones, diseñados para garantizar su seguridad y la mejor experiencia en la \"Isla de los Dioses\".",
+                        commitment_title: "Compromiso Cantik",
+                        commitment_text: "\"En Cantik Tours creemos en un trato justo y humano. Si tienes una situación especial, no dudes en escribirnos por WhatsApp y buscaremos la mejor solución juntos.\"",
+                        thanks: "Gracias por elegirnos para descubrir Bali",
+                        sections: {
+                            s1: {
+                                title: "1. PROCESO DE RESERVA Y PAGOS",
+                                items: [
+                                    { label: "Depósito de Confirmación", text: "Se requiere un pago fijo de 20€ por persona al momento de realizar la reserva para bloquear fechas y servicios." },
+                                    { label: "Pago Total", text: "El saldo restante (100% del costo del tour) debe estar liquidado 48 horas antes del inicio del viaje." },
+                                    { label: "Métodos de Pago", text: "Aceptamos pagos vía Transferencia Bancaria y Wise. Los gastos por comisiones bancarias o de conversión de divisa corren por cuenta del cliente." }
+                                ]
+                            },
+                            s2: {
+                                title: "2. CANCELACIONES Y PUNTUALIDAD",
+                                items: [
+                                    { label: "Cancelación Gratuita", text: "Si cancelas con más de 48 horas de antelación al inicio del tour, se reembolsará el depósito íntegro." },
+                                    { label: "Penalización Parcial", text: "Si cancelas entre 48 y 24 horas antes del inicio, el depósito de 20€ no será reembolsable (gastos de gestión)." },
+                                    { label: "Gastos de Gestión Totales", text: "Las cancelaciones con menos de 24 horas de antelación, no tendrán derecho a reembolso del pago total." },
+                                    { label: "Tiempo de Espera", text: "El guía/conductor esperará un máximo de 30 minutos en el punto de encuentro. Pasado ese tiempo, sin comunicación por parte del cliente, el servicio se dará por cancelado sin reembolso por \"No Show\" (no presentarse)." },
+                                    { label: "Zona Horaria de Referencia", text: "Para el cumplimiento de los plazos de cancelación y avisos, se utilizará el horario local de Bali (WITA - UTC+8), estimando las 8:00 am como hora de referencia para el inicio del conteo de días/horas." }
+                                ]
+                            },
+                            s3: {
+                                title: "3. MODIFICACIONES DE ITINERARIO",
+                                items: [
+                                    { label: "Cambios por el Cliente", text: "Los cambios de fecha se pueden revisar sin costo adicional según disponibilidad. Si solicita un cambio de hotel en la misma zona, no hay cargo. Si el nuevo hotel está en una zona distinta de Bali, podría aplicarse un suplemento por concepto de transporte." },
+                                    { label: "Cambios por la Agencia", text: "Debido a condiciones climáticas adversas, ceremonias religiosas imprevistas, tráfico extremo, cierre de templos o de caminos, Cantik Tours se reserva el derecho de ajustar la ruta. Cualquier cambio importante será avisado y consensuado con el cliente." },
+                                    { label: "Fuerza Mayor", text: "En caso de desastres naturales (inundaciones, actividad volcánica), priorizaremos su seguridad ofreciendo reagendar el tour o modificar la ruta hacia una zona segura." }
+                                ]
+                            },
+                            s4: {
+                                title: "4. ACTIVIDADES DE AVENTURA",
+                                content: "Al contratar actividades como rafting, trekking o buceo, el cliente declara y acepta:",
+                                items: [
+                                    { label: "Asunción de Riesgo", text: "El cliente reconoce que estas actividades implican un riesgo inherente y participa bajo su propia responsabilidad." },
+                                    { label: "Estado de Salud", text: "Confirma que no padece afecciones cardíacas, lesiones graves, cirugías recientes o embarazo." },
+                                    { label: "Objetos Personales", text: "Cantik Tours no se hace responsable por daños o pérdidas de objetos electrónicos (móviles, cámaras) durante las actividades." }
+                                ]
+                            },
+                            s5: {
+                                title: "5. RESPONSABILIDAD Y SEGUROS",
+                                items: [
+                                    { label: "Seguro de Viaje", text: "Cantik Tours recomienda encarecidamente contar con un seguro de viaje internacional. Cada viajero es responsable de su propia integridad física." },
+                                    { label: "Vuelos", text: "No gestionamos vuelos internacionales; la puntualidad para el inicio del tour es responsabilidad exclusiva del cliente." }
+                                ]
+                            },
+                            s6: {
+                                title: "6. RESPETO CULTURAL",
+                                items: [
+                                    { label: "Comportamiento", text: "Se exige respeto absoluto a las tradiciones y códigos de vestimenta en los templos de Bali. Nos reservamos el derecho de finalizar el servicio ante conductas irrespetuosas." }
+                                ]
+                            },
+                            s7: {
+                                title: "7. USO DE IMAGEN",
+                                items: [
+                                    { label: "Uso de Imagen", text: "Al finalizar el tour, solicitaremos completar una encuesta de satisfacción. En ella, el cliente podrá señalar expresamente si autoriza o no el uso de sus imágenes y videos en nuestras redes sociales." }
+                                ]
+                            },
+                            s8: {
+                                title: "8. RECLAMACIONES Y LEY APLICABLE",
+                                items: [
+                                    { label: "Reclamaciones", text: "Cualquier disconformidad debe comunicarse dentro de las 12 horas posteriores a la finalización del tour para gestionar una solución inmediata." },
+                                    { label: "Ley Aplicable", text: "Este contrato se rige bajo las leyes vigentes de la República de Indonesia." }
+                                ]
+                            }
                         }
                     }
                 }
@@ -1070,7 +1145,8 @@ i18n
                         trust_2: "Verified Local Guides",
                         trust_3: "Personalized Support",
                         made_with: "Made with",
-                        in_bali: "from Bali"
+                        in_bali: "from Bali",
+                        policies: "Booking Policy"
                     },
                     testimonials: {
                         badge: "Testimonials",
@@ -1150,6 +1226,80 @@ i18n
                             ig_follow_text: "Don't miss a thing! Follow us on Instagram to see more of Bali's magic:",
                             ig_follow_btn: "Follow on Instagram",
                             wsp_groups_text: "Are you in the community WhatsApp groups in Bali? Recommend us there, it would help us a lot to keep growing! Thank you so much for choosing Cantik Tours!",
+                        }
+                    },
+                    policies_page: {
+                        seo_title: "Terms and Conditions | Cantik Tours Bali",
+                        seo_desc: "Consult Cantik Tours' terms and conditions of service to ensure your best experience in Bali.",
+                        badge: "Cantik Tours Bali",
+                        title: "Terms and",
+                        title_accent: "Conditions",
+                        intro: "Welcome to Cantik Tours. By making a booking with us, you agree to the following terms and conditions, designed to ensure your safety and the best experience in the \"Island of the Gods\".",
+                        commitment_title: "Cantik Commitment",
+                        commitment_text: "\"At Cantik Tours, we believe in fair and human treatment. If you have a special situation, do not hesitate to write to us on WhatsApp and we will find the best solution together.\"",
+                        thanks: "Thank you for choosing us to discover Bali",
+                        sections: {
+                            s1: {
+                                title: "1. BOOKING PROCESS AND PAYMENTS",
+                                items: [
+                                    { label: "Confirmation Deposit", text: "A fixed payment of €20 per person is required at the time of booking to block dates and services." },
+                                    { label: "Total Payment", text: "The remaining balance (100% of the tour cost) must be settled 48 hours before the start of the trip." },
+                                    { label: "Payment Methods", text: "We accept payments via Bank Transfer and Wise. Costs for bank commissions or currency conversion are the responsibility of the client." }
+                                ]
+                            },
+                            s2: {
+                                title: "2. CANCELLATIONS AND PUNCTUALITY",
+                                items: [
+                                    { label: "Free Cancellation", text: "If you cancel more than 48 hours before the start of the tour, the full deposit will be refunded." },
+                                    { label: "Partial Penalty", text: "If you cancel between 48 and 24 hours before the start, the €20 deposit will not be refundable (management fees)." },
+                                    { label: "Total Management Fees", text: "Cancellations less than 24 hours before will not be entitled to a refund of the total payment." },
+                                    { label: "Waiting Time", text: "The guide/driver will wait a maximum of 30 minutes at the meeting point. After that time, without communication from the client, the service will be canceled without a refund due to \"No Show\" (non-appearance)." },
+                                    { label: "Reference Time Zone", text: "For the fulfillment of cancellation deadlines and notices, Bali local time (WITA - UTC+8) will be used, with 8:00 am as the reference time for the start of the day/hour count." }
+                                ]
+                            },
+                            s3: {
+                                title: "3. ITINERARY MODIFICATIONS",
+                                items: [
+                                    { label: "Changes by the Client", text: "Date changes can be reviewed at no additional cost subject to availability. If you request a hotel change in the same area, there is no charge. If the new hotel is in a different area of Bali, a transport supplement might apply." },
+                                    { label: "Changes by the Agency", text: "Due to adverse weather conditions, unforeseen religious ceremonies, extreme traffic, temple or road closures, Cantik Tours reserves the right to adjust the route. Any important change will be notified and agreed upon with the client." },
+                                    { label: "Force Majeure", text: "In case of natural disasters (floods, volcanic activity), we will prioritize your safety by offering to reschedule the tour or modify the route to a safe zone." }
+                                ]
+                            },
+                            s4: {
+                                title: "4. ADVENTURE ACTIVITIES",
+                                content: "By hiring activities such as rafting, trekking, or diving, the client declares and accepts:",
+                                items: [
+                                    { label: "Assumption of Risk", text: "The client recognizes that these activities involve an inherent risk and participates under their own responsibility." },
+                                    { label: "Health Status", text: "Confirms that they do not suffer from heart conditions, serious injuries, recent surgeries, or pregnancy." },
+                                    { label: "Personal Belongings", text: "Cantik Tours is not responsible for damage or loss of electronic objects (mobiles, cameras) during activities." }
+                                ]
+                            },
+                            s5: {
+                                title: "5. RESPONSIBILITY AND INSURANCE",
+                                items: [
+                                    { label: "Travel Insurance", text: "Cantik Tours strongly recommends having international travel insurance. Each traveler is responsible for their own physical integrity." },
+                                    { label: "Flights", text: "We do not manage international flights; punctuality for the start of the tour is the client's exclusive responsibility." }
+                                ]
+                            },
+                            s6: {
+                                title: "6. CULTURAL RESPECT",
+                                items: [
+                                    { label: "Behavior", text: "Absolute respect for traditions and dress codes in Bali temples is required. We reserve the right to end the service in case of disrespectful behavior." }
+                                ]
+                            },
+                            s7: {
+                                title: "7. IMAGE USE",
+                                items: [
+                                    { label: "Image Use", text: "Upon finishing the tour, we will request the completion of a satisfaction survey. In it, the client can expressly indicate whether or not they authorize the use of their images and videos on our social networks." }
+                                ]
+                            },
+                            s8: {
+                                title: "8. CLAIMS AND APPLICABLE LAW",
+                                items: [
+                                    { label: "Claims", text: "Any dissatisfaction must be communicated within 12 hours after the completion of the tour to manage an immediate solution." },
+                                    { label: "Applicable Law", text: "This contract is governed by the current laws of the Republic of Indonesia." }
+                                ]
+                            }
                         }
                     }
                 }

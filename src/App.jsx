@@ -19,6 +19,7 @@ const BaliGuide = lazy(() => import('./pages/BaliGuide'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ReviewsPage = lazy(() => import('./pages/ReviewsPage'));
 const AdminReviews = lazy(() => import('./pages/AdminReviews'));
+const Policies = lazy(() => import('./pages/Policies'));
 
 
 // Minimal loading component to avoid layout shifts
@@ -52,6 +53,7 @@ function App() {
                                 <Route path="/guia-bali" element={<BaliGuide />} />
                                 <Route path="/nosotros" element={<AboutPage />} />
                                 <Route path="/reviews" element={<ReviewsPage />} />
+                                <Route path="/politicas" element={<Policies />} />
                                 <Route path="/cantik-admin" element={<AdminReviews />} />
                             </Routes>
                         </Suspense>

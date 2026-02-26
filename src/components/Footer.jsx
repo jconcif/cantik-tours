@@ -2,8 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Instagram, Heart, MessageCircle, ShieldCheck, Users, Banknote } from 'lucide-react';
-import { trackEvent } from '../utils/analytics';
+import { Heart, ShieldCheck, Users } from 'lucide-react';
 
 const Footer = () => {
     const { t } = useTranslation();
@@ -48,6 +47,7 @@ const Footer = () => {
                         <li><Link to="/tours" className="hover:text-primary transition-colors">{t('nav.tours')}</Link></li>
                         <li><Link to="/guia-bali" className="hover:text-primary transition-colors">{t('nav.guide')}</Link></li>
                         <li><Link to="/reviews" className="hover:text-primary transition-colors">{t('common.reviews_title')}</Link></li>
+                        <li><Link to="/politicas" className="hover:text-primary transition-colors">{t('footer.policies')}</Link></li>
                     </ul>
                 </motion.div>
 
@@ -59,28 +59,12 @@ const Footer = () => {
                         <li>Bali, Indonesia</li>
                     </ul>
                 </motion.div>
-
-                <motion.div variants={columnVariants}>
-                    <h3 className="font-bold text-lg mb-6">{t('footer.social')}</h3>
-                    <div className="flex gap-4">
-                        <a href="https://instagram.com/cantiktours" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110">
-                            <Instagram size={24} />
-                        </a>
-                        <a
-                            href={`https://wa.me/376614535?text=${encodeURIComponent(t('common.whatsapp_message'))}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={() => trackEvent('Conversion', 'WhatsApp Click', 'Footer Button')}
-                            className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all transform hover:scale-110"
-                        >
-                            <MessageCircle size={24} />
-                        </a>
-                    </div>
-                </motion.div>
             </motion.div>
 
             <div className="max-w-7xl mx-auto border-t border-black/5 dark:border-white/5 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-medium text-gray-400">
-                <p>© {currentYear} Cantik Tours. {t('footer.rights')}</p>
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+                    <p>© {currentYear} Cantik Tours. {t('footer.rights')}</p>
+                </div>
                 <p className="flex items-center gap-2">
                     {t('footer.made_with')} <Heart size={14} className="text-red-500 fill-red-500" /> {t('footer.in_bali')}
                 </p>
