@@ -428,7 +428,6 @@ i18n
                         subtitle: "No somos una agencia masiva. Somos locales especializados en crear recuerdos que duran toda la vida.",
                         reason1: { title: "Expertos en Cultura Local", text: "No solo te llevamos, te sumergimos. Todo nuestro equipo comparte la misma pasión por explicarte el 'por qué' de cada tradición, templo y paisaje." },
                         reason2: { title: "Confort sin Compromisos", text: "Vehículos premium, climatizados y con todas las facilidades para que Bali sea un placer de principio a fin." },
-                        reason3: { title: "Confianza de Amigos", text: "Sin letras pequeñas. Reserva con un pequeño depósito y paga el resto al finalizar. Tu satisfacción es nuestra prioridad." },
                         reason4: { title: "Turismo Consciente", text: "Al reservar, garantizas un pago justo y sin retrasos a nuestro equipo local, impulsando directamente a las familias de Bali." }
                     },
                     features: {
@@ -438,7 +437,7 @@ i18n
                         wifi: { title: "WiFi a Bordo*", text: "Comparte tus momentos al instante mientras recorres la isla." },
                         water: { title: "Hidratación", text: "Agua fría siempre disponible para combatir el sol tropical de Bali." },
                         car: { title: "Libertad Total", text: "Coches espaciosos y limpios. Tú decides cuándo parar y cuándo seguir." },
-                        food: { title: "Gastronomía Real", text: "Te llevamos a los rincones donde los locales realmente disfrutamos comer." }
+                        food: { title: "Gastronomía Real", text: "Descubre los sabores más auténticos de Bali y la esencia de Indonesia en los rincones donde los locales realmente disfrutamos comer." }
                     },
                     about: {
                         tag: "Filosofía Cantik",
@@ -501,7 +500,7 @@ i18n
                         trust_3: "Soporte Personalizado",
                         made_with: "Hecho con",
                         in_bali: "en Bali",
-                        policies: "Políticas de reserva"
+                        policies: "Términos y condiciones"
                     },
                     testimonials: {
                         badge: "Testimonios",
@@ -535,7 +534,7 @@ i18n
                         whatsapp_tooltip: "¡Hola! ¿Hablamos?",
                         whatsapp_message: "Hola Cantik Tours! Me gustaría recibir más información sobre sus tours.",
                         language: "Idioma",
-                        reviews_title: "Opiniones",
+                        reviews_title: "Reseñas",
                         reviews_about: "Sobre",
                         reviews_showing: "Mostrando",
                         reviews_verified: "opiniones verificadas",
@@ -1074,7 +1073,6 @@ i18n
                         subtitle: "We are not a mass-market agency. We are locals specialized in creating memories that last a lifetime.",
                         reason1: { title: "Local Culture Experts", text: "We don't just take you there, we immerse you. Our entire team shares the same passion for explaining the 'why' of every tradition, temple, and landscape." },
                         reason2: { title: "Uncompromising Comfort", text: "Premium, air-conditioned vehicles with all the facilities to make Bali a pleasure from start to finish." },
-                        reason3: { title: "Friends' Trust", text: "No fine print. Book with a small deposit and pay the rest at the end. Your satisfaction is our priority." },
                         reason4: { title: "Conscious Tourism", text: "When you book, you ensure fair and immediate payment to our local team, directly supporting Balinese families." }
                     },
                     features: {
@@ -1084,7 +1082,7 @@ i18n
                         wifi: { title: "On-board WiFi*", text: "Share your moments instantly as you travel across the island." },
                         water: { title: "Hydration", text: "Always cold water available to beat Bali's tropical sun." },
                         car: { title: "Total Freedom", text: "Spacious and clean cars. You decide when to stop and when to keep moving." },
-                        food: { title: "Real Gastronomy", text: "We take you to the hidden gems where locals actually enjoy eating." }
+                        food: { title: "Real Gastronomy", text: "Discover the most authentic flavors of Bali and the essence of Indonesia in the hidden gems where locals actually enjoy eating." }
                     },
                     about: {
                         tag: "Cantik Philosophy",
@@ -1146,7 +1144,7 @@ i18n
                         trust_3: "Personalized Support",
                         made_with: "Made with",
                         in_bali: "from Bali",
-                        policies: "Booking Policy"
+                        policies: "Terms and Conditions"
                     },
                     testimonials: {
                         badge: "Testimonials",

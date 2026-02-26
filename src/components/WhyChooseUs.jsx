@@ -1,5 +1,5 @@
 import React from 'react';
-import { GraduationCap, Wifi, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { GraduationCap, Wifi, HeartHandshake } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -16,11 +16,6 @@ const WhyChooseUs = () => {
             icon: Wifi,
             title: t('why.reason2.title'),
             text: t('why.reason2.text')
-        },
-        {
-            icon: ShieldCheck,
-            title: t('why.reason3.title'),
-            text: t('why.reason3.text')
         },
         {
             icon: HeartHandshake,
