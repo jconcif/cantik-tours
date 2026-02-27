@@ -202,248 +202,120 @@ i18n
                         }
                     },
                     guide: {
-                        badge: "Imprescindible para tu viaje",
-                        title: "Guía Bali",
-                        title_accent: "2026.",
-                        subtitle: "Todo lo que necesitas saber antes de aterrizar en la Isla de los Dioses.",
+                        badge: "Bali Guide 2026",
+                        title: "🌴 Guía Bali 2026: Imprescindible para tu viaje",
+                        subtitle: "Todo lo que necesitas saber antes de aterrizar en la \"Isla de los Dioses\".",
                         chapters: {
-                            preparations: {
-                                title: "Los Preparativos",
-                                subtitle: "Antes de ir"
-                            },
-                            on_island: {
-                                title: "En la isla",
-                                subtitle: "Durante tu estancia"
-                            },
-                            experience: {
-                                title: "La Experiencia Bali",
-                                subtitle: "Cultura y más"
-                            }
+                            c1: { title: "Los Preparativos", subtitle: "Antes de despegar" },
+                            c2: { title: "El Clima", subtitle: "¿Cuándo viajar?" },
+                            c3: { title: "El Alojamiento", subtitle: "Dónde dormir" },
+                            c4: { title: "Movilidad", subtitle: "Cómo moverse" },
+                            c5: { title: "Dinero", subtitle: "Tarjetas y Cajeros (ATM)" },
+                            c6: { title: "Cultura", subtitle: "Experiencia Bali" }
                         },
-                        help_title: "¿Listo para convertir esta guía en realidad?",
-                        help_text: "Ahora que conoces los secretos de Bali, es hora de vivirlos. Únete a nosotros en una aventura privada y déjanos mostrarte la verdadera magia de nuestra isla, sin prisas y a tu ritmo.",
-                        see_tours_btn: "Explorar Experiencias",
                         sections: {
                             visa: {
-                                title: "Visado e Ingreso",
-                                intro: "Para que tu llegada al \"País de las 17.000 islas\" sea perfecta, hemos resumido la información esencial que necesitas antes de despegar.",
-                                basic_title: "1. Requisitos Básicos de Entrada",
-                                exit_ticket: "Billete de salida",
-                                exit_ticket_desc: "Es imprescindible presentar un vuelo de salida del país dentro de los primeros 30 días de estancia.",
-                                types_title: "2. Tipos de Visado según tu viaje",
-                                b1_title: "A. Visa B1 - Turismo Estándar (1 a 60 días)",
-                                b1_points: [
-                                    "Pasaporte vigente : Validez mínima de 6 meses desde el día de entrada.",
-                                    "Coste: 500.000 IDR (aprox. 25€) cada 30 dias.",
-                                    "Duración: Permiso inicial de 30 días",
-                                    "Puedes extender una vez, hasta un máximo de 60 días",
-                                    "Se puede Solicitar On Line o en el aeropuerto",
-                                    "Requiere adjuntar pasaje de salida",
-                                    "Solicítala en la Web Oficial de Inmigración (https://evisa.imigrasi.go.id/) hasta 90 días antes de tu viaje."
-                                ],
-                                b1_online: "OnLine: Web Oficial de Inmigración",
-                                c1_title: "B. Visa C1 - Turismo de Larga Estancia (Hasta 180 días)",
-                                c1_points: [
-                                    "Pasaporte vigente : Validez mínima de 6 meses desde el día de entrada.",
-                                    "Coste: 1.000.000 IDR (aprox. 50€) cada 60 días",
-                                    "Duración: Permiso inicial de 60 días",
-                                    "Puedes extender dos veces, hasta un máximo de 180 días",
-                                    "Se debe solicitar On Line (tarda entre 5 a 10 dias en ser aprobada)",
-                                    "Requiere adjuntar Extracto bancario de los últimos 3 meses con un saldo mínimo de 2.000 USD (o equivalente).",
-                                    "Solicítala en la Web Oficial de Inmigración (https://evisa.imigrasi.go.id/) hasta 90 días antes de tu viaje."
-                                ],
-                                levy_title: "Tasa Turística (Obligatorio)",
-                                levy_desc: "Todos los turistas extranjeros que visiten Bali deben pagar una tasa obligatoria de 150.000 IDR (aprox. 8€) por persona. Se paga una única vez por entrada, se aplica a adultos y niños, y busca preservar la cultura y el medio ambiente.",
-                                levy_mgmt: "Gestión: Exclusivamente en el sitio web/app oficial Love Bali o al llegar en aeropuertos/puertos.",
-                                levy_qr: "Comprobante: Tras el pago, recibirás un código QR por correo electrónico que debes guardar (digital o impreso) para mostrarlo en puntos de control en la isla.",
-                                levy_note: "Entradas y salidas: Si viajas a las Islas Gili o Lombok y regresas a Bali, es posible que debas volver a mostrar el comprobante, aunque la tasa es por viaje.",
-                                advice_title: "💡 Consejo Local",
-                                advice_text: "Las normativas pueden variar. Te recomendamos confirmar siempre en la web oficial o consultarnos si tienes dudas.",
-                            },
-                            levy: {
-                                title: "Dinero",
-                                intro: "La moneda local es la Rupia Indonesia (IDR). Aunque el pago con tarjeta está cada vez más extendido, Bali sigue siendo una isla donde \"el efectivo es el rey\", especialmente en mercados, templos y pequeños restaurantes locales (warungs).",
-                                exchange_title: "1. El Cambio de Moneda",
-                                exchange_rate: "Tasa de referencia: 1€ ≈ 19.000 IDR (aproximadamente). Te convertirás en \"millonario\" nada más llegar.",
-                                exchange_bills: "Billetes Impecables: Si traes efectivo para cambiar (Euros o Dólares), asegúrate de que los billetes sean nuevos, estén limpios y no tengan marcas o roturas. Algunas casas de cambio son muy estrictas y podrían rechazarlos o darte una tasa inferior si están deteriorados.",
-                                exchange_where: "Dónde cambiar: Evita cambiar en el aeropuerto. Busca casas de cambio oficiales y seguras como BMC. Desconfía de los locales pequeños con tipos de cambio \"demasiado buenos\": suelen ser ganchos para estafas de conteo rápido. (Si no estas seguro de donde cambiar, puedes preguntar a tu driver durante algun traslado. Con un poco de precausion.. no te pasara nada.)",
-                                cards_title: "2. Tarjetas y Cajeros (ATM)",
-                                cards_recommended: "Tarjetas Recomendadas: Las tarjetas tipo Revolut, Wise o N26 funcionan a la perfección. Ofrecen el mejor tipo de cambio y minimizan las comisiones bancarias.",
-                                cards_safe: "Cajeros Seguros: Utiliza siempre cajeros situados dentro de sucursales bancarias (BCA, Mandiri, BNI o CIMB Niaga). Son más seguros frente al skimming (duplicado de tarjetas).",
-                                cards_tip: "Pro Tip: Al sacar dinero, elige siempre \"cobrar en moneda local\" (IDR) en lugar de en euros para que sea tu banco quien haga la conversión, y no el cajero.",
-                                budget_title: "3. Presupuesto Orientativo (Precios 2026)",
-                                budget_food: "Gastronomía Local: Un almuerzo típico (Nasi Goreng) en un warung cuesta entre 2€ y 4€.",
-                                budget_beer: "Café o Cerveza: Una Bintang fría o un Latte artesanal rondan los 1,5€ y 3€.",
-                                budget_massage: "Pausa Relax: 60 min de masaje balinés tradicional suele costar entre 6€ y 10€.",
-                                budget_scooter: "Arriendo de Moto: Alquiler de scooter por día desde 4€ - 5€ (dependiendo del modelo).",
-                                advice_title: "💡 Consejo Local",
-                                advice_text: "Lleva siempre billetes pequeños (10k o 20k IDR). Son ideales para propinas, parkings en playas o pequeñas compras.",
-                            },
-                            health: {
-                                title: "Salud y Bienestar",
-                                intro: "Bali es un destino seguro, pero requiere una pequeña preparación previa para evitar contratiempos.",
-                                yellow_title: "4. Vacuna de la Fiebre Amarilla",
-                                yellow_intro: "Indonesia no tiene riesgo de Fiebre Amarilla, pero exige el certificado de vacunación para protegerse si vienes de una zona donde sí existe la enfermedad.",
-                                yellow_when: "¿Cuándo es obligatoria? Si procedes de un país con riesgo de transmisión o si has realizado una escala de más de 12 horas en un aeropuerto de esos países.",
-                                yellow_countries: "Países Hispanohablantes y Americanos afectados: Argentina, Bolivia, Brasil, Colombia, Ecuador, Paraguay, Perú, Venezuela, Guyana, Surinam, Guayana Francesa y Panamá.",
-                                yellow_europe: "¿Y Europa? Ningún país europeo está en la lista de riesgo, por lo que si viajas directamente desde España u otro país de la UE, no es obligatoria.",
-                                yellow_note: "Nota importante: El certificado debe ser el original y tener una antigüedad mínima de 10 días antes de la llegada.",
-                                insurance_title: "1. Seguro Médico: Tu mejor aliado",
-                                insurance_desc: "Imprescindible. Aunque Bali tiene clínicas excelentes como BIMC o Siloam, la sanidad privada es extremadamente cara. Asegúrate de incluir hospitalización, repatriación médica y 'deportes de aventura' si vas a conducir moto o hacer surf.",
-                                belly_title: "2. El famoso 'Bali Belly' y Prevención",
-                                belly_intro: "Para evitar problemas estomacales y disfrutar de la gastronomía balinesa al 100%:",
-                                belly_probiotics: "Probióticos: Empieza a tomarlos una semana antes de tu viaje para fortalecer tu flora intestinal.",
-                                belly_water: "Agua: Bebe siempre agua embotellada o filtrada (nunca del grifo, ni para lavarte los dientes).",
-                                belly_ice: "Hielo: En zonas turísticas es de agua purificada (tiene un agujero en medio), pero si tienes dudas, puedes pedirlo en un vaso a parte o sin él.",
-                                repellent_title: "3. Repelente de Mosquitos",
-                                repellent_desc: "Siempre es mejor comprar un repelente en el destino; en Bali encuentras Soffell, es muy efectivo y barato (aprox. 1€).",
-                                insurance_alert_title: "¡No te la juegues!"
-                            },
-                            stay: {
-                                title: "Alojamiento: zonas de Bali",
-                                intro: "Bali tiene una zona perfecta para cada tipo de viajero. Aquí te resumimos las vibras de cada una para que elijas tu destino ideal.",
-                                booking_agoda: "Booking y Agoda son las principales plataformas para encontrar alojamiento en indonesia. Compara los precios entre ambas, aveces hay diferencias.",
-                                ubud_title: "Ubud (Cultura y Naturaleza)",
-                                ubud_desc: "El corazón espiritual de la isla. Rodeado de arrozales, templos y centros de yoga. Ideal para conectar con la esencia balinesa.",
-                                ubud_tip: "Consejo: El centro es pequeño y bullicioso; busca alojamiento a 10 min de distancia para disfrutar de la verdadera paz de la selva.",
-                                uluwatu_title: "Uluwatu (Atardeceres y Surf)",
-                                uluwatu_desc: "Situado en acantilados impresionantes con hermosas playas de arena blanca. Es la zona favorita de los surfers y con los sunsets más espectaculares.",
-                                uluwatu_tip: "Consejo: Las distancias aquí son largas. Necesitarás moto o driver para moverte de una playa a otra.",
-                                canggu_title: "Canggu (Vanguardia y Vida Nocturna)",
-                                canggu_desc: "El epicentro del ambiente nocturno: beach clubs, cafeterías aesthetic, boutiques de diseño y mucha fiesta.",
-                                canggu_tip: "Consejo: El tráfico en Canggu puede ser un reto. Si buscas algo más tranquilo pero cerca, prueba en la zona de Seminyak o Pererenan.",
-                                sanur_title: "Sanur (Familiar y Amaneceres)",
-                                sanur_desc: "Playas de aguas tranquilas protegidas por arrecife. Un ambiente clásico y muy familiar con un paseo marítimo único.",
-                                sanur_tip: "Consejo: Alquila una bici al amanecer para recorrer todo el paseo costero. Es mágico.",
-                                nusadua_title: "Nusa Dua (Lujo y Resorts)",
-                                nusadua_desc: "La zona más exclusiva de la isla. Grandes resorts internacionales y playas de arena blanca inmaculadas.",
-                                nusadua_tip: "Consejo: Ideal si buscas un 'todo incluido' y descanso absoluto sin moverte demasiado del hotel.",
-                                lovina_title: "Lovina (Delfines y Relax)",
-                                lovina_desc: "Famosa por sus playas de arena negra volcánica y los avistamientos de delfines al amanecer. Un ambiente mucho más pausado y auténtico.",
-                                lovina_tip: "Consejo: El norte es la zona más auténtica para ver la \"Bali real\" lejos del turismo masivo.",
-                                amed_title: "Amed (Buceo y Vistas al Volcán)",
-                                amed_desc: "El paraíso para el snorkel y el buceo. Sus puestas de sol con vistas al volcán Agung son, posiblemente, de las mejores de Bali.",
-                                amed_tip: "Consejo: Trae escarpines. Las playas son de piedra/coral, pero la visibilidad bajo el agua es la mejor de la isla.",
-                                advice_title: "💡 Consejo Local",
-                                advice_text: "Si tu viaje es de más de una semana, divide tu estancia entre 2 o 3 zonas para disfrutar de los distintos ambientes de la isla.",
+                                title: "🛂 Visado e Ingreso (Actualizado 2026)",
+                                intro: "Para que tu llegada al \"País de las 17.000 islas\" sea perfecta, revisa estos requisitos esenciales:",
+                                b1: {
+                                    title: "Visa B1 - Turismo (1-60 días)",
+                                    points: [
+                                        "Coste: 500.000 IDR (aprox. 30€) por cada 30 días.",
+                                        "Duración: 30 días, extensible una vez (máx 60).",
+                                        "Trámite: Online (e-VoA) o al llegar (VoA).",
+                                        "Requisito: Pasaporte (>6 meses) y pasaje de salida."
+                                    ]
+                                },
+                                c1: {
+                                    title: "Visa C1 - Larga Estancia (180 días)",
+                                    points: [
+                                        "Coste: 1.000.000 IDR (aprox. 60€) cada 60 días.",
+                                        "Trámite: Solo Online (evisa.imigrasi.go.id).",
+                                        "Requisito: Extracto bancario (>2000 USD)."
+                                    ]
+                                },
+                                ecd: {
+                                    ecd_title: "🎟️ Tasas y Aduanas (Obligatorio)",
+                                    ecd_text: "Todos los extranjeros deben pagar la Tasa Turística (150.000 IDR) en Love Bali y rellenar la declaración de aduanas (ECD) online 48h antes del vuelo.",
+                                    ecd_tip: "Tip: Ten listos los códigos QR en tu móvil al aterrizar para evitar filas."
+                                }
                             },
                             weather: {
-                                title: "Clima y Cuándo Viajar",
-                                intro: "Bali es un paraíso tropical con temperaturas constantes (26-30°C), marcado por dos estaciones principales.",
-                                dry_season_title: "Estación Seca (Abril a Octubre)",
-                                dry_season_desc: "Sol garantizado, humedad baja y brisa marina. Es la mejor época para playas, senderismo y buceo.",
-                                wet_season_title: "Estación de Lluvias (Noviembre a Marzo)",
-                                wet_season_desc: "Un verdor espectacular. Las lluvias suelen ser cortas e intensas, a menudo por la tarde o noche. Ideal para evitar multitudes y disfrutar de cascadas.",
-                                months_title: "Guía mes a mes",
-                                month_jan: "Enero",
-                                month_feb: "Febrero",
-                                month_mar: "Marzo",
-                                month_apr: "Abril",
-                                month_may: "Mayo",
-                                month_jun: "Junio",
-                                month_jul: "Julio",
-                                month_aug: "Agosto",
-                                month_sep: "Septiembre",
-                                month_oct: "Octubre",
-                                month_nov: "Noviembre",
-                                month_dec: "Diciembre",
-                                month_desc_jan: "Lluvioso pero verde. Gran ambiente de año nuevo.",
-                                month_desc_feb: "Lluvias cortas. Precios bajos y poca gente.",
-                                month_desc_mar: "Mes de Nyepi (Año Nuevo Balinés). Cultura en estado puro.",
-                                month_desc_apr: "Cielos azules. Los arrozales están en su máximo esplendor.",
-                                month_desc_may: "Mes perfecto. Clima ideal y sin multitudes de verano.",
-                                month_desc_jun: "¡A la playa! El sol brilla todo el día.",
-                                month_desc_jul: "Temporada alta. Clima fresco y festivales.",
-                                month_desc_aug: "El mes más seco. Perfecto para subir volcanes.",
-                                month_desc_sep: "De los mejores meses. Menos gente y clima excelente.",
-                                month_desc_oct: "Calor tropical. Últimos días de sol pleno antes de la lluvia.",
-                                month_desc_nov: "Empiezan las lluvias. Los paisajes reviven.",
-                                month_desc_dec: "Lluvias nocturnas. Temporada navideña vibrante."
+                                title: "🌤️ Clima",
+                                months_title: "Resumen por Meses",
+                                intro: "Bali goza de un clima tropical constante (26-30°C).",
+                                dry: { title: "Seca (Abr-Oct)", desc: "Sol garantizado y humedad baja. La mejor época para playas y buceo." },
+                                rainy: { title: "Lluvias (Nov-Mar)", desc: "Verdor intenso y menos multitudes. Lluvias fuertes pero breves." },
+                                dry_best: "Temporada Top", dry_best_desc: "Julio y Agosto (Clima perfecto pero mucha gente)",
+                                perfect: "Meses Ideales", perfect_desc: "Abril, Mayo, Junio y Septiembre (Equilibrio total)",
+                                rainy: "Pura Lluvia", rainy_desc: "Enero y Febrero (Mucha humedad y lluvia constante)",
+                                transition: "Transición", transition_desc: "Marzo y Octubre (Clima variable y cambio de estación)"
                             },
-                            transport: {
-                                title: "Transporte: Cómo moverse",
-                                intro: "Bali no tiene transporte público convencional. La libertad de movimiento depende de las apps, el alquiler de motos o los conductores privados.",
-                                apps_title: "1. Aplicaciones de Transporte (VTC)",
-                                grab_gojek_title: "Grab & Gojek",
-                                grab_gojek_desc: "Grab & Gojek son los 'Uber' de el sudeste asiático. Puedes pedir coche o moto, e incluso comida a domicilio!. Puedes configurar tu tarjeta de banco para no tener que pagar en efectivo. Facil y comodo.",
-                                grab_gojek_tip: "Pro Tip: Usa Gojek para pedir comida (GoFood) a tu villa. ¡Es adictivo!",
-                                rental_title: "2. Alquiler de Motos",
-                                rental_desc: "Es la forma más común de moverse, pero requiere precaución.",
-                                rental_requirements_title: "Requisitos Obligatorios:",
-                                rental_req_license: "Carnet Internacional de Conducir (IDP): Debe incluir la categoría de moto (clase A). Sin él, el seguro no te cubrirá y podrías ser multado.",
-                                rental_req_helmet: "Casco: Obligatorio siempre. No solo por la multa, sino por tu seguridad.",
-                                rental_req_insurance: "Seguro: Asegúrate de que tu seguro de viaje cubra accidentes en moto.",
-                                rental_price: "Precio: Entre 80.000 y 150.000 IDR al día (aprox. 5€ - 9€).",
-                                rental_tip: "Tip: Antes de arrancar, saca fotos o video a la moto para registrar cualquier daño previo.",
-                                driver_title: "3. Coche con Conductor Privado",
-                                driver_desc: "La opción más cómoda y segura para excursiones de día completo, especialmente con clima impredecible o grupos.",
-                                driver_highlight: "Contamos con una red de conductores locales de total confianza para que solo te preocupes de disfrutar."
+                            stay: {
+                                title: "🏠 Alojamiento",
+                                intro: "Desde arrozales místicos hasta acantilados infinitos. Elige tu base según el ambiente que busques:",
+                                areas: [
+                                    { area: "Ubud", title: "El Corazón Cultural", desc: "Entre arrozales, templos y yoga. Perfecto para conectar con la espiritualidad." },
+                                    { area: "Uluwatu", title: "Vibra Surf & Lujo", desc: "Acantilados impresionantes y los mejores atardeceres de la isla." },
+                                    { area: "Canggu", title: "Lifestyle Aesthetic", desc: "Beach clubs, cafeterías modernas y vida nocturna vibrante." },
+                                    { area: "Sanur", title: "Paz Familiar", desc: "Aguas tranquilas y amaneceres únicos. Ideal para familias o estancias relajadas." }
+                                ],
+                                booking_agoda: "Tip: Booking y Agoda son los reyes aquí. ¡Compara siempre!"
                             },
-                            apps: {
-                                title: "Conectividad: Internet",
-                                intro: "Preparate y descarga las app en tu movil antes de llegar.",
-                                maps_title: "Navegación",
-                                maps_desc: "Google Maps funciona bien, pero cuidado que a veces intenta meterte por caminos de cabras, en especial si eliges la ruta de moto. Selecciona la opcion \"coche\" para ir por una ruta segura. Recuerda que puedes descargar los mapas para usarlos sin internet."
+                            mobility: {
+                                title: "🛵 Movilidad",
+                                intro: "Moverse por Bali es una aventura en sí misma. Aquí tienes las herramientas clave:",
+                                apps: [
+                                    { title: "Internet & eSIM", desc: "Usa Airalo (eSIM) o compra una SIM local de Telkomsel para estar conectado desde el minuto uno." },
+                                    { title: "Grab & Gojek", desc: "El 'Uber' asiático. Úsalo para coches, motos y comida (GoFood). Vincula tu tarjeta y olvida el efectivo." },
+                                    { title: "Google Maps", desc: "Usa siempre modo 'coche' aunque vayas en moto para evitar rutas peligrosas o intransitables." }
+                                ],
+                                transport: [
+                                    { title: "Moto (Scooter)", desc: "Libertad total, pero solo para expertos. Casco obligatorio y cuidado con la policía.", tip: "Lleva siempre Carnet Internacional (IDP)" },
+                                    { title: "Conductor Privado", desc: "La opción Cantik. Comodidad, aire acondicionado y conocimiento local sin estrés.", highlight: "Recomendado para tours de día completo" }
+                                ]
                             },
-                            packing: {
-                                title: "Qué llevar: Tu Mochila",
-                                intro: "Preparar la mochila para Bali es fácil si te enfocas en lo ligero y lo práctico. Aquí tienes los imprescindibles.",
-                                category_1: "Imprescindibles",
-                                items_1: "Pasaporte, Seguro de viaje, Camara de fotos, Algo de efectivo y Tarjetas (tipo Revolut).",
-                                category_2: "Ropa & Calzado",
-                                items_2: "Ropa ligera, Calzado cómodo para caminar, Sandalias, Bañador y Sarong para templos (puedes comprarlo allí).",
-                                category_3: "Botiquín & Cuidado",
-                                items_3: "Protector solar, Repelente de mosquitos y Medicamentos básicos (os puedes conseguir en cualquier farmacia y son de bajo costo).",
-                                category_4: "Varios",
-                                items_4: "Mochila pequeña de día, Botella de agua, cargador de telefono o powerbank."
+                            money: {
+                                title: "💰 Dinero",
+                                intro: "La moneda es la Rupia (IDR). Manejar efectivo es vital fuera de las zonas turísticas.",
+                                tips: [
+                                    { title: "¡Tarjeta Física!", desc: "Los cajeros (ATM) no tienen contactless. Sin la tarjeta física no podrás sacar dinero. Lleva al menos dos por si acaso." },
+                                    { title: "Cajeros Seguros", desc: "Usa solo cajeros dentro de bancos o supermercados (Indomaret) para evitar clonaciones." },
+                                    { title: "Cambio de Divisa", desc: "Tus billetes de Euro deben estar impecables. Cambia solo en sitios oficiales como BMC." }
+                                ],
+                                budget_title: "Presupuesto de Referencia",
+                                budget: [
+                                    { concept: "Comida Warung", price: "3€ - 7€ pax" },
+                                    { concept: "Cerveza / Café", price: "2€ - 4€" }
+                                ]
                             },
-                            safety: {
-                                title: "Consejos de Supervivencia",
-                                water: "Agua",
-                                water_desc: "NUNCA bebas del grifo. Usa agua embotellada incluso para lavarte los dientes.",
-                                sockets: "Enchufes",
-                                sockets_desc: "Tipo C/F (el mismo de España o Chile). No necesitas adaptador.",
-                                safety_tip: "Seguridad: Bali es muy seguro, pero usa el sentido común con tus pertenencias en zonas muy concurridas."
-                            },
-                            food: {
-                                title: "Gastronomía: Qué comer",
-                                intro: "La comida en Bali es una explosión de sabores, especias y texturas. Aquí tienes los platos que no puedes dejar de probar.",
-                                nasi_goreng_title: "Nasi Goreng",
-                                nasi_goreng_desc: "Arroz frito con verduras, pollo o gambas, coronado con un huevo frito. El plato nacional por excelencia.",
-                                mie_goreng_title: "Mie Goreng",
-                                mie_goreng_desc: "La versión con fideos amarillos del Nasi Goreng. Delicioso y reconfortante.",
-                                satay_title: "Satay (Sate)",
-                                satay_desc: "Brochetas de carne a la brasa servidas con una espectacular salsa de cacahuete.",
-                                gado_gado_title: "Gado-Gado",
-                                gado_gado_desc: "Ensalada de verduras al vapor, tofu y tempeh con salsa de cacahuete. Perfecto para vegetarianos.",
-                                babi_guling_title: "Babi Guling",
-                                babi_guling_desc: "Cochinillo asado lentamente con especias. Es el plato festivo más famoso de Bali.",
-                                drinks_title: "Bebidas Populares",
-                                drinks_desc: "Prueba la cerveza local Bintang, el Coconut (coco joven fresco) o el Jus Alpukat (zumo de aguacate con chocolate).",
-                            },
-                            phrases: {
-                                title: "Diccionario: Palabras útiles",
-                                intro: "Los balineses aprecian muchísimo que intentes hablar su idioma. Aquí tienes unas pinceladas básicas de Bahasa Indonesia.",
-                                halo: "Hola",
-                                terima_kasih: "Gracias",
-                                sama_sama: "De nada",
-                                tolong: "Por favor",
-                                selamat_pagi: "Buenos días",
-                                selamat_siang: "Buenas tardes",
-                                berapa: "¿Cuánto cuesta?",
-                                mahal: "Es muy caro",
-                                saya_mau: "Yo quiero...",
-                                pedas: "Picante",
-                                tidak_pedas: "No picante (¡importante!)"
-                            },
-                            summary: {
-                                title: "Resumen por Nacionalidad",
-                                country: "País",
-                                visa_price: "Precio Visa",
-                                levy_price: "Tasa Bali",
-                                fever: "Fiebre Amarilla"
+                            culture: {
+                                title: "⛩️ Cultura",
+                                intro: "Bali es la 'Isla de los Dioses'. El respeto a sus tradiciones es lo más importante.",
+                                food: {
+                                    food_title: "🍱 Gastronomía Imprescindible",
+                                    food_text: "Debes probar: Nasi Goreng (arroz), Mie Goreng (fideos), Satay (brochetas), Gado-Gado (vegetariano) y Babi Guling (cochinillo)."
+                                },
+                                phrases: {
+                                    dict_title: "🗣️ Diccionario de Bolsillo",
+                                    dict_items: [
+                                        "Halo: Hola | Terima kasih: Gracias | Sama-sama: De nada.",
+                                        "Tolong: Por favor | No picante: No picante | Berapa?: ¿Cuánto cuesta?"
+                                    ]
+                                },
+                                rules_title: "💡 Reglas de Oro",
+                                rules: [
+                                    { label: "Seguro Médico", text: "Obligatorio. La sanidad privada es excelente pero muy cara sin seguro." },
+                                    { label: "Bali Belly", text: "Nunca bebas agua del grifo. Usa desinfectante de manos frecuentemente." },
+                                    { label: "Templos", text: "Cubre tus hombros y piernas (Sarong). Nunca pises las ofrendas del suelo." },
+                                    { label: "Respeto", text: "No toques la cabeza de los locales y usa la mano derecha para dar/recibir." }
+                                ]
                             }
-                        }
+                        },
+                        cta_title: "¿Listo para vivir tu propia historia?",
+                        cta_text: "Ahora que conoces los secretos, es hora de vivirlos. Únete a Cantik Tours y siente la verdadera magia.",
+                        cta_btn_tours: "Ver Experiencias",
+                        cta_btn_wsp: "Hablar con nosotros",
                     },
                     why: {
                         title: "¿Por qué Cantik Tours?",
@@ -869,482 +741,356 @@ i18n
                         }
                     },
                     guide: {
-                        badge: "Essential for your trip",
-                        title: "Bali Guide",
-                        title_accent: "2026.",
-                        subtitle: "Everything you need to know before landing on the Island of the Gods.",
+                        badge: "Bali Guide 2026",
+                        title: "🌴 Bali Guide 2026: Essential for your trip",
+                        subtitle: "Everything you need to know before landing in the \"Island of the Gods\".",
                         chapters: {
-                            preparations: {
-                                title: "Preparations",
-                                subtitle: "Before you go"
-                            },
-                            on_island: {
-                                title: "On the Island",
-                                subtitle: "During your stay"
-                            },
-                            experience: {
-                                title: "The Bali Experience",
-                                subtitle: "Culture and more"
-                            }
+                            c1: { title: "Preparations", subtitle: "Before taking off" },
+                            c2: { title: "The Weather", subtitle: "When to travel?" },
+                            c3: { title: "Accommodation", subtitle: "Where to stay" },
+                            c4: { title: "Mobility", subtitle: "How to get around" },
+                            c5: { title: "Money", subtitle: "Cards and ATMs" },
+                            c6: { title: "Culture", subtitle: "Bali Experience" }
                         },
-                        help_title: "Ready to turn this guide into reality?",
-                        help_text: "Now that you know Bali's secrets, it's time to live them. Join us on a private adventure and let us show you the true magic of our island, without the rush and at your own pace.",
-                        see_tours_btn: "Explore Experiences",
                         sections: {
                             visa: {
-                                title: "Visa & Entry",
-                                intro: "To make your arrival in the \"Land of 17,000 islands\" perfect, we have summarized the essential information you need before take-off.",
-                                basic_title: "1. Basic Entry Requirements",
-                                exit_ticket: "Exit Ticket",
-                                exit_ticket_desc: "It is essential to present an exit flight from the country within the first 30 days of stay.",
-                                types_title: "2. Visa Types based on your trip",
-                                b1_title: "A. B1 Visa - Standard Tourism (1 to 60 days)",
-                                b1_points: [
-                                    "Valid Passport: Minimum 6 months validity from the day of entry.",
-                                    "Cost: 500,000 IDR (approx. $30 / 25€) every 30 days.",
-                                    "Duration: Initial 30-day permit",
-                                    "You can extend once, up to a maximum of 60 days",
-                                    "Can be requested Online or at the airport",
-                                    "Requires attaching an exit ticket",
-                                    "Request it on the Official Immigration Website (https://evisa.imigrasi.go.id/) up to 90 days before your trip."
-                                ],
-                                b1_online: "Online: Official Immigration Website",
-                                c1_title: "B. C1 Visa - Long Stay Tourism (Up to 180 days)",
-                                c1_points: [
-                                    "Valid Passport: Minimum 6 months validity from the day of entry.",
-                                    "Cost: 1,000,000 IDR (approx. $60 / 50€) every 60 days",
-                                    "Duration: Initial 60-day permit",
-                                    "Can be extended twice, up to a maximum of 180 days",
-                                    "Must be requested Online (takes 5 to 10 days for approval)",
-                                    "Requires attaching a bank statement from the last 3 months with a minimum balance of 2,000 USD (or equivalent).",
-                                    "Request it on the Official Immigration Website (https://evisa.imigrasi.go.id/) up to 90 days before your trip."
-                                ],
-                                levy_title: "Tourist Tax (Mandatory)",
-                                levy_desc: "All foreign tourists visiting Bali must pay a mandatory fee of 150,000 IDR (approx. 8€ / $9). It is paid once per entry, applies to adults and children, and aims to preserve culture and the environment.",
-                                levy_mgmt: "Management: Exclusively on the official Love Bali website/app or upon arrival at airports/ports.",
-                                levy_qr: "Proof of Payment: After payment, you will receive a QR code by email that you must save (digital or print) to show at checkpoints on the island.",
-                                levy_note: "Entries and Exits: If you travel to the Gili Islands or Lombok and return to Bali, you may need to show proof again, although the fee is per trip.",
-                                advice_title: "💡 Local Tip",
-                                advice_text: "Regulations can change. We recommend always confirming on the official website or asking us if you have questions.",
-                            },
-                            levy: {
-                                title: "Money",
-                                intro: "The local currency is the Indonesian Rupiah (IDR). Although card payments are increasingly widespread, Bali remains an island where \"cash is king,\" especially in markets, temples, and small local restaurants (warungs).",
-                                exchange_title: "1. Currency Exchange",
-                                exchange_rate: "Reference rate: 1€ ≈ 19,000 IDR (approximately). You'll become a \"millionaire\" as soon as you arrive.",
-                                exchange_bills: "Crisp Bills: If you bring cash to exchange (Euros or Dollars), ensure the bills are new, clean, and have no marks or tears. Some exchange houses are very strict and might reject them or give you a lower rate if they are damaged.",
-                                exchange_where: "Where to exchange: Avoid exchanging at the airport. Look for official and safe exchange houses like BMC. Distrust small shops with \"too good to be true\" exchange rates: they are usually hooks for quick-counting scams. (If you're not sure where to exchange, you can ask your driver during a transfer. With a little caution... nothing will happen to you.)",
-                                cards_title: "2. Cards and ATMs",
-                                cards_recommended: "Recommended Cards: Cards like Revolut, Wise, or N26 work perfectly. They offer the best exchange rate and minimize bank fees.",
-                                cards_safe: "Safe ATMs: Always use ATMs located inside bank branches (BCA, Mandiri, BNI, or CIMB Niaga). They are safer against skimming (card duplication).",
-                                cards_tip: "Pro Tip: When withdrawing money, always choose to \"charge in local currency\" (IDR) instead of in dollars so that your bank does the conversion, not the ATM.",
-                                budget_title: "3. Budget Orientation (2026 Prices)",
-                                budget_food: "Local Gastronomy: A typical lunch (Nasi Goreng) in a warung costs between €2 and €4.",
-                                budget_beer: "Coffee or Beer: A cold Bintang or a craft Latte is around €1.5 and €3.",
-                                budget_massage: "Relax Pause: 60 min of traditional Balinese massage usually costs between €6 and €10.",
-                                budget_scooter: "Scooter Rental: Daily scooter rental starting from €4 - €5 (depending on the model).",
-                                advice_title: "💡 Local Tip",
-                                advice_text: "Always carry small bills (10k or 20k IDR). They are ideal for tips, beach parking, or small purchases.",
-                            },
-                            health: {
-                                title: "Health & Wellness",
-                                intro: "Bali is a safe destination, but it requires a bit of prior preparation to avoid setbacks.",
-                                yellow_title: "4. Yellow Fever Vaccine",
-                                yellow_intro: "Indonesia has no risk of Yellow Fever, but it requires a vaccination certificate if you come from an area where the disease exists.",
-                                yellow_when: "When is it mandatory? If you come from a country with transmission risk or if you have made a stopover of more than 12 hours in an airport in those countries.",
-                                yellow_countries: "Affected countries: Argentina, Bolivia, Brazil, Colombia, Ecuador, Paraguay, Peru, Venezuela, Guyana, Suriname, French Guiana, and Panama.",
-                                yellow_europe: "What about Europe? No European country is on the risk list, so if you travel directly from Spain or another EU country, it is not mandatory.",
-                                yellow_note: "Important Note: The certificate must be the original and must be at least 10 days old before arrival.",
-                                insurance_title: "1. Medical Insurance: Your best ally",
-                                insurance_desc: "Essential. Although Bali has excellent clinics like BIMC or Siloam, private healthcare is extremely expensive. Ensure it includes hospitalization, medical repatriation, and 'adventure sports' if you plan to ride a motorcycle or surf.",
-                                belly_title: "2. The famous 'Bali Belly' and Prevention",
-                                belly_intro: "To avoid stomach problems and enjoy Balinese gastronomy 100%:",
-                                belly_probiotics: "Probióticos: We advise starting them a week before your trip to strengthen your intestinal flora.",
-                                belly_water: "Water: Always drink bottled or filtered water (never tap water, not even for brushing teeth).",
-                                belly_ice: "Ice: In tourist areas, it's purified water (tube-shaped with a hole), but if you have doubts, you can ask for it in a separate glass or without it.",
-                                repellent_title: "3. Mosquito Repellent",
-                                repellent_desc: "It's always better to buy repellent at the destination; in Bali you find Soffell, very effective and cheap (approx. 1€).",
-                                insurance_alert_title: "Don't risk it!"
-                            },
-                            stay: {
-                                title: "Accommodation: Areas of Bali",
-                                intro: "Bali has a perfect zone for every type of traveler. Here we summarize the vibes of each so you can choose your ideal destination.",
-                                booking_agoda: "Booking and Agoda are the main platforms for finding accommodation in Indonesia. Compare prices between both, sometimes there are differences.",
-                                ubud_title: "Ubud (Culture & Nature)",
-                                ubud_desc: "The spiritual heart of the island. Surrounded by rice fields, temples, and yoga centers. Ideal for connecting with the Balinese essence.",
-                                ubud_tip: "Tip: The center is small and bustling; look for accommodation 10 min away to enjoy the true peace of the jungle.",
-                                uluwatu_title: "Uluwatu (Sunsets & Surf)",
-                                uluwatu_desc: "Located on stunning cliffs with beautiful white sand beaches. It's the surfers' favorite area and has the most spectacular sunsets.",
-                                uluwatu_tip: "Tip: Distances here are long. You'll need a scooter or driver to move from one beach to another.",
-                                canggu_title: "Canggu (Trend & Nightlife)",
-                                canggu_desc: "The epicenter of the nightlife: beach clubs, aesthetic cafes, designer boutiques, and plenty of parties.",
-                                canggu_tip: "Tip: Traffic in Canggu can be a challenge. If you're looking for something quieter but nearby, try the Seminyak or Pererenan area.",
-                                sanur_title: "Sanur (Family & Sunrise)",
-                                sanur_desc: "Calm waters protected by a reef. A classic and very family-friendly atmosphere with a unique beach promenade.",
-                                sanur_tip: "Tip: Rent a bike at sunrise to ride along the entire coastal path. It's magical.",
-                                nusadua_title: "Nusa Dua (Luxury & Resorts)",
-                                nusadua_desc: "The most exclusive area of the island. Large international resorts and immaculate white sand beaches.",
-                                nusadua_tip: "Tip: Ideal if you are looking for an 'all-inclusive' experience and total relaxation without moving too much from the hotel.",
-                                lovina_title: "Lovina (Dolphins & Relax)",
-                                lovina_desc: "Famous for its volcanic black sand beaches and sunrise dolphin watching. A much slower and more authentic atmosphere.",
-                                lovina_tip: "Tip: The north is the most authentic area to see the \"real Bali\" away from mass tourism.",
-                                amed_title: "Amed (Diving & Volcano Views)",
-                                amed_desc: "A paradise for snorkeling and diving. Its sunsets with views of Mount Agung are arguably among the best in Bali.",
-                                amed_tip: "Tip: Children's feet? Bring water shoes. The beaches have rocks/coral, but the underwater visibility is the best on the island.",
-                                advice_title: "💡 Local Tip",
-                                advice_text: "If your trip is more than a week, divide your stay between 2 or 3 areas to enjoy the different vibes of the island.",
+                                title: "🛂 Visa & Entry",
+                                intro: "To make your arrival in the \"Country of 17,000 islands\" perfect, check these essential requirements:",
+                                b1: {
+                                    title: "Visa B1 - Tourism (30-60 days)",
+                                    points: [
+                                        "Cost: 500,000 IDR (approx. 30€) per 30 days.",
+                                        "Duration: 30 days, extendable once (max 60).",
+                                        "Process: Online (e-VoA) or on arrival (VoA).",
+                                        "Requirement: Passport (>6 months) and exit ticket."
+                                    ]
+                                },
+                                c1: {
+                                    title: "Visa C1 - Long Stay (180 days)",
+                                    points: [
+                                        "Cost: 1,000,000 IDR (approx. 60€) every 60 days.",
+                                        "Process: Only Online (evisa.imigrasi.go.id).",
+                                        "Requirement: Bank statement (>2000 USD)."
+                                    ]
+                                },
+                                ecd: {
+                                    ecd_title: "🎟️ Fees & Customs (Mandatory)",
+                                    ecd_text: "All foreigners must pay the Bali Levy (150,000 IDR) on Love Bali and fill out the customs declaration (ECD) online 48h before the flight.",
+                                    ecd_tip: "Tip: Have your QR codes ready on your mobile to avoid queues."
+                                }
                             },
                             weather: {
-                                title: "Weather & Best Time",
-                                intro: "Bali is a tropical paradise with stable temperatures (26-30°C), marked by two main seasons.",
-                                dry_season_title: "Dry Season (April to October)",
-                                dry_season_desc: "Guaranteed sun, low humidity, and sea breezes. Best time for beaches, hiking, and diving.",
-                                wet_season_title: "Wet Season (November to March)",
-                                wet_season_desc: "Spectacular lush greenery. Rains are usually short and intense, often in the afternoon or night. Ideal for avoiding crowds and enjoying waterfalls.",
-                                months_title: "Month-by-month Guide",
-                                month_jan: "January",
-                                month_feb: "February",
-                                month_mar: "March",
-                                month_apr: "April",
-                                month_may: "May",
-                                month_jun: "June",
-                                month_jul: "July",
-                                month_aug: "August",
-                                month_sep: "September",
-                                month_oct: "October",
-                                month_nov: "November",
-                                month_dec: "December",
-                                month_desc_jan: "Rainy but green. Great New Year's atmosphere.",
-                                month_desc_feb: "Short rains. Low prices and few people.",
-                                month_desc_mar: "Nyepi month (Balinese New Year). Pure culture.",
-                                month_desc_apr: "Blue skies. Rice fields are at their peak.",
-                                month_desc_may: "Perfect month. Ideal weather and no summer crowds.",
-                                month_desc_jun: "To the beach! The sun shines all day.",
-                                month_desc_jul: "High season. Cool weather and festivals.",
-                                month_desc_aug: "The driest month. Perfect for climbing volcanoes.",
-                                month_desc_sep: "One of the best months. Less crowded and excellent weather.",
-                                month_desc_oct: "Tropical heat. Last sunny days before the rain.",
-                                month_desc_nov: "Rains begin. Landscapes come to life.",
-                                month_desc_dec: "Night rains. Vibrant Christmas season."
+                                title: "🌤️ Weather",
+                                months_title: "Monthly Summary",
+                                intro: "Bali enjoys a constant tropical climate (26-30°C).",
+                                dry: { title: "Dry (Apr-Oct)", desc: "Guaranteed sun and low humidity. Best time for beaches and diving." },
+                                rainy: { title: "Rainy (Nov-Mar)", desc: "Intense greenery and fewer crowds. Heavy but brief rains." },
+                                dry_best: "Top Season", dry_best_desc: "July and August (Perfect weather but crowded)",
+                                perfect: "Ideal Months", perfect_desc: "April, May, June and September (Best balance)",
+                                transition: "Transition", transition_desc: "March and October (Variable weather)",
+                                rainy: "Pure Rain", rainy_desc: "January and February (High humidity and constant rain)"
                             },
-                            transport: {
-                                title: "Transport: How to Get Around",
-                                intro: "Bali doesn't have conventional public transport. Freedom of movement depends on apps, scooter rentals, or private drivers.",
-                                apps_title: "1. Transport Apps (VTC)",
-                                grab_gojek_title: "Grab & Gojek",
-                                grab_gojek_desc: "Grab & Gojek are the 'Uber' of Southeast Asia. You can order a car or motorcycle, and even food delivery! You can set up your bank card to avoid paying in cash. Easy and convenient.",
-                                grab_gojek_tip: "Pro Tip: Use Gojek to order food (GoFood) to your villa. It's addictive!",
-                                rental_title: "2. Scooter Rental",
-                                rental_desc: "This is the most common way to get around, but requires caution.",
-                                rental_requirements_title: "Mandatory Requirements:",
-                                rental_req_license: "International Driving Permit (IDP): Must include the motorcycle category (Class A). Without it, insurance won't cover you and you could be fined.",
-                                rental_req_helmet: "Helmet: Always mandatory. Not just for the fine, but for your safety.",
-                                rental_req_insurance: "Insurance: Make sure your travel insurance covers scooter accidents.",
-                                rental_price: "Price: Between 80,000 and 150,000 IDR per day (approx. $5 - $9).",
-                                rental_tip: "Tip: Before starting, take photos or video of the scooter to record any previous damage.",
-                                driver_title: "3. Private Driver",
-                                driver_desc: "The most comfortable and safe option for full-day excursions, especially with unpredictable weather or groups.",
-                                driver_highlight: "We have a network of fully trusted local drivers so you only worry about enjoying."
+                            stay: {
+                                title: "🏠 Accommodation",
+                                intro: "From mystic rice fields to infinite cliffs. Choose your base based on the vibe you're looking for:",
+                                areas: [
+                                    { area: "Ubud", title: "Cultural Heart", desc: "Amidst rice fields, temples, and yoga. Perfect for spiritual connection." },
+                                    { area: "Uluwatu", title: "Surf & Luxury Vibe", desc: "Breathtaking cliffs and the best sunsets on the island." },
+                                    { area: "Canggu", title: "Aesthetic Lifestyle", desc: "Beach clubs, modern cafes, and vibrant nightlife." },
+                                    { area: "Sanur", title: "Family Peace", desc: "Calm waters and unique sunrises. Ideal for families or relaxed stays." }
+                                ],
+                                booking_agoda: "Tip: Booking and Agoda are the kings here. Always compare!"
                             },
-                            apps: {
-                                title: "Connectivity: Internet",
-                                intro: "Prepare and download the apps on your mobile before arriving.",
-                                maps_title: "Navigation",
-                                maps_desc: "Google Maps works well, but be careful as it sometimes tries to take you through goat paths, especially if you choose the motorcycle route. Select the 'car' option for a safe route. Remember you can download maps to use without internet."
+                            mobility: {
+                                title: "🛵 Mobility",
+                                intro: "Getting around Bali is an adventure in itself. Here are the key tools:",
+                                apps: [
+                                    { title: "Internet & eSIM", desc: "Use Airalo (eSIM) or buy a local SIM from Telkomsel to be connected from minute one." },
+                                    { title: "Grab & Gojek", desc: "The 'Uber' of Asia. Use it for cars, bikes, and food (GoFood). Link your card and forget cash." },
+                                    { title: "Google Maps", desc: "Always use 'car' mode even if on a bike to avoid dangerous or impassable routes." }
+                                ],
+                                transport: [
+                                    { title: "Scooter (Moto)", desc: "Total freedom, but only for experts. Helmet mandatory and watch out for police.", tip: "Always carry International Driving Permit (IDP)" },
+                                    { title: "Private Driver", desc: "The Cantik option. Comfort, AC, and local knowledge without stress.", highlight: "Recommended for full-day tours" }
+                                ]
                             },
-                            packing: {
-                                title: "What to Pack: Your Backpack",
-                                intro: "Packing for Bali is easy if you focus on light and practical items. Here are the essentials.",
-                                category_1: "Essentials",
-                                items_1: "Passport, Travel Insurance, Power Adapter (Type C/F), Cash and Cards (like Revolut).",
-                                category_2: "Clothing & Footwear",
-                                items_2: "Light cotton/linen clothes, Comfortable walking shoes, Sandals, Swimwear, and a light sweatshirt if you head north.",
-                                category_3: "First Aid & Care",
-                                items_3: "Sunscreen (expensive there), Mosquito repellent (Soffell), Basic medications (Paracetamol, Fortasec).",
-                                category_4: "Miscellaneous",
-                                items_4: "Sarong for temples (can be bought there), Small day backpack, Reusable water bottle."
+                            money: {
+                                title: "💰 Money",
+                                intro: "The currency is the Rupiah (IDR). Cash is vital outside tourist areas.",
+                                tips: [
+                                    { title: "Physical Card!", desc: "ATMs don't have contactless. Without the physical card, you can't withdraw money. Carry at least two." },
+                                    { title: "Safe ATMs", desc: "Only use ATMs inside banks or supermarkets (Indomaret) to avoid skimming." },
+                                    { title: "Currency Exchange", desc: "Your bills must be pristine. Only exchange at official places like BMC." }
+                                ],
+                                budget_title: "Reference Budget",
+                                budget: [
+                                    { concept: "Warung Meal", price: "3€ - 7€ pax" },
+                                    { concept: "Beer / Coffee", price: "2€ - 4€" }
+                                ]
                             },
-                            safety: {
-                                title: "Survival Tips",
-                                water: "Water",
-                                water_desc: "NEVER drink from the tap. Use bottled water even to brush your teeth.",
-                                sockets: "Sockets",
-                                sockets_desc: "Type C/F (the same as Spain or UK). No adapter needed.",
-                                safety_tip: "Safety: Bali is very safe, but use common sense with your belongings in crowded areas."
-                            },
-                            food: {
-                                title: "Gastronomy: What to Eat",
-                                intro: "Food in Bali is an explosion of flavors, spices, and textures. Here are the dishes you must try.",
-                                nasi_goreng_title: "Nasi Goreng",
-                                nasi_goreng_desc: "Fried rice with vegetables, chicken, or shrimp, topped with a fried egg. The quintessential national dish.",
-                                mie_goreng_title: "Mie Goreng",
-                                mie_goreng_desc: "The yellow noodle version of Nasi Goreng. Delicious and comforting.",
-                                satay_title: "Satay (Sate)",
-                                satay_desc: "Grilled meat skewers served with a spectacular peanut sauce.",
-                                gado_gado_title: "Gado-Gado",
-                                gado_gado_desc: "Steamed vegetable salad, tofu, and tempeh with peanut sauce. Perfect for vegetarians.",
-                                babi_guling_title: "Babi Guling",
-                                babi_guling_desc: "Slow-roasted suckling pig with spices. Bali's most famous festive dish.",
-                                drinks_title: "Popular Drinks",
-                                drinks_desc: "Try the local Bintang beer, young fresh Coconut, or Jus Alpukat (avocado juice with chocolate).",
-                            },
-                            phrases: {
-                                title: "Dictionary: Useful Phrases",
-                                intro: "Balinese people really appreciate it when you try to speak their language. Here are some basic strokes of Bahasa Indonesia.",
-                                halo: "Hello",
-                                terima_kasih: "Thank you",
-                                sama_sama: "You're welcome",
-                                tolong: "Please",
-                                selamat_pagi: "Good morning",
-                                selamat_siang: "Good afternoon",
-                                berapa: "How much is it?",
-                                mahal: "It's too expensive",
-                                saya_mau: "I want...",
-                                pedas: "Spicy",
-                                tidak_pedas: "Not spicy (important!)"
-                            },
-                            summary: {
-                                title: "Nationality Summary",
-                                country: "Country",
-                                visa_price: "Visa Price",
-                                levy_price: "Bali Levy",
-                                fever: "Yellow Fever"
+                            culture: {
+                                title: "⛩️ Culture",
+                                intro: "Bali is the 'Island of the Gods'. Respect for their traditions is paramount.",
+                                food: {
+                                    food_title: "🍱 Must-Try Gastronomy",
+                                    food_text: "You must try: Nasi Goreng (rice), Mie Goreng (noodles), Satay (skewers), Gado-Gado (vegetarian), and Babi Guling (roast pig)."
+                                },
+                                phrases: {
+                                    dict_title: "🗣️ Pocket Dictionary",
+                                    dict_items: [
+                                        "Halo: Hello | Terima kasih: Thank you | Sama-sama: You're welcome.",
+                                        "Tolong: Please | Tidak pedas: Not spicy | Berapa?: How much is it?"
+                                    ]
+                                },
+                                rules_title: "💡 Golden Rules",
+                                rules: [
+                                    { label: "Travel Insurance", text: "Mandatory. Private healthcare is excellent but very expensive without insurance." },
+                                    { label: "Bali Belly", text: "Never drink tap water. Use hand sanitizer frequently." },
+                                    { label: "Temples", text: "Cover your shoulders and legs (Sarong). Never step on offerings on the ground." },
+                                    { label: "Respect", text: "Do not touch locals' heads and use your right hand to give/receive." }
+                                ]
                             }
                         },
-                    },
-                    why: {
-                        title: "Why Cantik Tours?",
-                        subtitle: "We are not a mass-market agency. We are locals specialized in creating memories that last a lifetime.",
-                        reason1: { title: "Local Culture Experts", text: "We don't just take you there, we immerse you. Our entire team shares the same passion for explaining the 'why' of every tradition, temple, and landscape." },
-                        reason2: { title: "Uncompromising Comfort", text: "Premium, air-conditioned vehicles with all the facilities to make Bali a pleasure from start to finish." },
-                        reason4: { title: "Conscious Tourism", text: "When you book, you ensure fair and immediate payment to our local team, directly supporting Balinese families." }
-                    },
-                    features: {
-                        title: "Details that make a",
-                        title_accent: "difference",
-                        subtitle: "We don't just care about where you go, but how you feel at every mile along the way.",
-                        wifi: { title: "On-board WiFi*", text: "Share your moments instantly as you travel across the island." },
-                        water: { title: "Hydration", text: "Always cold water available to beat Bali's tropical sun." },
-                        car: { title: "Total Freedom", text: "Spacious and clean cars. You decide when to stop and when to keep moving." },
-                        food: { title: "Real Gastronomy", text: "Discover the most authentic flavors of Bali and the essence of Indonesia in the hidden gems where locals actually enjoy eating." }
-                    },
-                    about: {
-                        tag: "Cantik Philosophy",
-                        title: "Travel at your own pace",
-                        meaning_title: "What does Cantik mean?",
-                        meaning_text: "In Indonesian, Cantik (pronounced Chantik) means beautiful. But for us, the beauty of Bali is not just in its postcards. It is also in the devotion of a morning offering, in the smile of a farmer, and in the peace you feel when understanding our culture. We want every moment of your trip to be, simply, Cantik.",
-                        authority_subtitle: "Local agency in Bali specialized in private tours and personalized attention in Spanish and English.",
-                        trust_local_title: "100% Local Agency",
-                        trust_local_desc: "No international intermediaries. We operate directly from Bali, supporting the local economy.",
-                        trust_direct_title: "Direct Contact",
-                        trust_direct_desc: "We design your trip ourselves, no call centers or automated responses.",
-                        trust_boutique_title: "No Crowds",
-                        trust_boutique_desc: "We flee from full buses. Only private experiences to guarantee quality.",
-                        cta_emotional_title: "Can you imagine your trip like this?",
-                        cta_emotional_text: "Far from the conventional. Close to the authentic magic of Bali.",
-                        cta_emotional_btn: "Let's talk on WhatsApp",
+                        cta_title: "Ready to live your own story?",
+                        cta_text: "Now that you know the secrets, it's time to live them. Join Cantik Tours and feel the true magic.",
+                        cta_btn_tours: "See Experiences",
+                        cta_btn_wsp: "Talk to us",
 
-                        impact_title: "Your trip creates impact",
-                        impact_desc: "Every booking funds our drivers directly, avoiding unfair agency fees, through prompt, fair payments.",
 
-                        team_intro_title: "The Team",
-                        team_intro_text: "No rush, safely, and in your language.",
-                        perty_name: "Perty",
-                        perty_role: "Founder",
-                        perty_title: "Perty (Founder)",
-                        perty_text_1: "With a Master's degree in Education and a lifetime dedicated to teaching, I have had the honor of representing our culture in various countries as an Indonesian language teacher. Today, my true passion is being your personal connection to the soul of Bali.",
-                        perty_text_2: "For me, guiding you is not just following an itinerary; it's about inviting you to feel the mysticism of our temples, the devotion of the rituals, and those secret spots we only share with those who visit us with an open heart. My greatest wish is for you to experience this island with the same respect and profound love with which I call it home.",
-                        javi_title: "Javi (Your Link & Logistics)",
-                        javi_role: "Logistics & Link",
-                        javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
-                        promise_title: "",
-                        promise_text: "To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
+                        why: {
+                            title: "Why Cantik Tours?",
+                            subtitle: "We are not a mass-market agency. We are locals specialized in creating memories that last a lifetime.",
+                            reason1: { title: "Local Culture Experts", text: "We don't just take you there, we immerse you. Our entire team shares the same passion for explaining the 'why' of every tradition, temple, and landscape." },
+                            reason2: { title: "Uncompromising Comfort", text: "Premium, air-conditioned vehicles with all the facilities to make Bali a pleasure from start to finish." },
+                            reason4: { title: "Conscious Tourism", text: "When you book, you ensure fair and immediate payment to our local team, directly supporting Balinese families." }
+                        },
+                        features: {
+                            title: "Details that make a",
+                            title_accent: "difference",
+                            subtitle: "We don't just care about where you go, but how you feel at every mile along the way.",
+                            wifi: { title: "On-board WiFi*", text: "Share your moments instantly as you travel across the island." },
+                            water: { title: "Hydration", text: "Always cold water available to beat Bali's tropical sun." },
+                            car: { title: "Total Freedom", text: "Spacious and clean cars. You decide when to stop and when to keep moving." },
+                            food: { title: "Real Gastronomy", text: "Discover the most authentic flavors of Bali and the essence of Indonesia in the hidden gems where locals actually enjoy eating." }
+                        },
+                        about: {
+                            tag: "Cantik Philosophy",
+                            title: "Travel at your own pace",
+                            meaning_title: "What does Cantik mean?",
+                            meaning_text: "In Indonesian, Cantik (pronounced Chantik) means beautiful. But for us, the beauty of Bali is not just in its postcards. It is also in the devotion of a morning offering, in the smile of a farmer, and in the peace you feel when understanding our culture. We want every moment of your trip to be, simply, Cantik.",
+                            authority_subtitle: "Local agency in Bali specialized in private tours and personalized attention in Spanish and English.",
+                            trust_local_title: "100% Local Agency",
+                            trust_local_desc: "No international intermediaries. We operate directly from Bali, supporting the local economy.",
+                            trust_direct_title: "Direct Contact",
+                            trust_direct_desc: "We design your trip ourselves, no call centers or automated responses.",
+                            trust_boutique_title: "No Crowds",
+                            trust_boutique_desc: "We flee from full buses. Only private experiences to guarantee quality.",
+                            cta_emotional_title: "Can you imagine your trip like this?",
+                            cta_emotional_text: "Far from the conventional. Close to the authentic magic of Bali.",
+                            cta_emotional_btn: "Let's talk on WhatsApp",
 
-                        meet_team_title: "Our Guides",
-                        team_reinforced_text: "To ensure you always have the best experience, we work with a network of fully trusted local drivers, chosen by ourselves for their professionalism, charisma, and honesty.",
-                        our: "Our",
-                        essence: "Essence.",
-                        guide_1_name: "Wayan",
-                        guide_1_role: "History & Temples",
-                        guide_1_desc: "Expert in Balinese history and architecture.",
-                        guide_2_name: "Putu",
-                        guide_2_role: "Gastronomy & Local Life",
-                        guide_2_desc: "Specialist in authentic flavors, local markets, and traditional Balinese cuisine.",
-                        guide_3_name: "Komang",
-                        guide_3_role: "Culture & Tradition",
-                        guide_3_desc: "Expert in local customs and daily life in Balinese villages.",
-                        guide_4_name: "Ketut",
-                        guide_4_role: "Waterfalls & Adventure",
-                        guide_4_desc: "The youngest guide in the team, expert in discovering hidden waterfalls and adventure routes."
-                    },
-                    footer: {
-                        description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",
-                        quick_links: "Quick Links",
-                        contact: "Contact",
-                        contact_spain: "Spanish Support",
-                        contact_bali: "Local Bali Support",
-                        location: "Ubud, Bali • Indonesia",
-                        social: "Social",
-                        rights: "All rights reserved.",
-                        trust_1: "Secure Payment on Arrival",
-                        trust_2: "Verified Local Guides",
-                        trust_3: "Personalized Support",
-                        made_with: "Made with",
-                        in_bali: "from Bali",
-                        policies: "Terms and Conditions"
-                    },
-                    testimonials: {
-                        badge: "Testimonials",
-                        title: "What our",
-                        title_accent: "travelers",
-                        subtitle: "Real stories from people who experienced the magic of Bali with us.",
-                        data: [
-                            {
-                                name: "Marta & Jorge",
-                                location: "Spain",
-                                text: "The best decision of our trip! Perty is an exceptional guide, she made us feel like family. Bali is magical, but seeing it with them is another level."
-                            },
-                            {
-                                name: "Raquel B.",
-                                location: "Spain",
-                                text: "Impeccable service. The driver was super punctual and the car very comfortable. They took us to places not found in travel guides. 100% recommended!"
-                            },
-                            {
-                                name: "González Family",
-                                location: "Argentina",
-                                text: "We traveled with two children and they had a lot of patience and flexibility. They organized a perfect itinerary for us. Thanks for everything."
+                            impact_title: "Your trip creates impact",
+                            impact_desc: "Every booking funds our drivers directly, avoiding unfair agency fees, through prompt, fair payments.",
+
+                            team_intro_title: "The Team",
+                            team_intro_text: "No rush, safely, and in your language.",
+                            perty_name: "Perty",
+                            perty_role: "Founder",
+                            perty_title: "Perty (Founder)",
+                            perty_text_1: "With a Master's degree in Education and a lifetime dedicated to teaching, I have had the honor of representing our culture in various countries as an Indonesian language teacher. Today, my true passion is being your personal connection to the soul of Bali.",
+                            perty_text_2: "For me, guiding you is not just following an itinerary; it's about inviting you to feel the mysticism of our temples, the devotion of the rituals, and those secret spots we only share with those who visit us with an open heart. My greatest wish is for you to experience this island with the same respect and profound love with which I call it home.",
+                            javi_title: "Javi (Your Link & Logistics)",
+                            javi_role: "Logistics & Link",
+                            javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
+                            promise_title: "",
+                            promise_text: "To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
+
+                            meet_team_title: "Our Guides",
+                            team_reinforced_text: "To ensure you always have the best experience, we work with a network of fully trusted local drivers, chosen by ourselves for their professionalism, charisma, and honesty.",
+                            our: "Our",
+                            essence: "Essence.",
+                            guide_1_name: "Wayan",
+                            guide_1_role: "History & Temples",
+                            guide_1_desc: "Expert in Balinese history and architecture.",
+                            guide_2_name: "Putu",
+                            guide_2_role: "Gastronomy & Local Life",
+                            guide_2_desc: "Specialist in authentic flavors, local markets, and traditional Balinese cuisine.",
+                            guide_3_name: "Komang",
+                            guide_3_role: "Culture & Tradition",
+                            guide_3_desc: "Expert in local customs and daily life in Balinese villages.",
+                            guide_4_name: "Ketut",
+                            guide_4_role: "Waterfalls & Adventure",
+                            guide_4_desc: "The youngest guide in the team, expert in discovering hidden waterfalls and adventure routes."
+                        },
+                        footer: {
+                            description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",
+                            quick_links: "Quick Links",
+                            contact: "Contact",
+                            contact_spain: "Spanish Support",
+                            contact_bali: "Local Bali Support",
+                            location: "Ubud, Bali • Indonesia",
+                            social: "Social",
+                            rights: "All rights reserved.",
+                            trust_1: "Secure Payment on Arrival",
+                            trust_2: "Verified Local Guides",
+                            trust_3: "Personalized Support",
+                            made_with: "Made with",
+                            in_bali: "from Bali",
+                            policies: "Terms and Conditions"
+                        },
+                        testimonials: {
+                            badge: "Testimonials",
+                            title: "What our",
+                            title_accent: "travelers",
+                            subtitle: "Real stories from people who experienced the magic of Bali with us.",
+                            data: [
+                                {
+                                    name: "Marta & Jorge",
+                                    location: "Spain",
+                                    text: "The best decision of our trip! Perty is an exceptional guide, she made us feel like family. Bali is magical, but seeing it with them is another level."
+                                },
+                                {
+                                    name: "Raquel B.",
+                                    location: "Spain",
+                                    text: "Impeccable service. The driver was super punctual and the car very comfortable. They took us to places not found in travel guides. 100% recommended!"
+                                },
+                                {
+                                    name: "González Family",
+                                    location: "Argentina",
+                                    text: "We traveled with two children and they had a lot of patience and flexibility. They organized a perfect itinerary for us. Thanks for everything."
+                                }
+                            ]
+                        },
+                        common: {
+                            loading: "Loading...",
+                            back: "Back",
+                            more_info: "More info",
+                            copied: "Link copied!",
+                            error: "Something went wrong",
+                            whatsapp_tooltip: "Hi! Shall we talk?",
+                            whatsapp_message: "Hi Cantik Tours! I would like to receive more information about your tours.",
+                            language: "Language",
+                            reviews_title: "Reviews",
+                            reviews_about: "About",
+                            reviews_showing: "Showing",
+                            reviews_verified: "verified reviews",
+                            whatsapp_about: "Hi Cantik Tours! I've seen your story and would like to ask you a question about my trip."
+                        },
+                        reviews_page: {
+                            title: "Your Experience in",
+                            title_accent: "Bali",
+                            subtitle: "Thank you for trusting Cantik Tours. Your opinion helps us grow and inspire other travelers.",
+                            form: {
+                                name: "Full Name",
+                                rating: "Your Rating",
+                                tour_type: "Which tour did you take?",
+                                tours: {
+                                    ubud_central: "Ubud Central",
+                                    ubud_north: "Ubud North",
+                                    lovina: "Lovina / Dolphins",
+                                    east: "East / Besakih",
+                                    lempuyang: "Lempuyang",
+                                    transfer: "Transfer",
+                                    custom: "Custom / Other"
+                                },
+                                country: "Country of Origin",
+                                countries: {
+                                    es: "Spain",
+                                    cl: "Chile",
+                                    ar: "Argentina",
+                                    mx: "Mexico",
+                                    co: "Colombia",
+                                    pe: "Peru",
+                                    uy: "Uruguay",
+                                    other: "Other"
+                                },
+                                comment: "Your comment",
+                                comment_placeholder: "Share what you liked the most...",
+                                ig_user: "Instagram User (Optional)",
+                                ig_placeholder: "@youruser",
+                                auth: "I'd love to be part of the Cantik Family in Instagram and I authorize sharing my experience on your social media.",
+                                implicit_consent: "By submitting my review, I accept its publication on the Cantik Tours website and the privacy policy.",
+                                submit: "Send Review",
+                                success_title: "Thank you for your review!",
+                                success_text: "Your message has been successfully saved. We will review it and it will appear on the website soon.",
+                                ig_follow_text: "Don't miss a thing! Follow us on Instagram to see more of Bali's magic:",
+                                ig_follow_btn: "Follow on Instagram",
+                                wsp_groups_text: "Are you in the community WhatsApp groups in Bali? Recommend us there, it would help us a lot to keep growing! Thank you so much for choosing Cantik Tours!",
                             }
-                        ]
-                    },
-                    common: {
-                        loading: "Loading...",
-                        back: "Back",
-                        more_info: "More info",
-                        copied: "Link copied!",
-                        error: "Something went wrong",
-                        whatsapp_tooltip: "Hi! Shall we talk?",
-                        whatsapp_message: "Hi Cantik Tours! I would like to receive more information about your tours.",
-                        language: "Language",
-                        reviews_title: "Reviews",
-                        reviews_about: "About",
-                        reviews_showing: "Showing",
-                        reviews_verified: "verified reviews",
-                        whatsapp_about: "Hi Cantik Tours! I've seen your story and would like to ask you a question about my trip."
-                    },
-                    reviews_page: {
-                        title: "Your Experience in",
-                        title_accent: "Bali",
-                        subtitle: "Thank you for trusting Cantik Tours. Your opinion helps us grow and inspire other travelers.",
-                        form: {
-                            name: "Full Name",
-                            rating: "Your rating",
-                            tour_type: "Which tour did you take?",
-                            tours: {
-                                ubud_central: "Ubud Central",
-                                ubud_north: "Ubud North",
-                                lovina: "Lovina / Dolphins",
-                                east: "East / Besakih",
-                                lempuyang: "Lempuyang",
-                                transfer: "Transfer",
-                                custom: "Custom / Other"
-                            },
-                            country: "Country of origin",
-                            countries: {
-                                es: "Spain",
-                                cl: "Chile",
-                                ar: "Argentina",
-                                mx: "Mexico",
-                                co: "Colombia",
-                                pe: "Peru",
-                                uy: "Uruguay",
-                                other: "Other"
-                            },
-                            comment: "Your comment",
-                            comment_placeholder: "Share what you liked the most...",
-                            ig_user: "Instagram User (Optional)",
-                            ig_placeholder: "@youruser",
-                            auth: "I'd love to be part of the Cantik Family in Instagram and I authorize sharing my experience on your social media.",
-                            implicit_consent: "By submitting my review, I accept its publication on the Cantik Tours website and the privacy policy.",
-                            submit: "Send Review",
-                            success_title: "Thank you for your review!",
-                            success_text: "Your message has been successfully saved. We will review it and it will appear on the website soon.",
-                            ig_follow_text: "Don't miss a thing! Follow us on Instagram to see more of Bali's magic:",
-                            ig_follow_btn: "Follow on Instagram",
-                            wsp_groups_text: "Are you in the community WhatsApp groups in Bali? Recommend us there, it would help us a lot to keep growing! Thank you so much for choosing Cantik Tours!",
-                        }
-                    },
-                    policies_page: {
-                        seo_title: "Terms and Conditions | Cantik Tours Bali",
-                        seo_desc: "Consult Cantik Tours' terms and conditions of service to ensure your best experience in Bali.",
-                        badge: "Cantik Tours Bali",
-                        title: "Terms and",
-                        title_accent: "Conditions",
-                        intro: "Welcome to Cantik Tours. By making a booking with us, you agree to the following terms and conditions, designed to ensure your safety and the best experience in the \"Island of the Gods\".",
-                        commitment_title: "Cantik Commitment",
-                        commitment_text: "\"At Cantik Tours, we believe in fair and human treatment. If you have a special situation, do not hesitate to write to us on WhatsApp and we will find the best solution together.\"",
-                        thanks: "Thank you for choosing us to discover Bali",
-                        sections: {
-                            s1: {
-                                title: "1. BOOKING PROCESS AND PAYMENTS",
-                                items: [
-                                    { label: "Confirmation Deposit", text: "A fixed payment of €20 per booked Tour is required at the time of booking to block dates and services." },
-                                    { label: "Total Payment", text: "The remaining balance (100% of the tour cost) must be settled 48 hours before the start of the trip." },
-                                    { label: "Payment Methods", text: "We accept payments via Bank Transfer and Wise. Costs for bank commissions or currency conversion are the responsibility of the client." }
-                                ]
-                            },
-                            s2: {
-                                title: "2. CANCELLATIONS AND PUNCTUALITY",
-                                items: [
-                                    { label: "Free Cancellation", text: "If you cancel more than 48 hours before the start of the tour, the full deposit will be refunded." },
-                                    { label: "Partial Penalty", text: "If you cancel between 48 and 24 hours before the start, the €20 deposit will not be refundable (management fees)." },
-                                    { label: "Total Management Fees", text: "Cancellations less than 24 hours before will not be entitled to a refund of the total payment." },
-                                    { label: "Waiting Time", text: "The guide/driver will wait a maximum of 30 minutes at the meeting point. After that time, without communication from the client, the service will be canceled without a refund due to \"No Show\" (non-appearance)." },
-                                    { label: "Reference Time Zone", text: "For the fulfillment of cancellation deadlines and notices, Bali local time (WITA - UTC+8) will be used, with 8:00 am as the reference time for the start of the day/hour count." }
-                                ]
-                            },
-                            s3: {
-                                title: "3. ITINERARY MODIFICATIONS",
-                                items: [
-                                    { label: "Changes by the Client", text: "Date changes can be reviewed at no additional cost subject to availability. If you request a hotel change in the same area, there is no charge. If the new hotel is in a different area of Bali, a transport supplement might apply." },
-                                    { label: "Changes by the Agency", text: "Due to adverse weather conditions, unforeseen religious ceremonies, extreme traffic, temple or road closures, Cantik Tours reserves the right to adjust the route. Any important change will be notified and agreed upon with the client." },
-                                    { label: "Force Majeure", text: "In case of natural disasters (floods, volcanic activity), we will prioritize your safety by offering to reschedule the tour or modify the route to a safe zone." }
-                                ]
-                            },
-                            s4: {
-                                title: "4. ADVENTURE ACTIVITIES",
-                                content: "By hiring activities such as rafting, trekking, or diving, the client declares and accepts:",
-                                items: [
-                                    { label: "Assumption of Risk", text: "The client recognizes that these activities involve an inherent risk and participates under their own responsibility." },
-                                    { label: "Health Status", text: "Confirms that they do not suffer from heart conditions, serious injuries, recent surgeries, or pregnancy." },
-                                    { label: "Personal Belongings", text: "Cantik Tours is not responsible for damage or loss of electronic objects (mobiles, cameras) during activities." }
-                                ]
-                            },
-                            s5: {
-                                title: "5. RESPONSIBILITY AND INSURANCE",
-                                items: [
-                                    { label: "Travel Insurance", text: "Cantik Tours strongly recommends having international travel insurance. Each traveler is responsible for their own physical integrity." },
-                                    { label: "Flights", text: "We do not manage international flights; punctuality for the start of the tour is the client's exclusive responsibility." }
-                                ]
-                            },
-                            s6: {
-                                title: "6. CULTURAL RESPECT",
-                                items: [
-                                    { label: "Behavior", text: "Absolute respect for traditions and dress codes in Bali temples is required. We reserve the right to end the service in case of disrespectful behavior." }
-                                ]
-                            },
-                            s7: {
-                                title: "7. IMAGE USE",
-                                items: [
-                                    { label: "Image Use", text: "Upon completion of the tour, we will request you to fill out a satisfaction survey. In it, the client may expressly indicate whether or not they authorize the use of their name, images and/or videos on our social networks." }
-                                ]
-                            },
-                            s8: {
-                                title: "8. INCIDENTS AND CLAIMS",
-                                items: [
-                                    { label: "During the tour", text: "In order to offer an immediate solution, any dissatisfaction with the service must be communicated at the time to our support team. This allows us to act in real time to improve your experience." },
-                                    { label: "Post-tour", text: "If you wish to make a formal claim after the service, you have a maximum period of 24 hours from the end of the tour. This margin is essential for us to investigate what happened with our local team and offer a precise and objective resolution." },
-                                    { label: "Applicable Law", text: "This contract is governed by the current laws of the Republic of Indonesia." }
-                                ]
+                        },
+                        policies_page: {
+                            seo_title: "Terms and Conditions | Cantik Tours Bali",
+                            seo_desc: "Consult Cantik Tours' terms and conditions of service to ensure your best experience in Bali.",
+                            badge: "Cantik Tours Bali",
+                            title: "Terms and",
+                            title_accent: "Conditions",
+                            intro: "Welcome to Cantik Tours. By making a booking with us, you agree to the following terms and conditions, designed to ensure your safety and the best experience in the \"Island of the Gods\".",
+                            commitment_title: "Cantik Commitment",
+                            commitment_text: "\"At Cantik Tours, we believe in fair and human treatment. If you have a special situation, do not hesitate to write to us on WhatsApp and we will find the best solution together.\"",
+                            thanks: "Thank you for choosing us to discover Bali",
+                            sections: {
+                                s1: {
+                                    title: "1. BOOKING PROCESS AND PAYMENTS",
+                                    items: [
+                                        { label: "Confirmation Deposit", text: "A fixed payment of €20 per booked Tour is required at the time of booking to block dates and services." },
+                                        { label: "Total Payment", text: "The remaining balance (100% of the tour cost) must be settled 48 hours before the start of the trip." },
+                                        { label: "Payment Methods", text: "We accept payments via Bank Transfer and Wise. Costs for bank commissions or currency conversion are the responsibility of the client." }
+                                    ]
+                                },
+                                s2: {
+                                    title: "2. CANCELLATIONS AND PUNCTUALITY",
+                                    items: [
+                                        { label: "Free Cancellation", text: "If you cancel more than 48 hours before the start of the tour, the full deposit will be refunded." },
+                                        { label: "Partial Penalty", text: "If you cancel between 48 and 24 hours before the start, the €20 deposit will not be refundable (management fees)." },
+                                        { label: "Total Management Fees", text: "Cancellations less than 24 hours before will not be entitled to a refund of the total payment." },
+                                        { label: "Waiting Time", text: "The guide/driver will wait a maximum of 30 minutes at the meeting point. After that time, without communication from the client, the service will be canceled without a refund due to \"No Show\" (non-appearance)." },
+                                        { label: "Reference Time Zone", text: "For the fulfillment of cancellation deadlines and notices, Bali local time (WITA - UTC+8) will be used, with 8:00 am as the reference time for the start of the day/hour count." }
+                                    ]
+                                },
+                                s3: {
+                                    title: "3. ITINERARY MODIFICATIONS",
+                                    items: [
+                                        { label: "Changes by the Client", text: "Date changes can be reviewed at no additional cost subject to availability. If you request a hotel change in the same area, there is no charge. If the new hotel is in a different area of Bali, a transport supplement might apply." },
+                                        { label: "Changes by the Agency", text: "Due to adverse weather conditions, unforeseen religious ceremonies, extreme traffic, temple or road closures, Cantik Tours reserves the right to adjust the route. Any important change will be notified and agreed upon with the client." },
+                                        { label: "Force Majeure", text: "In case of natural disasters (floods, volcanic activity), we will prioritize your safety by offering to reschedule the tour or modify the route to a safe zone." }
+                                    ]
+                                },
+                                s4: {
+                                    title: "4. ADVENTURE ACTIVITIES",
+                                    content: "By hiring activities such as rafting, trekking, or diving, the client declares and accepts:",
+                                    items: [
+                                        { label: "Assumption of Risk", text: "The client recognizes that these activities involve an inherent risk and participates under their own responsibility." },
+                                        { label: "Health Status", text: "Confirms that they do not suffer from heart conditions, serious injuries, recent surgeries, or pregnancy." },
+                                        { label: "Personal Belongings", text: "Cantik Tours is not responsible for damage or loss of electronic objects (mobiles, cameras) during activities." }
+                                    ]
+                                },
+                                s5: {
+                                    title: "5. RESPONSIBILITY AND INSURANCE",
+                                    items: [
+                                        { label: "Travel Insurance", text: "Cantik Tours strongly recommends having international travel insurance. Each traveler is responsible for their own physical integrity." },
+                                        { label: "Flights", text: "We do not manage international flights; punctuality for the start of the tour is the client's exclusive responsibility." }
+                                    ]
+                                },
+                                s6: {
+                                    title: "6. CULTURAL RESPECT",
+                                    items: [
+                                        { label: "Behavior", text: "Absolute respect for traditions and dress codes in Bali temples is required. We reserve the right to end the service in case of disrespectful behavior." }
+                                    ]
+                                },
+                                s7: {
+                                    title: "7. IMAGE USE",
+                                    items: [
+                                        { label: "Image Use", text: "Upon completion of the tour, we will request you to fill out a satisfaction survey. In it, the client may expressly indicate whether or not they authorize the use of their name, images and/or videos on our social networks." }
+                                    ]
+                                },
+                                s8: {
+                                    title: "8. INCIDENTS AND CLAIMS",
+                                    items: [
+                                        { label: "During the tour", text: "In order to offer an immediate solution, any dissatisfaction with the service must be communicated at the time to our support team. This allows us to act in real time to improve your experience." },
+                                        { label: "Post-tour", text: "If you wish to make a formal claim after the service, you have a maximum period of 24 hours from the end of the tour. This margin is essential for us to investigate what happened with our local team and offer a precise and objective resolution." },
+                                        { label: "Applicable Law", text: "This contract is governed by the current laws of the Republic of Indonesia." }
+                                    ]
+                                }
                             }
                         }
                     }
