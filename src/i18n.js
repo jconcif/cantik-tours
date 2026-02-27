@@ -206,6 +206,20 @@ i18n
                         title: "Guía Bali",
                         title_accent: "2026.",
                         subtitle: "Todo lo que necesitas saber antes de aterrizar en la Isla de los Dioses.",
+                        chapters: {
+                            preparations: {
+                                title: "Los Preparativos",
+                                subtitle: "Antes de ir"
+                            },
+                            on_island: {
+                                title: "En la isla",
+                                subtitle: "Durante tu estancia"
+                            },
+                            experience: {
+                                title: "La Experiencia Bali",
+                                subtitle: "Cultura y más"
+                            }
+                        },
                         help_title: "¿Listo para convertir esta guía en realidad?",
                         help_text: "Ahora que conoces los secretos de Bali, es hora de vivirlos. Únete a nosotros en una aventura privada y déjanos mostrarte la verdadera magia de nuestra isla, sin prisas y a tu ritmo.",
                         see_tours_btn: "Explorar Experiencias",
@@ -214,29 +228,33 @@ i18n
                                 title: "Visado e Ingreso",
                                 intro: "Para que tu llegada al \"País de las 17.000 islas\" sea perfecta, hemos resumido la información esencial que necesitas antes de despegar.",
                                 basic_title: "1. Requisitos Básicos de Entrada",
-                                passport: "Pasaporte vigente",
-                                passport_desc: "Validez mínima de 6 meses desde el día de entrada y al menos una hoja en blanco.",
                                 exit_ticket: "Billete de salida",
                                 exit_ticket_desc: "Es imprescindible presentar un vuelo de salida del país dentro de los primeros 30 días de estancia.",
                                 types_title: "2. Tipos de Visado según tu viaje",
-                                b1_title: "A. Visa B1 | Turismo Estándar (30 - 60 días)",
-                                b1_cost: "Coste: 500.000 IDR (aprox. 25€ / 30$).",
-                                b1_duration: "Duración: Permiso inicial de 30 días, puedes extender una vez, hasta un máximo de 60 días.",
-                                b1_mgmt: "Gestión:",
-                                b1_evoa: "e-VoA (On-Line): Solicítala en la Web Oficial de Inmigración (https://evisa.imigrasi.go.id/) hasta 90 días antes de tu viaje. ¡Te ahorrarás las largas colas en el aeropuerto!",
-                                b1_voa: "VoA (Presencial): También puedes tramitarla directamente al aterrizar en los mostradores de inmigración.",
-                                b1_reqs: "Requisitos:",
-                                b1_exit_desc: "Billete de salida: Es imprescindible presentar un vuelo de salida del país dentro de los primeros 30 días de estancia.",
-                                b1_exit_tip: "Tip: Puedes presentar una reserva de vuelo (Onwardticket) como billete de salida si aún no tienes el pasaje definitivo.",
-                                b1_note: "",
-                                c1_title: "B. Visa C1 | Turismo de Larga Estancia (Hasta 180 días)",
-                                c1_cost: "Coste: 1.000.000 IDR (aprox. 50€ / 60$) cada 60 días.",
-                                c1_duration: "Duración: Permiso inicial de 60 días, prorrogable dos veces, hasta un máximo de 180 días.",
-                                c1_reqs: "Requisitos:",
-                                c1_solvency: "Solvencia económica: Extracto bancario de los últimos 3 meses con un saldo mínimo de 2.000 USD (o equivalente).",
-                                levy_title: "Tasa Turística (Bali Levi)",
-                                levy_desc: "Desde el 14 de febrero de 2024, todos los turistas extranjeros que visiten Bali deben pagar una tasa obligatoria de 150.000 IDR (aprox. 7,5€ o 9 USD) por persona. Se paga una única vez por entrada, se aplica a adultos y niños, y busca preservar la cultura y el medio ambiente.",
-                                levy_mgmt: "Gestión: Exclusivamente en el sitio web/app oficial Love Bali o al llegar en aeropuertos/puertos. Se recomienda realizar el pago online con antelación para evitar colas.",
+                                b1_title: "A. Visa B1 - Turismo Estándar (1 a 60 días)",
+                                b1_points: [
+                                    "Pasaporte vigente : Validez mínima de 6 meses desde el día de entrada.",
+                                    "Coste: 500.000 IDR (aprox. 25€) cada 30 dias.",
+                                    "Duración: Permiso inicial de 30 días",
+                                    "Puedes extender una vez, hasta un máximo de 60 días",
+                                    "Se puede Solicitar On Line o en el aeropuerto",
+                                    "Requiere adjuntar pasaje de salida",
+                                    "Solicítala en la Web Oficial de Inmigración (https://evisa.imigrasi.go.id/) hasta 90 días antes de tu viaje."
+                                ],
+                                b1_online: "OnLine: Web Oficial de Inmigración",
+                                c1_title: "B. Visa C1 - Turismo de Larga Estancia (Hasta 180 días)",
+                                c1_points: [
+                                    "Pasaporte vigente : Validez mínima de 6 meses desde el día de entrada.",
+                                    "Coste: 1.000.000 IDR (aprox. 50€) cada 60 días",
+                                    "Duración: Permiso inicial de 60 días",
+                                    "Puedes extender dos veces, hasta un máximo de 180 días",
+                                    "Se debe solicitar On Line (tarda entre 5 a 10 dias en ser aprobada)",
+                                    "Requiere adjuntar Extracto bancario de los últimos 3 meses con un saldo mínimo de 2.000 USD (o equivalente).",
+                                    "Solicítala en la Web Oficial de Inmigración (https://evisa.imigrasi.go.id/) hasta 90 días antes de tu viaje."
+                                ],
+                                levy_title: "Tasa Turística (Obligatorio)",
+                                levy_desc: "Todos los turistas extranjeros que visiten Bali deben pagar una tasa obligatoria de 150.000 IDR (aprox. 8€) por persona. Se paga una única vez por entrada, se aplica a adultos y niños, y busca preservar la cultura y el medio ambiente.",
+                                levy_mgmt: "Gestión: Exclusivamente en el sitio web/app oficial Love Bali o al llegar en aeropuertos/puertos.",
                                 levy_qr: "Comprobante: Tras el pago, recibirás un código QR por correo electrónico que debes guardar (digital o impreso) para mostrarlo en puntos de control en la isla.",
                                 levy_note: "Entradas y salidas: Si viajas a las Islas Gili o Lombok y regresas a Bali, es posible que debas volver a mostrar el comprobante, aunque la tasa es por viaje.",
                                 advice_title: "💡 Consejo Local",
@@ -278,11 +296,13 @@ i18n
                                 belly_water: "Agua: Bebe siempre agua embotellada o filtrada (nunca del grifo, ni para lavarte los dientes).",
                                 belly_ice: "Hielo: En zonas turísticas es de agua purificada (tiene un agujero en medio), pero si tienes dudas, puedes pedirlo en un vaso a parte o sin él.",
                                 repellent_title: "3. Repelente de Mosquitos",
-                                repellent_desc: "Siempre es mejor comprar un repelente en el destino; en Bali encuentras Soffell, es muy efectivo y barato (aprox. 1€)."
+                                repellent_desc: "Siempre es mejor comprar un repelente en el destino; en Bali encuentras Soffell, es muy efectivo y barato (aprox. 1€).",
+                                insurance_alert_title: "¡No te la juegues!"
                             },
                             stay: {
                                 title: "Alojamiento: zonas de Bali",
                                 intro: "Bali tiene una zona perfecta para cada tipo de viajero. Aquí te resumimos las vibras de cada una para que elijas tu destino ideal.",
+                                booking_agoda: "Booking y Agoda son las principales plataformas para encontrar alojamiento en indonesia. Compara los precios entre ambas, aveces hay diferencias.",
                                 ubud_title: "Ubud (Cultura y Naturaleza)",
                                 ubud_desc: "El corazón espiritual de la isla. Rodeado de arrozales, templos y centros de yoga. Ideal para conectar con la esencia balinesa.",
                                 ubud_tip: "Consejo: El centro es pequeño y bullicioso; busca alojamiento a 10 min de distancia para disfrutar de la verdadera paz de la selva.",
@@ -345,7 +365,7 @@ i18n
                                 intro: "Bali no tiene transporte público convencional. La libertad de movimiento depende de las apps, el alquiler de motos o los conductores privados.",
                                 apps_title: "1. Aplicaciones de Transporte (VTC)",
                                 grab_gojek_title: "Grab & Gojek",
-                                grab_gojek_desc: "Son los 'Uber' de el sudeste asiático. Puedes pedir coche o moto (más rápido y barato).",
+                                grab_gojek_desc: "Grab & Gojek son los 'Uber' de el sudeste asiático. Puedes pedir coche o moto, e incluso comida a domicilio!. Puedes configurar tu tarjeta de banco para no tener que pagar en efectivo. Facil y comodo.",
                                 grab_gojek_tip: "Pro Tip: Usa Gojek para pedir comida (GoFood) a tu villa. ¡Es adictivo!",
                                 rental_title: "2. Alquiler de Motos",
                                 rental_desc: "Es la forma más común de moverse, pero requiere precaución.",
@@ -361,19 +381,21 @@ i18n
                             },
                             apps: {
                                 title: "Conectividad: Internet",
-                                maps_desc: "Google Maps funciona bien, pero cuidado: a veces intenta meter coches por caminos de cabras. Si vas en moto, elige la ruta 'Moto' si está disponible."
+                                intro: "Preparate y descarga las app en tu movil antes de llegar.",
+                                maps_title: "Navegación",
+                                maps_desc: "Google Maps funciona bien, pero cuidado que a veces intenta meterte por caminos de cabras, en especial si eliges la ruta de moto. Selecciona la opcion \"coche\" para ir por una ruta segura. Recuerda que puedes descargar los mapas para usarlos sin internet."
                             },
                             packing: {
                                 title: "Qué llevar: Tu Mochila",
                                 intro: "Preparar la mochila para Bali es fácil si te enfocas en lo ligero y lo práctico. Aquí tienes los imprescindibles.",
                                 category_1: "Imprescindibles",
-                                items_1: "Pasaporte, Seguro de viaje, Adaptador de corriente (Tipo C/F), Efectivo y Tarjetas (tipo Revolut).",
+                                items_1: "Pasaporte, Seguro de viaje, Camara de fotos, Algo de efectivo y Tarjetas (tipo Revolut).",
                                 category_2: "Ropa & Calzado",
-                                items_2: "Ropa ligera de algodón/lino, Calzado cómodo para caminar, Sandalias, Bañador y una sudadera fina si subes al norte.",
+                                items_2: "Ropa ligera, Calzado cómodo para caminar, Sandalias, Bañador y Sarong para templos (puedes comprarlo allí).",
                                 category_3: "Botiquín & Cuidado",
-                                items_3: "Protector solar (es caro allí), Repelente de mosquitos (Soffell), Medicamentos básicos (Paracetamol, Fortasec).",
+                                items_3: "Protector solar, Repelente de mosquitos y Medicamentos básicos (os puedes conseguir en cualquier farmacia y son de bajo costo).",
                                 category_4: "Varios",
-                                items_4: "Sarong para templos (puedes comprarlo allí), Mochila pequeña de día, Botella de agua reutilizable."
+                                items_4: "Mochila pequeña de día, Botella de agua, cargador de telefono o powerbank."
                             },
                             safety: {
                                 title: "Consejos de Supervivencia",
@@ -470,7 +492,7 @@ i18n
                         javi_role: "Logística & Enlace",
                         javi_text: "Viajero incansable y un profundo enamorado de Bali, mi misión en Cantik es ser tu puente directo y confiable con la isla. Me encargo de que cada detalle de tu itinerario sea impecable y de resolver cualquier inquietud que surja en el camino. Estoy aquí para que te desprendas de la logística y te concentres únicamente en disfrutar, con la seguridad de saber que siempre tienes a alguien a tu lado para que todo fluya sin inconvenientes.",
                         promise_title: "",
-                        promise_text: "Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza, seleccionados personalmente por nosotros bajo los mismos estándares de calidez y seguridad que nos definen.",
+                        promise_text: "Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza para que solo te preocupes de disfrutar.",
 
                         meet_team_title: "Nuestros Guías",
                         team_reinforced_text: "Para asegurar que siempre tengas la mejor experiencia, trabajamos con una red de conductores locales de total confianza, elegidos por nosotros mismos por su profesionalidad, carisma y honestidad.",
@@ -851,6 +873,20 @@ i18n
                         title: "Bali Guide",
                         title_accent: "2026.",
                         subtitle: "Everything you need to know before landing on the Island of the Gods.",
+                        chapters: {
+                            preparations: {
+                                title: "Preparations",
+                                subtitle: "Before you go"
+                            },
+                            on_island: {
+                                title: "On the Island",
+                                subtitle: "During your stay"
+                            },
+                            experience: {
+                                title: "The Bali Experience",
+                                subtitle: "Culture and more"
+                            }
+                        },
                         help_title: "Ready to turn this guide into reality?",
                         help_text: "Now that you know Bali's secrets, it's time to live them. Join us on a private adventure and let us show you the true magic of our island, without the rush and at your own pace.",
                         see_tours_btn: "Explore Experiences",
@@ -859,31 +895,35 @@ i18n
                                 title: "Visa & Entry",
                                 intro: "To make your arrival in the \"Land of 17,000 islands\" perfect, we have summarized the essential information you need before take-off.",
                                 basic_title: "1. Basic Entry Requirements",
-                                passport: "Valid Passport",
-                                passport_desc: "At least 6 months validity from the day of entry and at least one blank page.",
                                 exit_ticket: "Exit Ticket",
                                 exit_ticket_desc: "It is essential to present an exit flight from the country within the first 30 days of stay.",
                                 types_title: "2. Visa Types based on your trip",
-                                b1_title: "A. B1 Visa | Standard Tourism (30 - 60 days)",
-                                b1_cost: "Cost: 500,000 IDR (approx. $30 / 25€).",
-                                b1_duration: "Duration: Initial 30-day permit, you can extend once, up to a maximum of 60 days.",
-                                b1_mgmt: "Management:",
-                                b1_evoa: "e-VoA (Online): Apply at the Official Immigration Website (https://evisa.imigrasi.go.id/) up to 90 days before your trip. You'll avoid long queues at the airport!",
-                                b1_voa: "VoA (In-person): You can also process it directly upon arrival at the immigration counters.",
-                                b1_reqs: "Requirements:",
-                                b1_exit_desc: "Exit Ticket: It is essential to present an exit flight from the country within the first 30 days of stay.",
-                                b1_exit_tip: "Tip: You can present a flight reservation (Onwardticket) as an exit ticket if you don't have the final ticket yet.",
-                                b1_note: "",
-                                c1_title: "B. C1 Visa | Long Stay Tourism (Up to 180 days)",
-                                c1_cost: "Cost: 1,000,000 IDR (approx. $60 / 50€) every 60 days.",
-                                c1_duration: "Duration: Initial 60-day permit, extendable twice, up to a maximum of 180 days.",
-                                c1_reqs: "Requirements:",
-                                c1_solvency: "Financial solvency: Bank statement from the last 3 months with a minimum balance of 2,000 USD (or equivalent).",
-                                levy_title: "Tourist Tax (Bali Levy)",
-                                levy_desc: "Since February 14, 2024, all foreign tourists visiting Bali must pay a mandatory fee of 150,000 IDR (approx. 7.5€ or $9) per person. It is paid once per entry, applies to both adults and children, and aims to preserve culture and the environment.",
-                                levy_mgmt: "Management: Exclusively on the official Love Bali website/app or upon arrival at airports/ports. Online payment in advance is recommended to avoid queues.",
-                                levy_qr: "Proof: After payment, you will receive a QR code by email that you must save (digital or print) to show at checkpoints on the island.",
-                                levy_note: "Entries and Exits: If you travel to the Gili Islands or Lombok and return to Bali, you may need to show your proof again, although the fee is per trip.",
+                                b1_title: "A. B1 Visa - Standard Tourism (1 to 60 days)",
+                                b1_points: [
+                                    "Valid Passport: Minimum 6 months validity from the day of entry.",
+                                    "Cost: 500,000 IDR (approx. $30 / 25€) every 30 days.",
+                                    "Duration: Initial 30-day permit",
+                                    "You can extend once, up to a maximum of 60 days",
+                                    "Can be requested Online or at the airport",
+                                    "Requires attaching an exit ticket",
+                                    "Request it on the Official Immigration Website (https://evisa.imigrasi.go.id/) up to 90 days before your trip."
+                                ],
+                                b1_online: "Online: Official Immigration Website",
+                                c1_title: "B. C1 Visa - Long Stay Tourism (Up to 180 days)",
+                                c1_points: [
+                                    "Valid Passport: Minimum 6 months validity from the day of entry.",
+                                    "Cost: 1,000,000 IDR (approx. $60 / 50€) every 60 days",
+                                    "Duration: Initial 60-day permit",
+                                    "Can be extended twice, up to a maximum of 180 days",
+                                    "Must be requested Online (takes 5 to 10 days for approval)",
+                                    "Requires attaching a bank statement from the last 3 months with a minimum balance of 2,000 USD (or equivalent).",
+                                    "Request it on the Official Immigration Website (https://evisa.imigrasi.go.id/) up to 90 days before your trip."
+                                ],
+                                levy_title: "Tourist Tax (Mandatory)",
+                                levy_desc: "All foreign tourists visiting Bali must pay a mandatory fee of 150,000 IDR (approx. 8€ / $9). It is paid once per entry, applies to adults and children, and aims to preserve culture and the environment.",
+                                levy_mgmt: "Management: Exclusively on the official Love Bali website/app or upon arrival at airports/ports.",
+                                levy_qr: "Proof of Payment: After payment, you will receive a QR code by email that you must save (digital or print) to show at checkpoints on the island.",
+                                levy_note: "Entries and Exits: If you travel to the Gili Islands or Lombok and return to Bali, you may need to show proof again, although the fee is per trip.",
                                 advice_title: "💡 Local Tip",
                                 advice_text: "Regulations can change. We recommend always confirming on the official website or asking us if you have questions.",
                             },
@@ -923,11 +963,13 @@ i18n
                                 belly_water: "Water: Always drink bottled or filtered water (never tap water, not even for brushing teeth).",
                                 belly_ice: "Ice: In tourist areas, it's purified water (tube-shaped with a hole), but if you have doubts, you can ask for it in a separate glass or without it.",
                                 repellent_title: "3. Mosquito Repellent",
-                                repellent_desc: "It's always better to buy repellent at the destination; in Bali you find Soffell, very effective and cheap (approx. 1€)."
+                                repellent_desc: "It's always better to buy repellent at the destination; in Bali you find Soffell, very effective and cheap (approx. 1€).",
+                                insurance_alert_title: "Don't risk it!"
                             },
                             stay: {
                                 title: "Accommodation: Areas of Bali",
                                 intro: "Bali has a perfect zone for every type of traveler. Here we summarize the vibes of each so you can choose your ideal destination.",
+                                booking_agoda: "Booking and Agoda are the main platforms for finding accommodation in Indonesia. Compare prices between both, sometimes there are differences.",
                                 ubud_title: "Ubud (Culture & Nature)",
                                 ubud_desc: "The spiritual heart of the island. Surrounded by rice fields, temples, and yoga centers. Ideal for connecting with the Balinese essence.",
                                 ubud_tip: "Tip: The center is small and bustling; look for accommodation 10 min away to enjoy the true peace of the jungle.",
@@ -988,9 +1030,9 @@ i18n
                             transport: {
                                 title: "Transport: How to Get Around",
                                 intro: "Bali doesn't have conventional public transport. Freedom of movement depends on apps, scooter rentals, or private drivers.",
-                                apps_title: "1. Ridesharing Apps",
+                                apps_title: "1. Transport Apps (VTC)",
                                 grab_gojek_title: "Grab & Gojek",
-                                grab_gojek_desc: "They are the 'Uber' of Southeast Asia. You can order a car or a scooter (faster and cheaper).",
+                                grab_gojek_desc: "Grab & Gojek are the 'Uber' of Southeast Asia. You can order a car or motorcycle, and even food delivery! You can set up your bank card to avoid paying in cash. Easy and convenient.",
                                 grab_gojek_tip: "Pro Tip: Use Gojek to order food (GoFood) to your villa. It's addictive!",
                                 rental_title: "2. Scooter Rental",
                                 rental_desc: "This is the most common way to get around, but requires caution.",
@@ -1006,11 +1048,9 @@ i18n
                             },
                             apps: {
                                 title: "Connectivity: Internet",
-                                intro: "Staying connected is essential for moving around safely.",
-                                internet_title: "Internet (SIM / eSIM)",
-                                internet_desc: "Telkomsel has the best coverage. We recommend buying an eSIM before traveling to have data as soon as you land. Tip: You can buy the SIM directly at the airport or ask your driver where you can do it on the way to your accommodation.",
+                                intro: "Prepare and download the apps on your mobile before arriving.",
                                 maps_title: "Navigation",
-                                maps_desc: "Google Maps works well, but be careful: sometimes it tries to take cars through goat paths. If you're on a scooter, choose the 'Scooter' route if available."
+                                maps_desc: "Google Maps works well, but be careful as it sometimes tries to take you through goat paths, especially if you choose the motorcycle route. Select the 'car' option for a safe route. Remember you can download maps to use without internet."
                             },
                             packing: {
                                 title: "What to Pack: Your Backpack",

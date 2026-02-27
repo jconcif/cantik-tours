@@ -21,7 +21,8 @@ const WhatsAppButton = () => {
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
-    const whatsappMessage = encodeURIComponent(t('common.whatsapp_message'));
+    const currentPage = window.location.href;
+    const whatsappMessage = encodeURIComponent(`${t('common.whatsapp_message')} (Visto en: ${currentPage})`);
     const whatsappLink = `https://wa.me/376614535?text=${whatsappMessage}`;
 
     return (
