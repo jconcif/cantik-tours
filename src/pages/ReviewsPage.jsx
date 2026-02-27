@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Send, CheckCircle2, Instagram, MapPin, Quote } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Star, Send, CheckCircle2, Instagram, Quote } from 'lucide-react';
 import SEO from '../components/SEO';
 
 const ReviewsPage = () => {

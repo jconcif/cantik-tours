@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Check, X, Trash2, Star, Lock, Eye, EyeOff, CheckCircle2, Languages } from 'lucide-react';
+import { Star, Lock, Eye, EyeOff, CheckCircle2, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const AdminReviews = () => {

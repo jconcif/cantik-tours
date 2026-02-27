@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Users, Languages, Star, ArrowRight } from 'lucide-react';
+import { Clock, Users, Languages, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';

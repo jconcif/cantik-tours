@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Landmark, Waves, TreePine, Compass, Palette, Camera, Car, Droplets, Sun } from 'lucide-react';
+import { TreePine, Compass, Palette, Camera, Droplets, Sun } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { Heart, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const AboutUs = () => {
     const { t } = useTranslation();
@@ -73,7 +73,7 @@ const AboutUs = () => {
                         className="prose dark:prose-invert mb-12"
                     >
                         <p className="text-lg md:text-xl lg:text-2xl text-gray-700 dark:text-gray-300 font-medium leading-relaxed italic mb-8 border-l-4 border-primary/30 pl-6">
-                            "{t('about.meaning_text')}"
+                            «{t('about.meaning_text')}»
                         </p>
                         <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
                             {t('about.team_intro_text')}

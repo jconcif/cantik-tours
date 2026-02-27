@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { MessageCircle, Compass, ArrowRight, BookOpen } from 'lucide-react';
-import BookingModal from './BookingModal';
+import { Compass, ArrowRight, BookOpen } from 'lucide-react';
 
 const FinalCTA = () => {
     const { t } = useTranslation();
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const whatsappMessage = encodeURIComponent(t('common.whatsapp_message'));
     const whatsappLink = `https://wa.me/376614535?text=${whatsappMessage}`;
@@ -94,12 +92,6 @@ const FinalCTA = () => {
                     </div>
                 </div>
             </div>
-
-            <BookingModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                tourTitle="Consulta General"
-            />
         </section>
     );
 };
