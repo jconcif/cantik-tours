@@ -65,6 +65,7 @@ const Home = () => {
                 schema={businessSchema}
             />
             <Hero />
+            <WhyChooseUs />
 
             {/* Featured Tours */}
             <div id="tours">
@@ -96,14 +97,9 @@ const Home = () => {
                 </div>
             </div>
 
-            <WhyChooseUs />
             <FeaturesGrid />
-            <AboutUs />
-
-            {/* Testimonials */}
             <Testimonials reviews={tours[0].reviewsList} />
-
-            {/* Final CTA */}
+            <AboutUs />
             <FinalCTA />
         </div>
     );

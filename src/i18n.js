@@ -426,7 +426,7 @@ i18n
                     why: {
                         title: "¿Por qué Cantik Tours?",
                         subtitle: "No somos una agencia masiva. Somos locales especializados en crear recuerdos que duran toda la vida.",
-                        reason1: { title: "Expertos en Cultura Local", text: "No solo te llevamos, te sumergimos. Todo nuestro equipo comparte la misma pasión por explicarte el 'por qué' de cada tradición, templo y paisaje." },
+                        reason1: { title: "Expertos en Cultura Local", text: "No solo te llevamos, te sumergimos. Todo nuestro equipo comparte la misma pasión por mostrar y explicar cada tradición, templo y paisaje." },
                         reason2: { title: "Confort sin Compromisos", text: "Vehículos premium, climatizados y con todas las facilidades para que Bali sea un placer de principio a fin." },
                         reason4: { title: "Turismo Consciente", text: "Al reservar, garantizas un pago justo y sin retrasos a nuestro equipo local, impulsando directamente a las familias de Bali." }
                     },
@@ -437,7 +437,7 @@ i18n
                         wifi: { title: "WiFi a Bordo*", text: "Comparte tus momentos al instante mientras recorres la isla." },
                         water: { title: "Hidratación", text: "Agua fría siempre disponible para combatir el sol tropical de Bali." },
                         car: { title: "Libertad Total", text: "Coches espaciosos y limpios. Tú decides cuándo parar y cuándo seguir." },
-                        food: { title: "Gastronomía Real", text: "Descubre los sabores más auténticos de Bali y la esencia de Indonesia en los rincones donde los locales realmente disfrutamos comer." }
+                        food: { title: "Gastronomía Real", text: "Descubre los sabores más auténticos de Bali y la esencia de Indonesia." }
                     },
                     about: {
                         tag: "Filosofía Cantik",
@@ -493,11 +493,14 @@ i18n
                         description: "Tu agencia de confianza en Bali. Experiencias privadas, auténticas y acompañamiento local.",
                         quick_links: "Enlaces rápidos",
                         contact: "Contacto",
+                        contact_spain: "Atención en Español",
+                        contact_bali: "Soporte Local en Bali",
+                        location: "Ubud, Bali • Indonesia",
                         social: "Redes Sociales",
                         rights: "Todos los derechos reservados.",
-                        trust_1: "Pago Seguro en Destino",
+                        trust_1: "Pago Seguro",
                         trust_2: "Guías Locales Verificados",
-                        trust_3: "Soporte Personalizado",
+                        trust_3: "Apoyo a la comunidad",
                         made_with: "Hecho con",
                         in_bali: "en Bali",
                         policies: "Términos y condiciones"
@@ -596,7 +599,7 @@ i18n
                             s1: {
                                 title: "1. PROCESO DE RESERVA Y PAGOS",
                                 items: [
-                                    { label: "Depósito de Confirmación", text: "Se requiere un pago fijo de 20€ por persona al momento de realizar la reserva para bloquear fechas y servicios." },
+                                    { label: "Depósito de Confirmación", text: "Se requiere un pago fijo de 20€ por Tour contratado, pagado al momento de realizar la reserva, para bloquear fechas y servicios." },
                                     { label: "Pago Total", text: "El saldo restante (100% del costo del tour) debe estar liquidado 48 horas antes del inicio del viaje." },
                                     { label: "Métodos de Pago", text: "Aceptamos pagos vía Transferencia Bancaria y Wise. Los gastos por comisiones bancarias o de conversión de divisa corren por cuenta del cliente." }
                                 ]
@@ -644,13 +647,14 @@ i18n
                             s7: {
                                 title: "7. USO DE IMAGEN",
                                 items: [
-                                    { label: "Uso de Imagen", text: "Al finalizar el tour, solicitaremos completar una encuesta de satisfacción. En ella, el cliente podrá señalar expresamente si autoriza o no el uso de sus imágenes y videos en nuestras redes sociales." }
+                                    { label: "Uso de Imagen", text: "Al finalizar el tour, solicitaremos completar una encuesta de satisfacción. En ella, el cliente podrá señalar expresamente si autoriza o no el uso de su nombre, imágenes y/o videos en nuestras redes sociales." }
                                 ]
                             },
                             s8: {
-                                title: "8. RECLAMACIONES Y LEY APLICABLE",
+                                title: "8. INCIDENCIAS Y RECLAMACIONES",
                                 items: [
-                                    { label: "Reclamaciones", text: "Cualquier disconformidad debe comunicarse dentro de las 12 horas posteriores a la finalización del tour para gestionar una solución inmediata." },
+                                    { label: "Durante el tour", text: "Con el fin de ofrecer una solución inmediata, cualquier disconformidad con el servicio deberá comunicarse en el momento a nuestro equipo de soporte. Esto nos permite actuar en tiempo real para mejorar su experiencia." },
+                                    { label: "Post-tour", text: "Si desea realizar una reclamación formal tras el servicio, dispone de un plazo máximo de 24 horas desde la finalización del tour. Este margen es esencial para que podamos investigar lo sucedido con nuestro equipo local y ofrecer una resolución precisa y objetiva." },
                                     { label: "Ley Aplicable", text: "Este contrato se rige bajo las leyes vigentes de la República de Indonesia." }
                                 ]
                             }
@@ -1137,6 +1141,9 @@ i18n
                         description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",
                         quick_links: "Quick Links",
                         contact: "Contact",
+                        contact_spain: "Spanish Support",
+                        contact_bali: "Local Bali Support",
+                        location: "Ubud, Bali • Indonesia",
                         social: "Social",
                         rights: "All rights reserved.",
                         trust_1: "Secure Payment on Arrival",
@@ -1240,7 +1247,7 @@ i18n
                             s1: {
                                 title: "1. BOOKING PROCESS AND PAYMENTS",
                                 items: [
-                                    { label: "Confirmation Deposit", text: "A fixed payment of €20 per person is required at the time of booking to block dates and services." },
+                                    { label: "Confirmation Deposit", text: "A fixed payment of €20 per booked Tour is required at the time of booking to block dates and services." },
                                     { label: "Total Payment", text: "The remaining balance (100% of the tour cost) must be settled 48 hours before the start of the trip." },
                                     { label: "Payment Methods", text: "We accept payments via Bank Transfer and Wise. Costs for bank commissions or currency conversion are the responsibility of the client." }
                                 ]
@@ -1288,13 +1295,14 @@ i18n
                             s7: {
                                 title: "7. IMAGE USE",
                                 items: [
-                                    { label: "Image Use", text: "Upon finishing the tour, we will request the completion of a satisfaction survey. In it, the client can expressly indicate whether or not they authorize the use of their images and videos on our social networks." }
+                                    { label: "Image Use", text: "Upon completion of the tour, we will request you to fill out a satisfaction survey. In it, the client may expressly indicate whether or not they authorize the use of their name, images and/or videos on our social networks." }
                                 ]
                             },
                             s8: {
-                                title: "8. CLAIMS AND APPLICABLE LAW",
+                                title: "8. INCIDENTS AND CLAIMS",
                                 items: [
-                                    { label: "Claims", text: "Any dissatisfaction must be communicated within 12 hours after the completion of the tour to manage an immediate solution." },
+                                    { label: "During the tour", text: "In order to offer an immediate solution, any dissatisfaction with the service must be communicated at the time to our support team. This allows us to act in real time to improve your experience." },
+                                    { label: "Post-tour", text: "If you wish to make a formal claim after the service, you have a maximum period of 24 hours from the end of the tour. This margin is essential for us to investigate what happened with our local team and offer a precise and objective resolution." },
                                     { label: "Applicable Law", text: "This contract is governed by the current laws of the Republic of Indonesia." }
                                 ]
                             }

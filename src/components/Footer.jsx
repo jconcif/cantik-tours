@@ -65,6 +65,11 @@ const Footer = () => {
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                     <p>© {currentYear} Cantik Tours. {t('footer.rights')}</p>
                 </div>
+                <div className="flex gap-6 mt-4 md:mt-0 font-bold uppercase tracking-widest text-[10px]">
+                    <span>{t('footer.trust_1')}</span>
+                    <span>{t('footer.trust_2')}</span>
+                    <span>{t('footer.trust_3')}</span>
+                </div>
                 <p className="flex items-center gap-2">
                     {t('footer.made_with')} <Heart size={14} className="text-red-500 fill-red-500" /> {t('footer.in_bali')}
                 </p>

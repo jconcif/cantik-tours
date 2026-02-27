@@ -38,7 +38,7 @@ const WhyChooseUs = () => {
                     <p className="text-gray-600 max-w-xl mx-auto">{t('why.subtitle')}</p>
                 </motion.div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 max-w-6xl mx-auto">
                     {reasons.map((reason, idx) => (
                         <motion.div
                             key={idx}
