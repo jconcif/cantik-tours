@@ -76,14 +76,14 @@ const FinalCTA = () => {
                                 whileInView={{ scale: 1 }}
                                 viewport={{ once: true }}
                                 transition={{ duration: 1.5 }}
-                                src="/images/ubud.jpg"
+                                src="/images/ubud.webp"
                                 alt="Ubud Rice Terraces - Cantik Tours Bali"
                                 width="800"
                                 height="600"
                                 loading="lazy"
                                 className="absolute inset-0 w-full h-full object-cover"
                                 onError={(e) => {
-                                    e.target.src = 'https://images.unsplash.com/photo-1555400038-63f5ba517a47?auto=format&fit=crop&w=1200&q=80';
+                                    e.target.src = '/images/ubud.webp';
                                 }}
                             />
                             {/* Gradient overlays to blend */}

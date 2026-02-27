@@ -13,7 +13,7 @@ const SEO = ({ title, description, keywords, image, url, schema }) => {
     const baseUrl = "https://www.cantiktours.com";
     const metaImage = image
         ? (image.startsWith('http') ? image : `${baseUrl}${image}`)
-        : `${baseUrl}/images/hero.png`;
+        : `${baseUrl}/images/hero-og.webp`;
 
     const metaUrl = url || window.location.href;
 

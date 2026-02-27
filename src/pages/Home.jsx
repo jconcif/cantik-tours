@@ -18,7 +18,7 @@ const Home = () => {
         "@context": "https://schema.org",
         "@type": "TravelAgency",
         "name": "Cantik Tours Bali",
-        "image": "https://www.cantiktours.com/images/hero.png",
+        "image": "https://www.cantiktours.com/images/hero-og.webp",
         "@id": "https://www.cantiktours.com",
         "url": "https://www.cantiktours.com",
         "telephone": "+376 614 535",

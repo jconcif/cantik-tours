@@ -20,9 +20,10 @@ const Hero = () => {
             {/* Background Image - With Parallax */}
             <motion.div style={{ y: y1 }} className="absolute inset-0 w-full h-full">
                 <picture className="w-full h-full">
-                    <source srcSet="/images/hero-mobile.jpg" media="(max-width: 768px)" />
+                    <source srcSet="/images/hero-mobile.webp" type="image/webp" media="(max-width: 768px)" />
+                    <source srcSet="/images/hero.webp" type="image/webp" />
                     <img
-                        src="/images/hero.jpg"
+                        src="/images/hero.webp"
                         alt="Bali Tours - Templos sagrados, arrozales y cascadas en Ubud - Cantik Tours"
                         width="1920"
                         height="1080"
