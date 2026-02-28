@@ -666,7 +666,7 @@ i18n
                             time: "Hora de la cita",
                             btn: "Enviar solicitud por WhatsApp",
                             success: "¡Solicitud generada! Te redirigiremos a WhatsApp para confirmar la cita.",
-                            message_template: "Hola Cantik Tours! 👋\n\nMe gustaría agendar una videollamada para tramitar mi visado a Indonesia.\n\n👤 *Nombre:* {{name}}\n🛂 *Tipo de Visa:* {{type}}\n📅 *Día:* {{date}}\n⏰ *Hora:* {{time}} (Hora de España)\n\n¿Me confirmáis disponibilidad? ¡Gracias!"
+                            message_template: "Hola Cantik Tours!\n\nMe gustar\u00eda agendar una videollamada para tramitar mi visado a Indonesia.\n\n\uD83D\uDC64 *Nombre:* {{name}}\n\uD83D\uDEC2 *Tipo de Visa:* {{type}}\n\uD83D\uDCC5 *D\u00eda:* {{date}}\n\u23F0 *Hora:* {{time}} (Hora de Espa\u00f1a)\n\n\u00BFMe confirm\u00E1is disponibilidad? \u00A1Gracias!"
                         }
                     }
                 }
@@ -1323,7 +1323,7 @@ i18n
                             time: "Appointment Time",
                             btn: "Send request via WhatsApp",
                             success: "Request generated! You will be redirected to WhatsApp to confirm the appointment.",
-                            message_template: "Hi Cantik Tours! 👋\n\nI would like to schedule a video call to process my Indonesia visa.\n\n👤 *Name:* {{name}}\n🛂 *Visa Type:* {{type}}\n📅 *Day:* {{date}}\n⏰ *Time:* {{time}} (Spain Time)\n\nCould you please confirm availability? Thank you!"
+                            message_template: "Hi Cantik Tours!\n\nI would like to schedule a video call to process my Indonesia visa.\n\n\uD83D\uDC64 *Name:* {{name}}\n\uD83D\uDEC2 *Visa Type:* {{type}}\n\uD83D\uDCC5 *Day:* {{date}}\n\u23F0 *Time:* {{time}} (Spain Time)\n\nCould you please confirm availability? Thank you!"
                         }
                     }
                 }

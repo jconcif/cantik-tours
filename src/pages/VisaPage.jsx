@@ -330,7 +330,7 @@ const VisaPage = () => {
                         <div className="text-center sm:text-left">
                             <h3 className="text-lg font-black mb-1.5">Compromiso Cantik</h3>
                             <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
-                                "Tratamos tus datos como propios. Nuestra reputación se basa en la confianza y el servicio personalizado."
+                                "Tratamos tus datos con total seguridad y confidencialidad. Nuestra reputación se basa en la confianza y el servicio personalizado."
                             </p>
                         </div>
                     </motion.div>
