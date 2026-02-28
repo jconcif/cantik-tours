@@ -48,6 +48,7 @@ const Footer = () => {
                         <li><Link to="/guia-bali" className="hover:text-primary transition-colors">{t('nav.guide')}</Link></li>
                         <li><Link to="/reviews" className="hover:text-primary transition-colors">{t('common.reviews_title')}</Link></li>
                         <li><Link to="/politicas" className="hover:text-primary transition-colors">{t('footer.policies')}</Link></li>
+                        <li><Link to="/visados" className="hover:text-primary transition-colors">{t('footer.visa_assistance')}</Link></li>
                     </ul>
                 </motion.div>
 
@@ -64,11 +65,6 @@ const Footer = () => {
             <div className="max-w-7xl mx-auto border-t border-black/5 dark:border-white/5 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-medium text-gray-400">
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
                     <p>© {currentYear} Cantik Tours. {t('footer.rights')}</p>
-                </div>
-                <div className="flex gap-6 mt-4 md:mt-0 font-bold uppercase tracking-widest text-[10px]">
-                    <span>{t('footer.trust_1')}</span>
-                    <span>{t('footer.trust_2')}</span>
-                    <span>{t('footer.trust_3')}</span>
                 </div>
                 <p className="flex items-center gap-2">
                     {t('footer.made_with')} <Heart size={14} className="text-red-500 fill-red-500" /> {t('footer.in_bali')}

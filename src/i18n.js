@@ -21,7 +21,8 @@ i18n
                         view_guide: "Ver Guía Bali 2026",
                         contact: "Habla con nosotros",
                         about: "Nosotros",
-                        expert_choice: "Elección del Experto"
+                        expert_choice: "Elección del Experto",
+                        visa_assistance: "Asistencia de Visado"
                     },
                     hero: {
                         badge: "Experiencias Premium en Indonesia.",
@@ -397,7 +398,8 @@ i18n
                         trust_3: "Apoyo a la comunidad",
                         made_with: "Hecho con",
                         in_bali: "en Bali",
-                        policies: "Términos y condiciones"
+                        policies: "Términos y condiciones",
+                        visa_assistance: "Asistencia de Visado"
                     },
                     testimonials: {
                         badge: "Testimonios",
@@ -575,6 +577,97 @@ i18n
                                 ]
                             }
                         }
+                    },
+                    visa_page: {
+                        seo_title: "Asistencia de Visado Indonesia | Cantik Tours",
+                        seo_desc: "Gestión paso a paso de tu visa B1 o C1 para Indonesia. Videollamada personalizada, optimización de documentos y garantía de pago.",
+                        hero: {
+                            badge: "Servicio Premium",
+                            title_1: "Tu Visado a Indonesia",
+                            title_2: "sin complicaciones",
+                            subtitle: "Te ayudamos paso a paso en una videollamada personalizada para gestionar tu visa B1 o C1. Evita errores, formatos incorrectos y pagos rechazados.",
+                            btn_whatsapp: "Quiero agendar mi cita por WhatsApp",
+                            btn_types: "Ver tipos de Visa B1 / C1"
+                        },
+                        why: {
+                            title: "¿Por qué hacerlo con nosotros?",
+                            subtitle: "Evita dolores de cabeza con expertos.",
+                            reason1: {
+                                title: "Acompañamiento Real",
+                                text: "Llenamos el formulario contigo en vivo por videollamada. Resolvemos dudas al instante y evitamos la barrera del idioma."
+                            },
+                            reason2: {
+                                title: "Optimización de Archivos",
+                                text: "Ajustamos tus fotos y pasaporte a los requisitos exactos del sistema para asegurar una solicitud impecable."
+                            },
+                            reason3: {
+                                title: "Cero Estrés de Pago",
+                                text: "El cliente nos paga el total por Wise/Transferencia y nosotros realizamos el pago oficial, evitando el común rechazo de tarjetas extranjeras."
+                            }
+                        },
+                        security: {
+                            title: "Seguridad y Responsabilidad",
+                            subtitle: "Tu tranquilidad es nuestra prioridad. Transparencia total.",
+                            item1: {
+                                title: "Privacidad Garantizada",
+                                text: "Los documentos se reciben por WhatsApp y se borran en tiempo real frente a ti antes de colgar la llamada."
+                            },
+                            item2: {
+                                title: "Control del Cliente",
+                                text: "Creamos la cuenta con tu correo y clave para que mantengas la propiedad absoluta del trámite."
+                            },
+                            item3: {
+                                title: "Responsabilidad Compartida",
+                                text: "Como asistencia técnica, validamos juntos los datos. Tú tienes la última palabra antes del envío final y la aprobación depende del gobierno indonesio."
+                            }
+                        },
+                        times: {
+                            title: "Tiempos y Entrega",
+                            b1: {
+                                title: "Visa B1 (Turismo)",
+                                text: "Suele llegar casi al instante a tu correo electrónico tras el pago."
+                            },
+                            c1: {
+                                title: "Visa C1",
+                                text: "El tiempo estimado de respuesta de Inmigración es de 5 a 10 días hábiles."
+                            },
+                            completion: "Nuestro servicio de asesoría concluye una vez realizado el pago de la tasa oficial en la plataforma."
+                        },
+                        pricing: {
+                            title: "Tarifas y Reserva",
+                            cost: "Gestión: €20 + Costo Visa",
+                            disclaimer: "El importe total se abona por adelantado (vía Wise o Transferencia) para la reserva de la cita técnica.",
+                            btn: "Agendar por WhatsApp"
+                        },
+                        whatsapp_message: "Hola Cantik Tours! Me gustaría agendar una cita para la asesoría de visados Indonesia.",
+                        it_support: "¡Oferta Exclusiva! Si reservas un tour con nosotros posteriormente, te aplicaremos un descuento especial en tu reserva.",
+                        checklist: {
+                            title: "Requisitos Previos",
+                            subtitle: "Reúne estos documentos en formato digital (foto o PDF) antes de nuestra videollamada.",
+                            common: "Para todas las visas:",
+                            b1: "Específico para Visa B1 (Turismo - 60 días):",
+                            c1: "Específico para Visa C1 (Larga Estancia - 180 días):",
+                            item_passport: "Foto a color de la página de datos de tu pasaporte (vigencia mínima de 6 meses).",
+                            item_photo: "Fotografía tipo carnet (fondo liso y claro, a color, sin gafas).",
+                            item_date: "Fecha prevista de tu entrada a Indonesia.",
+                            item_hotel: "Nombre o dirección de tu alojamiento en Indonesia para los primeros días.",
+                            item_contact: "Correo electrónico personal y número de WhatsApp activo.",
+                            item_ticket: "Boleto de salida de Indonesia. Si no tienes o no sabes cuándo saldrás, te ayudamos a crear un boleto temporal (Onward Ticket).",
+                            item_bank: "Cartola o extracto bancario de los últimos 3 meses que acredite solvencia."
+                        },
+                        form: {
+                            title: "Agenda tu Videollamada",
+                            subtitle: "Nos adaptamos a ti. Nuestro horario preferente de asesorías es de Lunes a Domingo, de 10:00 a 14:00 (Hora de España - CET/CEST), pero puedes consultar por WhatsApp otra disponibilidad.",
+                            name: "Tu Nombre Completo",
+                            visa_type: "Tipo de Visa a tramitar",
+                            visa_b1: "Visa B1 (Turismo/Visita - 60 días)",
+                            visa_c1: "Visa C1 (Larga Estancia - 180 días)",
+                            date: "Día preferido para la llamada",
+                            time: "Hora preferida (10:00 - 14:00, Hora de España)",
+                            btn: "Generar Solicitud por WhatsApp",
+                            success: "¡Solicitud generada! Te redirigiremos a WhatsApp para confirmar la cita.",
+                            message_template: "Hola Cantik Tours! Me gustaría agendar una asesoría para mi visado a Indonesia.\n\n👤 Nombre: {{name}}\n🛂 Tipo de Visa: {{type}}\n📅 Día preferido: {{date}}\n⏰ Hora preferida: {{time}} (Hora de España)\n\n¿Me confirman disponibilidad por favor?"
+                        }
                     }
                 }
             },
@@ -587,7 +680,8 @@ i18n
                         view_guide: "View Bali Guide 2026",
                         contact: "Talk to us",
                         about: "About Us",
-                        expert_choice: "Expert's Choice"
+                        expert_choice: "Expert's Choice",
+                        visa_assistance: "Visa Assistance"
                     },
                     hero: {
                         badge: "Premium Experiences in Indonesia.",
@@ -961,7 +1055,8 @@ i18n
                         trust_3: "Personalized Support",
                         made_with: "Made with",
                         in_bali: "from Bali",
-                        policies: "Terms and Conditions"
+                        policies: "Terms and Conditions",
+                        visa_assistance: "Visa Assistance"
                     },
                     testimonials: {
                         badge: "Testimonials",
@@ -1138,6 +1233,97 @@ i18n
                                     { label: "Applicable Law", text: "This contract is governed by the current laws of the Republic of Indonesia." }
                                 ]
                             }
+                        }
+                    },
+                    visa_page: {
+                        seo_title: "Indonesia Visa Assistance | Cantik Tours",
+                        seo_desc: "Step-by-step management of your B1 or C1 visa for Indonesia. Personalized video call, document optimization, and payment guarantee.",
+                        hero: {
+                            badge: "Premium Service",
+                            title_1: "Your Indonesia Visa",
+                            title_2: "without complications",
+                            subtitle: "We help you step-by-step in a personalized video call to manage your B1 or C1 visa. Avoid errors, incorrect formats, and rejected payments.",
+                            btn_whatsapp: "I want to schedule my appointment via WhatsApp",
+                            btn_types: "See Visa B1 / C1 types"
+                        },
+                        why: {
+                            title: "Why do it with us?",
+                            subtitle: "Pain points solved with experts.",
+                            reason1: {
+                                title: "Real Accompaniment",
+                                text: "We fill out the form with you live via video call. We resolve doubts instantly and avoid the language barrier."
+                            },
+                            reason2: {
+                                title: "File Optimization",
+                                text: "We adjust your photos and passport to the exact system requirements to ensure a flawless application."
+                            },
+                            reason3: {
+                                title: "Zero Payment Stress",
+                                text: "You pay us the total via Wise/Transfer and we make the official payment, avoiding common foreign card rejections."
+                            }
+                        },
+                        security: {
+                            title: "Security and Responsibility",
+                            subtitle: "Your peace of mind is our priority. Total transparency.",
+                            item1: {
+                                title: "Privacy Guaranteed",
+                                text: "Documents are received via WhatsApp and deleted in real-time in front of you before ending the call."
+                            },
+                            item2: {
+                                title: "Client Control",
+                                text: "We create the account with your email and password so you maintain absolute ownership of the process."
+                            },
+                            item3: {
+                                title: "Shared Responsibility",
+                                text: "As technical assistance, we validate data together. You have the final word before submission, and approval depends on the Indonesian government."
+                            }
+                        },
+                        times: {
+                            title: "Times and Delivery",
+                            b1: {
+                                title: "Visa B1 (Tourism)",
+                                text: "It usually arrives almost instantly to your email after payment."
+                            },
+                            c1: {
+                                title: "Visa C1",
+                                text: "The estimated response time from Immigration is 5 to 10 business days."
+                            },
+                            completion: "Our advisory service concludes once the official government fee has been paid on the platform."
+                        },
+                        pricing: {
+                            title: "Fees and Booking",
+                            cost: "Service: €20 + Visa Cost",
+                            disclaimer: "The total amount is paid in advance (via Wise or Transfer) to reserve the technical appointment.",
+                            btn: "Schedule via WhatsApp"
+                        },
+                        whatsapp_message: "Hi Cantik Tours! I would like to schedule an appointment for Indonesia visa assistance.",
+                        it_support: "Exclusive Offer! If you later book a tour with us, we will apply a special discount to your reservation.",
+                        checklist: {
+                            title: "Prerequisites",
+                            subtitle: "Gather these documents in digital format (photo or PDF) before our video call.",
+                            common: "For all visas:",
+                            b1: "Specific for Visa B1 (Tourism - 60 days):",
+                            c1: "Specific for Visa C1 (Long Stay - 180 days):",
+                            item_passport: "Color photo of your passport's data page (minimum validity of 6 months).",
+                            item_photo: "Passport-style photograph (clear plain background, color, no glasses).",
+                            item_date: "Expected date of entry into Indonesia.",
+                            item_hotel: "Name or address of your accommodation in Indonesia for the first few days.",
+                            item_contact: "Personal email and active WhatsApp number.",
+                            item_ticket: "Exit ticket from Indonesia. If you don't have one or don't know when you will leave, we help you create a temporary ticket (Onward Ticket).",
+                            item_bank: "Bank statement from the last 3 months proving solvency."
+                        },
+                        form: {
+                            title: "Schedule your Video Call",
+                            subtitle: "We adapt to you. Our preferred advisory schedule is Monday to Sunday, from 10:00 to 14:00 (Spain Time - CET/CEST), but you may ask for other availabilities.",
+                            name: "Your Full Name",
+                            visa_type: "Visa Type to process",
+                            visa_b1: "Visa B1 (Tourism/Visit - 60 days)",
+                            visa_c1: "Visa C1 (Long Stay - 180 days)",
+                            date: "Preferred day for the call",
+                            time: "Preferred time (10:00 - 14:00, Spain Time)",
+                            btn: "Generate WhatsApp Request",
+                            success: "Request generated! You will be redirected to WhatsApp to confirm the appointment.",
+                            message_template: "Hi Cantik Tours! I would like to schedule an advisory for my Indonesia visa.\n\n👤 Name: {{name}}\n🛂 Visa Type: {{type}}\n📅 Preferred Day: {{date}}\n⏰ Preferred Time: {{time}} (Spain Time)\n\nCould you please confirm availability?"
                         }
                     }
                 }
