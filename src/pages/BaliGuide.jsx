@@ -103,11 +103,18 @@ const Bullet = ({ children }) => (
 );
 
 /* ─── Helper to parse prices dynamically ────────────────────────── */
-const renderWithPrices = (text, formatPrice) => {
+const renderDynamicText = (text, formatPrice) => {
     if (!text || typeof text !== 'string') return text;
-    // Regex for {{PRICE_XX}}
-    const parts = text.split(/(\{\{PRICE_\d+\}\})/g);
+    // Regex for {{PRICE_XX}} or {{LINK_EVISA}}
+    const parts = text.split(/(\{\{PRICE_\d+\}\}|\{\{LINK_EVISA\}\})/g);
     return parts.map((part, index) => {
+        if (part === '{{LINK_EVISA}}') {
+            return (
+                <a key={index} href="https://evisa.imigrasi.go.id/" target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2 hover:opacity-80 transition-opacity">
+                    evisa.imigrasi.go.id
+                </a>
+            );
+        }
         const match = part.match(/\{\{PRICE_(\d+)\}\}/);
         if (match) {
             const price = parseInt(match[1], 10);
@@ -189,7 +196,7 @@ const BaliGuide = () => {
                     <div className="grid md:grid-cols-2 gap-6 mb-6">
                         <InfoCard label={c.visaB1Title}>
                             <ul className="grid gap-2">
-                                {c.visaB1Points.map((pt, i) => <Bullet key={i}>{renderWithPrices(pt, formatPrice)}</Bullet>)}
+                                {c.visaB1Points.map((pt, i) => <Bullet key={i}>{renderDynamicText(pt, formatPrice)}</Bullet>)}
                             </ul>
                         </InfoCard>
 
@@ -197,14 +204,7 @@ const BaliGuide = () => {
                             <ul className="grid gap-2">
                                 {c.visaC1Points.map((pt, i) => (
                                     <Bullet key={i}>
-                                        {i === 4 ? (
-                                            <>
-                                                {pt}
-                                                <a href="https://evisa.imigrasi.go.id/" target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2">
-                                                    evisa.imigrasi.go.id
-                                                </a>
-                                            </>
-                                        ) : renderWithPrices(pt, formatPrice)}
+                                        {renderDynamicText(pt, formatPrice)}
                                     </Bullet>
                                 ))}
                             </ul>
@@ -214,7 +214,7 @@ const BaliGuide = () => {
                     <InfoCard label={c.ecdTitle} accent>
                         <ul className="grid gap-3">
                             <Bullet>
-                                {renderWithPrices(c.ecdP1.split('Love Bali')[0], formatPrice)}
+                                {renderDynamicText(c.ecdP1.split('Love Bali')[0], formatPrice)}
                                 <a href="https://lovebali.baliprov.go.id/" target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2">
                                     Love Bali
                                 </a>
@@ -326,7 +326,7 @@ const BaliGuide = () => {
                             </InfoCard>
                             <InfoCard label={c.budgetTitle}>
                                 <p className="text-base text-gray-600 dark:text-gray-400 font-medium leading-relaxed whitespace-pre-line">
-                                    {renderWithPrices(c.budgetText, formatPrice)}
+                                    {renderDynamicText(c.budgetText, formatPrice)}
                                 </p>
                             </InfoCard>
                         </div>

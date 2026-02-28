@@ -18,23 +18,24 @@ export const baliGuideTranslations = {
         s1Tag: "visado e ingreso",
         visaB1Title: "Visa B1 — Turismo (1 a 60 días)",
         visaB1Points: [
-            "Coste: 500.000 IDR (≈ {{PRICE_35}}) por cada 30 días.",
-            "Permiso inicial de 30 días, extensible una vez (máx. 60 días).",
-            "Trámite: Online (e-VoA) a través de la web oficial de inmigración evisa.imigrasi.go.id o Presencial al llegar al aeropuerto.",
-            "Pasaporte con mínimo 6 meses de vigencia y una hoja en blanco.",
-            "Requiere adjuntar pasaje de salida."
+            "Coste: 500.000 IDR (≈ {{PRICE_25}}) por cada 30 días.",
+            "Estancia: Permiso inicial de 30 días, extensible una vez por otros 30 dias (60 días en total).",
+            "Trámite: Online (e-VoA) a través de la web oficial de inmigración {{LINK_EVISA}} o Presencial al llegar al aeropuerto.",
+            "Plazo: Tarda solo unos minutos en ser aprobada.",
+            "Pasaporte: Mínimo 6 meses de vigencia y una hoja en blanco.",
+            "Adicional: Requiere adjuntar pasaje de salida."
         ],
         visaC1Title: "Visa C1 — Larga Estancia (hasta 180 días)",
         visaC1Points: [
-            "Coste: 1.000.000 IDR (≈ {{PRICE_65}}) cada 60 días.",
-            "Trámite: Solo on line a través de la web oficial de inmigración evisa.imigrasi.go.id",
+            "Coste: 1.000.000 IDR (≈ {{PRICE_50}}) cada 60 días.",
+            "Estancia: Permiso inicial de 60 días, extensible dos veces por otros 60 dias cada una (180 días en total).",
+            "Trámite: Solo on line a través de la web oficial de inmigración {{LINK_EVISA}}",
             "Plazo: Tarda 5 a 10 días hábiles en ser aprobada.",
-            "Requiere extracto bancario (últimos 3 meses) con saldo mín. 2.000 USD.",
             "Pasaporte con mínimo 6 meses de vigencia y una hoja en blanco.",
-            "Web oficial: "
+            "Adicional: Requiere extracto bancario (últimos 3 meses) con saldo mín. 2.000 USD o equivalente."
         ],
         ecdTitle: "🎟️ Tasas y Aduanas — Obligatorio",
-        ecdP1: "Tasa Turística de Bali: 150.000 IDR (≈ {{PRICE_10}}). Págala antes en Love Bali para evitar filas.",
+        ecdP1: "Tasa Turística de Bali: 150.000 IDR (≈ {{PRICE_8}}). Págala antes en Love Bali para evitar filas.",
         ecdP2: "Declaración de Aduanas (ECD): Rellena el formulario online en las 48 horas previas a tu vuelo. Obtendrás un código QR que deberás mostrar al salir del aeropuerto.",
         ecdTip: "💡 Tip: Ten los QR listos en el móvil al aterrizar para ir directo sin colas.",
 
@@ -133,23 +134,24 @@ export const baliGuideTranslations = {
         s1Tag: "visa & entry",
         visaB1Title: "Visa B1 — Tourism (1 to 60 days)",
         visaB1Points: [
-            "Cost: 500,000 IDR (≈ {{PRICE_35}}) for every 30 days.",
-            "Initial 30-day permit, extendable once (max. 60 days).",
-            "Process: Online (e-VoA) through the official immigration website evisa.imigrasi.go.id or in person upon arrival at the airport.",
-            "Passport with at least 6 months validity and a blank page.",
-            "Requires attaching an exit or return ticket."
+            "Cost: 500,000 IDR (≈ {{PRICE_25}}) for every 30 days.",
+            "Stay: Initial 30-day permit, extendable once for another 30 days (60 days in total).",
+            "Process: Online (e-VoA) through the official immigration website {{LINK_EVISA}} or in person upon arrival at the airport.",
+            "Processing time: Takes only a few minutes to be approved.",
+            "Passport: Minimum 6 months validity and a blank page.",
+            "Additional: Requires attaching an exit or return ticket."
         ],
         visaC1Title: "Visa C1 — Long Stay (up to 180 days)",
         visaC1Points: [
-            "Cost: 1,000,000 IDR (≈ {{PRICE_65}}) every 60 days.",
-            "Process: Only online through the official immigration website evisa.imigrasi.go.id",
+            "Cost: 1,000,000 IDR (≈ {{PRICE_50}}) every 60 days.",
+            "Stay: Initial 60-day permit, extendable twice for another 60 days each (180 days in total).",
+            "Process: Only online through the official immigration website {{LINK_EVISA}}",
             "Processing time: Takes 5 to 10 business days to be approved.",
-            "Requires bank statement (last 3 months) with min. balance $2,000 USD.",
-            "Passport with at least 6 months validity and a blank page.",
-            "Official website: "
+            "Passport: Minimum 6 months validity and a blank page.",
+            "Additional: Requires bank statement (last 3 months) with min. balance $2,000 USD or equivalent."
         ],
         ecdTitle: "🎟️ Fees & Customs — Mandatory",
-        ecdP1: "Bali Tourist Levy: 150,000 IDR (≈ {{PRICE_10}}). Pay in advance via Love Bali to avoid queues.",
+        ecdP1: "Bali Tourist Levy: 150,000 IDR (≈ {{PRICE_8}}). Pay in advance via Love Bali to avoid queues.",
         ecdP2: "Electronic Customs Declaration (e-CD): Fill out the online form within 48 hours before your flight. You'll get a QR code to show upon leaving the airport.",
         ecdTip: "💡 Tip: Have your QR codes ready on your phone when you land to go straight through without waiting.",
 
