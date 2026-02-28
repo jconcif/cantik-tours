@@ -656,17 +656,17 @@ i18n
                             item_bank: "Cartola o extracto bancario de los últimos 3 meses que acredite solvencia."
                         },
                         form: {
-                            title: "Agenda tu Videollamada",
-                            subtitle: "Nos adaptamos a ti. Nuestro horario preferente de asesorías es de Lunes a Domingo, de 10:00 a 14:00 (Hora de España - CET/CEST), pero puedes consultar por WhatsApp otra disponibilidad.",
-                            name: "Tu Nombre Completo",
-                            visa_type: "Tipo de Visa a tramitar",
-                            visa_b1: "Visa B1 (Turismo/Visita - 60 días)",
-                            visa_c1: "Visa C1 (Larga Estancia - 180 días)",
-                            date: "Día preferido para la llamada",
-                            time: "Hora preferida (10:00 - 14:00, Hora de España)",
-                            btn: "Generar Solicitud por WhatsApp",
+                            title: "Agenda tu videollamada",
+                            subtitle: "Reserva tu espacio de asesoría técnica de 10:00 a 14:00 (Hora España).",
+                            name: "Nombre Completo",
+                            visa_type: "Tipo de visa a tramitar",
+                            visa_b1: "Visa B1 (Turismo de 1 a 60 días)",
+                            visa_c1: "Visa C1 (Turismo de 1 a 180 días)",
+                            date: "Día de la cita",
+                            time: "Hora de la cita",
+                            btn: "Enviar solicitud por WhatsApp",
                             success: "¡Solicitud generada! Te redirigiremos a WhatsApp para confirmar la cita.",
-                            message_template: "Hola Cantik Tours! Me gustaría agendar una asesoría para mi visado a Indonesia.\n\n👤 Nombre: {{name}}\n🛂 Tipo de Visa: {{type}}\n📅 Día preferido: {{date}}\n⏰ Hora preferida: {{time}} (Hora de España)\n\n¿Me confirman disponibilidad por favor?"
+                            message_template: "Hola Cantik Tours! 👋\n\nMe gustaría agendar una videollamada para tramitar mi visado a Indonesia.\n\n👤 *Nombre:* {{name}}\n🛂 *Tipo de Visa:* {{type}}\n📅 *Día:* {{date}}\n⏰ *Hora:* {{time}} (Hora de España)\n\n¿Me confirmáis disponibilidad? ¡Gracias!"
                         }
                     }
                 }
@@ -1222,7 +1222,7 @@ i18n
                             s7: {
                                 title: "7. IMAGE USE",
                                 items: [
-                                    { label: "Image Use", text: "Upon completion of the tour, we will request you to fill out a satisfaction survey. In it, the client may expressly indicate whether or not they authorize the use of their name, images and/or videos on our social networks." }
+                                    { label: "Image Use", text: "Upon completion of the tour, we will request you to fill out a satisfaction survey. In it, the client may expressly indicate whether or not they authorize the use of their name, images and/o videos on our social networks." }
                                 ]
                             },
                             s8: {
@@ -1313,17 +1313,17 @@ i18n
                             item_bank: "Bank statement from the last 3 months proving solvency."
                         },
                         form: {
-                            title: "Schedule your Video Call",
-                            subtitle: "We adapt to you. Our preferred advisory schedule is Monday to Sunday, from 10:00 to 14:00 (Spain Time - CET/CEST), but you may ask for other availabilities.",
-                            name: "Your Full Name",
-                            visa_type: "Visa Type to process",
-                            visa_b1: "Visa B1 (Tourism/Visit - 60 days)",
-                            visa_c1: "Visa C1 (Long Stay - 180 days)",
-                            date: "Preferred day for the call",
-                            time: "Preferred time (10:00 - 14:00, Spain Time)",
-                            btn: "Generate WhatsApp Request",
+                            title: "Schedule your video call",
+                            subtitle: "Book your technical assistance slot from 10:00 to 14:00 (Spain Time).",
+                            name: "Full Name",
+                            visa_type: "Visa type to process",
+                            visa_b1: "Visa B1 (Tourism 1 to 60 days)",
+                            visa_c1: "Visa C1 (Tourism 1 to 180 days)",
+                            date: "Appointment Day",
+                            time: "Appointment Time",
+                            btn: "Send request via WhatsApp",
                             success: "Request generated! You will be redirected to WhatsApp to confirm the appointment.",
-                            message_template: "Hi Cantik Tours! I would like to schedule an advisory for my Indonesia visa.\n\n👤 Name: {{name}}\n🛂 Visa Type: {{type}}\n📅 Preferred Day: {{date}}\n⏰ Preferred Time: {{time}} (Spain Time)\n\nCould you please confirm availability?"
+                            message_template: "Hi Cantik Tours! 👋\n\nI would like to schedule a video call to process my Indonesia visa.\n\n👤 *Name:* {{name}}\n🛂 *Visa Type:* {{type}}\n📅 *Day:* {{date}}\n⏰ *Time:* {{time}} (Spain Time)\n\nCould you please confirm availability? Thank you!"
                         }
                     }
                 }
