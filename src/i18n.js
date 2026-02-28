@@ -564,7 +564,8 @@ i18n
                         guide: "Bali Guide 2026",
                         view_guide: "View Bali Guide 2026",
                         contact: "Talk to us",
-                        about: "About Us"
+                        about: "About Us",
+                        expert_choice: "Expert's Choice"
                     },
                     hero: {
                         badge: "Premium Experiences in Indonesia.",
@@ -673,6 +674,7 @@ i18n
                         msg_hotel: "Hotel/Area",
                         msg_coupon: "Coupon",
                         msg_confirm: "Can you confirm availability? Thanks!",
+                        faq_intro: "The questions our travelers always ask us:",
                         availability_disclaimer: "We will confirm the availability of the chosen language directly via WhatsApp.",
                         error_language_required: "Please select a language to continue.",
                         booking_experience: "Service Type",
@@ -690,6 +692,7 @@ i18n
                         exp_elite_warning: "⚠️ High demand for Spanish guides. Priority confirmation via WhatsApp.",
                         exp_elite_price_label: "",
                         price_special: "From",
+                        transfer_title: "BOOK YOUR TRANSFER",
                         transfer_type: "Route",
                         transfer_type_placeholder: "Select route",
                         transfer_route_1: "Airport → Ubud",
@@ -855,242 +858,241 @@ i18n
                         cta_text: "Now that you know the secrets, it's time to live them. Join Cantik Tours and feel the true magic.",
                         cta_btn_tours: "See Experiences",
                         cta_btn_wsp: "Talk to us",
+                    },
+                    why: {
+                        title: "Why Cantik Tours?",
+                        subtitle: "We are not a mass-market agency. We are locals specialized in creating memories that last a lifetime.",
+                        reason1: { title: "Local Culture Experts", text: "We don't just take you there, we immerse you. Our entire team shares the same passion for explaining the 'why' of every tradition, temple, and landscape." },
+                        reason2: { title: "Uncompromising Comfort", text: "Premium, air-conditioned vehicles with all the facilities to make Bali a pleasure from start to finish." },
+                        reason4: { title: "Conscious Tourism", text: "When you book, you ensure fair and immediate payment to our local team, directly supporting Balinese families." }
+                    },
+                    features: {
+                        title: "Details that make a",
+                        title_accent: "difference",
+                        subtitle: "We don't just care about where you go, but how you feel at every mile along the way.",
+                        wifi: { title: "On-board WiFi*", text: "Share your moments instantly as you travel across the island." },
+                        water: { title: "Hydration", text: "Always cold water available to beat Bali's tropical sun." },
+                        car: { title: "Total Freedom", text: "Spacious and clean cars. You decide when to stop and when to keep moving." },
+                        food: { title: "Real Gastronomy", text: "Discover the most authentic flavors of Bali and the essence of Indonesia in the hidden gems where locals actually enjoy eating." }
+                    },
+                    about: {
+                        tag: "Cantik Philosophy",
+                        title: "Travel at your own pace",
+                        meaning_title: "What does Cantik mean?",
+                        meaning_text: "In Indonesian, Cantik (pronounced Chantik) means beautiful. But for us, the beauty of Bali is not just in its postcards. It is also in the devotion of a morning offering, in the smile of a farmer, and in the peace you feel when understanding our culture. We want every moment of your trip to be, simply, Cantik.",
+                        authority_subtitle: "Local agency in Bali specialized in private tours and personalized attention in Spanish and English.",
+                        trust_local_title: "100% Local Agency",
+                        trust_local_desc: "No international intermediaries. We operate directly from Bali, supporting the local economy.",
+                        trust_direct_title: "Direct Contact",
+                        trust_direct_desc: "We design your trip ourselves, no call centers or automated responses.",
+                        trust_boutique_title: "No Crowds",
+                        trust_boutique_desc: "We flee from full buses. Only private experiences to guarantee quality.",
+                        cta_emotional_title: "Can you imagine your trip like this?",
+                        cta_emotional_text: "Far from the conventional. Close to the authentic magic of Bali.",
+                        cta_emotional_btn: "Let's talk on WhatsApp",
 
+                        impact_title: "Your trip creates impact",
+                        impact_desc: "Every booking funds our drivers directly, avoiding unfair agency fees, through prompt, fair payments.",
 
-                        why: {
-                            title: "Why Cantik Tours?",
-                            subtitle: "We are not a mass-market agency. We are locals specialized in creating memories that last a lifetime.",
-                            reason1: { title: "Local Culture Experts", text: "We don't just take you there, we immerse you. Our entire team shares the same passion for explaining the 'why' of every tradition, temple, and landscape." },
-                            reason2: { title: "Uncompromising Comfort", text: "Premium, air-conditioned vehicles with all the facilities to make Bali a pleasure from start to finish." },
-                            reason4: { title: "Conscious Tourism", text: "When you book, you ensure fair and immediate payment to our local team, directly supporting Balinese families." }
-                        },
-                        features: {
-                            title: "Details that make a",
-                            title_accent: "difference",
-                            subtitle: "We don't just care about where you go, but how you feel at every mile along the way.",
-                            wifi: { title: "On-board WiFi*", text: "Share your moments instantly as you travel across the island." },
-                            water: { title: "Hydration", text: "Always cold water available to beat Bali's tropical sun." },
-                            car: { title: "Total Freedom", text: "Spacious and clean cars. You decide when to stop and when to keep moving." },
-                            food: { title: "Real Gastronomy", text: "Discover the most authentic flavors of Bali and the essence of Indonesia in the hidden gems where locals actually enjoy eating." }
-                        },
-                        about: {
-                            tag: "Cantik Philosophy",
-                            title: "Travel at your own pace",
-                            meaning_title: "What does Cantik mean?",
-                            meaning_text: "In Indonesian, Cantik (pronounced Chantik) means beautiful. But for us, the beauty of Bali is not just in its postcards. It is also in the devotion of a morning offering, in the smile of a farmer, and in the peace you feel when understanding our culture. We want every moment of your trip to be, simply, Cantik.",
-                            authority_subtitle: "Local agency in Bali specialized in private tours and personalized attention in Spanish and English.",
-                            trust_local_title: "100% Local Agency",
-                            trust_local_desc: "No international intermediaries. We operate directly from Bali, supporting the local economy.",
-                            trust_direct_title: "Direct Contact",
-                            trust_direct_desc: "We design your trip ourselves, no call centers or automated responses.",
-                            trust_boutique_title: "No Crowds",
-                            trust_boutique_desc: "We flee from full buses. Only private experiences to guarantee quality.",
-                            cta_emotional_title: "Can you imagine your trip like this?",
-                            cta_emotional_text: "Far from the conventional. Close to the authentic magic of Bali.",
-                            cta_emotional_btn: "Let's talk on WhatsApp",
+                        team_intro_title: "The Team",
+                        team_intro_text: "No rush, safely, and in your language.",
+                        perty_name: "Perty",
+                        perty_role: "Founder",
+                        local_experts: "Local Experts",
+                        perty_title: "Perty (Founder)",
+                        perty_text_1: "With a Master's degree in Education and a lifetime dedicated to teaching, I have had the honor of representing our culture in various countries as an Indonesian language teacher. Today, my true passion is being your personal connection to the soul of Bali.",
+                        perty_text_2: "For me, guiding you is not just following an itinerary; it's about inviting you to feel the mysticism of our temples, the devotion of the rituals, and those secret spots we only share with those who visit us with an open heart. My greatest wish is for you to experience this island with the same respect and profound love with which I call it home.",
+                        javi_title: "Javi (Your Link & Logistics)",
+                        javi_role: "Logistics & Link",
+                        javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
+                        promise_title: "",
+                        promise_text: "To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
 
-                            impact_title: "Your trip creates impact",
-                            impact_desc: "Every booking funds our drivers directly, avoiding unfair agency fees, through prompt, fair payments.",
-
-                            team_intro_title: "The Team",
-                            team_intro_text: "No rush, safely, and in your language.",
-                            perty_name: "Perty",
-                            perty_role: "Founder",
-                            perty_title: "Perty (Founder)",
-                            perty_text_1: "With a Master's degree in Education and a lifetime dedicated to teaching, I have had the honor of representing our culture in various countries as an Indonesian language teacher. Today, my true passion is being your personal connection to the soul of Bali.",
-                            perty_text_2: "For me, guiding you is not just following an itinerary; it's about inviting you to feel the mysticism of our temples, the devotion of the rituals, and those secret spots we only share with those who visit us with an open heart. My greatest wish is for you to experience this island with the same respect and profound love with which I call it home.",
-                            javi_title: "Javi (Your Link & Logistics)",
-                            javi_role: "Logistics & Link",
-                            javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
-                            promise_title: "",
-                            promise_text: "To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
-
-                            meet_team_title: "Our Guides",
-                            team_reinforced_text: "To ensure you always have the best experience, we work with a network of fully trusted local drivers, chosen by ourselves for their professionalism, charisma, and honesty.",
-                            our: "Our",
-                            essence: "Essence.",
-                            guide_1_name: "Wayan",
-                            guide_1_role: "History & Temples",
-                            guide_1_desc: "Expert in Balinese history and architecture.",
-                            guide_2_name: "Putu",
-                            guide_2_role: "Gastronomy & Local Life",
-                            guide_2_desc: "Specialist in authentic flavors, local markets, and traditional Balinese cuisine.",
-                            guide_3_name: "Komang",
-                            guide_3_role: "Culture & Tradition",
-                            guide_3_desc: "Expert in local customs and daily life in Balinese villages.",
-                            guide_4_name: "Ketut",
-                            guide_4_role: "Waterfalls & Adventure",
-                            guide_4_desc: "The youngest guide in the team, expert in discovering hidden waterfalls and adventure routes."
-                        },
-                        footer: {
-                            description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",
-                            quick_links: "Quick Links",
-                            contact: "Contact",
-                            contact_spain: "Spanish Support",
-                            contact_bali: "Local Bali Support",
-                            location: "Ubud, Bali • Indonesia",
-                            social: "Social",
-                            rights: "All rights reserved.",
-                            trust_1: "Secure Payment on Arrival",
-                            trust_2: "Verified Local Guides",
-                            trust_3: "Personalized Support",
-                            made_with: "Made with",
-                            in_bali: "from Bali",
-                            policies: "Terms and Conditions"
-                        },
-                        testimonials: {
-                            badge: "Testimonials",
-                            title: "What our",
-                            title_accent: "travelers",
-                            subtitle: "Real stories from people who experienced the magic of Bali with us.",
-                            data: [
-                                {
-                                    name: "Marta & Jorge",
-                                    location: "Spain",
-                                    text: "The best decision of our trip! Perty is an exceptional guide, she made us feel like family. Bali is magical, but seeing it with them is another level."
-                                },
-                                {
-                                    name: "Raquel B.",
-                                    location: "Spain",
-                                    text: "Impeccable service. The driver was super punctual and the car very comfortable. They took us to places not found in travel guides. 100% recommended!"
-                                },
-                                {
-                                    name: "González Family",
-                                    location: "Argentina",
-                                    text: "We traveled with two children and they had a lot of patience and flexibility. They organized a perfect itinerary for us. Thanks for everything."
-                                }
-                            ]
-                        },
-                        common: {
-                            loading: "Loading...",
-                            back: "Back",
-                            more_info: "More info",
-                            copied: "Link copied!",
-                            error: "Something went wrong",
-                            whatsapp_tooltip: "Hi! Shall we talk?",
-                            whatsapp_message: "Hi Cantik Tours! I would like to receive more information about your tours.",
-                            language: "Language",
-                            reviews_title: "Reviews",
-                            reviews_about: "About",
-                            reviews_showing: "Showing",
-                            reviews_verified: "verified reviews",
-                            whatsapp_about: "Hi Cantik Tours! I've seen your story and would like to ask you a question about my trip."
-                        },
-                        reviews_page: {
-                            title: "Your Experience in",
-                            title_accent: "Bali",
-                            subtitle: "Thank you for trusting Cantik Tours. Your opinion helps us grow and inspire other travelers.",
-                            form: {
-                                name: "Full Name",
-                                rating: "Your Rating",
-                                tour_type: "Which tour did you take?",
-                                tours: {
-                                    ubud_central: "Ubud Central",
-                                    ubud_north: "Ubud North",
-                                    lovina: "Lovina / Dolphins",
-                                    east: "East / Besakih",
-                                    lempuyang: "Lempuyang",
-                                    transfer: "Transfer",
-                                    custom: "Custom / Other"
-                                },
-                                country: "Country of Origin",
-                                countries: {
-                                    es: "Spain",
-                                    cl: "Chile",
-                                    ar: "Argentina",
-                                    mx: "Mexico",
-                                    co: "Colombia",
-                                    pe: "Peru",
-                                    uy: "Uruguay",
-                                    other: "Other"
-                                },
-                                comment: "Your comment",
-                                comment_placeholder: "Share what you liked the most...",
-                                ig_user: "Instagram User (Optional)",
-                                ig_placeholder: "@youruser",
-                                auth: "I'd love to be part of the Cantik Family in Instagram and I authorize sharing my experience on your social media.",
-                                implicit_consent: "By submitting my review, I accept its publication on the Cantik Tours website and the privacy policy.",
-                                submit: "Send Review",
-                                success_title: "Thank you for your review!",
-                                success_text: "Your message has been successfully saved. We will review it and it will appear on the website soon.",
-                                ig_follow_text: "Don't miss a thing! Follow us on Instagram to see more of Bali's magic:",
-                                ig_follow_btn: "Follow on Instagram",
-                                wsp_groups_text: "Are you in the community WhatsApp groups in Bali? Recommend us there, it would help us a lot to keep growing! Thank you so much for choosing Cantik Tours!",
+                        meet_team_title: "Our Guides",
+                        team_reinforced_text: "To ensure you always have the best experience, we work with a network of fully trusted local drivers, chosen by ourselves for their professionalism, charisma, and honesty.",
+                        our: "Our",
+                        essence: "Essence.",
+                        guide_1_name: "Wayan",
+                        guide_1_role: "History & Temples",
+                        guide_1_desc: "Expert in Balinese history and architecture.",
+                        guide_2_name: "Putu",
+                        guide_2_role: "Gastronomy & Local Life",
+                        guide_2_desc: "Specialist in authentic flavors, local markets, and traditional Balinese cuisine.",
+                        guide_3_name: "Komang",
+                        guide_3_role: "Culture & Tradition",
+                        guide_3_desc: "Expert in local customs and daily life in Balinese villages.",
+                        guide_4_name: "Ketut",
+                        guide_4_role: "Waterfalls & Adventure",
+                        guide_4_desc: "The youngest guide in the team, expert in discovering hidden waterfalls and adventure routes."
+                    },
+                    footer: {
+                        description: "Your trusted agency in Bali. Private, authentic experiences with local accompaniment.",
+                        quick_links: "Quick Links",
+                        contact: "Contact",
+                        contact_spain: "Spanish Support",
+                        contact_bali: "Local Bali Support",
+                        location: "Ubud, Bali • Indonesia",
+                        social: "Social",
+                        rights: "All rights reserved.",
+                        trust_1: "Secure Payment on Arrival",
+                        trust_2: "Verified Local Guides",
+                        trust_3: "Personalized Support",
+                        made_with: "Made with",
+                        in_bali: "from Bali",
+                        policies: "Terms and Conditions"
+                    },
+                    testimonials: {
+                        badge: "Testimonials",
+                        title: "What our",
+                        title_accent: "travelers",
+                        subtitle: "Real stories from people who experienced the magic of Bali with us.",
+                        data: [
+                            {
+                                name: "Marta & Jorge",
+                                location: "Spain",
+                                text: "The best decision of our trip! Perty is an exceptional guide, she made us feel like family. Bali is magical, but seeing it with them is another level."
+                            },
+                            {
+                                name: "Raquel B.",
+                                location: "Spain",
+                                text: "Impeccable service. The driver was super punctual and the car very comfortable. They took us to places not found in travel guides. 100% recommended!"
+                            },
+                            {
+                                name: "González Family",
+                                location: "Argentina",
+                                text: "We traveled with two children and they had a lot of patience and flexibility. They organized a perfect itinerary for us. Thanks for everything."
                             }
-                        },
-                        policies_page: {
-                            seo_title: "Terms and Conditions | Cantik Tours Bali",
-                            seo_desc: "Consult Cantik Tours' terms and conditions of service to ensure your best experience in Bali.",
-                            badge: "Cantik Tours Bali",
-                            title: "Terms and",
-                            title_accent: "Conditions",
-                            intro: "Welcome to Cantik Tours. By making a booking with us, you agree to the following terms and conditions, designed to ensure your safety and the best experience in the \"Island of the Gods\".",
-                            commitment_title: "Cantik Commitment",
-                            commitment_text: "\"At Cantik Tours, we believe in fair and human treatment. If you have a special situation, do not hesitate to write to us on WhatsApp and we will find the best solution together.\"",
-                            thanks: "Thank you for choosing us to discover Bali",
-                            sections: {
-                                s1: {
-                                    title: "1. BOOKING PROCESS AND PAYMENTS",
-                                    items: [
-                                        { label: "Confirmation Deposit", text: "A fixed payment of €20 per booked Tour is required at the time of booking to block dates and services." },
-                                        { label: "Total Payment", text: "The remaining balance (100% of the tour cost) must be settled 48 hours before the start of the trip." },
-                                        { label: "Payment Methods", text: "We accept payments via Bank Transfer and Wise. Costs for bank commissions or currency conversion are the responsibility of the client." }
-                                    ]
-                                },
-                                s2: {
-                                    title: "2. CANCELLATIONS AND PUNCTUALITY",
-                                    items: [
-                                        { label: "Free Cancellation", text: "If you cancel more than 48 hours before the start of the tour, the full deposit will be refunded." },
-                                        { label: "Partial Penalty", text: "If you cancel between 48 and 24 hours before the start, the €20 deposit will not be refundable (management fees)." },
-                                        { label: "Total Management Fees", text: "Cancellations less than 24 hours before will not be entitled to a refund of the total payment." },
-                                        { label: "Waiting Time", text: "The guide/driver will wait a maximum of 30 minutes at the meeting point. After that time, without communication from the client, the service will be canceled without a refund due to \"No Show\" (non-appearance)." },
-                                        { label: "Reference Time Zone", text: "For the fulfillment of cancellation deadlines and notices, Bali local time (WITA - UTC+8) will be used, with 8:00 am as the reference time for the start of the day/hour count." }
-                                    ]
-                                },
-                                s3: {
-                                    title: "3. ITINERARY MODIFICATIONS",
-                                    items: [
-                                        { label: "Changes by the Client", text: "Date changes can be reviewed at no additional cost subject to availability. If you request a hotel change in the same area, there is no charge. If the new hotel is in a different area of Bali, a transport supplement might apply." },
-                                        { label: "Changes by the Agency", text: "Due to adverse weather conditions, unforeseen religious ceremonies, extreme traffic, temple or road closures, Cantik Tours reserves the right to adjust the route. Any important change will be notified and agreed upon with the client." },
-                                        { label: "Force Majeure", text: "In case of natural disasters (floods, volcanic activity), we will prioritize your safety by offering to reschedule the tour or modify the route to a safe zone." }
-                                    ]
-                                },
-                                s4: {
-                                    title: "4. ADVENTURE ACTIVITIES",
-                                    content: "By hiring activities such as rafting, trekking, or diving, the client declares and accepts:",
-                                    items: [
-                                        { label: "Assumption of Risk", text: "The client recognizes that these activities involve an inherent risk and participates under their own responsibility." },
-                                        { label: "Health Status", text: "Confirms that they do not suffer from heart conditions, serious injuries, recent surgeries, or pregnancy." },
-                                        { label: "Personal Belongings", text: "Cantik Tours is not responsible for damage or loss of electronic objects (mobiles, cameras) during activities." }
-                                    ]
-                                },
-                                s5: {
-                                    title: "5. RESPONSIBILITY AND INSURANCE",
-                                    items: [
-                                        { label: "Travel Insurance", text: "Cantik Tours strongly recommends having international travel insurance. Each traveler is responsible for their own physical integrity." },
-                                        { label: "Flights", text: "We do not manage international flights; punctuality for the start of the tour is the client's exclusive responsibility." }
-                                    ]
-                                },
-                                s6: {
-                                    title: "6. CULTURAL RESPECT",
-                                    items: [
-                                        { label: "Behavior", text: "Absolute respect for traditions and dress codes in Bali temples is required. We reserve the right to end the service in case of disrespectful behavior." }
-                                    ]
-                                },
-                                s7: {
-                                    title: "7. IMAGE USE",
-                                    items: [
-                                        { label: "Image Use", text: "Upon completion of the tour, we will request you to fill out a satisfaction survey. In it, the client may expressly indicate whether or not they authorize the use of their name, images and/or videos on our social networks." }
-                                    ]
-                                },
-                                s8: {
-                                    title: "8. INCIDENTS AND CLAIMS",
-                                    items: [
-                                        { label: "During the tour", text: "In order to offer an immediate solution, any dissatisfaction with the service must be communicated at the time to our support team. This allows us to act in real time to improve your experience." },
-                                        { label: "Post-tour", text: "If you wish to make a formal claim after the service, you have a maximum period of 24 hours from the end of the tour. This margin is essential for us to investigate what happened with our local team and offer a precise and objective resolution." },
-                                        { label: "Applicable Law", text: "This contract is governed by the current laws of the Republic of Indonesia." }
-                                    ]
-                                }
+                        ]
+                    },
+                    common: {
+                        loading: "Loading...",
+                        back: "Back",
+                        more_info: "More info",
+                        copied: "Link copied!",
+                        error: "Something went wrong",
+                        whatsapp_tooltip: "Hi! Shall we talk?",
+                        whatsapp_message: "Hi Cantik Tours! I would like to receive more information about your tours.",
+                        language: "Language",
+                        reviews_title: "Reviews",
+                        reviews_about: "About",
+                        reviews_showing: "Showing",
+                        reviews_verified: "verified reviews",
+                        whatsapp_about: "Hi Cantik Tours! I've seen your story and would like to ask you a question about my trip."
+                    },
+                    reviews_page: {
+                        title: "Your Experience in",
+                        title_accent: "Bali",
+                        subtitle: "Thank you for trusting Cantik Tours. Your opinion helps us grow and inspire other travelers.",
+                        form: {
+                            name: "Full Name",
+                            rating: "Your Rating",
+                            tour_type: "Which tour did you take?",
+                            tours: {
+                                ubud_central: "Ubud Central",
+                                ubud_north: "Ubud North",
+                                lovina: "Lovina / Dolphins",
+                                east: "East / Besakih",
+                                lempuyang: "Lempuyang",
+                                transfer: "Transfer",
+                                custom: "Custom / Other"
+                            },
+                            country: "Country of Origin",
+                            countries: {
+                                es: "Spain",
+                                cl: "Chile",
+                                ar: "Argentina",
+                                mx: "Mexico",
+                                co: "Colombia",
+                                pe: "Peru",
+                                uy: "Uruguay",
+                                other: "Other"
+                            },
+                            comment: "Your comment",
+                            comment_placeholder: "Share what you liked the most...",
+                            ig_user: "Instagram User (Optional)",
+                            ig_placeholder: "@youruser",
+                            auth: "I'd love to be part of the Cantik Family in Instagram and I authorize sharing my experience on your social media.",
+                            implicit_consent: "By submitting my review, I accept its publication on the Cantik Tours website and the privacy policy.",
+                            submit: "Send Review",
+                            success_title: "Thank you for your review!",
+                            success_text: "Your message has been successfully saved. We will review it and it will appear on the website soon.",
+                            ig_follow_text: "Don't miss a thing! Follow us on Instagram to see more of Bali's magic:",
+                            ig_follow_btn: "Follow on Instagram",
+                            wsp_groups_text: "Are you in the community WhatsApp groups in Bali? Recommend us there, it would help us a lot to keep growing! Thank you so much for choosing Cantik Tours!",
+                        }
+                    },
+                    policies_page: {
+                        seo_title: "Terms and Conditions | Cantik Tours Bali",
+                        seo_desc: "Consult Cantik Tours' terms and conditions of service to ensure your best experience in Bali.",
+                        badge: "Cantik Tours Bali",
+                        title: "Terms and",
+                        title_accent: "Conditions",
+                        intro: "Welcome to Cantik Tours. By making a booking with us, you agree to the following terms and conditions, designed to ensure your safety and the best experience in the \"Island of the Gods\".",
+                        commitment_title: "Cantik Commitment",
+                        commitment_text: "\"At Cantik Tours, we believe in fair and human treatment. If you have a special situation, do not hesitate to write to us on WhatsApp and we will find the best solution together.\"",
+                        thanks: "Thank you for choosing us to discover Bali",
+                        sections: {
+                            s1: {
+                                title: "1. BOOKING PROCESS AND PAYMENTS",
+                                items: [
+                                    { label: "Confirmation Deposit", text: "A fixed payment of €20 per booked Tour is required at the time of booking to block dates and services." },
+                                    { label: "Total Payment", text: "The remaining balance (100% of the tour cost) must be settled 48 hours before the start of the trip." },
+                                    { label: "Payment Methods", text: "We accept payments via Bank Transfer and Wise. Costs for bank commissions or currency conversion are the responsibility of the client." }
+                                ]
+                            },
+                            s2: {
+                                title: "2. CANCELLATIONS AND PUNCTUALITY",
+                                items: [
+                                    { label: "Free Cancellation", text: "If you cancel more than 48 hours before the start of the tour, the full deposit will be refunded." },
+                                    { label: "Partial Penalty", text: "If you cancel between 48 and 24 hours before the start, the €20 deposit will not be refundable (management fees)." },
+                                    { label: "Total Management Fees", text: "Cancellations less than 24 hours before will not be entitled to a refund of the total payment." },
+                                    { label: "Waiting Time", text: "The guide/driver will wait a maximum of 30 minutes at the meeting point. After that time, without communication from the client, the service will be canceled without a refund due to \"No Show\" (non-appearance)." },
+                                    { label: "Reference Time Zone", text: "For the fulfillment of cancellation deadlines and notices, Bali local time (WITA - UTC+8) will be used, with 8:00 am as the reference time for the start of the day/hour count." }
+                                ]
+                            },
+                            s3: {
+                                title: "3. ITINERARY MODIFICATIONS",
+                                items: [
+                                    { label: "Changes by the Client", text: "Date changes can be reviewed at no additional cost subject to availability. If you request a hotel change in the same area, there is no charge. If the new hotel is in a different area of Bali, a transport supplement might apply." },
+                                    { label: "Changes by the Agency", text: "Due to adverse weather conditions, unforeseen religious ceremonies, extreme traffic, temple or road closures, Cantik Tours reserves the right to adjust the route. Any important change will be notified and agreed upon with the client." },
+                                    { label: "Force Majeure", text: "In case of natural disasters (floods, volcanic activity), we will prioritize your safety by offering to reschedule the tour or modify the route to a safe zone." }
+                                ]
+                            },
+                            s4: {
+                                title: "4. ADVENTURE ACTIVITIES",
+                                content: "By hiring activities such as rafting, trekking, or diving, the client declares and accepts:",
+                                items: [
+                                    { label: "Assumption of Risk", text: "The client recognizes that these activities involve an inherent risk and participates under their own responsibility." },
+                                    { label: "Health Status", text: "Confirms that they do not suffer from heart conditions, serious injuries, recent surgeries, or pregnancy." },
+                                    { label: "Personal Belongings", text: "Cantik Tours is not responsible for damage or loss of electronic objects (mobiles, cameras) during activities." }
+                                ]
+                            },
+                            s5: {
+                                title: "5. RESPONSIBILITY AND INSURANCE",
+                                items: [
+                                    { label: "Travel Insurance", text: "Cantik Tours strongly recommends having international travel insurance. Each traveler is responsible for their own physical integrity." },
+                                    { label: "Flights", text: "We do not manage international flights; punctuality for the start of the tour is the client's exclusive responsibility." }
+                                ]
+                            },
+                            s6: {
+                                title: "6. CULTURAL RESPECT",
+                                items: [
+                                    { label: "Behavior", text: "Absolute respect for traditions and dress codes in Bali temples is required. We reserve the right to end the service in case of disrespectful behavior." }
+                                ]
+                            },
+                            s7: {
+                                title: "7. IMAGE USE",
+                                items: [
+                                    { label: "Image Use", text: "Upon completion of the tour, we will request you to fill out a satisfaction survey. In it, the client may expressly indicate whether or not they authorize the use of their name, images and/or videos on our social networks." }
+                                ]
+                            },
+                            s8: {
+                                title: "8. INCIDENTS AND CLAIMS",
+                                items: [
+                                    { label: "During the tour", text: "In order to offer an immediate solution, any dissatisfaction with the service must be communicated at the time to our support team. This allows us to act in real time to improve your experience." },
+                                    { label: "Post-tour", text: "If you wish to make a formal claim after the service, you have a maximum period of 24 hours from the end of the tour. This margin is essential for us to investigate what happened with our local team and offer a precise and objective resolution." },
+                                    { label: "Applicable Law", text: "This contract is governed by the current laws of the Republic of Indonesia." }
+                                ]
                             }
                         }
                     }

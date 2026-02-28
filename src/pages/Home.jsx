@@ -98,8 +98,8 @@ const Home = () => {
             </div>
 
             <FeaturesGrid />
-            <Testimonials reviews={tours[0].reviewsList} />
             <AboutUs />
+            <Testimonials reviews={tours[0].reviewsList} />
             <FinalCTA />
         </div>
     );
