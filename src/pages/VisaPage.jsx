@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../context/CurrencyContext';
 import {
     ShieldCheck,
     Lock,
@@ -84,6 +85,8 @@ const Label = ({ children }) => (
 /* ════════════════════════════════════════ */
 const VisaPage = () => {
     const { t } = useTranslation();
+    const { formatPrice } = useCurrency();
+    const price = formatPrice(20);
     const [formData, setFormData] = React.useState({ name: '', type: 'B1', date: '', time: '10:00' });
 
     useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -358,7 +361,8 @@ const VisaPage = () => {
                                     {t('visa_page.pricing.title')}
                                 </span>
                                 <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-3 leading-none">
-                                    {t('visa_page.pricing.cost')}
+                                    <span className="text-primary">{price.symbol}{price.amount}</span>
+                                    <span className="text-white/60 text-xl md:text-2xl font-bold ml-2">{t('visa_page.pricing.plus_visa')}</span>
                                 </h2>
                                 <p className="text-white/45 font-medium text-sm md:text-base max-w-sm mx-auto leading-relaxed">
                                     {t('visa_page.pricing.disclaimer')}

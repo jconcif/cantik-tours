@@ -635,7 +635,8 @@ i18n
                         },
                         pricing: {
                             title: "Tarifas y Reserva",
-                            cost: "Gestión: €20 + Costo Visa",
+                            label: "Gestión",
+                            plus_visa: "+ Costo Visa",
                             disclaimer: "El importe total se abona por adelantado (vía Wise o Transferencia) para la reserva de la cita técnica.",
                             btn: "Agendar por WhatsApp"
                         },
@@ -1292,7 +1293,8 @@ i18n
                         },
                         pricing: {
                             title: "Fees and Booking",
-                            cost: "Service: €20 + Visa Cost",
+                            label: "Management",
+                            plus_visa: "+ Visa Cost",
                             disclaimer: "The total amount is paid in advance (via Wise or Transfer) to reserve the technical appointment.",
                             btn: "Schedule via WhatsApp"
                         },
