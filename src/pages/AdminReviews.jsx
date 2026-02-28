@@ -9,6 +9,8 @@ const AdminReviews = () => {
     const [password, setPassword] = useState('');
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [updatingId, setUpdatingId] = useState(null);
+    const [successId, setSuccessId] = useState(null);
     const [message, setMessage] = useState(null);
 
     const fetchReviews = async () => {
@@ -40,6 +42,8 @@ const AdminReviews = () => {
     };
 
     const updateReview = async (id, data) => {
+        setUpdatingId(id);
+        setMessage(null);
         try {
             const apiPath = window.location.origin + '/api/admin_update_review.php';
             const response = await fetch(apiPath, {
@@ -57,13 +61,18 @@ const AdminReviews = () => {
 
             const result = await response.json();
             if (result.status === 'success') {
-                setMessage({ type: 'success', text: 'Reseña actualizada' });
-                fetchReviews();
+                // No message set for success as per user request
+                setSuccessId(id);
+                setTimeout(() => setSuccessId(null), 2000);
             } else {
                 setMessage({ type: 'error', text: result.message || 'Error al actualizar' });
             }
         } catch (error) {
             setMessage({ type: 'error', text: error.message || 'Error al actualizar' });
+        } finally {
+            setUpdatingId(null);
+            // Clear message after 3 seconds
+            setTimeout(() => setMessage(null), 3000);
         }
     };
 
@@ -84,7 +93,6 @@ const AdminReviews = () => {
             if (!response.ok) throw new Error('Error al eliminar');
             const result = await response.json();
             if (result.status === 'success') {
-                setMessage({ type: 'success', text: 'Reseña eliminada' });
                 fetchReviews();
             } else {
                 setMessage({ type: 'error', text: result.message });
@@ -109,7 +117,6 @@ const AdminReviews = () => {
             if (!response.ok) throw new Error('Error al crear');
             const result = await response.json();
             if (result.status === 'success') {
-                setMessage({ type: 'success', text: 'Reseña creada' });
                 fetchReviews();
             } else {
                 setMessage({ type: 'error', text: result.message || 'Error al crear' });
@@ -218,17 +225,16 @@ const AdminReviews = () => {
                     </div>
                 </div>
 
-                {message && (
+                {message && message.type === 'error' && (
                     <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        className={`mb-8 p-4 rounded-2xl font-bold border flex items-center gap-3 ${message.type === 'success'
-                            ? 'bg-green-50 border-green-100 text-green-600'
-                            : 'bg-red-50 border-red-100 text-red-600'
-                            }`}
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] px-8 py-4 rounded-3xl font-black border flex items-center gap-4 shadow-2xl backdrop-blur-md bg-red-50/90 border-red-100 text-red-600 shadow-red-500/20"
                     >
-                        {message.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
-                        {message.text}
+                        <div className="p-2 rounded-full bg-red-100">
+                            <AlertCircle size={24} />
+                        </div>
+                        <span className="text-lg">{message.text}</span>
                     </motion.div>
                 )}
 
@@ -382,6 +388,7 @@ const AdminReviews = () => {
                                         <Trash2 size={20} />
                                     </button>
                                     <button
+                                        disabled={updatingId === review.id}
                                         onClick={() => {
                                             const values = {
                                                 nombre: document.getElementById(`nombre-${review.id}`).value,
@@ -396,10 +403,29 @@ const AdminReviews = () => {
                                             };
                                             updateReview(review.id, values);
                                         }}
-                                        className="flex items-center gap-3 px-8 py-4 bg-primary text-white rounded-2xl font-black shadow-lg shadow-primary/25 hover:scale-105 active:scale-95 transition-all"
+                                        className={`flex items-center gap-3 px-8 py-4 text-white rounded-2xl font-black shadow-lg transition-all ${updatingId === review.id
+                                            ? 'bg-gray-400 cursor-not-allowed opacity-70'
+                                            : successId === review.id
+                                                ? 'bg-green-500 shadow-green-200'
+                                                : 'bg-primary shadow-primary/25 hover:scale-105 active:scale-95 cursor-pointer'
+                                            }`}
                                     >
-                                        <CheckCircle2 size={20} />
-                                        Guardar Cambios
+                                        {updatingId === review.id ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                Guardando...
+                                            </>
+                                        ) : successId === review.id ? (
+                                            <>
+                                                <CheckCircle2 size={20} />
+                                                ¡Guardado!
+                                            </>
+                                        ) : (
+                                            <>
+                                                <CheckCircle2 size={20} />
+                                                Guardar Cambios
+                                            </>
+                                        )}
                                     </button>
                                 </div>
                             </div>

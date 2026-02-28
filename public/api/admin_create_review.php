@@ -8,7 +8,7 @@ checkAuth();
 try {
     // Insert a blank/draft review
     $query = "INSERT INTO reviews (nombre, tour_id, estrellas, aprobado, fecha) 
-              VALUES ('Nuevo Viajero', 'custom', 5, 0, NOW())";
+              VALUES ('', 'custom', 5, 1, NOW())";
     
     $stmt = $conn->prepare($query);
     
