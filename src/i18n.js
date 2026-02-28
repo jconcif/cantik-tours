@@ -220,7 +220,7 @@ i18n
                                 b1: {
                                     title: "Visa B1 - Turismo (1-60 días)",
                                     points: [
-                                        "Coste: 500.000 IDR (aprox. 30€) por cada 30 días.",
+                                        "Coste: 500.000 IDR (aprox. $35) por cada 30 días.",
                                         "Duración: 30 días, extensible una vez (máx 60).",
                                         "Trámite: Online (e-VoA) o al llegar (VoA).",
                                         "Requisito: Pasaporte (>6 meses) y pasaje de salida."
@@ -229,7 +229,7 @@ i18n
                                 c1: {
                                     title: "Visa C1 - Larga Estancia (180 días)",
                                     points: [
-                                        "Coste: 1.000.000 IDR (aprox. 60€) cada 60 días.",
+                                        "Coste: 1.000.000 IDR (aprox. $65) cada 60 días.",
                                         "Trámite: Solo Online (evisa.imigrasi.go.id).",
                                         "Requisito: Extracto bancario (>2000 USD)."
                                     ]
@@ -285,8 +285,8 @@ i18n
                                 ],
                                 budget_title: "Presupuesto de Referencia",
                                 budget: [
-                                    { concept: "Comida Warung", price: "3€ - 7€ pax" },
-                                    { concept: "Cerveza / Café", price: "2€ - 4€" }
+                                    { concept: "Comida Warung", price: "$3 - $8 pax" },
+                                    { concept: "Cerveza / Café", price: "$2 - $5" }
                                 ]
                             },
                             culture: {
@@ -762,7 +762,7 @@ i18n
                                 b1: {
                                     title: "Visa B1 - Tourism (30-60 days)",
                                     points: [
-                                        "Cost: 500,000 IDR (approx. 30€) per 30 days.",
+                                        "Cost: 500,000 IDR (approx. $35) per 30 days.",
                                         "Duration: 30 days, extendable once (max 60).",
                                         "Process: Online (e-VoA) or on arrival (VoA).",
                                         "Requirement: Passport (>6 months) and exit ticket."
@@ -771,7 +771,7 @@ i18n
                                 c1: {
                                     title: "Visa C1 - Long Stay (180 days)",
                                     points: [
-                                        "Cost: 1,000,000 IDR (approx. 60€) every 60 days.",
+                                        "Cost: 1,000,000 IDR (approx. $65) every 60 days.",
                                         "Process: Only Online (evisa.imigrasi.go.id).",
                                         "Requirement: Bank statement (>2000 USD)."
                                     ]
@@ -827,8 +827,8 @@ i18n
                                 ],
                                 budget_title: "Reference Budget",
                                 budget: [
-                                    { concept: "Warung Meal", price: "3€ - 7€ pax" },
-                                    { concept: "Beer / Coffee", price: "2€ - 4€" }
+                                    { concept: "Warung Meal", price: "$3 - $8 pax" },
+                                    { concept: "Beer / Coffee", price: "$2 - $5" }
                                 ]
                             },
                             culture: {
