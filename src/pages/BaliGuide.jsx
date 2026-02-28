@@ -64,9 +64,6 @@ const Section = ({ id, icon, number, title, children }) => (
         >
             {/* Section header */}
             <div className="flex items-center gap-4 mb-8">
-                <span className="text-xs font-black text-primary uppercase tracking-[0.3em] opacity-60">
-                    {number}
-                </span>
                 <div className="flex-1 h-px bg-black/10 dark:bg-white/10" />
             </div>
             <div className="flex items-start gap-4 mb-8">

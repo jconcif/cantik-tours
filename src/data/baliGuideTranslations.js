@@ -15,18 +15,20 @@ export const baliGuideTranslations = {
             { id: 'cultura', number: '06', title: 'Cultura', subtitle: 'Consejos de oro' },
         ],
         s1Label: "Los Preparativos: Antes de despegar",
-        s1Tag: "Visado e Ingreso · Actualizado 2026",
+        s1Tag: "visado e ingreso",
         visaB1Title: "Visa B1 — Turismo (1 a 60 días)",
         visaB1Points: [
             "Coste: 500.000 IDR (≈ {{PRICE_35}}) por cada 30 días.",
             "Permiso inicial de 30 días, extensible una vez (máx. 60 días).",
-            "Trámite: Online (e-VoA) o al llegar al aeropuerto.",
-            "Pasaporte con mínimo 6 meses de vigencia y una hoja en blanco."
+            "Trámite: Online (e-VoA) a través de la web oficial de inmigración evisa.imigrasi.go.id o Presencial al llegar al aeropuerto.",
+            "Pasaporte con mínimo 6 meses de vigencia y una hoja en blanco.",
+            "Requiere adjuntar pasaje de salida."
         ],
         visaC1Title: "Visa C1 — Larga Estancia (hasta 180 días)",
         visaC1Points: [
             "Coste: 1.000.000 IDR (≈ {{PRICE_65}}) cada 60 días.",
-            "Solo Online · tarda 5 a 10 días hábiles.",
+            "Trámite: Solo on line a través de la web oficial de inmigración evisa.imigrasi.go.id",
+            "Plazo: Tarda 5 a 10 días hábiles en ser aprobada.",
             "Requiere extracto bancario (últimos 3 meses) con saldo mín. 2.000 USD.",
             "Pasaporte con mínimo 6 meses de vigencia y una hoja en blanco.",
             "Web oficial: "
@@ -128,18 +130,20 @@ export const baliGuideTranslations = {
             { id: 'cultura', number: '06', title: 'Culture', subtitle: 'Golden tips' },
         ],
         s1Label: "Preparations: Before you take off",
-        s1Tag: "Visa & Entry · Updated 2026",
+        s1Tag: "visa & entry",
         visaB1Title: "Visa B1 — Tourism (1 to 60 days)",
         visaB1Points: [
             "Cost: 500,000 IDR (≈ {{PRICE_35}}) for every 30 days.",
             "Initial 30-day permit, extendable once (max. 60 days).",
-            "Process: Online (e-VoA) or upon arrival at the airport.",
-            "Passport with at least 6 months validity and a blank page."
+            "Process: Online (e-VoA) through the official immigration website evisa.imigrasi.go.id or in person upon arrival at the airport.",
+            "Passport with at least 6 months validity and a blank page.",
+            "Requires attaching an exit or return ticket."
         ],
         visaC1Title: "Visa C1 — Long Stay (up to 180 days)",
         visaC1Points: [
             "Cost: 1,000,000 IDR (≈ {{PRICE_65}}) every 60 days.",
-            "Online only · takes 5 to 10 business days.",
+            "Process: Only online through the official immigration website evisa.imigrasi.go.id",
+            "Processing time: Takes 5 to 10 business days to be approved.",
             "Requires bank statement (last 3 months) with min. balance $2,000 USD.",
             "Passport with at least 6 months validity and a blank page.",
             "Official website: "
