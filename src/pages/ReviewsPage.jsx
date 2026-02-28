@@ -185,7 +185,13 @@ const ReviewsPage = () => {
                                                     <h4 className="font-bold text-gray-900 dark:text-white text-lg">{rev.name}</h4>
                                                     <div className="flex items-center gap-2 mt-1">
                                                         {rev.country && (() => {
-                                                            const flags = { ar: '🇦🇷', cl: '🇨🇱', co: '🇨🇴', es: '🇪🇸', mx: '🇲🇽', pe: '🇵🇪', uy: '🇺🇾', us: '🇺🇸' };
+                                                            const flags = {
+                                                                de: '🇩🇪', ad: '🇦🇩', ar: '🇦🇷', au: '🇦🇺', be: '🇧🇪', bo: '🇧🇴',
+                                                                ca: '🇨🇦', cl: '🇨🇱', co: '🇨🇴', cr: '🇨🇷', ec: '🇪🇨', es: '🇪🇸',
+                                                                us: '🇺🇸', fr: '🇫🇷', gt: '🇬🇹', id: '🇮🇩', it: '🇮🇹', mx: '🇲🇽',
+                                                                nl: '🇳🇱', pa: '🇵🇦', py: '🇵🇾', pe: '🇵🇪', pt: '🇵🇹', gb: '🇬🇧',
+                                                                do: '🇩🇴', ch: '🇨🇭', th: '🇹🇭', uy: '🇺🇾', venezuela: '🇻🇪'
+                                                            };
                                                             const flag = flags[rev.country] || '🌐';
                                                             const countryName = t(`reviews_page.form.countries.${rev.country}`);
                                                             return <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{flag} {countryName}</span>;

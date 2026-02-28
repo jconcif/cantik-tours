@@ -65,6 +65,7 @@ function checkAuth() {
     }
 
     if (empty($auth) || $auth !== $access_token) { 
+        sleep(1); // Basic rate limiting / delay
         http_response_code(401);
         echo json_encode(["status" => "error", "message" => "Acceso no autorizado"]);
         exit();

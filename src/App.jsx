@@ -18,8 +18,10 @@ import TourDetail from './pages/TourDetail';
 const BaliGuide = lazy(() => import('./pages/BaliGuide'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ReviewsPage = lazy(() => import('./pages/ReviewsPage'));
-const AdminReviews = lazy(() => import('./pages/AdminReviews'));
 const Policies = lazy(() => import('./pages/Policies'));
+
+// Admin (Direct import for reliability)
+import AdminReviews from './pages/AdminReviews';
 
 
 // Minimal loading component to avoid layout shifts
