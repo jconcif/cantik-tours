@@ -18,21 +18,21 @@ export const baliGuideTranslations = {
         s1Tag: "Visado e Ingreso · Actualizado 2026",
         visaB1Title: "Visa B1 — Turismo (1 a 60 días)",
         visaB1Points: [
-            "Coste: 500.000 IDR (≈ $35) por cada 30 días.",
+            "Coste: 500.000 IDR (≈ {{PRICE_35}}) por cada 30 días.",
             "Permiso inicial de 30 días, extensible una vez (máx. 60 días).",
             "Trámite: Online (e-VoA) o al llegar al aeropuerto.",
             "Pasaporte con mínimo 6 meses de vigencia y una hoja en blanco."
         ],
         visaC1Title: "Visa C1 — Larga Estancia (hasta 180 días)",
         visaC1Points: [
-            "Coste: 1.000.000 IDR (≈ $65) cada 60 días.",
+            "Coste: 1.000.000 IDR (≈ {{PRICE_65}}) cada 60 días.",
             "Solo Online · tarda 5 a 10 días hábiles.",
             "Requiere extracto bancario (últimos 3 meses) con saldo mín. 2.000 USD.",
             "Pasaporte con mínimo 6 meses de vigencia y una hoja en blanco.",
             "Web oficial: "
         ],
         ecdTitle: "🎟️ Tasas y Aduanas — Obligatorio",
-        ecdP1: "Tasa Turística de Bali: 150.000 IDR (≈ 9€). Págala antes en Love Bali para evitar filas.",
+        ecdP1: "Tasa Turística de Bali: 150.000 IDR (≈ {{PRICE_10}}). Págala antes en Love Bali para evitar filas.",
         ecdP2: "Declaración de Aduanas (ECD): Rellena el formulario online en las 48 horas previas a tu vuelo. Obtendrás un código QR que deberás mostrar al salir del aeropuerto.",
         ecdTip: "💡 Tip: Ten los QR listos en el móvil al aterrizar para ir directo sin colas.",
 
@@ -75,7 +75,7 @@ export const baliGuideTranslations = {
         exchangeTitle: "💱 Cambio de Efectivo",
         exchangeDesc: "Tus billetes deben estar impecables. Cambia solo en sitios oficiales (BMC). Evita locales con tasas sospechosamente altas.",
         budgetTitle: "🍜 Presupuesto de Referencia",
-        budgetText: "Nasi Goreng (almuerzo): $3–$8\nCerveza Bintang / café: $2–$5",
+        budgetText: "Nasi Goreng (almuerzo): {{PRICE_3}}–{{PRICE_8}}\nCerveza Bintang / café: {{PRICE_2}}–{{PRICE_5}}",
 
         s6Label: "Cultura y Consejos de Oro",
         foodTitle: "Gastronomía que debes probar",
@@ -131,21 +131,21 @@ export const baliGuideTranslations = {
         s1Tag: "Visa & Entry · Updated 2026",
         visaB1Title: "Visa B1 — Tourism (1 to 60 days)",
         visaB1Points: [
-            "Cost: 500,000 IDR (≈ $35) for every 30 days.",
+            "Cost: 500,000 IDR (≈ {{PRICE_35}}) for every 30 days.",
             "Initial 30-day permit, extendable once (max. 60 days).",
             "Process: Online (e-VoA) or upon arrival at the airport.",
             "Passport with at least 6 months validity and a blank page."
         ],
         visaC1Title: "Visa C1 — Long Stay (up to 180 days)",
         visaC1Points: [
-            "Cost: 1,000,000 IDR (≈ $65) every 60 days.",
+            "Cost: 1,000,000 IDR (≈ {{PRICE_65}}) every 60 days.",
             "Online only · takes 5 to 10 business days.",
             "Requires bank statement (last 3 months) with min. balance $2,000 USD.",
             "Passport with at least 6 months validity and a blank page.",
             "Official website: "
         ],
         ecdTitle: "🎟️ Fees & Customs — Mandatory",
-        ecdP1: "Bali Tourist Levy: 150,000 IDR (≈ $10). Pay in advance via Love Bali to avoid queues.",
+        ecdP1: "Bali Tourist Levy: 150,000 IDR (≈ {{PRICE_10}}). Pay in advance via Love Bali to avoid queues.",
         ecdP2: "Electronic Customs Declaration (e-CD): Fill out the online form within 48 hours before your flight. You'll get a QR code to show upon leaving the airport.",
         ecdTip: "💡 Tip: Have your QR codes ready on your phone when you land to go straight through without waiting.",
 
@@ -188,7 +188,7 @@ export const baliGuideTranslations = {
         exchangeTitle: "💱 Money Exchange",
         exchangeDesc: "Your bills must be pristine. Exchange only at official places (BMC). Avoid places providing suspiciously high rates.",
         budgetTitle: "🍜 Reference Budget",
-        budgetText: "Nasi Goreng (lunch): $3–$8\nBintang Beer / coffee: $2–$5",
+        budgetText: "Nasi Goreng (lunch): {{PRICE_3}}–{{PRICE_8}}\nBintang Beer / coffee: {{PRICE_2}}–{{PRICE_5}}",
 
         s6Label: "Culture & Golden Tips",
         foodTitle: "Must-try Gastronomy",

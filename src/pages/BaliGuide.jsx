@@ -1,3 +1,5 @@
+import SEO from "../components/SEO";
+
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -18,7 +20,7 @@ import {
     Star,
     MessageCircle
 } from 'lucide-react';
-import SEO from '../components/SEO';
+import { useCurrency } from '../context/CurrencyContext';
 import { baliGuideTranslations } from '../data/baliGuideTranslations';
 
 const getIcon = (id) => {
@@ -103,9 +105,26 @@ const Bullet = ({ children }) => (
     </li>
 );
 
+/* ─── Helper to parse prices dynamically ────────────────────────── */
+const renderWithPrices = (text, formatPrice) => {
+    if (!text || typeof text !== 'string') return text;
+    // Regex for {{PRICE_XX}}
+    const parts = text.split(/(\{\{PRICE_\d+\}\})/g);
+    return parts.map((part, index) => {
+        const match = part.match(/\{\{PRICE_(\d+)\}\}/);
+        if (match) {
+            const price = parseInt(match[1], 10);
+            const formatted = formatPrice(price);
+            return <strong key={index}>{formatted.symbol}{formatted.amount}</strong>;
+        }
+        return part;
+    });
+};
+
 /* ─── Main component ────────────────────────────────────────────── */
 const BaliGuide = () => {
     const { i18n } = useTranslation();
+    const { formatPrice } = useCurrency();
     const lang = i18n.language && i18n.language.startsWith('en') ? 'en' : 'es';
     const c = baliGuideTranslations[lang];
 
@@ -173,7 +192,7 @@ const BaliGuide = () => {
                     <div className="grid md:grid-cols-2 gap-6 mb-6">
                         <InfoCard label={c.visaB1Title}>
                             <ul className="grid gap-2">
-                                {c.visaB1Points.map((pt, i) => <Bullet key={i}>{pt}</Bullet>)}
+                                {c.visaB1Points.map((pt, i) => <Bullet key={i}>{renderWithPrices(pt, formatPrice)}</Bullet>)}
                             </ul>
                         </InfoCard>
 
@@ -188,7 +207,7 @@ const BaliGuide = () => {
                                                     evisa.imigrasi.go.id
                                                 </a>
                                             </>
-                                        ) : pt}
+                                        ) : renderWithPrices(pt, formatPrice)}
                                     </Bullet>
                                 ))}
                             </ul>
@@ -198,7 +217,7 @@ const BaliGuide = () => {
                     <InfoCard label={c.ecdTitle} accent>
                         <ul className="grid gap-3">
                             <Bullet>
-                                {c.ecdP1.split('Love Bali')[0]}
+                                {renderWithPrices(c.ecdP1.split('Love Bali')[0], formatPrice)}
                                 <a href="https://lovebali.baliprov.go.id/" target="_blank" rel="noreferrer" className="text-primary underline underline-offset-2">
                                     Love Bali
                                 </a>
@@ -310,7 +329,7 @@ const BaliGuide = () => {
                             </InfoCard>
                             <InfoCard label={c.budgetTitle}>
                                 <p className="text-base text-gray-600 dark:text-gray-400 font-medium leading-relaxed whitespace-pre-line">
-                                    {c.budgetText}
+                                    {renderWithPrices(c.budgetText, formatPrice)}
                                 </p>
                             </InfoCard>
                         </div>
