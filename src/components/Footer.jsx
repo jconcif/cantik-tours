@@ -65,16 +65,20 @@ const Footer = () => {
                 </motion.div>
             </motion.div>
 
-            <div className="max-w-7xl mx-auto border-t border-black/5 dark:border-white/5 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm font-medium text-gray-400">
-                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8">
+            <div className="max-w-7xl mx-auto border-t border-black/5 dark:border-white/5 mt-16 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-sm font-medium text-gray-400">
+                <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-center md:text-left">
                     <p>© {currentYear} Cantik Tours. {t('footer.rights')}</p>
-                    <span className="px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                    <span className="hidden md:inline-flex px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400">
                         v{version}
                     </span>
                 </div>
                 <p className="flex items-center gap-2">
                     {t('footer.made_with')} <Heart size={14} className="text-red-500 fill-red-500" /> {t('footer.in_bali')}
                 </p>
+                {/* Mobile version indicator at the very bottom */}
+                <span className="md:hidden px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                    v{version}
+                </span>
             </div>
         </footer>
     );
