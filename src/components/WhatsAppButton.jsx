@@ -21,8 +21,14 @@ const WhatsAppButton = () => {
         return () => window.removeEventListener('scroll', toggleVisibility);
     }, []);
 
-    const currentPage = window.location.href;
-    const whatsappMessage = encodeURIComponent(`${t('common.whatsapp_message')} (Visto en: ${currentPage})`);
+    const location = window.location.pathname;
+    const isVisaPage = location.includes('/visados');
+
+    const baseMessage = isVisaPage
+        ? t('visa_page.whatsapp_message')
+        : t('common.whatsapp_message');
+
+    const whatsappMessage = encodeURIComponent(baseMessage);
     const whatsappLink = `https://wa.me/376614535?text=${whatsappMessage}`;
 
     return (

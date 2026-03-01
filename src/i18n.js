@@ -493,7 +493,7 @@ i18n
                             comment_placeholder: "Comparte qué fue lo que más te gustó...",
                             ig_user: "Usuario de Instagram (Opcional)",
                             ig_placeholder: "@tuusuario",
-                            auth: "Me encantaría formar parte de la Familia Cantik en Instagram y autorizo compartir mi experiencia en sus redes sociales.",
+                            auth: "¡Quiero ser parte de la Familia Cantik! Autorizo el uso de mi reseña, fotos y videos para sus redes sociales y promoción de futuras experiencias.",
                             implicit_consent: "Al enviar mi reseña, acepto su publicación en la web de Cantik Tours y la política de privacidad.",
                             submit: "Enviar Reseña",
                             success_title: "¡Gracias por tu reseña!",
@@ -602,7 +602,7 @@ i18n
                             },
                             reason3: {
                                 title: "Cero Estrés de Pago",
-                                text: "El cliente nos paga el total por Wise/Transferencia y nosotros realizamos el pago oficial, evitando el común rechazo de tarjetas extranjeras."
+                                text: "Realizamos el pago de la visa con una tarjeta local, evitando el común rechazo de tarjetas extranjeras."
                             }
                         },
                         security: {
@@ -618,17 +618,17 @@ i18n
                             },
                             item3: {
                                 title: "Responsabilidad Compartida",
-                                text: "Como asistencia técnica, validamos juntos los datos. Tú tienes la última palabra antes del envío final y la aprobación depende del gobierno indonesio."
+                                text: "Validamos juntos los datos. Tú tienes la última palabra antes del envío final y la aprobación depende del gobierno indonesio."
                             }
                         },
                         times: {
                             title: "Tiempos y Entrega",
                             b1: {
-                                title: "Visa B1 (Turismo)",
+                                title: "Visa B1 (Turismo General)",
                                 text: "Suele llegar casi al instante a tu correo electrónico tras el pago."
                             },
                             c1: {
-                                title: "Visa C1",
+                                title: "Visa C1 (Turismo Larga Estancia)",
                                 text: "El tiempo estimado de respuesta de Inmigración es de 5 a 10 días hábiles."
                             },
                             completion: "Nuestro servicio de asesoría concluye una vez realizado el pago de la tasa oficial en la plataforma."
@@ -640,8 +640,12 @@ i18n
                             disclaimer: "El importe total se abona por adelantado (vía Wise o Transferencia) para la reserva de la cita técnica.",
                             btn: "Agendar por WhatsApp"
                         },
-                        whatsapp_message: "Hola Cantik Tours! Me gustaría agendar una cita para la asesoría de visados Indonesia.",
+                        whatsapp_message: "Hola Cantik Tours! Tengo dudas sobre los visados, ¿me podéis ayudar?",
                         it_support: "¡Oferta Exclusiva! Si reservas un tour con nosotros posteriormente, te aplicaremos un descuento especial en tu reserva.",
+                        commitment: {
+                            title: "Compromiso Cantik",
+                            text: "Tratamos tus datos con total seguridad y confidencialidad. Nuestra reputación se basa en la confianza y el servicio personalizado."
+                        },
                         checklist: {
                             title: "Requisitos Previos",
                             subtitle: "Reúne estos documentos en formato digital (foto o PDF) antes de nuestra videollamada.",
@@ -1051,7 +1055,7 @@ i18n
                         location: "Ubud, Bali • Indonesia",
                         social: "Social",
                         rights: "All rights reserved.",
-                        trust_1: "Secure Payment on Arrival",
+                        trust_1: "Secure Payment",
                         trust_2: "Verified Local Guides",
                         trust_3: "Personalized Support",
                         made_with: "Made with",
@@ -1151,7 +1155,7 @@ i18n
                             comment_placeholder: "Share what you liked the most...",
                             ig_user: "Instagram User (Optional)",
                             ig_placeholder: "@youruser",
-                            auth: "I'd love to be part of the Cantik Family in Instagram and I authorize sharing my experience on your social media.",
+                            auth: "I want to be part of the Cantik Family! I authorize the use of my review, photos, and videos for your social media and promotion of future experiences.",
                             implicit_consent: "By submitting my review, I accept its publication on the Cantik Tours website and the privacy policy.",
                             submit: "Send Review",
                             success_title: "Thank you for your review!",
@@ -1260,7 +1264,7 @@ i18n
                             },
                             reason3: {
                                 title: "Zero Payment Stress",
-                                text: "You pay us the total via Wise/Transfer and we make the official payment, avoiding common foreign card rejections."
+                                text: "We pay for the visa using a local card, avoiding common foreign card rejections."
                             }
                         },
                         security: {
@@ -1276,17 +1280,17 @@ i18n
                             },
                             item3: {
                                 title: "Shared Responsibility",
-                                text: "As technical assistance, we validate data together. You have the final word before submission, and approval depends on the Indonesian government."
+                                text: "We validate data together. You have the final word before submission, and approval depends on the Indonesian government."
                             }
                         },
                         times: {
                             title: "Times and Delivery",
                             b1: {
-                                title: "Visa B1 (Tourism)",
+                                title: "Visa B1 (General Tourism)",
                                 text: "It usually arrives almost instantly to your email after payment."
                             },
                             c1: {
-                                title: "Visa C1",
+                                title: "Visa C1 (Extended Stay Tourism)",
                                 text: "The estimated response time from Immigration is 5 to 10 business days."
                             },
                             completion: "Our advisory service concludes once the official government fee has been paid on the platform."
@@ -1298,8 +1302,12 @@ i18n
                             disclaimer: "The total amount is paid in advance (via Wise or Transfer) to reserve the technical appointment.",
                             btn: "Schedule via WhatsApp"
                         },
-                        whatsapp_message: "Hi Cantik Tours! I would like to schedule an appointment for Indonesia visa assistance.",
+                        whatsapp_message: "Hi Cantik Tours! I have questions about the visas, can you help me?",
                         it_support: "Exclusive Offer! If you later book a tour with us, we will apply a special discount to your reservation.",
+                        commitment: {
+                            title: "Cantik Commitment",
+                            text: "We handle your data with full security and confidentiality. Our reputation is built on trust and personalised service."
+                        },
                         checklist: {
                             title: "Prerequisites",
                             subtitle: "Gather these documents in digital format (photo or PDF) before our video call.",

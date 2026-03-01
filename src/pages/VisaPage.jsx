@@ -331,9 +331,9 @@ const VisaPage = () => {
                             <ShieldCheck size={28} />
                         </div>
                         <div className="text-center sm:text-left">
-                            <h3 className="text-lg font-black mb-1.5">Compromiso Cantik</h3>
+                            <h3 className="text-lg font-black mb-1.5">{t('visa_page.commitment.title')}</h3>
                             <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 font-medium leading-relaxed italic">
-                                "Tratamos tus datos con total seguridad y confidencialidad. Nuestra reputación se basa en la confianza y el servicio personalizado."
+                                "{t('visa_page.commitment.text')}"
                             </p>
                         </div>
                     </motion.div>
