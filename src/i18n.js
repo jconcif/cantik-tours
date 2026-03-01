@@ -204,7 +204,8 @@ i18n
                     },
                     guide: {
                         badge: "Bali Guide 2026",
-                        title: "🌴 Guía Bali 2026: Imprescindible para tu viaje",
+                        title: "Guía Bali",
+                        title_accent: "2026",
                         subtitle: "Todo lo que necesitas saber antes de aterrizar en la \"Isla de los Dioses\".",
                         chapters: {
                             c1: { title: "Los Preparativos", subtitle: "Antes de despegar" },
@@ -866,7 +867,8 @@ i18n
                     },
                     guide: {
                         badge: "Bali Guide 2026",
-                        title: "🌴 Bali Guide 2026: Essential for your trip",
+                        title: "Bali Guide",
+                        title_accent: "2026",
                         subtitle: "Everything you need to know before landing in the \"Island of the Gods\".",
                         chapters: {
                             c1: { title: "Preparations", subtitle: "Before taking off" },

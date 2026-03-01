@@ -145,35 +145,39 @@ const TourList = () => {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="mt-32 relative group"
             >
-                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                {/* Decorative glows */}
+                <div className="absolute -top-24 -left-24 w-72 h-72 bg-primary/20 rounded-full blur-[100px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+                <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-secondary/20 rounded-full blur-[100px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
 
-                <div className="bg-bg-light dark:bg-surface-dark rounded-[3rem] overflow-hidden flex flex-col md:flex-row items-center border border-black/5 dark:border-white/5 shadow-xl">
+                <div className="bg-white dark:bg-surface-dark rounded-[3rem] overflow-hidden flex flex-col md:flex-row items-center border border-black/5 dark:border-white/5 shadow-2xl transition-all duration-500 hover:shadow-primary/10">
                     <div className="flex-1 p-10 md:p-16 text-center md:text-left">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 text-secondary-dark font-black text-[10px] uppercase tracking-widest mb-6 border border-secondary/20">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-black text-[10px] uppercase tracking-widest mb-6 border border-primary/20">
                             <BookOpen size={14} /> {t('guide.badge')}
                         </div>
-                        <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight tracking-tight">
-                            {t('guide.title')} <span className="text-primary italic">{t('guide.title_accent')}</span>
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 leading-tight tracking-tight">
+                            <span className="text-gradient inline-block mr-2">{t('guide.title')}</span>
+                            <span className="italic">{t('guide.title_accent')}</span>
                         </h2>
-                        <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl font-medium mb-10 max-w-xl">
+                        <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl font-medium mb-10 max-w-xl leading-relaxed">
                             {t('guide.subtitle')}
                         </p>
                         <Link
                             to="/guia-bali"
-                            className="btn-primary inline-flex items-center gap-2 group/btn"
+                            className="btn-primary inline-flex items-center gap-3 px-10 py-5 text-lg group/btn shadow-xl"
                         >
                             {t('nav.view_guide')}
-                            <ArrowRight size={20} className="group-hover/btn:translate-x-1 transition-transform" />
+                            <ArrowRight size={22} className="group-hover/btn:translate-x-1 transition-transform" />
                         </Link>
                     </div>
 
                     <div className="md:w-2/5 w-full aspect-[4/3] md:aspect-auto self-stretch relative overflow-hidden">
                         <img
-                            src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80"
+                            src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=80"
                             alt="Guía Bali 2026"
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-110"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-bg-light dark:from-surface-dark via-transparent to-transparent md:bg-gradient-to-r" />
+                        {/* More subtle gradient overlays */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-surface-dark via-transparent to-transparent md:bg-gradient-to-r md:w-32" />
                     </div>
                 </div>
             </motion.div>
