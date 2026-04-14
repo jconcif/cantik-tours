@@ -352,7 +352,7 @@ i18n
                         cta_emotional_btn: "Hablemos por WhatsApp",
 
                         impact_title: "Tu viaje impacta",
-                        impact_desc: "Cada reserva financia sin comisiones abusivas a los conductores y sus familias, gracias a un pago justo y sin demoras.",
+                        impact_desc: "Cada reserva financia a los conductores y sus familias, gracias a un pago justo y sin demoras.",
 
                         team_intro_title: "El Equipo",
                         team_intro_text: "Sin prisas, con seguridad y en tu idioma.",
@@ -1015,7 +1015,7 @@ i18n
                         cta_emotional_btn: "Let's talk on WhatsApp",
 
                         impact_title: "Your trip creates impact",
-                        impact_desc: "Every booking funds our drivers directly, avoiding unfair agency fees, through prompt, fair payments.",
+                        impact_desc: "Every booking funds our drivers and their families directly, through prompt and fair payments.",
 
                         team_intro_title: "The Team",
                         team_intro_text: "No rush, safely, and in your language.",
