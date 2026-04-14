@@ -125,30 +125,7 @@ const AboutPage = () => {
                         </div>
                     </div>
 
-                    {/* Javi */}
-                    <div className="flex flex-col lg:flex-row-reverse gap-10 md:gap-16 items-center">
-                        <div className="flex-1 w-full max-w-md">
-                            <motion.div
-                                initial={{ opacity: 0, x: 20 }}
-                                whileInView={{ opacity: 1, x: 0 }}
-                                viewport={{ once: true }}
-                                className="rounded-[2.5rem] overflow-hidden shadow-2xl"
-                            >
-                                <img
-                                    src="/images/team/javier-cofounder.webp"
-                                    alt="Javi"
-                                    className="w-full aspect-[4/5] object-cover hover:scale-105 transition-transform duration-700"
-                                />
-                            </motion.div>
-                        </div>
-                        <div className="flex-1 lg:text-right">
-                            <h3 className="text-3xl md:text-4xl font-black text-primary mb-2">Javi</h3>
-                            <p className="text-xs md:text-sm font-bold text-gray-400 uppercase tracking-[0.3em] mb-8">({t('about.javi_role') || 'Logística & Enlace'})</p>
-                            <div className="text-lg md:text-xl text-gray-600 dark:text-gray-400 font-medium leading-relaxed border-l-4 lg:border-l-0 lg:border-r-4 border-primary/20 pl-8 lg:pl-0 lg:pr-8">
-                                {t('about.javi_text')}
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </section>
 
