@@ -3,13 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../context/CurrencyContext';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { getDateStatus, isDateDisabled } from '../data/availability';
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
     const { t, i18n } = useTranslation();
     const { formatPrice } = useCurrency();
     const [showCoupon, setShowCoupon] = useState(false);
     const [formData, setFormData] = useState({
-        date: '',
+        date: null,
         pax: '2',
         hotel: '',
         coupon: '',
@@ -53,7 +56,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
 Me gustaría reservar este tour, por favor:
 
 🛕 ${t('detail.msg_tour')}: ${tourTitle}
-📅 ${t('detail.msg_date')}: ${formData.date}
+📅 ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
 👥 ${t('detail.msg_pax')}: ${paxLabel}
 🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
 ✨ Experiencia: ${expName}
@@ -117,14 +120,20 @@ Me gustaría reservar este tour, por favor:
                                     <Calendar size={14} className="text-primary" />
                                     {t('detail.booking_date')}
                                 </label>
-                                <input
+                                <DatePicker
                                     id="booking-date"
-                                    type="date"
+                                    selected={formData.date}
+                                    onChange={(date) => setFormData({ ...formData, date })}
+                                    minDate={new Date()}
+                                    filterDate={(date) => !isDateDisabled(date)}
+                                    dayClassName={(date) => {
+                                        const status = getDateStatus(date);
+                                        return status === 'yellow' ? 'custom-day-yellow' : (status === 'red' ? 'custom-day-red' : 'custom-day-green');
+                                    }}
+                                    dateFormat="dd/MM/yyyy"
                                     required
-                                    min={new Date().toISOString().split('T')[0]}
-                                    value={formData.date}
-                                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                    className={`${inputClasses} appearance-none block w-full relative`}
+                                    className={`${inputClasses} appearance-none block w-[100%] relative`}
+                                    wrapperClassName="w-full"
                                 />
                             </div>
 
