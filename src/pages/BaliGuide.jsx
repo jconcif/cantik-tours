@@ -134,7 +134,7 @@ const BaliGuide = () => {
 
     useEffect(() => { window.scrollTo(0, 0); }, []);
 
-    const whatsappLink = `https://wa.me/376614535?text=${encodeURIComponent(c.wspText)}`;
+    const whatsappLink = `https://wa.me/34642517787?text=${encodeURIComponent(c.wspText)}`;
 
     return (
         <div className="min-h-screen bg-bg-light dark:bg-bg-dark font-sans">

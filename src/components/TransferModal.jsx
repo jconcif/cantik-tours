@@ -32,7 +32,7 @@ const TransferModal = ({ isOpen, onClose }) => {
 ${t('detail.msg_confirm')}`;
 
         const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/376614535?text=${encodedMessage}`;
+        const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
 
         window.open(whatsappUrl, '_blank');
         onClose();

@@ -1,6 +1,9 @@
 import ReactGA from "react-ga4";
 
-const GA_MEASUREMENT_ID = "G-HSVS7RPZP7";
+const MEASUREMENT_IDS = [
+    { trackingId: "G-HSVS7RPZP7" },
+    { trackingId: "GT-KD23Q4X9" }
+];
 
 /**
  * Initializes Google Analytics 4
@@ -12,8 +15,8 @@ export const initGA = () => {
         window.location.hostname === "127.0.0.1";
 
     if (!isLocalhost) {
-        ReactGA.initialize(GA_MEASUREMENT_ID);
-        console.log("GA4 Initialized");
+        ReactGA.initialize(MEASUREMENT_IDS);
+        console.log("GA4 & Google Tag Initialized");
     } else {
         console.log("GA4 Skipped (Localhost)");
     }

@@ -24,16 +24,18 @@ const TourCard = ({ tour, index }) => {
             className="glass-card motion-safe overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
         >
             <div className="relative h-72 overflow-hidden">
-                <img
-                    src={tour.image}
-                    alt={`${l('title')} - ${l('description')}`}
-                    width="800"
-                    height="600"
-                    loading={index > 2 ? "lazy" : "eager"}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
-                />
+                <Link to={`/tour/${tour.id}`} className="block w-full h-full">
+                    <img
+                        src={tour.image}
+                        alt={`${l('title')} - ${l('description')}`}
+                        width="800"
+                        height="600"
+                        loading={index > 2 ? "lazy" : "eager"}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                    />
+                </Link>
 
-                <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-1 shadow-lg">
+                <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-1 shadow-lg pointer-events-none">
                     <Star size={12} className="text-accent fill-accent" />
                     <span>4.9</span>
                 </div>
@@ -45,7 +47,9 @@ const TourCard = ({ tour, index }) => {
             </div>
 
             <div className="p-8 flex-grow flex flex-col">
-                <h3 className="text-2xl font-black mb-3 group-hover:text-primary-dark transition-colors leading-tight">{l('title')}</h3>
+                <Link to={`/tour/${tour.id}`} className="group/title">
+                    <h3 className="text-2xl font-black mb-3 group-hover/title:text-primary transition-colors leading-tight">{l('title')}</h3>
+                </Link>
                 <p className="text-gray-600 dark:text-gray-400 mb-8 line-clamp-3 text-sm leading-relaxed">
                     {l('description')}
                 </p>

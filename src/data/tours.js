@@ -9,7 +9,7 @@ export const tours = [
         heroSubtitle_en: "A full day discovering the spiritual heart of Bali, at your own pace and without rush.",
         fullDescription: "Sumérgete en el corazón espiritual de Bali. Este tour está diseñado para quienes buscan autenticidad, combinando templos históricos, cascadas escondidas y la belleza inigualable de Tegalalang Rice Terrace. Desde rituales de purificación tradicional hasta el relax en los mejores restaurantes con vistas a los arrozales, vive la experiencia completa de los alrededores de Ubud en un solo dia.",
         fullDescription_en: "Immerse yourself in Bali's spiritual heart. This tour is designed for those seeking authenticity, combining historic temples, hidden waterfalls, and the unparalleled beauty of Tegalalang Rice Terrace. From traditional purification rituals to relaxing in the best restaurants with views of the rice fields, live the complete experience of the surroundings of Ubud in a single day.",
-        price: 55,
+        price: 59,
         duration: "8-10 horas",
         duration_en: "8-10 hours",
         image: "/images/tours/ubud-central/ubud-central-columpio.webp",
@@ -142,7 +142,7 @@ export const tours = [
         heroSubtitle_en: "Explore the lush north: temples over water and infinite rice terraces.",
         fullDescription: "Descubre la exuberante naturaleza del norte de Ubud. Visitaremos el templo Ulun Danu Beratan sobre el lago, la impresionante cascada Nungnung o Leke Leke, y caminaremos por los campos de arroz infinitos de Jatiluwih.",
         fullDescription_en: "Discover the lush nature of north Ubud. We will visit the Ulun Danu Beratan temple on the lake, the impressive Nungnung or Leke Leke waterfall, and walk through the endless rice fields of Jatiluwih.",
-        price: 65,
+        price: 69,
         duration: "10-12 horas",
         duration_en: "10-12 hours",
         image: "/images/tours/ubud-norte/leke-leke.webp",
@@ -271,7 +271,7 @@ export const tours = [
         heroSubtitle_en: "A magical adventure at sunrise connecting with marine life and the northern jungle.",
         fullDescription: "La aventura definitiva para los madrugadores. Empezaremos viendo delfines en su hábitat natural en Lovina, seguiremos con las cascadas de Banyumala, y visitaremos los lagos gemelos y el templo de Ulun Danu.",
         fullDescription_en: "The ultimate adventure for early birds. We start seeing dolphins in their natural habitat in Lovina, followed by Banyumala waterfalls, and visiting twin lakes and Ulun Danu temple.",
-        price: 70,
+        price: 89,
         duration: "15 horas",
         duration_en: "15 hours",
         image: "/images/tours/lovina-dolphins/lovina-sunrise.webp",
@@ -391,7 +391,7 @@ export const tours = [
         heroSubtitle_en: "Travel to Bali's past visiting the Mother Temple and traditional villages frozen in time.",
         fullDescription: "Una inmersión profunda en la historia de Bali. Visitaremos Besakih, situado en la ladera del volcán Agung, el palacio acuático Tirta Gangga y la aldea tradicional Penglipuran, famosa por su arquitectura intacta.",
         fullDescription_en: "A deep dive into Bali's history. We will visit Besakih, located on the slopes of Mount Agung, the Tirta Gangga water palace and the traditional village of Penglipuran, famous for its untouched architecture.",
-        price: 65,
+        price: 69,
         duration: "10-12 horas",
         duration_en: "10-12 hours",
         image: "/images/tours/east-bali-besakih/besakih.webp",
@@ -493,7 +493,7 @@ export const tours = [
         heroSubtitle_en: "Capture Bali's viral essence and relax on virgin eastern beaches.",
         fullDescription: "Prepárate para las vistas más espectaculares. Madrugaremos para llegar a las famosas Puertas del Cielo en Lempuyang, seguidas de la belleza real de Tirta Gangga y finalizar en una de las mejores playas de Bali.",
         fullDescription_en: "Get ready for the most spectacular views. We will start early to reach the famous Gates of Heaven at Lempuyang, followed by the royal beauty of Tirta Gangga and ending at one of Bali's best beaches.",
-        price: 65,
+        price: 79,
         duration: "10-12 horas",
         duration_en: "10-12 hours",
         image: "/images/tours/lempuyang-gates/lempuyang-temple.webp",
@@ -596,6 +596,243 @@ export const tours = [
         ]
     },
 
+    {
+        id: 'beji-griya-tanah-lot',
+        title: "Bali Místico: Purificación, Monos y Atardecer",
+        title_en: "Mystic Bali: Purification, Monkeys & Sunset",
+        description: "Vive una purificación espiritual intensa, el bosque Sangeh y el atardecer en Tanah Lot.",
+        description_en: "Experience intense spiritual purification, explore Sangeh forest and marvel at Tanah Lot.",
+        heroSubtitle: "Desde el ritual de agua en Beji Griya hasta la espectacular danza de fuego frente al océano.",
+        heroSubtitle_en: "From the water ritual in Beji Griya to the spectacular fire dance facing the ocean.",
+        fullDescription: "Prepárate para una inmersión cultural profunda. Empezaremos el día con un viaje interior realizando el ritual de purificación (Melukat) en la cascada y zona de esculturas escondidas de Beji Griya. Continuaremos paseando entre inmensos árboles de Nuez moscada en Sangeh, admiraremos la arquitectura del templo real de Taman Ayun y terminaremos con uno de los momentos más épicos de Bali: el atardecer en Tanah Lot, donde el templo parece flotar sobre el mar, coronado con el espectacular baile Kecak del fuego.",
+        fullDescription_en: "Get ready for a deep cultural immersion. We will start the day with an inner journey performing the purification ritual (Melukat) at the hidden Beji Griya waterfall. We will continue walking among immense nutmeg trees in Sangeh, admire the royal temple of Taman Ayun and finish with sunset at Tanah Lot, crowned with the spectacular Kecak fire dance.",
+        price: 69,
+        duration: "11-12 horas",
+        duration_en: "11-12 hours",
+        image: "/images/tours/tanah-lot/tanah-lot-sunset.webp",
+        images: [
+            "/images/tours/tanah-lot/tanah-lot-sunset.webp",
+            "/images/tours/tanah-lot/beji-griya.webp",
+            "/images/tours/tanah-lot/sangeh-monkey.webp",
+            "/images/tours/tanah-lot/kecak-dance.webp"
+        ],
+        badge: "Viaje Místico",
+        badge_en: "Mystical Journey",
+        category: ['cultura', 'fotografia'],
+        mapUrl: "https://maps.google.com/maps?q=Tanah%20Lot%20Temple&t=&z=11&ie=UTF8&iwloc=&output=embed",
+        packingList: ['swimwear', 'money', 'camera', 'sunscreen'],
+        importantInfo: [
+            "Para la purificación (Melukat), trae toalla y ropa interior/bañador. La cascada mojará toda tu ropa exterior (te facilitan un sarong para el agua).",
+            "Taman Ayun es un recinto real; no ingresarás a los pabellones internos, la visita es por sus hermosos jardines exteriores.",
+            "La danza Kecak tiene plazas limitadas, por lo que cumpliremos el horario con cierta puntualidad para asegurar vuestro asiento frente al atardecer."
+        ],
+        importantInfo_en: [
+            "For the purification (Melukat), bring a towel and swimwear. You will receive a water sarong.",
+            "Taman Ayun is a royal precinct; the innermost sanctum is not accessible.",
+            "The Kecak dance has limited seats, so the day's pace must be kept to guarantee good spots."
+        ],
+        itinerary: [
+            {
+                type: 'pickup',
+                duration: "08:00",
+                activity: "Recogida tranquila",
+                activity_en: "Relaxed pickup",
+                desc: "Te pasamos a buscar al hotel para ir en dirección suroeste sin prisas.",
+                desc_en: "We pick you up at your hotel to head southwest without rushing."
+            },
+            {
+                type: 'visit',
+                duration: "2.5 horas",
+                duration_en: "2.5 hours",
+                activity: "Purificación en Beji Griya",
+                activity_en: "Purification at Beji Griya",
+                desc: "Un ritual (Melukat) con gran poder emocional en un cañón tallado único. Esta increíble parada toma tiempo intencionalmente: cambiarte, disfrutar del recinto sagrado, participar en la ceremonia individual, y volver a vestirte en seco.",
+                desc_en: "A deep emotional ritual (Melukat) in a unique carved canyon. Time is given to fully experience the blessing and change clothes afterward."
+            },
+            {
+                type: 'photo',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Bosque de Monos de Sangeh",
+                activity_en: "Sangeh Monkey Forest",
+                desc: "Mucho más sereno e íntimo que otras opciones populares. Pasearás bajo un dosel altísimo con árboles milenarios, protegido por macacos balineses muy tranquilos.",
+                desc_en: "Much more serene and intimate than other popular options. You will walk under towering ancient trees protected by peaceful macaques."
+            },
+            {
+                type: 'food',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Almuerzo Local",
+                activity_en: "Local Lunch",
+                desc: "Parada estratégica para recargar energías disfrutando de la gastronomía de Bali.",
+                desc_en: "Strategic stop to recharge energies enjoying Balinese gastronomy."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Templo Taman Ayun",
+                activity_en: "Taman Ayun Temple",
+                desc: "Descubre la grandeza del antiguo imperio de Mengwi en este templo rodeado por fosos de agua, prados perfectos y altas pagodas oscuras (Meru).",
+                desc_en: "Discover the grandeur of the ancient Mengwi empire in this temple surrounded by water moats, perfect lawns, and dark pagoda towers (Meru)."
+            },
+            {
+                type: 'photo',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
+                activity: "Llegada al Templo Tanah Lot",
+                activity_en: "Tanah Lot Temple arrival",
+                desc: "Llegaremos con margen al sur de la isla. Tendremos el tiempo perfecto para recorrer este icónico peñón sobre el mar y encontrar el encuadre ideal antes de que caiga el sol.",
+                desc_en: "We will arrive with plenty of time to explore this iconic rock formation in the sea and find the perfect photo frame."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Atardecer de Fuego: Danza Kecak",
+                activity_en: "Fire Sunset: Kecak Dance",
+                desc: "El anfiteatro al aire libre se enciende. Solo el canto monótono de 50 hombres sirviendo como orquesta humana y las llamas iluminan la danza epopeya del Ramayana.",
+                desc_en: "An outdoor amphitheater comes alive with a human choir of 50 men illuminating the Ramayana epic fire dance at twilight."
+            },
+            {
+                type: 'dropoff',
+                activity: "Regreso a casa",
+                activity_en: "Return home",
+                desc: "La hora de llegada a Ubud será aproximadamente a las 20:00 o 20:30, llenos de esa vibra mágica del oeste de Bali.",
+                desc_en: "Approximate arrival around 8:30 PM, filled with the magical vibe of West Bali."
+            }
+        ],
+        location: "Mengwi / Tanah Lot",
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Sarong cortesía"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Courtesy sarong"],
+        not_included: ["Tickets y donativo de purificación", "Entradas Tanah Lot y Kecak", "Comidas", "Seguro médico"],
+        not_included_en: ["Entrance fees & purification donation", "Tanah Lot and Kecak tickets", "Meals", "Medical insurance"],
+        rating: 5.0,
+        reviews: 12,
+        reviewsList: [
+            { name: "Luciana G.", date: "Hace 1 semana", text: "Lloré purificándome en Beji Griya. Terminamos el día de forma brutal viendo el mar.", date_en: "1 week ago", text_en: "I cried during purification at Beji Griya. We ended the day in a brutal way facing the sea." },
+            { name: "Miguel T.", date: "Hace 1 mes", text: "Menos mal que fuimos a Sangeh y no al Monkey Forest de Ubud. Super tranquilo.", date_en: "1 month ago", text_en: "Thank goodness we went to Sangeh instead of Ubud Monkey Forest. Super quiet." },
+            { name: "Raúl P.", date: "Hace 2 meses", text: "La organización impecable, pudimos ver el atardecer antes del baile sin correr.", date_en: "2 months ago", text_en: "Impeccable organization, we could watch the sunset before the dance without rushing." }
+        ]
+    },
+    {
+        id: 'uluwatu-south-beaches',
+        title: "Sur de Bali: Playas, Acantilados y Uluwatu",
+        title_en: "South Bali: Beaches, Cliffs & Uluwatu",
+        description: "Arena blanca, el templo sobre el abismo y el atardecer vibrante del sur.",
+        description_en: "White sand, the cliff temple and the vibrant south sunset.",
+        heroSubtitle: "El día tropical perfecto: cálidas playas espectaculares culminan en la magia del Templo Uluwatu.",
+        heroSubtitle_en: "The perfect tropical day: spectacular warm beaches culminate in the magic of Uluwatu Temple.",
+        fullDescription: "Explora la península de Bukit, el secreto mejor guardado para los amantes del sol y la brisa oceánica. Navegaremos por la costa sur para descubrir playas inmaculadas de arena blanca y agua turquesa protegidas por inmensos muros de piedra caliza. Terminaremos la jornada de la forma más épica posible: al borde de un acantilado de 70 metros de altura en el Templo de Uluwatu, donde la tradicional danza del fuego cobrará vida mientras el sol se hunde en el extenso Océano Índico.",
+        fullDescription_en: "Explore the Bukit peninsula, the best kept secret for sun and ocean breeze lovers. We will navigate the south coast to discover immaculate white sand and turquoise water beaches protected by immense limestone walls. We will end the day in the most epic way possible: on the edge of a 70-meter-high cliff at the Uluwatu Temple, where the traditional fire dance will come alive as the sun sinks into the Indian Ocean.",
+        price: 69,
+        duration: "10 horas",
+        duration_en: "10 hours",
+        image: "/images/tours/uluwatu/uluwatu-temple.webp",
+        images: [
+            "/images/tours/uluwatu/uluwatu-temple.webp",
+            "/images/tours/uluwatu/melasti-beach.webp",
+            "/images/tours/uluwatu/padang-padang.webp",
+            "/images/tours/uluwatu/kecak-uluwatu.webp"
+        ],
+        badge: "Día de Playa",
+        badge_en: "Beach Day",
+        category: ['playas', 'cultura', 'fotografia'],
+        mapUrl: "https://maps.google.com/maps?q=Uluwatu%20Temple&t=&z=11&ie=UTF8&iwloc=&output=embed",
+        packingList: ['swimwear', 'sunscreen', 'camera', 'money'],
+        importantInfo: [
+            "El precio está optimizado para inicios/finales en el sur (Seminyak, Kuta, Jimbaran, Nusa Dua, Uluwatu). Salidas desde el área de Ubud tienen un pequeño suplemento por lejanía.",
+            "Lleva ropa de baño lista y una muda para el templo. Se requiere Sarong para entrar a Uluwatu (nosotros te lo prestamos).",
+            "Los monos de Uluwatu son extremadamente listos. Evita llevar gafas de sol sueltas, gorras o joyería colgante que puedan arrancar."
+        ],
+        importantInfo_en: [
+            "The price is optimized for starts/ends in the south (Seminyak, Kuta, Nusa Dua, Uluwatu). Departures from Ubud have a small distance supplement.",
+            "Wear swimwear under your clothes and bring a change for the temple. Sarong is required at Uluwatu (we provide it).",
+            "Uluwatu monkeys are very smart. Avoid wearing loose sunglasses or pendants."
+        ],
+        itinerary: [
+            {
+                type: 'pickup',
+                duration: "09:30",
+                activity: "Salida Costera",
+                activity_en: "Coastal Departure",
+                desc: "Recogida tranquila a media mañana para poner rumbo a la preciosa península caliza del sur (Bukit).",
+                desc_en: "Relaxed mid-morning pick-up to head to the beautiful southern limestone peninsula (Bukit)."
+            },
+            {
+                type: 'photo',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
+                activity: "GWK Cultural Park (Opcional)",
+                activity_en: "GWK Cultural Park (Optional)",
+                desc: "Si te impresiona la arquitectura monumental, podemos ver la masiva estatua del Dios Wisnu (de las más altas de Asia). Alternativamente, podemos saltarlo de camino e ir a un Beach Club.",
+                desc_en: "If you are impressed by monumental architecture, we can see the massive Wisnu statue. Alternatively, we can skip it and go to a Beach Club."
+            },
+            {
+                type: 'beach',
+                duration: "2.5 horas",
+                duration_en: "2.5 hours",
+                activity: "Playa Melasti o Pandawa",
+                activity_en: "Melasti or Pandawa Beach",
+                desc: "La carretera en zig-zag tallada en el acantilado te dejará sin aliento. Un escenario de agua cristalina y arenas blancas donde relajarse al máximo estilo balinés.",
+                desc_en: "The zig-zag road carved into the cliff will leave you breathless. Crystal clear waters and white sands to relax in true Balinese style."
+            },
+            {
+                type: 'food',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Almuerzo cerca del mar",
+                activity_en: "Lunch by the sea",
+                desc: "Pausa para degustar mariscos frescos o cocina local en el ambiente playero del sur de la isla.",
+                desc_en: "Take a break to taste fresh seafood or local cuisine in the beach atmosphere of the island's south."
+            },
+            {
+                type: 'beach',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Playa Padang Padang",
+                activity_en: "Padang Padang Beach",
+                desc: "Escondida entre cuevas, esta cala se hizo mundialmente famosa en Hollywood. Un rincón vibrante de arena dorada y el punto magnético para los grandes surfistas.",
+                desc_en: "Hidden between caves, this cove became world famous in Hollywood. A vibrant spot of golden sand."
+            },
+            {
+                type: 'visit',
+                duration: "1.5 horas",
+                duration_en: "1.5 hours",
+                activity: "Templo Pura Luhur Uluwatu",
+                activity_en: "Uluwatu Temple",
+                desc: "Siente el poder del océano desde este antiquísimo templo apoyado en un acantilado de corte vertical. Un paisaje visualmente imponente.",
+                desc_en: "Feel the power of the ocean from this ancient temple perched on a vertical cliff. A visually stunning landscape."
+            },
+            {
+                type: 'visit',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Atardecer: Danza Fuego Kecak",
+                activity_en: "Sunset: Kecak Fire Dance",
+                desc: "El espectáculo más brutal. Con los tickets previstos con antelación, nos sentaremos a admirar cómo los cánticos crecen mientras el sol pinta el cielo de rojo.",
+                desc_en: "The most brutal show. With tickets ready, we sit to admire the chants grow as the sun paints the sky red."
+            },
+            {
+                type: 'dropoff',
+                activity: "Fin de ruta",
+                activity_en: "End of route",
+                desc: "Regresamos sobre las 19:30 o 20:00 dejándote descansar tras uno de los días turísticos más redondos y estéticos que ofrece Bali.",
+                desc_en: "We return around 7:30 PM, letting you rest after one of the most aesthetic tourist days Bali offers."
+            }
+        ],
+        location: "Península Sur (Bukit)",
+        included: ["Transporte privado", "Conductor / Guía", "Gasolina", "Parking / Peajes", "Agua mineral", "Uso de Sarong"],
+        included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Use of Sarong"],
+        not_included: ["Donativos a las playas", "Tickets Templo Uluwatu y Danza Kecak", "Entrada Monumento GWK", "Comidas"],
+        not_included_en: ["Beach donations", "Uluwatu and Kecak tickets", "GWK Monument entry", "Meals"],
+        rating: 4.8,
+        reviews: 32,
+        reviewsList: [
+            { name: "Andrea V.", date: "Hace 2 semanas", text: "La playa Melasti me enamoró por completo. Nos tomamos algo relajados viendo el mar antes del templo.", date_en: "2 weeks ago", text_en: "Melasti beach completely made me fall in love. We drank seeing the sea." },
+            { name: "Sebas F.", date: "Hace 1 mes", text: "El atardecer en ese acantilado no tiene nombre. Mucho ojo con los monos que me quitaron las gafas y Perty me ayudó a recuperarlas haha.", date_en: "1 month ago", text_en: "The sunset on that cliff has no name. Watch out for the monkeys, they stole my glasses and Perty helped get them back haha." }
+        ]
+    },
     {
         id: 'transfers-bali',
         title: "Traslados Privados: Aeropuerto y Puertos",

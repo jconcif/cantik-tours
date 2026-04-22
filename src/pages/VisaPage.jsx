@@ -101,7 +101,7 @@ const VisaPage = () => {
             .replace('{{type}}', typeText)
             .replace('{{date}}', formData.date || '-')
             .replace('{{time}}', formData.time || '-');
-        return `https://wa.me/376614535?text=${encodeURIComponent(msg)}`;
+        return `https://wa.me/34642517787?text=${encodeURIComponent(msg)}`;
     };
 
     const isFormValid = formData.name.trim() !== '' && formData.date !== '';
