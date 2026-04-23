@@ -634,7 +634,7 @@ export const tours = [
         itinerary: [
             {
                 type: 'pickup',
-                duration: "08:00",
+                duration: "08:30",
                 activity: "Recogida tranquila",
                 activity_en: "Relaxed pickup",
                 desc: "Te pasamos a buscar al hotel para ir en dirección suroeste sin prisas.",
@@ -659,15 +659,6 @@ export const tours = [
                 desc_en: "Much more serene and intimate than other popular options. You will walk under towering ancient trees protected by peaceful macaques."
             },
             {
-                type: 'food',
-                duration: "1 hora",
-                duration_en: "1 hour",
-                activity: "Almuerzo Local",
-                activity_en: "Local Lunch",
-                desc: "Parada estratégica para recargar energías disfrutando de la gastronomía de Bali.",
-                desc_en: "Strategic stop to recharge energies enjoying Balinese gastronomy."
-            },
-            {
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
@@ -675,6 +666,15 @@ export const tours = [
                 activity_en: "Taman Ayun Temple",
                 desc: "Descubre la grandeza del antiguo imperio de Mengwi en este templo rodeado por fosos de agua, prados perfectos y altas pagodas oscuras (Meru).",
                 desc_en: "Discover the grandeur of the ancient Mengwi empire in this temple surrounded by water moats, perfect lawns, and dark pagoda towers (Meru)."
+            },
+            {
+                type: 'food',
+                duration: "1 hora",
+                duration_en: "1 hour",
+                activity: "Almuerzo Local",
+                activity_en: "Local Lunch",
+                desc: "Parada estratégica para recargar energías disfrutando de la gastronomía de Bali.",
+                desc_en: "Strategic stop to recharge energies enjoying Balinese gastronomy."
             },
             {
                 type: 'photo',

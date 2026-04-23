@@ -112,7 +112,7 @@ i18n
                         booking_hotel: "Ubicación / Hotel",
                         booking_hotel_placeholder: "Ej: Maya Ubud Resort",
                         booking_submit: "Confirmar y enviar",
-                        booking_payment_info: "Reserva con un pequeño depósito (mín. 20€) y paga el resto 24h antes del tour.",
+                        booking_payment_info: "Abona el 100% ahora o solo el 30% como reserva. Pago restante 48h antes.",
                         booking_pax_1: "1 Persona",
                         booking_pax_2: "2 Personas",
                         booking_pax_3: "3 Personas",
@@ -142,7 +142,7 @@ i18n
                         exp_economy_desc: "Vehículo estándar o superior. Tu conductor te lleva seguro, mientras tú exploras a tu ritmo.",
                         exp_economy_price_label: "",
                         exp_comfort_title: "Guía en Inglés",
-                        exp_comfort_sub: "Guía local certificado (Idioma Inglés)",
+                        exp_comfort_sub: "Guía local (Idioma Inglés)",
                         exp_comfort_desc: "Vehículo superior. Descubre la historia profunda de Bali con un experto a tu lado.",
                         exp_comfort_price_label: "",
                         exp_elite_title: "GUÍA EN ESPAÑOL 💎",
@@ -182,7 +182,7 @@ i18n
                         faq_packing_q: "¿Qué debo llevar al tour?",
                         faq_info_q: "Información importante sobre el tour",
                         fair_payment_title: "Pago Consciente",
-                        fair_payment_desc: "Tu reserva se efectúa con un pequeño depósito (mínimo 20€), y el resto lo abonas hasta 24 horas antes del tour. Con este sistema aseguramos un trato justo para el equipo local desde el primer minuto, fomentando un turismo responsable y que apoya directamente a las familias de la isla.",
+                        fair_payment_desc: "Tu reserva te permite abonar el 100% de una vez para tu comodidad o elegir un 30% como depósito. El resto (si aplica) se abona hasta 48h antes del tour. Con este sistema aseguramos un trato justo para el equipo local desde el primer minuto, fomentando un turismo responsable y que apoya directamente a las familias de la isla.",
                         view_full_route: "Ver el recorrido real en Google Maps",
                         benefits: {
                             private: "100% Privado",
@@ -518,8 +518,8 @@ i18n
                             s1: {
                                 title: "1. PROCESO DE RESERVA Y PAGOS",
                                 items: [
-                                    { label: "Depósito de Confirmación", text: "Se requiere un abono del 20% del total (con un mínimo de 20€) por Tour contratado, pagado al momento de realizar la reserva, para bloquear fechas y servicios." },
-                                    { label: "Pago Total", text: "El saldo restante (80% del costo del tour) debe estar liquidado 24 horas antes del inicio del viaje." },
+                                    { label: "Depósito de Confirmación", text: "Se requiere el pago íntegro o un abono del 30% del total por Tour contratado, pagado al momento de realizar la reserva de forma oficial, para bloquear fechas y servicios." },
+                                    { label: "Pago Total", text: "El saldo restante (70% del costo del tour) debe estar liquidado 48 horas antes del inicio del viaje." },
                                     { label: "Métodos de Pago", text: "Aceptamos pagos vía Transferencia Bancaria y Wise. Los gastos por comisiones bancarias o de conversión de divisa corren por cuenta del cliente." }
                                 ]
                             },
@@ -777,7 +777,7 @@ i18n
                         booking_hotel: "Location / Hotel",
                         booking_hotel_placeholder: "e.g., Maya Ubud Resort",
                         booking_submit: "Confirm and send",
-                        booking_payment_info: "Book with a small deposit and pay the rest on arrival.",
+                        booking_payment_info: "Pay 100% upfront or 30% as a deposit. Rest is due 48h before.",
                         booking_pax_1: "1 Person",
                         booking_pax_2: "2 People",
                         booking_pax_3: "3 People",
@@ -845,7 +845,7 @@ i18n
                         faq_packing_q: "What should I bring to the tour?",
                         faq_info_q: "Important information about the tour",
                         fair_payment_title: "Conscious Payment",
-                        fair_payment_desc: "Your initial deposit covers the day's logistical expenses (vehicle and fuel). With this system, we ensure fair treatment for the local team from minute one, fostering responsible tourism that directly supports Balinese families.",
+                        fair_payment_desc: "Your booking lets you pay 100% upfront for convenience or choose a 30% deposit. The rest (if applicable) is due 48h before the tour. With this system, we ensure fair treatment for the local team from minute one, fostering responsible tourism that directly supports Balinese families.",
                         view_full_route: "View the real route on Google Maps",
                         benefits: {
                             private: "100% Private",
@@ -1181,8 +1181,8 @@ i18n
                             s1: {
                                 title: "1. BOOKING PROCESS AND PAYMENTS",
                                 items: [
-                                    { label: "Confirmation Deposit", text: "A fixed payment of €20 per booked Tour is required at the time of booking to block dates and services." },
-                                    { label: "Total Payment", text: "The remaining balance (100% of the tour cost) must be settled 48 hours before the start of the trip." },
+                                    { label: "Confirmation Deposit", text: "Full payment or a 30% deposit of the total per booked Tour is required at the time of booking to officially block dates and services." },
+                                    { label: "Total Payment", text: "The remaining balance (70% of the tour cost) must be settled 48 hours before the start of the trip." },
                                     { label: "Payment Methods", text: "We accept payments via Bank Transfer and Wise. Costs for bank commissions or currency conversion are the responsibility of the client." }
                                 ]
                             },

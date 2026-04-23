@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^9.1.1",
     "date-fns": "^4.1.0",
     "framer-motion": "^10.12.16",
     "i18next": "^25.7.4",

@@ -1,28 +1,52 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, Shield } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../context/CurrencyContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getDateStatus, isDateDisabled } from '../data/availability';
+import { PayPalButtons } from "@paypal/react-paypal-js";
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
     const { t, i18n } = useTranslation();
     const { formatPrice } = useCurrency();
     const [step, setStep] = useState(1);
+    const [isPaid, setIsPaid] = useState(false);
+    const [viewBankDetails, setViewBankDetails] = useState(false);
+    const [copiedField, setCopiedField] = useState(null);
     const [showCoupon, setShowCoupon] = useState(false);
     const [formData, setFormData] = useState({
         date: null,
         pax: '2',
         hotel: '',
         coupon: '',
-        experience: 'comfort' // Default to middle tier for anchoring
+        experience: 'comfort', // Default to middle tier for anchoring
+        paymentType: 'full' // 'deposit' or 'full'
     });
+
+    const copyToClipboard = (text, field) => {
+        navigator.clipboard.writeText(text);
+        setCopiedField(field);
+        setTimeout(() => setCopiedField(null), 2000);
+    };
 
     const resetModal = () => {
         onClose();
-        setTimeout(() => setStep(1), 500); // Reset step gracefully after closing animation
+        setTimeout(() => {
+            setStep(1);
+            setIsPaid(false);
+            setFormData({
+                date: null,
+                pax: '2',
+                hotel: '',
+                coupon: '',
+                experience: 'comfort',
+                paymentType: 'full'
+            });
+            setViewBankDetails(false);
+            setCopiedField(null);
+        }, 500);
     };
 
     const basePrice = tourPrice || 0;
@@ -45,7 +69,10 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
             expName = '';
     }
     const totalPrice = basePrice + extraPrice;
-    const depositAmount = Math.max(20, Math.round(totalPrice * 0.2));
+    
+    // Updated to 30% deposit rule
+    const calculatedDeposit = Math.max(20, Math.round(totalPrice * 0.3));
+    const depositAmount = formData.paymentType === 'full' ? totalPrice : calculatedDeposit;
     const remainingAmount = totalPrice - depositAmount;
 
     const handleSubmit = (e) => {
@@ -80,9 +107,39 @@ Me gustaría reservar este tour, por favor:
 🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
 ✨ Experiencia: ${expName}
 
+💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${totalPrice} €
+${isPaid ? `✅ ${i18n.language === 'en' ? 'Deposit PAID via PayPal:' : 'Depósito PAGADO por PayPal:'} ${depositAmount} €` : `(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${depositAmount} €)`}${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+
+${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looking forward to your details!' : '¡Acabo de pagar la reserva por PayPal! Quedo a la espera de la confirmación.') : '¿Me pueden confirmar disponibilidad y próximos pasos?'}
+¡Muchas gracias!`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
+
+        window.open(whatsappUrl, '_blank');
+        resetModal();
+    };
+
+    const handleAlternativePayment = (e) => {
+        e.preventDefault();
+        setViewBankDetails(true);
+    };
+
+    const handleConfirmWhatsApp = () => {
+        const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
+        
+        const message = `¡Hola Cantik Tours!
+Me gustaría reservar este tour, por favor:
+
+🛕 ${t('detail.msg_tour')}: ${tourTitle}
+📅 ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
+👥 ${t('detail.msg_pax')}: ${paxLabel}
+🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
+✨ Experiencia: ${expName}
+
 💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${totalPrice} € (${i18n.language === 'en' ? 'Deposit:' : 'Reserva:'} ${depositAmount} €)${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
-¿Me pueden confirmar disponibilidad y próximos pasos?
+${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank transfer. Could you provide the account details?" : "Quiero reservar pero me gustaría abonar el depósito por transferencia bancaria (IBAN) o Wise. ¿Me pasáis la cuenta?"}
 ¡Muchas gracias!`;
 
         const encodedMessage = encodeURIComponent(message);
@@ -363,6 +420,18 @@ Me gustaría reservar este tour, por favor:
                                             </div>
                                         </div>
 
+                                        {/* Expert UX: Real-time price update to avoid sticker shock */}
+                                        <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 flex items-center justify-between mt-2">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'Total Price Estimated' : 'Precio Total Estimado'}</span>
+                                                <span className="text-[9px] text-gray-500 font-bold">{i18n.language === 'en' ? 'Per vehicle up to 5 pax' : 'Por vehículo hasta 5 pax'}</span>
+                                            </div>
+                                            <div className="text-2xl font-black text-primary flex items-center gap-1">
+                                                {totalPrice}
+                                                <span className="text-xs">€</span>
+                                            </div>
+                                        </div>
+
                                         {/* Navigation Buttons for Step 2 */}
                                         <div className="flex gap-3 mt-6">
                                             <button
@@ -424,6 +493,23 @@ Me gustaría reservar este tour, por favor:
                                             </div>
                                             
                                             <div className="pt-2">
+                                                <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl mb-4">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, paymentType: 'full' })}
+                                                        className={`flex-1 py-2 text-[10px] font-black rounded-lg transition-all ${formData.paymentType === 'full' ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-gray-500'}`}
+                                                    >
+                                                        {i18n.language === 'en' ? 'PAY 100% TOTAL' : 'ABONAR TOTAL (100%)'}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setFormData({ ...formData, paymentType: 'deposit' })}
+                                                        className={`flex-1 py-2 text-[10px] font-black rounded-lg transition-all ${formData.paymentType === 'deposit' ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-gray-500'}`}
+                                                    >
+                                                        {i18n.language === 'en' ? 'PAY 30% DEPOSIT' : 'ABONAR RESERVA (30%)'}
+                                                    </button>
+                                                </div>
+
                                                 <h4 className="text-sm font-black text-primary mb-3">Detalle de Pago</h4>
                                                 <div className="space-y-3">
                                                     <div className="flex justify-between items-center bg-white dark:bg-black/20 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
@@ -433,14 +519,18 @@ Me gustaría reservar este tour, por favor:
                                                     
                                                     <div className="flex justify-between items-center bg-primary/10 border border-primary/20 p-3 rounded-xl">
                                                         <div>
-                                                            <span className="block text-xs font-black text-primary">Abonar ahora (Reserva)</span>
-                                                            <span className="block text-[10px] text-gray-500">Vía Transferencia o Wise</span>
+                                                            <span className="block text-xs font-black text-primary">
+                                                                {formData.paymentType === 'full' ? (i18n.language === 'en' ? 'Total to pay' : 'Total a pagar') : (i18n.language === 'en' ? 'Deposit (30%)' : 'Abonar ahora (30%)')}
+                                                            </span>
+                                                            <span className="block text-[10px] text-gray-500">
+                                                                {isPaid ? (i18n.language === 'en' ? 'Paid with PayPal' : 'Pagado con PayPal') : 'Vía PayPal o Tarjeta'}
+                                                            </span>
                                                         </div>
                                                         <span className="text-lg font-black text-primary">{depositAmount} €</span>
                                                     </div>
                                                     
                                                     <div className="flex justify-between items-center p-3">
-                                                        <span className="text-xs font-bold text-gray-500">Pago Restante (24h antes)</span>
+                                                        <span className="text-xs font-bold text-gray-500">{isPaid ? "Pagado ✓" : (i18n.language === 'en' ? "Remaining balance (48h before)" : "Pago Restante (48h antes del viaje)")}</span>
                                                         <span className="text-sm font-black text-gray-700 dark:text-gray-300">{remainingAmount} €</span>
                                                     </div>
                                                 </div>
@@ -456,13 +546,107 @@ Me gustaría reservar este tour, por favor:
                                             >
                                                 <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
                                             </button>
-                                            <button
-                                                type="submit"
-                                                className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex items-center justify-center gap-3"
-                                            >
-                                                <MessageCircle size={24} />
-                                                Enviar por WhatsApp
-                                            </button>
+                                            {!isPaid ? (
+                                                <div className="flex-1 flex flex-col gap-3 min-w-[200px]" style={{ zIndex: 0, position: 'relative' }}>
+                                                    <PayPalButtons 
+                                                        style={{ layout: "horizontal", shape: "pill", color: "gold", label: "pay", height: 55, tagline: false }}
+                                                        createOrder={(data, actions) => {
+                                                            return actions.order.create({
+                                                                purchase_units: [{
+                                                                    description: formData.paymentType === 'full' ? `Pago Total - Cantik Tours (${tourTitle.substring(0, 40)})` : `Reserva (30%) - Cantik Tours (${tourTitle.substring(0, 40)})`,
+                                                                    amount: { value: depositAmount.toString() }
+                                                                }]
+                                                            });
+                                                        }}
+                                                        onApprove={(data, actions) => {
+                                                            return actions.order.capture().then((details) => {
+                                                                setIsPaid(true);
+                                                            });
+                                                        }}
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => handleAlternativePayment(e)}
+                                                        className="text-xs font-bold text-gray-500 hover:text-primary transition-colors text-center underline decoration-dashed underline-offset-4 mb-2"
+                                                    >
+                                                        {i18n.language === 'en' ? 'Or reserve paying via Wise / Bank transfer' : 'Quiero reservar por Transferencia Bancaria o Wise'}
+                                                    </button>
+
+                                                    {viewBankDetails && (
+                                                        <motion.div 
+                                                            initial={{ opacity: 0, y: 10 }}
+                                                            animate={{ opacity: 1, y: 0 }}
+                                                            className="mt-2 bg-white dark:bg-white/5 border-2 border-primary/20 rounded-2xl p-5 space-y-4 shadow-xl"
+                                                        >
+                                                            <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-wider mb-2">
+                                                                <Ticket size={14} />
+                                                                {i18n.language === 'en' ? 'BANK TRANSFER DETAILS' : 'DATOS PARA TRANSFERENCIA'}
+                                                            </div>
+                                                            
+                                                            <div className="space-y-3">
+                                                                <div className="group relative">
+                                                                    <span className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Nombre Titular</span>
+                                                                    <div className="flex items-center justify-between bg-gray-50 dark:bg-black/20 p-2 rounded-lg border border-black/5">
+                                                                        <span className="text-xs font-black truncate pr-2 italic">Javier Ignacio Contreras Cifuentes</span>
+                                                                        <button onClick={() => copyToClipboard('Javier Ignacio Contreras Cifuentes', 'name')} className="text-primary hover:scale-110 transition-transform">
+                                                                            {copiedField === 'name' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="group relative">
+                                                                    <span className="block text-[10px] font-bold text-gray-400 mb-1 uppercase text-primary font-black">Tu IBAN (Wise)</span>
+                                                                    <div className="flex items-center justify-between bg-primary/5 p-2 rounded-lg border border-primary/20">
+                                                                        <span className="text-xs font-black tracking-wider">BE97 9673 8690 2549</span>
+                                                                        <button onClick={() => copyToClipboard('BE97 9673 8690 2549', 'iban')} className="text-primary hover:scale-110 transition-transform">
+                                                                            {copiedField === 'iban' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="group relative">
+                                                                    <span className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Swift / BIC</span>
+                                                                    <div className="flex items-center justify-between bg-gray-50 dark:bg-black/20 p-2 rounded-lg border border-black/5">
+                                                                        <span className="text-xs font-black">TRWIBEB1XXX</span>
+                                                                        <button onClick={() => copyToClipboard('TRWIBEB1XXX', 'bic')} className="text-primary hover:scale-110 transition-transform">
+                                                                            {copiedField === 'bic' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <p className="text-[9px] text-gray-500 italic mt-2 leading-relaxed">
+                                                                {i18n.language === 'en' 
+                                                                    ? 'Once done, send us the receipt via WhatsApp to block your dates.' 
+                                                                    : 'Una vez realizada la transferencia, pulsa el botón de WhatsApp para enviarnos el comprobante.'}
+                                                            </p>
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleConfirmWhatsApp}
+                                                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-3 rounded-xl text-sm font-black shadow-lg flex items-center justify-center gap-2 transition-all mt-4"
+                                                            >
+                                                                <MessageCircle size={18} />
+                                                                {i18n.language === 'en' ? 'CONFIRM VIA WHATSAPP' : 'CONFIRMAR POR WHATSAPP'}
+                                                            </button>
+                                                        </motion.div>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    type="submit"
+                                                    className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#128C7E] text-white"
+                                                >
+                                                    <MessageCircle size={24} />
+                                                    {i18n.language === 'en' ? 'Send Receipt via WhatsApp' : 'Enviar recibo por WhatsApp'}
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Expert UX: Cancellation Guarantee Shield */}
+                                        <div className="flex items-center justify-center gap-2 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 py-2 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
+                                            <Shield size={14} />
+                                            {i18n.language === 'en' ? 'Free cancellation up to 48h before the trip' : 'Cancelación gratuita hasta 48h antes del viaje'}
                                         </div>
 
                                         {/* Trust Box: Pago Consciente */}
