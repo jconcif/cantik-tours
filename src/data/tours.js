@@ -269,9 +269,9 @@ export const tours = [
         description_en: "An epic experience: dolphin watching at sunrise and secret waterfalls.",
         heroSubtitle: "Una aventura mágica al amanecer conectando con la vida marina y la selva norteña.",
         heroSubtitle_en: "A magical adventure at sunrise connecting with marine life and the northern jungle.",
-        fullDescription: "La aventura definitiva para los madrugadores. Empezaremos viendo delfines en su hábitat natural en Lovina, seguiremos con las cascadas de Banyumala, y visitaremos los lagos gemelos y el templo de Ulun Danu.",
-        fullDescription_en: "The ultimate adventure for early birds. We start seeing dolphins in their natural habitat in Lovina, followed by Banyumala waterfalls, and visiting twin lakes and Ulun Danu temple.",
-        price: 89,
+        fullDescription: "La aventura definitiva para los madrugadores. Empezaremos viendo delfines en su hábitat natural en Lovina, seguiremos con la impresionante cascada de Banyumala y cerraremos el día con la visita opcional al icónico templo de Ulun Danu.",
+        fullDescription_en: "The ultimate adventure for early birds. We start seeing dolphins in their natural habitat in Lovina, followed by the stunning Banyumala waterfalls, and an optional visit to the iconic Ulun Danu temple.",
+        price: 115,
         duration: "15 horas",
         duration_en: "15 hours",
         image: "/images/tours/lovina-dolphins/lovina-sunrise.webp",
@@ -333,15 +333,6 @@ export const tours = [
                 desc_en: "Refresh yourself at the Twin Waterfalls. A magical curtain of water that slides down a wall of ferns and rocks into a natural pool of crystal clear waters."
             },
             {
-                type: 'visit',
-                duration: "30 min",
-                duration_en: "30 min",
-                activity: "Vistas lagos gemelos",
-                activity_en: "Twin lakes views",
-                desc: "Admira la impresionante vista de los lagos Buyan y Tamblingan desde las tierras altas.",
-                desc_en: "Admire the stunning view of lakes Buyan and Tamblingan from the highlands."
-            },
-            {
                 type: 'food',
                 duration: "1 hora",
                 duration_en: "1 hour",
@@ -354,8 +345,8 @@ export const tours = [
                 type: 'visit',
                 duration: "1 hora",
                 duration_en: "1 hour",
-                activity: "Templo Ulun Danu Beratan",
-                activity_en: "Ulun Danu Beratan temple",
+                activity: "Templo Ulun Danu Beratan (Opcional)",
+                activity_en: "Ulun Danu Beratan temple (Optional)",
                 desc: "Visita el emblemático templo flotante sobre el lago Beratan, una de las imágenes más icónicas de Bali.",
                 desc_en: "Visit the iconic floating temple on Lake Beratan, one of the most iconic images of Bali."
             },
