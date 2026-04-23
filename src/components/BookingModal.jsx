@@ -21,7 +21,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
         pax: '2',
         hotel: '',
         coupon: '',
-        experience: 'comfort', // Default to middle tier for anchoring
+        experience: 'economy', // Default to cheapest tier
         paymentType: 'full' // 'deposit' or 'full'
     });
 
@@ -70,10 +70,15 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
     }
     const totalPrice = basePrice + extraPrice;
     
+    // Expert UX: 5th passenger onwards fee (5€ per extra person)
+    const paxNum = parseInt(formData.pax);
+    const extraPaxFee = (!isNaN(paxNum) && paxNum > 4) ? (paxNum - 4) * 5 : 0;
+    const finalTotalPrice = totalPrice + extraPaxFee;
+
     // Updated to 30% deposit rule
-    const calculatedDeposit = Math.max(20, Math.round(totalPrice * 0.3));
-    const depositAmount = formData.paymentType === 'full' ? totalPrice : calculatedDeposit;
-    const remainingAmount = totalPrice - depositAmount;
+    const calculatedDeposit = Math.max(20, Math.round(finalTotalPrice * 0.3));
+    const depositAmount = formData.paymentType === 'full' ? finalTotalPrice : calculatedDeposit;
+    const remainingAmount = finalTotalPrice - depositAmount;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -107,7 +112,7 @@ Me gustaría reservar este tour, por favor:
 🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
 ✨ Experiencia: ${expName}
 
-💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${totalPrice} €
+💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPrice} €
 ${isPaid ? `✅ ${i18n.language === 'en' ? 'Deposit PAID via PayPal:' : 'Depósito PAGADO por PayPal:'} ${depositAmount} €` : `(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${depositAmount} €)`}${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looking forward to your details!' : '¡Acabo de pagar la reserva por PayPal! Quedo a la espera de la confirmación.') : '¿Me pueden confirmar disponibilidad y próximos pasos?'}
@@ -137,7 +142,7 @@ Me gustaría reservar este tour, por favor:
 🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
 ✨ Experiencia: ${expName}
 
-💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${totalPrice} € (${i18n.language === 'en' ? 'Deposit:' : 'Reserva:'} ${depositAmount} €)${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPrice} € (${i18n.language === 'en' ? 'Deposit:' : 'Reserva:'} ${depositAmount} €)${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank transfer. Could you provide the account details?" : "Quiero reservar pero me gustaría abonar el depósito por transferencia bancaria (IBAN) o Wise. ¿Me pasáis la cuenta?"}
 ¡Muchas gracias!`;
@@ -424,10 +429,10 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                         <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 flex items-center justify-between mt-2">
                                             <div className="flex flex-col">
                                                 <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'Total Price Estimated' : 'Precio Total Estimado'}</span>
-                                                <span className="text-[9px] text-gray-500 font-bold">{i18n.language === 'en' ? 'Per vehicle up to 5 pax' : 'Por vehículo hasta 5 pax'}</span>
+                                                <span className="text-[9px] text-gray-500 font-bold">{i18n.language === 'en' ? 'Per vehicle up to 4 pax' : 'Por vehículo hasta 4 pax'}</span>
                                             </div>
                                             <div className="text-2xl font-black text-primary flex items-center gap-1">
-                                                {totalPrice}
+                                                {finalTotalPrice}
                                                 <span className="text-xs">€</span>
                                             </div>
                                         </div>
@@ -514,7 +519,7 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                                 <div className="space-y-3">
                                                     <div className="flex justify-between items-center bg-white dark:bg-black/20 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
                                                         <span className="text-xs font-bold text-gray-500">Valor Total</span>
-                                                        <span className="text-base font-black text-gray-900 dark:text-white">{totalPrice} €</span>
+                                                        <span className="text-base font-black text-gray-900 dark:text-white">{finalTotalPrice} €</span>
                                                     </div>
                                                     
                                                     <div className="flex justify-between items-center bg-primary/10 border border-primary/20 p-3 rounded-xl">
