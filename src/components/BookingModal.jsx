@@ -253,9 +253,14 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                                 <option value="3">{t('detail.booking_pax_3')}</option>
                                                 <option value="4">{t('detail.booking_pax_4')}</option>
                                                 <option value="5">{t('detail.booking_pax_5')}</option>
-                                                <option value="6 o más">{t('detail.booking_pax_6')}</option>
-                                                <option value="12 o más">{t('detail.booking_pax_12')}</option>
-                                                <option value="20 o más">{t('detail.booking_pax_20')}</option>
+                                                <option value="6">{t('detail.booking_pax_6')}</option>
+                                                <option value="7">{t('detail.booking_pax_7')}</option>
+                                                <option value="8">{t('detail.booking_pax_8')}</option>
+                                                <option value="9">{t('detail.booking_pax_9')}</option>
+                                                <option value="10">{t('detail.booking_pax_10')}</option>
+                                                <option value="11">{t('detail.booking_pax_11')}</option>
+                                                <option value="12">{t('detail.booking_pax_12')}</option>
+                                                <option value="13 o más">{t('detail.booking_pax_more')}</option>
                                             </select>
                                         </div>
 
@@ -498,18 +503,18 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                             </div>
                                             
                                             <div className="pt-2">
-                                                <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl mb-4">
+                                                <div className="flex bg-gray-100 dark:bg-white/10 p-1 rounded-2xl mb-4">
                                                     <button
                                                         type="button"
                                                         onClick={() => setFormData({ ...formData, paymentType: 'full' })}
-                                                        className={`flex-1 py-2 text-[10px] font-black rounded-lg transition-all ${formData.paymentType === 'full' ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-gray-500'}`}
+                                                        className={`flex-1 py-2.5 text-[10px] font-black rounded-xl transition-all ${formData.paymentType === 'full' ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-gray-500 hover:text-gray-700'}`}
                                                     >
                                                         {i18n.language === 'en' ? 'PAY 100% TOTAL' : 'ABONAR TOTAL (100%)'}
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={() => setFormData({ ...formData, paymentType: 'deposit' })}
-                                                        className={`flex-1 py-2 text-[10px] font-black rounded-lg transition-all ${formData.paymentType === 'deposit' ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-gray-500'}`}
+                                                        className={`flex-1 py-2.5 text-[10px] font-black rounded-xl transition-all ${formData.paymentType === 'deposit' ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-gray-500 hover:text-gray-700'}`}
                                                     >
                                                         {i18n.language === 'en' ? 'PAY 30% DEPOSIT' : 'ABONAR RESERVA (30%)'}
                                                     </button>
@@ -569,23 +574,33 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                                             });
                                                         }}
                                                     />
-                                                    <button
-                                                        type="button"
-                                                        onClick={(e) => handleAlternativePayment(e)}
-                                                        className="text-xs font-bold text-gray-500 hover:text-primary transition-colors text-center underline decoration-dashed underline-offset-4 mb-2"
-                                                    >
-                                                        {i18n.language === 'en' ? 'Or reserve paying via Wise / Bank transfer' : 'Quiero reservar por Transferencia Bancaria o Wise'}
-                                                    </button>
+                                                    {!viewBankDetails && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => handleAlternativePayment(e)}
+                                                            className="text-[11px] font-black text-gray-400 hover:text-primary transition-colors text-center underline decoration-dashed underline-offset-4 mb-2 w-full py-2"
+                                                        >
+                                                            {i18n.language === 'en' ? 'Or pay via Wise / Bank transfer' : 'O prefiere pagar por Transferencia / Wise'}
+                                                        </button>
+                                                    )}
 
                                                     {viewBankDetails && (
                                                         <motion.div 
-                                                            initial={{ opacity: 0, y: 10 }}
-                                                            animate={{ opacity: 1, y: 0 }}
-                                                            className="mt-2 bg-white dark:bg-white/5 border-2 border-primary/20 rounded-2xl p-5 space-y-4 shadow-xl"
+                                                            initial={{ opacity: 0, height: 0 }}
+                                                            animate={{ opacity: 1, height: 'auto' }}
+                                                            className="mt-2 bg-white dark:bg-white/5 border-2 border-primary/20 rounded-3xl p-5 space-y-4 shadow-xl overflow-hidden relative"
                                                         >
-                                                            <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-wider mb-2">
-                                                                <Ticket size={14} />
-                                                                {i18n.language === 'en' ? 'BANK TRANSFER DETAILS' : 'DATOS PARA TRANSFERENCIA'}
+                                                            <div className="flex items-center justify-between mb-2">
+                                                                <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-wider">
+                                                                    <Ticket size={14} />
+                                                                    {i18n.language === 'en' ? 'BANK TRANSFER DETAILS' : 'DATOS PARA TRANSFERENCIA'}
+                                                                </div>
+                                                                <button 
+                                                                    onClick={() => setViewBankDetails(false)}
+                                                                    className="text-gray-400 hover:text-primary p-1"
+                                                                >
+                                                                    <X size={16} />
+                                                                </button>
                                                             </div>
                                                             
                                                             <div className="space-y-3">
