@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Lock, Eye, EyeOff, CheckCircle2, Languages, Plus, RefreshCw, AlertCircle, Trash2, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { reviewService } from '../services/reviewService';
 
 const AdminReviews = () => {
     const { i18n } = useTranslation();
@@ -13,29 +14,18 @@ const AdminReviews = () => {
     const [successId, setSuccessId] = useState(null);
     const [message, setMessage] = useState(null);
 
+    // Simple password check
+    const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'cantik2024';
+
     const fetchReviews = async () => {
         setLoading(true);
         setMessage(null);
         try {
-            const apiPath = window.location.origin + '/api/admin_get_reviews.php';
-            const response = await fetch(`${apiPath}?token=${password}`, {
-                headers: { 'Authorization': password }
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ message: `Error ${response.status}` }));
-                throw new Error(errorData.message || 'Error en el servidor');
-            }
-
-            const result = await response.json();
-            if (result.status === 'success') {
-                setReviews(result.data);
-                setIsAuthenticated(true);
-            } else {
-                setMessage({ type: 'error', text: result.message });
-            }
+            const data = await reviewService.getReviews(password);
+            setReviews(data);
+            setIsAuthenticated(true);
         } catch (error) {
-            setMessage({ type: 'error', text: error.message || 'Error de conexión' });
+            setMessage({ type: 'error', text: 'Error al conectar con la base de datos' });
         } finally {
             setLoading(false);
         }
@@ -45,33 +35,14 @@ const AdminReviews = () => {
         setUpdatingId(id);
         setMessage(null);
         try {
-            const apiPath = window.location.origin + '/api/admin_update_review.php';
-            const response = await fetch(apiPath, {
-                method: 'POST',
-                headers: {
-                    'Authorization': password,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id, token: password, ...data })
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al actualizar');
-            }
-
-            const result = await response.json();
-            if (result.status === 'success') {
-                // No message set for success as per user request
-                setSuccessId(id);
-                setTimeout(() => setSuccessId(null), 2000);
-            } else {
-                setMessage({ type: 'error', text: result.message || 'Error al actualizar' });
-            }
+            await reviewService.updateReview(id, { ...data, token: password });
+            setSuccessId(id);
+            setTimeout(() => setSuccessId(null), 2000);
+            fetchReviews(); // Refresh local data
         } catch (error) {
-            setMessage({ type: 'error', text: error.message || 'Error al actualizar' });
+            setMessage({ type: 'error', text: 'Error al actualizar' });
         } finally {
             setUpdatingId(null);
-            // Clear message after 3 seconds
             setTimeout(() => setMessage(null), 3000);
         }
     };
@@ -80,47 +51,17 @@ const AdminReviews = () => {
         if (!window.confirm('¿Estás seguro de que quieres eliminar esta reseña permanentemente?')) return;
 
         try {
-            const apiPath = window.location.origin + '/api/admin_delete_review.php';
-            const response = await fetch(apiPath, {
-                method: 'POST',
-                headers: {
-                    'Authorization': password,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ id, token: password })
-            });
-
-            if (!response.ok) throw new Error('Error al eliminar');
-            const result = await response.json();
-            if (result.status === 'success') {
-                fetchReviews();
-            } else {
-                setMessage({ type: 'error', text: result.message });
-            }
+            await reviewService.deleteReview(id, password);
+            fetchReviews();
         } catch (error) {
-            setMessage({ type: 'error', text: error.message });
+            setMessage({ type: 'error', text: 'Error al eliminar' });
         }
     };
 
     const createReview = async () => {
         try {
-            const apiPath = window.location.origin + '/api/admin_create_review.php';
-            const response = await fetch(apiPath, {
-                method: 'POST',
-                headers: {
-                    'Authorization': password,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ token: password })
-            });
-
-            if (!response.ok) throw new Error('Error al crear');
-            const result = await response.json();
-            if (result.status === 'success') {
-                fetchReviews();
-            } else {
-                setMessage({ type: 'error', text: result.message || 'Error al crear' });
-            }
+            await reviewService.createReview(password);
+            fetchReviews();
         } catch (error) {
             setMessage({ type: 'error', text: error.message });
         }
@@ -238,6 +179,37 @@ const AdminReviews = () => {
                     </motion.div>
                 )}
 
+                {/* Performance Analytics Dashboard */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
+                    {[
+                        { label: 'Reserva', key: 'rating_booking' },
+                        { label: 'Logística', key: 'rating_logistics' },
+                        { label: 'Ruta', key: 'rating_route' },
+                        { label: 'Conductor', key: 'rating_driver' },
+                        { label: 'Vehículo', key: 'rating_vehicle' },
+                        { label: 'Calidad/Precio', key: 'rating_price' }
+                    ].map((stat) => {
+                        const validReviews = reviews.filter(r => r[stat.key]);
+                        const avg = validReviews.length > 0 
+                            ? (validReviews.reduce((acc, r) => acc + Number(r[stat.key]), 0) / validReviews.length).toFixed(1)
+                            : '-';
+                        return (
+                            <motion.div 
+                                key={stat.key}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm text-center"
+                            >
+                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{stat.label}</div>
+                                <div className="text-3xl font-black text-primary flex items-center justify-center gap-1">
+                                    {avg}
+                                    <Star size={16} fill="currentColor" />
+                                </div>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+
                 <div className="grid gap-8">
                     {reviews.map((review) => (
                         <motion.div
@@ -277,21 +249,55 @@ const AdminReviews = () => {
                                     </select>
                                 </div>
 
-                                {/* Rating */}
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Estrellas</label>
-                                    <select
-                                        id={`stars-${review.id}`}
-                                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary text-yellow-500"
-                                        defaultValue={review.estrellas}
-                                    >
-                                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
-                                        <option value="4">⭐⭐⭐⭐ (4)</option>
-                                        <option value="3">⭐⭐⭐ (3)</option>
-                                        <option value="2">⭐⭐ (2)</option>
-                                        <option value="1">⭐ (1)</option>
-                                    </select>
-                                </div>
+                                 <div className="col-span-full md:col-span-2 lg:col-span-1 space-y-2">
+                                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Conductor</label>
+                                     <input
+                                         id={`driver-${review.id}`}
+                                         className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary text-blue-500"
+                                         defaultValue={review.driver_name || ''}
+                                         placeholder="Nombre Conductor"
+                                     />
+                                 </div>
+
+                                 <div className="col-span-full md:col-span-2 lg:col-span-1 space-y-2">
+                                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Origen</label>
+                                     <select
+                                         id={`find_us-${review.id}`}
+                                         className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary"
+                                         defaultValue={review.find_us || ''}
+                                     >
+                                         <option value="instagram">Instagram</option>
+                                         <option value="google">Google/Web</option>
+                                         <option value="recommendation">Recomendación</option>
+                                         <option value="whatsapp">WhatsApp</option>
+                                         <option value="other">Otro</option>
+                                     </select>
+                                 </div>
+
+                                 {/* Ratings Grid */}
+                                 <div className="col-span-full grid grid-cols-3 md:grid-cols-6 gap-4 bg-gray-50 dark:bg-black/20 p-4 rounded-2xl border border-black/5">
+                                     {[
+                                         { label: 'Reserva', id: 'booking', key: 'rating_booking' },
+                                         { label: 'Logística', id: 'logistics', key: 'rating_logistics' },
+                                         { label: 'Ruta', id: 'route', key: 'rating_route' },
+                                         { label: 'Conductor', id: 'driver_score', key: 'rating_driver' },
+                                         { label: 'Vehículo', id: 'vehicle', key: 'rating_vehicle' },
+                                         { label: 'Precio', id: 'price', key: 'rating_price' }
+                                     ].map(r => (
+                                         <div key={r.id} className="space-y-1">
+                                             <label className="text-[9px] font-black uppercase text-gray-400 tracking-wider text-center block">{r.label}</label>
+                                             <select
+                                                 id={`rating-${r.id}-${review.id}`}
+                                                 className="w-full bg-transparent text-center text-xs font-black text-primary outline-none cursor-pointer"
+                                                 defaultValue={review[r.key] || 5}
+                                             >
+                                                 {[5, 4, 3, 2, 1].map(v => (
+                                                     <option key={v} value={v}>{v} ⭐</option>
+                                                 ))}
+                                             </select>
+                                         </div>
+                                     ))}
+                                 </div>
 
                                 {/* Country */}
                                 <div className="space-y-2">
@@ -393,7 +399,14 @@ const AdminReviews = () => {
                                             const values = {
                                                 nombre: document.getElementById(`nombre-${review.id}`).value,
                                                 tour_id: document.getElementById(`tour-${review.id}`).value,
-                                                estrellas: document.getElementById(`stars-${review.id}`).value,
+                                                driver_name: document.getElementById(`driver-${review.id}`).value,
+                                                find_us: document.getElementById(`find_us-${review.id}`).value,
+                                                rating_booking: document.getElementById(`rating-booking-${review.id}`).value,
+                                                rating_logistics: document.getElementById(`rating-logistics-${review.id}`).value,
+                                                rating_route: document.getElementById(`rating-route-${review.id}`).value,
+                                                rating_driver: document.getElementById(`rating-driver_score-${review.id}`).value,
+                                                rating_vehicle: document.getElementById(`rating-vehicle-${review.id}`).value,
+                                                rating_price: document.getElementById(`rating-price-${review.id}`).value,
                                                 pais: document.getElementById(`pais-${review.id}`).value,
                                                 ig_user: document.getElementById(`ig-${review.id}`).value,
                                                 aprobado: document.getElementById(`aprobado-${review.id}`).value,

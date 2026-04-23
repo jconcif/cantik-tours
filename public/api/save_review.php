@@ -26,19 +26,39 @@ try {
 
 $data = json_decode(file_get_contents("php://input"));
 
-if (!empty($data->name) && !empty($data->rating) && !empty($data->comment)) {
+if (!empty($data->name) && !empty($data->comment)) {
     try {
-        $query = "INSERT INTO reviews (nombre, estrellas, tour_id, comentario, comentario_en, ig_user, pais, autorizacion_fotos, aprobado) 
-                  VALUES (:nombre, :estrellas, :tour_id, :comentario, :comentario_en, :ig_user, :pais, :autorizacion_fotos, :aprobado)";
+        $query = "INSERT INTO reviews (
+                    nombre, tour_id, driver_name, find_us, 
+                    rating_booking, rating_logistics, rating_route, 
+                    rating_driver, rating_vehicle, rating_price, 
+                    comentario, comentario_en, ig_user, pais, 
+                    autorizacion_fotos, aprobado
+                  ) 
+                  VALUES (
+                    :nombre, :tour_id, :driver_name, :find_us, 
+                    :rating_booking, :rating_logistics, :rating_route, 
+                    :rating_driver, :rating_vehicle, :rating_price, 
+                    :comentario, :comentario_en, :ig_user, :pais, 
+                    :autorizacion_fotos, :aprobado
+                  )";
         
         $stmt = $conn->prepare($query);
 
         $stmt->bindParam(":nombre", $data->name);
-        $stmt->bindParam(":estrellas", $data->rating);
         $stmt->bindParam(":tour_id", $data->tour_type);
+        $stmt->bindParam(":driver_name", $data->driver_name);
+        $stmt->bindParam(":find_us", $data->find_us);
+        
+        $stmt->bindParam(":rating_booking", $data->rating_booking, PDO::PARAM_INT);
+        $stmt->bindParam(":rating_logistics", $data->rating_logistics, PDO::PARAM_INT);
+        $stmt->bindParam(":rating_route", $data->rating_route, PDO::PARAM_INT);
+        $stmt->bindParam(":rating_driver", $data->rating_driver, PDO::PARAM_INT);
+        $stmt->bindParam(":rating_vehicle", $data->rating_vehicle, PDO::PARAM_INT);
+        $stmt->bindParam(":rating_price", $data->rating_price, PDO::PARAM_INT);
+
         $stmt->bindParam(":comentario", $data->comment);
         
-        // If the review was submitted in English, save it also to the English column
         $comentario_en = (isset($data->lang) && strpos($data->lang, 'en') === 0) ? $data->comment : null;
         $stmt->bindParam(":comentario_en", $comentario_en);
         
@@ -46,12 +66,12 @@ if (!empty($data->name) && !empty($data->rating) && !empty($data->comment)) {
         $pais = !empty($data->country) ? $data->country : 'es';
         $stmt->bindParam(":pais", $pais);
         $stmt->bindParam(":autorizacion_fotos", $data->auth, PDO::PARAM_BOOL);
-        $aprobado = 0; // Default to false
+        $aprobado = 0; 
         $stmt->bindParam(":aprobado", $aprobado, PDO::PARAM_INT);
 
         if($stmt->execute()) {
             http_response_code(201);
-            echo json_encode(["status" => "success", "message" => "Review saved successfully. Waiting for moderation."]);
+            echo json_encode(["status" => "success", "message" => "Review saved successfully."]);
         } else {
             http_response_code(503);
             echo json_encode(["status" => "error", "message" => "Unable to save review."]);
