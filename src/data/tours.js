@@ -269,9 +269,9 @@ export const tours = [
         description_en: "An epic experience: dolphin watching at sunrise and secret waterfalls.",
         heroSubtitle: "Una aventura mágica al amanecer conectando con la vida marina y la selva norteña.",
         heroSubtitle_en: "A magical adventure at sunrise connecting with marine life and the northern jungle.",
-        fullDescription: "La aventura definitiva para los madrugadores. Empezaremos viendo delfines en su hábitat natural en Lovina, seguiremos con la impresionante cascada de Banyumala y cerraremos el día con la visita opcional al icónico templo de Ulun Danu.",
-        fullDescription_en: "The ultimate adventure for early birds. We start seeing dolphins in their natural habitat in Lovina, followed by the stunning Banyumala waterfalls, and an optional visit to the iconic Ulun Danu temple.",
-        price: 115,
+        fullDescription: "La aventura definitiva para los madrugadores. El precio incluye transporte privado y barca privada bajo reserva. En Cantik Tours practicamos un turismo responsable: nos alejamos de las persecuciones masivas de delfines, priorizando el respeto por los animales y su hábitat natural para que disfrutes de una experiencia ética y tranquila.",
+        fullDescription_en: "The ultimate adventure for early birds. Price includes private transport and private boat with pre-booking. At Cantik Tours we practice responsible tourism: we keep our distance from massive dolphin chases, prioritizing respect for the animals and their natural habitat for an ethical and peaceful experience.",
+        price: 97,
         duration: "15 horas",
         duration_en: "15 hours",
         image: "/images/tours/lovina-dolphins/lovina-sunrise.webp",
@@ -288,13 +288,15 @@ export const tours = [
         packingList: ['swimwear', 'sunscreen', 'camera', 'shoes'],
         importantInfo: [
             "La salida en barco es muy temprano (amanecer). El mar suele estar tranquilo.",
+            "Turismo Ético: No perseguimos a los delfines. Mantenemos una distancia de respeto para no estresarlos.",
             "Lleva bañador y toalla para la cascada Banyumala.",
-            "El trayecto de regreso es largo, aprovechamos para descansar o ver los Lagos Gemelos."
+            "El trayecto de regreso es largo, aprovechamos para descansar."
         ],
         importantInfo_en: [
             "The boat departure is very early (sunrise). The sea is usually calm.",
+            "Ethical Tourism: We do not chase the dolphins. We maintain a respectful distance to avoid stressing them.",
             "Bring swimwear and a towel for the Banyumala waterfall.",
-            "The return journey is long, we take the opportunity to rest or see the Twin Lakes."
+            "The return journey is long, we take the opportunity to rest."
         ],
         itinerary: [
             {
@@ -309,10 +311,10 @@ export const tours = [
                 type: 'visit',
                 duration: "2 horas",
                 duration_en: "2 hours",
-                activity: "Delfines en Lovina",
-                activity_en: "Dolphins in Lovina",
-                desc: "Avistamiento de delfines en barca tradicional durante el amanecer.",
-                desc_en: "Dolphin watching on a traditional boat during sunrise."
+                activity: "Barca Privada: Delfines",
+                activity_en: "Private Boat: Dolphins",
+                desc: "Avistamiento de delfines en barca tradicional PRIVADA (incluida en el precio). Máximo relax y exclusividad al amanecer.",
+                desc_en: "Dolphin watching on a PRIVATE traditional boat (included in the price). Maximum relaxation and exclusivity at sunrise."
             },
             {
                 type: 'food',
@@ -347,15 +349,17 @@ export const tours = [
                 duration_en: "1 hour",
                 activity: "Templo Ulun Danu Beratan (Opcional)",
                 activity_en: "Ulun Danu Beratan temple (Optional)",
-                desc: "Visita el emblemático templo flotante sobre el lago Beratan, una de las imágenes más icónicas de Bali.",
-                desc_en: "Visit the iconic floating temple on Lake Beratan, one of the most iconic images of Bali."
+                desc: "Si el grupo lo desea, visitaremos el emblemático templo flotante. Al ser opcional, permite ganar tiempo para el regreso si se prefiere.",
+                desc_en: "If the group wishes, we will visit the iconic floating temple. Being optional, it allows to save time for the return journey if preferred."
             },
             {
                 type: 'dropoff',
+                duration: "4:00 pm - 6:00 pm",
+                duration_en: "4:00 pm - 6:00 pm",
                 activity: "Regreso al hotel",
                 activity_en: "Return to hotel",
-                desc: "Horario de regreso puede variar según tráfico y condiciones climáticas.",
-                desc_en: "Return time may vary depending on traffic and weather conditions."
+                desc: "Llegada aproximada a tu alojamiento. El horario final depende del tráfico y de si se realizó la parada opcional en el templo.",
+                desc_en: "Approximate arrival at your accommodation. The final schedule depends on traffic and whether the optional temple stop was made."
             }
         ],
         location: "Lovina / Norte",
