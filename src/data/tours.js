@@ -728,12 +728,11 @@ export const tours = [
         price: 69,
         duration: "10 horas",
         duration_en: "10 hours",
-        image: "/images/tours/uluwatu/uluwatu-temple.jpg",
+        image: "/images/tours/uluwatu/uluwatu-temple.webp",
         images: [
-            "/images/tours/uluwatu/uluwatu-temple.jpg",
-            "/images/tours/uluwatu/melasti-beach.jpg",
-            "/images/tours/uluwatu/padang-padang.webp",
-            "/images/tours/uluwatu/kecak-uluwatu.webp"
+            "/images/tours/uluwatu/uluwatu-temple.webp",
+            "/images/tours/uluwatu/melasti-beach.webp",
+            "/images/tours/uluwatu/melasti-beach.webp"
         ],
         badge: "Día de Playa",
         badge_en: "Beach Day",
