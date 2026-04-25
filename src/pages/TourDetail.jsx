@@ -719,7 +719,7 @@ const TourDetail = () => {
                 onClose={() => setIsBookingModalOpen(false)}
                 tourTitle={l(tour, 'title')}
                 tourPrice={tour.price}
-                whatsappNumber="376614535"
+                tourId={tour.id}
             />
             <TransferModal
                 isOpen={isTransferModalOpen}

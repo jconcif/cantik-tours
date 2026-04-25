@@ -9,7 +9,7 @@ import { getDateStatus, isDateDisabled } from '../data/availability';
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import { trackEvent } from '../utils/analytics';
 
-const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
+const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     const { t, i18n } = useTranslation();
     const { formatPrice } = useCurrency();
     const [step, setStep] = useState(1);
@@ -30,6 +30,34 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
         navigator.clipboard.writeText(text);
         setCopiedField(field);
         setTimeout(() => setCopiedField(null), 2000);
+    };
+
+    const saveBookingToDB = async (overrideIsPaid = null) => {
+        try {
+            const data = {
+                tour_id: tourId || tourTitle.toLowerCase().replace(/\s+/g, '-'),
+                tour_title: tourTitle,
+                date: formData.date,
+                pax: formData.pax,
+                hotel: formData.hotel,
+                experience: formData.experience,
+                payment_type: formData.paymentType,
+                total_price: finalTotalPrice,
+                deposit_amount: depositAmount,
+                is_paid: overrideIsPaid !== null ? overrideIsPaid : isPaid,
+                coupon: formData.coupon
+            };
+
+            await fetch('/api/save_booking.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+        } catch (error) {
+            console.error("Error saving booking:", error);
+        }
     };
 
     const resetModal = () => {
@@ -125,6 +153,7 @@ ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looki
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
 
         trackEvent('Conversion', 'WhatsApp Confirmation', `${tourTitle} (${isPaid ? 'PAID' : 'PENDING'})`);
+        saveBookingToDB();
         window.open(whatsappUrl, '_blank');
         resetModal();
     };
@@ -155,6 +184,7 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
 
         trackEvent('Conversion', 'WhatsApp Bank Details Confirmation', tourTitle);
+        saveBookingToDB();
         window.open(whatsappUrl, '_blank');
         resetModal();
     };
@@ -577,6 +607,7 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                                             return actions.order.capture().then((details) => {
                                                                 trackEvent('Ecommerce', 'PayPal Payment Success', tourTitle);
                                                                 setIsPaid(true);
+                                                                saveBookingToDB(true);
                                                             });
                                                         }}
                                                     />

@@ -1,28 +1,36 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Star, Lock, Eye, EyeOff, CheckCircle2, Languages, Plus, RefreshCw, AlertCircle, Trash2, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Star, Lock, Eye, EyeOff, CheckCircle2, Languages, Plus, RefreshCw, AlertCircle, Trash2, ShieldCheck, Calendar, Users, MapPin, Wallet, TrendingUp, UserCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { reviewService } from '../services/reviewService';
+import { adminService } from '../services/adminService';
 
 const AdminReviews = () => {
     const { i18n } = useTranslation();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState('');
+    const [activeTab, setActiveTab] = useState('bookings');
     const [reviews, setReviews] = useState([]);
+    const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(false);
     const [updatingId, setUpdatingId] = useState(null);
     const [successId, setSuccessId] = useState(null);
     const [message, setMessage] = useState(null);
 
     // Simple password check
-    const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'cantik2024';
+    const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'javiperty2026';
 
-    const fetchReviews = async () => {
+    const fetchData = async () => {
         setLoading(true);
         setMessage(null);
         try {
-            const data = await reviewService.getReviews(password);
-            setReviews(data);
+            if (activeTab === 'reviews') {
+                const data = await reviewService.getReviews(password);
+                setReviews(data);
+            } else {
+                const data = await adminService.getBookings(password);
+                setBookings(data);
+            }
             setIsAuthenticated(true);
         } catch (error) {
             setMessage({ type: 'error', text: 'Error al conectar con la base de datos' });
@@ -31,6 +39,12 @@ const AdminReviews = () => {
         }
     };
 
+    useEffect(() => {
+        if (isAuthenticated) {
+            fetchData();
+        }
+    }, [activeTab, isAuthenticated]);
+
     const updateReview = async (id, data) => {
         setUpdatingId(id);
         setMessage(null);
@@ -38,7 +52,7 @@ const AdminReviews = () => {
             await reviewService.updateReview(id, { ...data, token: password });
             setSuccessId(id);
             setTimeout(() => setSuccessId(null), 2000);
-            fetchReviews(); // Refresh local data
+            fetchData();
         } catch (error) {
             setMessage({ type: 'error', text: 'Error al actualizar' });
         } finally {
@@ -49,10 +63,9 @@ const AdminReviews = () => {
 
     const deleteReview = async (id) => {
         if (!window.confirm('¿Estás seguro de que quieres eliminar esta reseña permanentemente?')) return;
-
         try {
             await reviewService.deleteReview(id, password);
-            fetchReviews();
+            fetchData();
         } catch (error) {
             setMessage({ type: 'error', text: 'Error al eliminar' });
         }
@@ -61,399 +74,273 @@ const AdminReviews = () => {
     const createReview = async () => {
         try {
             await reviewService.createReview(password);
-            fetchReviews();
+            fetchData();
         } catch (error) {
             setMessage({ type: 'error', text: error.message });
         }
     };
 
     const countriesList = [
-        { code: 'de', name: '🇩🇪 Alemania' },
-        { code: 'ad', name: '🇦🇩 Andorra' },
-        { code: 'ar', name: '🇦🇷 Argentina' },
-        { code: 'au', name: '🇦🇺 Australia' },
-        { code: 'be', name: '🇧🇪 Bélgica' },
-        { code: 'bo', name: '🇧🇴 Bolivia' },
-        { code: 'ca', name: '🇨🇦 Canadá' },
-        { code: 'cl', name: '🇨🇱 Chile' },
-        { code: 'co', name: '🇨🇴 Colombia' },
-        { code: 'cr', name: '🇨🇷 Costa Rica' },
-        { code: 'ec', name: '🇪🇨 Ecuador' },
-        { code: 'es', name: '🇪🇸 España' },
-        { code: 'us', name: '🇺🇸 USA' },
-        { code: 'fr', name: '🇫🇷 Francia' },
-        { code: 'gt', name: '🇬🇹 Guatemala' },
-        { code: 'id', name: '🇮🇩 Indonesia' },
-        { code: 'it', name: '🇮🇹 Italia' },
-        { code: 'mx', name: '🇲🇽 México' },
-        { code: 'nl', name: '🇳🇱 P. Bajos' },
-        { code: 'pa', name: '🇵🇦 Panamá' },
-        { code: 'py', name: '🇵🇾 Paraguay' },
-        { code: 'pe', name: '🇵🇪 Perú' },
-        { code: 'pt', name: '🇵🇹 Portugal' },
-        { code: 'gb', name: '🇬🇧 Reino Unido' },
-        { code: 'do', name: '🇩🇴 Rep. Dominicana' },
-        { code: 'ch', name: '🇨🇭 Suiza' },
-        { code: 'th', name: '🇹🇭 Tailandia' },
-        { code: 'uy', name: '🇺🇾 Uruguay' },
-        { code: 'venezuela', name: '🇻🇪 Venezuela' },
-        { code: 'other', name: '🌐 Otro' }
+        { code: 'de', name: '🇩🇪 Alemania' }, { code: 'ad', name: '🇦🇩 Andorra' }, { code: 'ar', name: '🇦🇷 Argentina' },
+        { code: 'au', name: '🇦🇺 Australia' }, { code: 'be', name: '🇧🇪 Bélgica' }, { code: 'bo', name: '🇧🇴 Bolivia' },
+        { code: 'ca', name: '🇨🇦 Canadá' }, { code: 'cl', name: '🇨🇱 Chile' }, { code: 'co', name: '🇨🇴 Colombia' },
+        { code: 'cr', name: '🇨🇷 Costa Rica' }, { code: 'ec', name: '🇪🇨 Ecuador' }, { code: 'es', name: '🇪🇸 España' },
+        { code: 'us', name: '🇺🇸 USA' }, { code: 'fr', name: '🇫🇷 Francia' }, { code: 'gt', name: '🇬🇹 Guatemala' },
+        { code: 'id', name: '🇮🇩 Indonesia' }, { code: 'it', name: '🇮🇹 Italia' }, { code: 'mx', name: '🇲🇽 México' },
+        { code: 'nl', name: '🇳🇱 P. Bajos' }, { code: 'pa', name: '🇵🇦 Panamá' }, { code: 'py', name: '🇵🇾 Paraguay' },
+        { code: 'pe', name: '🇵🇪 Perú' }, { code: 'pt', name: '🇵🇹 Portugal' }, { code: 'gb', name: '🇬🇧 Reino Unido' },
+        { code: 'do', name: '🇩🇴 Rep. Dominicana' }, { code: 'ch', name: '🇨🇭 Suiza' }, { code: 'th', name: '🇹🇭 Tailandia' },
+        { code: 'uy', name: '🇺🇾 Uruguay' }, { code: 'venezuela', name: '🇻🇪 Venezuela' }, { code: 'other', name: '🌐 Otro' }
     ];
 
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex items-center justify-center p-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="w-full max-w-md bg-white dark:bg-white/5 p-10 rounded-[3rem] border border-black/5 shadow-2xl"
-                >
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md bg-white dark:bg-white/5 p-10 rounded-[3rem] border border-black/5 shadow-2xl">
                     <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 mx-auto">
                         <ShieldCheck size={40} className="text-primary" />
                     </div>
-                    <h1 className="text-3xl font-black text-center mb-2">Panel Admin</h1>
-                    <p className="text-center text-gray-500 mb-8 font-medium italic">Introduce la clave de acceso</p>
-
-                    <form onSubmit={(e) => { e.preventDefault(); fetchReviews(); }} className="space-y-4">
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Contraseña"
-                            className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-2xl outline-none focus:ring-2 focus:ring-primary font-bold text-center"
-                        />
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-4 bg-primary text-white rounded-2xl font-black shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
-                        >
-                            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Entrar'}
+                    <h1 className="text-3xl font-black text-center mb-2">Cantik Dashboard</h1>
+                    <p className="text-center text-gray-500 mb-8 font-medium italic">Acceso restringido</p>
+                    <form onSubmit={(e) => { e.preventDefault(); fetchData(); }} className="space-y-4">
+                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-2xl outline-none focus:ring-2 focus:ring-primary font-bold text-center" />
+                        <button type="submit" disabled={loading} className="w-full py-4 bg-primary text-white rounded-2xl font-black shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
+                            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Entrar al Panel'}
                         </button>
                     </form>
-                    {message && (
-                        <p className={`mt-6 text-center text-sm font-bold ${message.type === 'error' ? 'text-red-500' : 'text-green-500'}`}>
-                            {message.text}
-                        </p>
-                    )}
+                    {message && <p className={`mt-6 text-center text-sm font-bold ${message.type === 'error' ? 'text-red-500' : 'text-green-500'}`}>{message.text}</p>}
                 </motion.div>
             </div>
         );
     }
 
     return (
-        <div className="pt-32 pb-20 min-h-screen bg-bg-light dark:bg-bg-dark px-6">
-            <div className="max-w-6xl mx-auto">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="pt-28 pb-20 min-h-screen bg-bg-light dark:bg-bg-dark px-4 md:px-6">
+            <div className="max-w-7xl mx-auto">
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
                     <div>
-                        <h1 className="text-4xl md:text-5xl font-black mb-2">Gestionar <span className="text-primary italic">Reseñas</span></h1>
-                        <p className="text-gray-500 font-medium">Panel de control de testimonios · Cantik Tours</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={createReview}
-                            className="flex items-center gap-2 px-6 py-4 bg-white dark:bg-white/5 border border-black/5 text-secondary dark:text-white rounded-2xl font-black hover:bg-gray-50 transition-all shadow-sm"
-                        >
-                            <Plus size={20} className="text-primary" />
-                            Nueva Reseña
-                        </button>
-                        <button
-                            onClick={fetchReviews}
-                            className="p-4 bg-white dark:bg-white/5 border border-black/5 rounded-2xl hover:bg-gray-50 transition-all shadow-sm"
-                            title="Refrescar"
-                        >
-                            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
-                        </button>
-                    </div>
-                </div>
-
-                {message && message.type === 'error' && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="fixed top-8 left-1/2 -translate-x-1/2 z-[100] px-8 py-4 rounded-3xl font-black border flex items-center gap-4 shadow-2xl backdrop-blur-md bg-red-50/90 border-red-100 text-red-600 shadow-red-500/20"
-                    >
-                        <div className="p-2 rounded-full bg-red-100">
-                            <AlertCircle size={24} />
+                        <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-[0.2em] mb-2">
+                            <ShieldCheck size={14} />
+                            Panel de Administración
                         </div>
-                        <span className="text-lg">{message.text}</span>
-                    </motion.div>
-                )}
-
-                {/* Performance Analytics Dashboard */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
-                    {[
-                        { label: 'Reserva', key: 'rating_booking' },
-                        { label: 'Logística', key: 'rating_logistics' },
-                        { label: 'Ruta', key: 'rating_route' },
-                        { label: 'Conductor', key: 'rating_driver' },
-                        { label: 'Vehículo', key: 'rating_vehicle' },
-                        { label: 'Calidad/Precio', key: 'rating_price' }
-                    ].map((stat) => {
-                        const validReviews = reviews.filter(r => r[stat.key]);
-                        const avg = validReviews.length > 0 
-                            ? (validReviews.reduce((acc, r) => acc + Number(r[stat.key]), 0) / validReviews.length).toFixed(1)
-                            : '-';
-                        return (
-                            <motion.div 
-                                key={stat.key}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm text-center"
-                            >
-                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{stat.label}</div>
-                                <div className="text-3xl font-black text-primary flex items-center justify-center gap-1">
-                                    {avg}
-                                    <Star size={16} fill="currentColor" />
-                                </div>
-                            </motion.div>
-                        );
-                    })}
+                        <h1 className="text-4xl md:text-5xl font-black">Cantik <span className="text-primary italic">Control</span></h1>
+                    </div>
+                    
+                    {/* Tabs */}
+                    <div className="flex bg-white dark:bg-white/5 p-1.5 rounded-2xl border border-black/5 shadow-sm">
+                        <button 
+                            onClick={() => setActiveTab('bookings')}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all ${activeTab === 'bookings' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                            <Calendar size={18} />
+                            Reservas
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('reviews')}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all ${activeTab === 'reviews' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-700'}`}
+                        >
+                            <Star size={18} />
+                            Reseñas
+                        </button>
+                    </div>
                 </div>
 
-                <div className="grid gap-8">
-                    {reviews.map((review) => (
-                        <motion.div
-                            key={review.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] border border-black/5 flex flex-col gap-8 shadow-xl"
-                        >
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {/* Name */}
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Nombre</label>
-                                    <input
-                                        id={`nombre-${review.id}`}
-                                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary"
-                                        defaultValue={review.nombre || ''}
-                                    />
+                <AnimatePresence mode="wait">
+                    {activeTab === 'bookings' ? (
+                        <motion.div key="bookings" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
+                            {/* Stats */}
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                                <div className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm">
+                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Reservas</div>
+                                    <div className="text-3xl font-black text-primary">{bookings.length}</div>
                                 </div>
-
-                                {/* Tour */}
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Tour</label>
-                                    <select
-                                        id={`tour-${review.id}`}
-                                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary"
-                                        defaultValue={review.tour_id || ''}
-                                    >
-                                        <option value="">-- Seleccionar Tour --</option>
-                                        <option value="ubud_central">Ubud Central</option>
-                                        <option value="ubud_north">Ubud North</option>
-                                        <option value="lovina">Lovina / Delfines</option>
-                                        <option value="east">East Bali / Besakih</option>
-                                        <option value="lempuyang">Lempuyang</option>
-                                        <option value="transfer">Traslado</option>
-                                        <option value="custom">Tour Personalizado</option>
-                                        <option value="other">Otro</option>
-                                    </select>
+                                <div className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm">
+                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Pagadas</div>
+                                    <div className="text-3xl font-black text-emerald-500">{bookings.filter(b => b.is_paid == 1).length}</div>
                                 </div>
-
-                                 <div className="col-span-full md:col-span-2 lg:col-span-1 space-y-2">
-                                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Conductor</label>
-                                     <input
-                                         id={`driver-${review.id}`}
-                                         className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary text-blue-500"
-                                         defaultValue={review.driver_name || ''}
-                                         placeholder="Nombre Conductor"
-                                     />
-                                 </div>
-
-                                 <div className="col-span-full md:col-span-2 lg:col-span-1 space-y-2">
-                                     <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Origen</label>
-                                     <select
-                                         id={`find_us-${review.id}`}
-                                         className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary"
-                                         defaultValue={review.find_us || ''}
-                                     >
-                                         <option value="instagram">Instagram</option>
-                                         <option value="google">Google/Web</option>
-                                         <option value="recommendation">Recomendación</option>
-                                         <option value="whatsapp">WhatsApp</option>
-                                         <option value="other">Otro</option>
-                                     </select>
-                                 </div>
-
-                                 {/* Ratings Grid */}
-                                 <div className="col-span-full grid grid-cols-3 md:grid-cols-6 gap-4 bg-gray-50 dark:bg-black/20 p-4 rounded-2xl border border-black/5">
-                                     {[
-                                         { label: 'Reserva', id: 'booking', key: 'rating_booking' },
-                                         { label: 'Logística', id: 'logistics', key: 'rating_logistics' },
-                                         { label: 'Ruta', id: 'route', key: 'rating_route' },
-                                         { label: 'Conductor', id: 'driver_score', key: 'rating_driver' },
-                                         { label: 'Vehículo', id: 'vehicle', key: 'rating_vehicle' },
-                                         { label: 'Precio', id: 'price', key: 'rating_price' }
-                                     ].map(r => (
-                                         <div key={r.id} className="space-y-1">
-                                             <label className="text-[9px] font-black uppercase text-gray-400 tracking-wider text-center block">{r.label}</label>
-                                             <select
-                                                 id={`rating-${r.id}-${review.id}`}
-                                                 className="w-full bg-transparent text-center text-xs font-black text-primary outline-none cursor-pointer"
-                                                 defaultValue={review[r.key] || 5}
-                                             >
-                                                 {[5, 4, 3, 2, 1].map(v => (
-                                                     <option key={v} value={v}>{v} ⭐</option>
-                                                 ))}
-                                             </select>
-                                         </div>
-                                     ))}
-                                 </div>
-
-                                {/* Country */}
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">País</label>
-                                    <select
-                                        id={`pais-${review.id}`}
-                                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary"
-                                        defaultValue={review.pais || 'es'}
-                                    >
-                                        {countriesList.map(c => (
-                                            <option key={c.code} value={c.code}>{c.name}</option>
-                                        ))}
-                                    </select>
+                                <div className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm">
+                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Ingresos Depósitos</div>
+                                    <div className="text-3xl font-black text-secondary">{bookings.reduce((acc, b) => acc + (b.is_paid == 1 ? Number(b.deposit_amount) : 0), 0).toFixed(0)}€</div>
                                 </div>
-
-                                {/* Instagram */}
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Instagram</label>
-                                    <input
-                                        id={`ig-${review.id}`}
-                                        className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary text-pink-500"
-                                        defaultValue={review.ig_user || ''}
-                                        placeholder="@usuario"
-                                    />
-                                </div>
-
-                                {/* Status Toggle */}
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Estado</label>
-                                    <select
-                                        id={`aprobado-${review.id}`}
-                                        className={`w-full px-4 py-3 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary ${review.aprobado == 1 ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-500'}`}
-                                        defaultValue={review.aprobado}
-                                    >
-                                        <option value="1">✅ Publicado</option>
-                                        <option value="0">❌ Oculto</option>
-                                    </select>
+                                <div className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm">
+                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Pendientes</div>
+                                    <div className="text-3xl font-black text-orange-400">{bookings.filter(b => b.is_paid == 0).length}</div>
                                 </div>
                             </div>
 
-                            {/* Comments Section */}
-                            <div className="grid md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest flex items-center gap-2">
-                                        Comentario (ES)
-                                    </label>
-                                    <textarea
-                                        id={`orig-${review.id}`}
-                                        className="w-full p-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary h-32 italic leading-relaxed"
-                                        defaultValue={review.comentario || ''}
-                                        placeholder="Comentario original..."
-                                    />
+                            <div className="bg-white dark:bg-white/5 rounded-[2.5rem] border border-black/5 shadow-xl overflow-hidden">
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left">
+                                        <thead>
+                                            <tr className="bg-gray-50 dark:bg-white/5 border-b border-black/5">
+                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Fecha Tour</th>
+                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Tour / Cliente</th>
+                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Grupo / Hotel</th>
+                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Precio / Pago</th>
+                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-black/5">
+                                            {bookings.map((booking) => (
+                                                <tr key={booking.id} className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors group">
+                                                    <td className="px-6 py-6">
+                                                        <div className="text-sm font-black text-gray-900 dark:text-white">
+                                                            {new Date(booking.booking_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
+                                                        </div>
+                                                        <div className="text-[10px] font-bold text-gray-400 uppercase">
+                                                            {new Date(booking.booking_date).toLocaleDateString('es-ES', { year: 'numeric' })}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-6">
+                                                        <div className="text-sm font-black text-primary truncate max-w-[180px]">{booking.tour_title}</div>
+                                                        <div className="text-xs font-bold text-gray-500 italic">ID: #{booking.id}</div>
+                                                    </td>
+                                                    <td className="px-6 py-6">
+                                                        <div className="flex items-center gap-1.5 text-xs font-black text-gray-700 dark:text-gray-300">
+                                                            <Users size={12} className="text-gray-400" />
+                                                            {booking.pax} Pers.
+                                                        </div>
+                                                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 truncate max-w-[150px]">
+                                                            <MapPin size={10} />
+                                                            {booking.hotel}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-6">
+                                                        <div className="text-sm font-black text-gray-900 dark:text-white">{booking.total_price}€</div>
+                                                        <div className="text-[10px] font-bold text-gray-400">Dep: {booking.deposit_amount}€</div>
+                                                    </td>
+                                                    <td className="px-6 py-6">
+                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${booking.is_paid == 1 ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
+                                                            {booking.is_paid == 1 ? (
+                                                                <><CheckCircle2 size={12} /> PAGADO</>
+                                                            ) : (
+                                                                <><Wallet size={12} /> PENDIENTE</>
+                                                            )}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
                                 </div>
-
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase text-pink-500 tracking-widest flex items-center gap-2">
-                                        <Languages size={12} />
-                                        Translation (EN)
-                                    </label>
-                                    <textarea
-                                        id={`trans-${review.id}`}
-                                        className="w-full p-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary h-32 italic leading-relaxed"
-                                        defaultValue={review.comentario_en || ''}
-                                        placeholder="Traduce el comentario aquí..."
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Footer Actions */}
-                            <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-black/5">
-                                <div className="flex items-center gap-6">
-                                    <label className="flex items-center gap-3 cursor-pointer group">
-                                        <input
-                                            type="checkbox"
-                                            id={`auth-${review.id}`}
-                                            className="w-5 h-5 rounded-lg border-2 border-primary/30 text-primary focus:ring-primary"
-                                            defaultChecked={review.autorizacion_fotos == 1}
-                                        />
-                                        <span className="text-[11px] font-black uppercase tracking-wider text-gray-500 group-hover:text-primary transition-colors">
-                                            Autoriza Redes/Web
-                                        </span>
-                                    </label>
-                                    <span className="text-[10px] font-medium text-gray-400">
-                                        ID: {review.id} · Fecha: {new Date(review.fecha).toLocaleDateString()}
-                                    </span>
-                                </div>
-
-                                <div className="flex items-center gap-3">
-                                    <button
-                                        onClick={() => deleteReview(review.id)}
-                                        className="p-4 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all"
-                                        title="Eliminar Reseña"
-                                    >
-                                        <Trash2 size={20} />
-                                    </button>
-                                    <button
-                                        disabled={updatingId === review.id}
-                                        onClick={() => {
-                                            const values = {
-                                                nombre: document.getElementById(`nombre-${review.id}`).value,
-                                                tour_id: document.getElementById(`tour-${review.id}`).value,
-                                                driver_name: document.getElementById(`driver-${review.id}`).value,
-                                                find_us: document.getElementById(`find_us-${review.id}`).value,
-                                                rating_booking: document.getElementById(`rating-booking-${review.id}`).value,
-                                                rating_logistics: document.getElementById(`rating-logistics-${review.id}`).value,
-                                                rating_route: document.getElementById(`rating-route-${review.id}`).value,
-                                                rating_driver: document.getElementById(`rating-driver_score-${review.id}`).value,
-                                                rating_vehicle: document.getElementById(`rating-vehicle-${review.id}`).value,
-                                                rating_price: document.getElementById(`rating-price-${review.id}`).value,
-                                                pais: document.getElementById(`pais-${review.id}`).value,
-                                                ig_user: document.getElementById(`ig-${review.id}`).value,
-                                                aprobado: document.getElementById(`aprobado-${review.id}`).value,
-                                                comentario: document.getElementById(`orig-${review.id}`).value,
-                                                comentario_en: document.getElementById(`trans-${review.id}`).value,
-                                                autorizacion_fotos: document.getElementById(`auth-${review.id}`).checked ? 1 : 0
-                                            };
-                                            updateReview(review.id, values);
-                                        }}
-                                        className={`flex items-center gap-3 px-8 py-4 text-white rounded-2xl font-black shadow-lg transition-all ${updatingId === review.id
-                                            ? 'bg-gray-400 cursor-not-allowed opacity-70'
-                                            : successId === review.id
-                                                ? 'bg-green-500 shadow-green-200'
-                                                : 'bg-primary shadow-primary/25 hover:scale-105 active:scale-95 cursor-pointer'
-                                            }`}
-                                    >
-                                        {updatingId === review.id ? (
-                                            <>
-                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                Guardando...
-                                            </>
-                                        ) : successId === review.id ? (
-                                            <>
-                                                <CheckCircle2 size={20} />
-                                                ¡Guardado!
-                                            </>
-                                        ) : (
-                                            <>
-                                                <CheckCircle2 size={20} />
-                                                Guardar Cambios
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
+                                {bookings.length === 0 && (
+                                    <div className="p-20 text-center text-gray-400 font-medium italic">No hay reservas registradas aún</div>
+                                )}
                             </div>
                         </motion.div>
-                    ))}
-                </div>
+                    ) : (
+                        <motion.div key="reviews" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
+                            {/* Reviews Stats */}
+                            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+                                {[
+                                    { label: 'Reserva', key: 'rating_booking' },
+                                    { label: 'Logística', key: 'rating_logistics' },
+                                    { label: 'Ruta', key: 'rating_route' },
+                                    { label: 'Conductor', key: 'rating_driver' },
+                                    { label: 'Vehículo', key: 'rating_vehicle' },
+                                    { label: 'Precio', key: 'rating_price' }
+                                ].map((stat) => {
+                                    const validReviews = reviews.filter(r => r[stat.key]);
+                                    const avg = validReviews.length > 0 
+                                        ? (validReviews.reduce((acc, r) => acc + Number(r[stat.key]), 0) / validReviews.length).toFixed(1)
+                                        : '-';
+                                    return (
+                                        <div key={stat.key} className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-black/5 text-center shadow-sm">
+                                            <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">{stat.label}</div>
+                                            <div className="text-xl font-black text-primary flex items-center justify-center gap-0.5">{avg}<Star size={12} fill="currentColor" /></div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
 
-                {reviews.length === 0 && !loading && (
-                    <div className="text-center py-24 bg-gray-50 dark:bg-white/5 rounded-[3rem] border border-dashed border-gray-200 dark:border-white/10">
-                        <p className="text-gray-400 font-medium">No hay reseñas para gestionar aún</p>
-                    </div>
-                )}
+                            <div className="flex justify-end gap-3 mb-6">
+                                <button onClick={createReview} className="flex items-center gap-2 px-6 py-4 bg-primary text-white rounded-2xl font-black hover:scale-105 transition-all shadow-lg shadow-primary/20">
+                                    <Plus size={20} />
+                                    Nueva Reseña Manual
+                                </button>
+                                <button onClick={fetchData} className="p-4 bg-white dark:bg-white/5 border border-black/5 rounded-2xl hover:bg-gray-50 transition-all shadow-sm">
+                                    <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+                                </button>
+                            </div>
+
+                            <div className="grid gap-6">
+                                {reviews.map((review) => (
+                                    <motion.div key={review.id} className="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] border border-black/5 flex flex-col gap-8 shadow-xl">
+                                        <div className="grid md:grid-cols-3 gap-6">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Nombre</label>
+                                                <input id={`nombre-${review.id}`} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary" defaultValue={review.nombre || ''} />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Tour</label>
+                                                <select id={`tour-${review.id}`} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary" defaultValue={review.tour_id || ''}>
+                                                    <option value="ubud_central">Ubud Central</option>
+                                                    <option value="ubud_north">Ubud North</option>
+                                                    <option value="lovina">Lovina / Delfines</option>
+                                                    <option value="east">East Bali</option>
+                                                    <option value="lempuyang">Lempuyang</option>
+                                                    <option value="custom">Personalizado</option>
+                                                </select>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Estado</label>
+                                                <select id={`aprobado-${review.id}`} className={`w-full px-4 py-3 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary ${review.aprobado == 1 ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-500'}`} defaultValue={review.aprobado}>
+                                                    <option value="1">✅ Publicado</option>
+                                                    <option value="0">❌ Oculto</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="grid md:grid-cols-2 gap-6">
+                                            <textarea id={`orig-${review.id}`} className="w-full p-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary h-32 italic" defaultValue={review.comentario || ''} />
+                                            <textarea id={`trans-${review.id}`} className="w-full p-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary h-32 italic text-primary" defaultValue={review.comentario_en || ''} placeholder="Traducción al inglés..." />
+                                        </div>
+
+                                        <div className="flex items-center justify-between pt-6 border-t border-black/5">
+                                            <div className="text-[10px] font-bold text-gray-400">ID: #{review.id} · {new Date(review.fecha).toLocaleDateString()}</div>
+                                            <div className="flex gap-3">
+                                                <button onClick={() => deleteReview(review.id)} className="p-3 text-red-400 hover:bg-red-50 rounded-xl transition-all"><Trash2 size={18} /></button>
+                                                <button 
+                                                    onClick={() => {
+                                                        const values = {
+                                                            nombre: document.getElementById(`nombre-${review.id}`).value,
+                                                            tour_id: document.getElementById(`tour-${review.id}`).value,
+                                                            aprobado: document.getElementById(`aprobado-${review.id}`).value,
+                                                            comentario: document.getElementById(`orig-${review.id}`).value,
+                                                            comentario_en: document.getElementById(`trans-${review.id}`).value,
+                                                            // Keep other hidden values
+                                                            driver_name: review.driver_name,
+                                                            find_us: review.find_us,
+                                                            rating_booking: review.rating_booking,
+                                                            rating_logistics: review.rating_logistics,
+                                                            rating_route: review.rating_route,
+                                                            rating_driver: review.rating_driver,
+                                                            rating_vehicle: review.rating_vehicle,
+                                                            rating_price: review.rating_price,
+                                                            pais: review.pais,
+                                                            ig_user: review.ig_user,
+                                                            autorizacion_fotos: review.autorizacion_fotos
+                                                        };
+                                                        updateReview(review.id, values);
+                                                    }}
+                                                    className="px-6 py-3 bg-primary text-white rounded-xl font-black shadow-lg flex items-center gap-2"
+                                                >
+                                                    {updatingId === review.id ? <RefreshCw size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
+                                                    {successId === review.id ? '¡Guardado!' : 'Guardar'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
         </div>
     );
 };
 
 export default AdminReviews;
+

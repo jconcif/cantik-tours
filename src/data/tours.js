@@ -718,7 +718,7 @@ export const tours = [
         heroSubtitle_en: "The perfect tropical day: spectacular warm beaches culminate in the magic of Uluwatu Temple.",
         fullDescription: "Explora la península de Bukit, el secreto mejor guardado para los amantes del sol y la brisa oceánica. Navegaremos por la costa sur para descubrir playas inmaculadas de arena blanca y agua turquesa protegidas por inmensos muros de piedra caliza. Terminaremos la jornada de la forma más épica posible: al borde de un acantilado de 70 metros de altura en el Templo de Uluwatu, donde la tradicional danza del fuego cobrará vida mientras el sol se hunde en el extenso Océano Índico.",
         fullDescription_en: "Explore the Bukit peninsula, the best kept secret for sun and ocean breeze lovers. We will navigate the south coast to discover immaculate white sand and turquoise water beaches protected by immense limestone walls. We will end the day in the most epic way possible: on the edge of a 70-meter-high cliff at the Uluwatu Temple, where the traditional fire dance will come alive as the sun sinks into the Indian Ocean.",
-        price: 69,
+        price: 60,
         duration: "10 horas",
         duration_en: "10 hours",
         image: "/images/tours/uluwatu/uluwatu-temple.webp",
