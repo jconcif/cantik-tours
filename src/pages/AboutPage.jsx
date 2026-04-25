@@ -130,24 +130,38 @@ const AboutPage = () => {
             </section>
 
             {/* 3. Philosophy - The Bridge (True Full Width Band) */}
-            <section className="bg-primary/5 dark:bg-primary/[0.03] border-y border-primary/10 py-24 md:py-40 overflow-hidden">
-                <div className="max-w-5xl mx-auto text-center px-6">
+            <section className="relative py-24 md:py-40 overflow-hidden">
+                {/* Background Decor */}
+                <div className="absolute top-0 left-0 w-full h-full bg-primary/5 dark:bg-primary/[0.02] -z-10" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-7xl h-full bg-[radial-gradient(circle_at_center,rgba(19,200,236,0.08)_0%,transparent_70%)] -z-10" />
+
+                <div className="max-w-5xl mx-auto px-6">
                     <motion.div
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="relative"
+                        className="relative bg-white/40 dark:bg-white/5 backdrop-blur-sm border border-primary/10 p-8 md:p-20 rounded-[3rem] md:rounded-[5rem] shadow-2xl shadow-primary/5 text-center"
                     >
-                        {/* Decorative Quotes - Subtly balanced */}
-                        <div className="hidden md:block absolute top-0 left-0 text-7xl font-serif text-primary opacity-20 pointer-events-none -translate-x-16 lg:-translate-x-24">“</div>
-                        <div className="hidden md:block absolute bottom-0 right-0 text-7xl font-serif text-primary opacity-20 pointer-events-none translate-x-16 lg:translate-x-24 translate-y-4">”</div>
+                        {/* Balinese Flower Icon (Simplified SVG) */}
+                        <div className="mb-8 flex justify-center">
+                            <div className="w-12 h-12 text-primary opacity-40">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <path d="M12 2L14.5 9H21L15.5 13.5L18 21L12 16.5L6 21L8.5 13.5L3 9H9.5L12 2Z" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </div>
+                        </div>
 
-                        <span className="text-primary font-bold tracking-[0.3em] uppercase text-[10px] md:text-xs mb-8 block relative z-10">
+                        <span className="text-primary font-bold tracking-[0.4em] uppercase text-[10px] md:text-xs mb-8 block">
                             {t('about.tag')}
                         </span>
-                        <p className="text-lg md:text-2xl text-gray-800 dark:text-white font-medium italic leading-relaxed relative z-10 max-w-4xl mx-auto">
-                            {t('about.meaning_text')}
-                        </p>
+
+                        <div className="relative inline-block">
+                            <div className="absolute -top-10 -left-6 md:-left-12 text-6xl md:text-9xl font-serif text-primary/10 select-none pointer-events-none">“</div>
+                            <p className="text-xl md:text-3xl lg:text-4xl text-gray-900 dark:text-white font-medium italic leading-relaxed px-4 md:px-8 relative z-10">
+                                {t('about.meaning_text')}
+                            </p>
+                            <div className="absolute -bottom-10 -right-6 md:-right-12 text-6xl md:text-9xl font-serif text-primary/10 select-none pointer-events-none translate-y-4">”</div>
+                        </div>
                     </motion.div>
                 </div>
             </section>

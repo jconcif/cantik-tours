@@ -456,9 +456,7 @@ const TourDetail = () => {
                                     </li>
                                 ))}
                             </ul>
-                            <p className="mt-6 text-[10px] uppercase font-bold text-gray-400">
-                                *{i18n.language.startsWith('es') ? 'deberás pagarlo por tu cuenta en cada lugar.' : 'to be paid on your own at each place.'}
-                            </p>
+
                         </section>
                     </div>
 

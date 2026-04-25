@@ -7,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getDateStatus, isDateDisabled } from '../data/availability';
 import { PayPalButtons } from "@paypal/react-paypal-js";
+import { trackEvent } from '../utils/analytics';
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
     const { t, i18n } = useTranslation();
@@ -85,6 +86,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
 
         // Si estamos en el paso 1, y la validacion HTML pasó, vamos al paso 2
         if (step === 1) {
+            trackEvent('Booking', 'Step 2 reached', tourTitle);
             setStep(2);
             return;
         }
@@ -95,6 +97,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice }) => {
                 alert(i18n.language.startsWith('es') ? "Por favor selecciona un nivel de experiencia." : "Please select an experience level.");
                 return;
             }
+            trackEvent('Booking', 'Step 3 reached', `${tourTitle} - ${formData.experience}`);
             setStep(3);
             return;
         }
@@ -121,6 +124,7 @@ ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looki
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
 
+        trackEvent('Conversion', 'WhatsApp Confirmation', `${tourTitle} (${isPaid ? 'PAID' : 'PENDING'})`);
         window.open(whatsappUrl, '_blank');
         resetModal();
     };
@@ -150,6 +154,7 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
 
+        trackEvent('Conversion', 'WhatsApp Bank Details Confirmation', tourTitle);
         window.open(whatsappUrl, '_blank');
         resetModal();
     };
@@ -570,6 +575,7 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                                         }}
                                                         onApprove={(data, actions) => {
                                                             return actions.order.capture().then((details) => {
+                                                                trackEvent('Ecommerce', 'PayPal Payment Success', tourTitle);
                                                                 setIsPaid(true);
                                                             });
                                                         }}

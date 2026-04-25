@@ -380,8 +380,8 @@ export const tours = [
         id: 'east-bali-besakih',
         title: "Este de Bali: El Templo Madre Besakih",
         title_en: "East Bali: Besakih Mother Temple",
-        description: "Visita el templo más grande de Bali, palacios de agua y la aldea más limpia del mundo.",
-        description_en: "Visit Bali's largest temple, water palaces and the world's cleanest village.",
+        description: "Visita el templo más grande de Bali, palacios de agua y una aldea tradicional única.",
+        description_en: "Visit Bali's largest temple, water palaces and a unique traditional village.",
         heroSubtitle: "Viaja al pasado de Bali visitando el Templo Madre y aldeas tradicionales detenidas en el tiempo.",
         heroSubtitle_en: "Travel to Bali's past visiting the Mother Temple and traditional villages frozen in time.",
         fullDescription: "Una inmersión profunda en la historia de Bali. Visitaremos Besakih, situado en la ladera del volcán Agung, el palacio acuático Tirta Gangga y la aldea tradicional Penglipuran, famosa por su arquitectura intacta.",
@@ -593,8 +593,8 @@ export const tours = [
 
     {
         id: 'beji-griya-tanah-lot',
-        title: "Bali Místico: Purificación, Monos y Atardecer",
-        title_en: "Mystic Bali: Purification, Monkeys & Sunset",
+        title: "Oeste de Bali: Purificación, Templos y Atardecer",
+        title_en: "West Bali: Purification, Temples & Sunset",
         description: "Vive una purificación espiritual intensa, el bosque Sangeh y el atardecer en Tanah Lot.",
         description_en: "Experience intense spiritual purification, explore Sangeh forest and marvel at Tanah Lot.",
         heroSubtitle: "Desde el ritual de agua en Beji Griya hasta la espectacular danza de fuego frente al océano.",
@@ -602,14 +602,12 @@ export const tours = [
         fullDescription: "Prepárate para una inmersión cultural profunda. Empezaremos el día con un viaje interior realizando el ritual de purificación (Melukat) en la cascada y zona de esculturas escondidas de Beji Griya. Continuaremos paseando entre inmensos árboles de Nuez moscada en Sangeh, admiraremos la arquitectura del templo real de Taman Ayun y terminaremos con uno de los momentos más épicos de Bali: el atardecer en Tanah Lot, donde el templo parece flotar sobre el mar, coronado con el espectacular baile Kecak del fuego.",
         fullDescription_en: "Get ready for a deep cultural immersion. We will start the day with an inner journey performing the purification ritual (Melukat) at the hidden Beji Griya waterfall. We will continue walking among immense nutmeg trees in Sangeh, admire the royal temple of Taman Ayun and finish with sunset at Tanah Lot, crowned with the spectacular Kecak fire dance.",
         price: 69,
-        duration: "11-12 horas",
-        duration_en: "11-12 hours",
-        image: "/images/tours/tanah-lot/tanah-lot-sunset.webp",
+        duration: "10-12 horas",
+        duration_en: "10-12 hours",
+        image: "https://www.ministryofvillas.com/wp-content/uploads/2016/04/bali-tanah-lot-temple-sunset.jpg",
         images: [
-            "/images/tours/tanah-lot/tanah-lot-sunset.webp",
-            "/images/tours/tanah-lot/beji-griya.webp",
-            "/images/tours/tanah-lot/sangeh-monkey.webp",
-            "/images/tours/tanah-lot/kecak-dance.webp"
+            "https://www.ministryofvillas.com/wp-content/uploads/2016/04/bali-tanah-lot-temple-sunset.jpg",
+            "https://static.mybalitrips.com/media/15699/brij-waterfall-1.jpg"
         ],
         badge: "Viaje Místico",
         badge_en: "Mystical Journey",
@@ -747,7 +745,7 @@ export const tours = [
         itinerary: [
             {
                 type: 'pickup',
-                duration: "09:30",
+                duration: "11:00",
                 activity: "Salida Costera",
                 activity_en: "Coastal Departure",
                 desc: "Recogida tranquila a media mañana para poner rumbo a la preciosa península caliza del sur (Bukit).",
@@ -755,17 +753,17 @@ export const tours = [
             },
             {
                 type: 'photo',
-                duration: "1.5 horas",
-                duration_en: "1.5 hours",
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "GWK Cultural Park (Opcional)",
                 activity_en: "GWK Cultural Park (Optional)",
-                desc: "Si te impresiona la arquitectura monumental, podemos ver la masiva estatua del Dios Wisnu (de las más altas de Asia). Alternativamente, podemos saltarlo de camino e ir a un Beach Club.",
-                desc_en: "If you are impressed by monumental architecture, we can see the massive Wisnu statue. Alternatively, we can skip it and go to a Beach Club."
+                desc: "Si te impresiona la arquitectura monumental, podemos ver la masiva estatua del Dios Wisnu (de las más altas de Asia). Alternativamente, podemos saltarlo de camino para dedicar más tiempo a relajarnos frente al mar.",
+                desc_en: "If you are impressed by monumental architecture, we can see the massive Wisnu statue. Alternatively, we can skip it to spend more time relaxing by the sea."
             },
             {
                 type: 'beach',
-                duration: "2.5 horas",
-                duration_en: "2.5 hours",
+                duration: "2 horas",
+                duration_en: "2 hours",
                 activity: "Playa Melasti o Pandawa",
                 activity_en: "Melasti or Pandawa Beach",
                 desc: "La carretera en zig-zag tallada en el acantilado te dejará sin aliento. Un escenario de agua cristalina y arenas blancas donde relajarse al máximo estilo balinés.",
@@ -791,8 +789,8 @@ export const tours = [
             },
             {
                 type: 'visit',
-                duration: "1.5 horas",
-                duration_en: "1.5 hours",
+                duration: "1 hora",
+                duration_en: "1 hour",
                 activity: "Templo Pura Luhur Uluwatu",
                 activity_en: "Uluwatu Temple",
                 desc: "Siente el poder del océano desde este antiquísimo templo apoyado en un acantilado de corte vertical. Un paisaje visualmente imponente.",
@@ -804,15 +802,15 @@ export const tours = [
                 duration_en: "1 hour",
                 activity: "Atardecer: Danza Fuego Kecak",
                 activity_en: "Sunset: Kecak Fire Dance",
-                desc: "El espectáculo más brutal. Con los tickets previstos con antelación, nos sentaremos a admirar cómo los cánticos crecen mientras el sol pinta el cielo de rojo.",
-                desc_en: "The most brutal show. With tickets ready, we sit to admire the chants grow as the sun paints the sky red."
+                desc: "El espectáculo más impactante de la isla. Con los tickets previstos con antelación, nos sentaremos a admirar cómo los cánticos crecen mientras el sol pinta el cielo de rojo.",
+                desc_en: "The island's most impactful show. With tickets ready, we sit to admire the chants grow as the sun paints the sky red."
             },
             {
                 type: 'dropoff',
                 activity: "Fin de ruta",
                 activity_en: "End of route",
-                desc: "Regresamos sobre las 19:30 o 20:00 dejándote descansar tras uno de los días turísticos más redondos y estéticos que ofrece Bali.",
-                desc_en: "We return around 7:30 PM, letting you rest after one of the most aesthetic tourist days Bali offers."
+                desc: "Regresamos sobre las 20:00 dejándote descansar tras uno de los días turísticos más redondos y estéticos que ofrece Bali.",
+                desc_en: "We return around 8:00 PM, letting you rest after one of the most aesthetic tourist days Bali offers."
             }
         ],
         location: "Península Sur (Bukit)",

@@ -77,7 +77,7 @@ const TourCard = ({ tour, index }) => {
                         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary-dark">
                             <Users size={14} />
                         </div>
-                        <span>{i18n.language.startsWith('es') ? '1-5 pasajeros' : '1-5 passengers'}</span>
+                        <span>{i18n.language.startsWith('es') ? '1-4 pasajeros' : '1-4 passengers'}</span>
                     </div>
                 </div>
 

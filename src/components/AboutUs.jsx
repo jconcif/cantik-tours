@@ -17,7 +17,7 @@ const AboutUs = () => {
                     {t('about.our')} <span className="text-primary italic">{t('about.essence')}</span>
                 </h2>
             </div>
-            <div className="grid md:grid-cols-[40%_60%] gap-10 lg:gap-20 items-center">
+            <div className="grid md:grid-cols-[2fr_3fr] gap-10 lg:gap-20 items-center">
                 {/* Left Column: Visual */}
                 <motion.div
                     initial={false}
@@ -70,11 +70,17 @@ const AboutUs = () => {
 
                     <motion.div
                         variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } }}
-                        className="prose dark:prose-invert mb-12"
+                        className="mb-12"
                     >
-                        <p className="text-lg md:text-xl lg:text-2xl text-gray-700 dark:text-gray-300 font-medium leading-relaxed italic mb-8 border-l-4 border-primary/30 pl-6">
-                            «{t('about.meaning_text')}»
-                        </p>
+                        <div className="relative mb-8 group">
+                            {/* Decorative Quote Mark */}
+                            <div className="absolute -top-6 -left-4 text-6xl md:text-8xl font-serif text-primary/10 select-none pointer-events-none group-hover:text-primary/20 transition-colors">
+                                “
+                            </div>
+                            <p className="text-xl md:text-2xl lg:text-3xl text-gray-800 dark:text-white font-medium italic leading-relaxed pl-8 pr-4 border-l-2 border-primary/20 relative z-10">
+                                {t('about.meaning_text')}
+                            </p>
+                        </div>
                         <p className="text-base md:text-lg text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
                             {t('about.team_intro_text')}
                         </p>
