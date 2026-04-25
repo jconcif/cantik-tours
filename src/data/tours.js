@@ -748,8 +748,8 @@ export const tours = [
                 duration: "11:00",
                 activity: "Salida Costera",
                 activity_en: "Coastal Departure",
-                desc: "Recogida tranquila a media mañana para poner rumbo a la preciosa península caliza del sur (Bukit).",
-                desc_en: "Relaxed mid-morning pick-up to head to the beautiful southern limestone peninsula (Bukit)."
+                desc: "Recogida tranquila a media mañana en tu hotel en Uluwatu, para poner rumbo a la preciosa península caliza del sur (Bukit).",
+                desc_en: "Relaxed mid-morning pick-up at your hotel in Uluwatu, to head to the beautiful southern limestone peninsula (Bukit)."
             },
             {
                 type: 'photo',

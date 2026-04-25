@@ -2,7 +2,7 @@ import ReactGA from "react-ga4";
 
 const MEASUREMENT_IDS = [
     { trackingId: "G-HSVS7RPZP7" }, // Bali Tours Flow
-    { trackingId: "GT-KD23Q4X9" }
+    { trackingId: "G-Q1LJHZCC5E" }
 ];
 
 /**

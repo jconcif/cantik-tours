@@ -187,7 +187,7 @@ i18n
                         faq_packing_q: "¿Qué debo llevar al tour?",
                         faq_info_q: "Información importante sobre el tour",
                         fair_payment_title: "Pago Consciente",
-                        fair_payment_desc: "Tu reserva te permite abonar el 100% hasta 48h antes del tour. Con este sistema aseguramos un trato justo para el equipo local desde el primer minuto, fomentando un turismo responsable y que apoya directamente a las familias de Bali.",
+                        fair_payment_desc: "Tu reserva te permite abonar el 100% hasta 48h antes del tour. Con este sistema aseguramos un compromiso justo para el equipo local desde el primer minuto, fomentando un turismo responsable y que apoya directamente a las familias de Bali.",
                         view_full_route: "Ver el recorrido real en Google Maps",
                         benefits: {
                             private: "100% Privado",
@@ -849,7 +849,7 @@ i18n
                         faq_packing_q: "What should I bring to the tour?",
                         faq_info_q: "Important information about the tour",
                         fair_payment_title: "Conscious Payment",
-                        fair_payment_desc: "Your booking allows you to pay 100% up to 48h before the tour. With this system, we ensure fair treatment for the local team from minute one, fostering responsible tourism that directly supports Balinese families.",
+                        fair_payment_desc: "Your booking allows you to pay 100% up to 48h before the tour. With this system, we ensure a fair commitment for the local team from minute one, fostering responsible tourism that directly supports Balinese families.",
                         view_full_route: "View the real route on Google Maps",
                         benefits: {
                             private: "100% Private",
