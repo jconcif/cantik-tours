@@ -18,6 +18,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     const [viewBankDetails, setViewBankDetails] = useState(false);
     const [copiedField, setCopiedField] = useState(null);
     const [showCoupon, setShowCoupon] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('paypal'); // 'paypal' or 'transfer'
+    const [paymentPlan, setPaymentPlan] = useState('deposit'); // 'deposit' or 'full'
 
     useEffect(() => {
         const fetchAvailability = async () => {
@@ -141,16 +143,22 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     const extraPaxFee = paxNum > 4 ? (paxNum - 4) * 5 : 0;
     
     // Fee for split payment (Deposit + Remaining)
-    const splitFee = formData.paymentType === 'deposit' ? 5 : 0;
+    const finalTotalPrice = totalPrice + extraPaxFee;
     
-    const finalTotalPrice = totalPrice + extraPaxFee + splitFee;
+    // Price calculations based on selected plan
+    const splitFee = 5;
     
-    // Calculation of Deposit (30% + splitFee)
-    const depositAmount = formData.paymentType === 'deposit' 
-        ? Math.round((totalPrice + extraPaxFee) * 0.3) + splitFee 
+    const currentPayAmount = paymentPlan === 'deposit' 
+        ? Math.round((finalTotalPrice * 0.3) + splitFee) 
         : finalTotalPrice;
+    
+    const currentRemainingAmount = paymentPlan === 'deposit' 
+        ? finalTotalPrice - (currentPayAmount - splitFee) 
+        : 0;
 
-    const remainingAmount = finalTotalPrice - depositAmount;
+    const finalTotalPriceWithFees = paymentPlan === 'deposit' 
+        ? finalTotalPrice + splitFee 
+        : finalTotalPrice;
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -185,8 +193,8 @@ Me gustaría reservar este tour, por favor:
 🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
 ✨ Experiencia: ${expName}
 
-💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPrice} €
-${isPaid ? `✅ ${i18n.language === 'en' ? 'Deposit PAID via PayPal:' : 'Depósito PAGADO por PayPal:'} ${depositAmount} €` : `(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${depositAmount} €)`}${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPriceWithFees} €
+${isPaid ? `✅ ${i18n.language === 'en' ? 'Deposit PAID via PayPal:' : 'Depósito PAGADO por PayPal:'} ${currentPayAmount} €` : `(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${currentPayAmount} €)`}${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looking forward to your details!' : '¡Acabo de pagar la reserva por PayPal! Quedo a la espera de la confirmación.') : '¿Me pueden confirmar disponibilidad y próximos pasos?'}
 ¡Muchas gracias!`;
@@ -207,22 +215,24 @@ ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looki
 
     const handleConfirmWhatsApp = () => {
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
+        const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
-        const message = `¡Hola Cantik Tours!
+        const message = `¡Hola Cantik Tours! 👋
 Me gustaría reservar este tour, por favor:
 
-🛕 ${t('detail.msg_tour')}: ${tourTitle}
-👤 ${i18n.language === 'en' ? 'Client' : 'Cliente'}: ${formData.name}
-📅 ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
-👥 ${t('detail.msg_pax')}: ${paxLabel}
-🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
-✨ Experiencia: ${expName} (${i18n.language === 'en' ? 'English' : 'Español'})
+🌴 *Tour:* ${tourTitle}
+👤 *Cliente:* ${formData.name}
+📅 *Fecha:* ${dateStr}
+👥 *Pasajeros:* ${paxLabel}
+📍 *Hotel/Zona:* ${formData.hotel}
+🚐 *Experiencia:* ${expName} (${i18n.language === 'en' ? 'English' : 'Español'})
 
-💶 Total: ${finalTotalPrice} €
-- Reserva: ${depositAmount} €
-- Restante: ${remainingAmount} €
-${showCoupon && formData.coupon ? `🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}\n` : ''}
-${i18n.language === 'en' ? "I want to book via bank transfer (IBAN). Can you verify the payment?\nThank you very much!" : "Quiero reservar con transferencia bancaria (IBAN). ¿Podeis verificar el pago?\n¡Muchas gracias!"}`;
+💰 *Total:* ${finalTotalPriceWithFees} €
+${paymentPlan === 'deposit' ? `💳 *Reserva hoy:* ${currentPayAmount} €\n⏳ *Pendiente:* ${currentRemainingAmount} €` : `✅ *Pago Completo:* ${currentPayAmount} €`}
+
+${i18n.language === 'en' 
+    ? "I want to book via bank transfer (IBAN). Can you verify the payment? I attach the screenshot below.\n\nThank you very much! 🙏" 
+    : "Quiero reservar con transferencia bancaria (IBAN). ¿Podéis verificar el pago? Adjunto la captura aquí abajo.\n\n¡Muchas gracias! 🙏"}`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
@@ -576,69 +586,167 @@ ${i18n.language === 'en' ? "I want to book via bank transfer (IBAN). Can you ver
                                             <h2 className="text-2xl font-black text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Secure your booking' : 'Asegura tu reserva'}</h2>
                                         </div>
 
-                                        {/* Layered Luxury Card */}
-                                        <div className="relative pt-4">
-                                            {/* Background Card (Payment 2) */}
-                                            <div className="bg-gray-100 dark:bg-white/5 rounded-[32px] p-8 pt-16 mt-12 border border-black/5 dark:border-white/5 relative z-0">
-                                                <div className="flex justify-between items-start opacity-60">
-                                                    <div>
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <div className="w-2 h-2 rounded-full bg-gray-400" />
-                                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{i18n.language === 'en' ? 'FINAL BALANCE' : 'PAGO RESTANTE'}</span>
-                                                        </div>
-                                                        <div className="text-sm font-bold text-gray-900 dark:text-white mb-1">{i18n.language === 'en' ? 'To be paid via Web/Transfer' : 'A pagar vía Web o Transferencia'}</div>
-                                                        <div className="text-[9px] font-black text-secondary leading-tight max-w-[180px] uppercase italic">
-                                                            {i18n.language === 'en' 
-                                                                ? '⚠️ No cash accepted by the driver. Pay via your Traveler Portal.' 
-                                                                : '⚠️ No aceptamos pago al conductor. Todo debe estar pagado por la web o transferencia.'}
-                                                        </div>
-                                                    </div>
-                                                    <div className="text-xl font-black text-gray-600 dark:text-gray-400">{remainingAmount}€</div>
-                                                </div>
-                                            </div>
+                                        {/* Payment Plan Selector */}
+                                        <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-2xl mb-2">
+                                            <button 
+                                                type="button"
+                                                onClick={() => setPaymentPlan('deposit')}
+                                                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${paymentPlan === 'deposit' ? 'bg-primary text-white shadow-lg' : 'text-gray-400'}`}
+                                            >
+                                                {i18n.language === 'en' ? 'Pay 30% Deposit' : 'Pagar Reserva (30%)'}
+                                            </button>
+                                            <button 
+                                                type="button"
+                                                onClick={() => setPaymentPlan('full')}
+                                                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${paymentPlan === 'full' ? 'bg-primary text-white shadow-lg' : 'text-gray-400'}`}
+                                            >
+                                                {i18n.language === 'en' ? 'Pay 100% Full' : 'Pago Completo (100%)'}
+                                            </button>
+                                        </div>
 
-                                            {/* Foreground Card (Payment 1 - Floating) */}
-                                            <div className="absolute top-0 left-0 right-0 bg-white dark:bg-[#1a1a1a] rounded-[32px] p-6 md:p-8 shadow-2xl shadow-primary/20 border border-black/5 dark:border-white/10 z-10">
+                                        {/* Layered Luxury Card Container */}
+                                        <div className="relative mt-4">
+                                            {/* Background Card (Payment 2 - Absolute behind) */}
+                                            {paymentPlan === 'deposit' && (
+                                                <div className="absolute top-12 left-0 right-0 bg-gray-100 dark:bg-white/5 rounded-[32px] p-8 pb-4 border border-black/5 dark:border-white/5 z-0 opacity-60">
+                                                    <div className="mt-8 flex justify-between items-start">
+                                                        <div>
+                                                            <div className="flex items-center gap-2 mb-1">
+                                                                <div className="w-2 h-2 rounded-full bg-gray-400" />
+                                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{i18n.language === 'en' ? 'FINAL BALANCE' : 'PAGO RESTANTE'}</span>
+                                                            </div>
+                                                            <div className="text-sm font-bold text-gray-900 dark:text-white mb-1">{i18n.language === 'en' ? 'To be paid via Web/Transfer' : 'A pagar vía Web o Transferencia'}</div>
+                                                            <div className="text-[9px] font-black text-secondary leading-tight max-w-[150px] uppercase italic">
+                                                                {i18n.language === 'en' 
+                                                                    ? '⚠️ No cash accepted by the driver.' 
+                                                                    : '⚠️ No aceptamos pago al conductor.'}
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-xl font-black text-gray-600 dark:text-gray-400">{currentRemainingAmount}€</div>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Foreground Card (Payment 1 - Relative on top) */}
+                                            <div className="relative bg-white dark:bg-[#1a1a1a] rounded-[32px] p-6 md:p-8 shadow-2xl shadow-primary/20 border border-black/5 dark:border-white/10 z-10 transition-all">
                                                 <div className="flex justify-between items-start mb-6">
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-2 mb-2">
                                                             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                                                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">{i18n.language === 'en' ? 'DUE TODAY' : 'ABONAR HOY'}</span>
+                                                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">
+                                                                {paymentPlan === 'deposit' 
+                                                                    ? (i18n.language === 'en' ? 'RESERVE TODAY' : 'RESERVAR HOY')
+                                                                    : (i18n.language === 'en' ? 'PAYMENT IN FULL' : 'PAGO TOTAL')}
+                                                            </span>
                                                         </div>
                                                         <h3 className="text-lg font-black text-gray-900 dark:text-white leading-tight">
-                                                            {i18n.language === 'en' ? 'Booking Confirmation' : 'Confirmación de Reserva'}
+                                                            {paymentPlan === 'deposit' ? (i18n.language === 'en' ? 'Booking Confirmation' : 'Confirmación de Reserva') : (i18n.language === 'en' ? 'Full Tour Payment' : 'Pago Completo del Tour')}
                                                         </h3>
                                                         <p className="text-[10px] font-bold text-gray-400 italic">
                                                             {i18n.language === 'en' ? 'Support & Reservation insurance included' : 'Incluye soporte 24/7 y garantía de reserva'}
                                                         </p>
                                                     </div>
                                                     <div className="text-right">
-                                                        <div className="text-3xl font-black text-primary">{depositAmount}€</div>
-                                                        <div className="text-[8px] font-black text-gray-400 uppercase tracking-tighter mt-1">{i18n.language === 'en' ? 'Processing fee included' : 'Gastos de gestión incluidos'}</div>
+                                                        <div className="text-3xl font-black text-primary">{currentPayAmount}€</div>
+                                                        <div className="text-[8px] font-black text-gray-400 uppercase tracking-tighter mt-1">
+                                                            {i18n.language === 'en' ? 'Total tour value:' : 'Valor total del tour:'} {totalPrice}€
+                                                        </div>
                                                     </div>
                                                 </div>
 
+                                                {/* Payment Method Tabs */}
                                                 {!isPaid && (
-                                                    <div className="PayPalArea mt-4">
-                                                        <PayPalButtons 
-                                                            style={{ layout: "vertical", shape: "pill", label: "pay", height: 48 }}
-                                                            createOrder={(data, actions) => {
-                                                                return actions.order.create({
-                                                                    purchase_units: [{
-                                                                        description: `${tourTitle} - Booking`,
-                                                                        amount: { value: depositAmount.toString() }
-                                                                    }]
-                                                                });
-                                                            }}
-                                                            onApprove={(data, actions) => {
-                                                                return actions.order.capture().then((details) => {
-                                                                    setIsPaid(true);
-                                                                    handleConfirmPaid();
-                                                                });
+                                                    <div className="flex bg-gray-100 dark:bg-black/20 p-1 rounded-2xl mb-6 relative">
+                                                        <motion.div 
+                                                            className="absolute top-1 bottom-1 bg-white dark:bg-white/10 rounded-xl shadow-sm z-0"
+                                                            initial={false}
+                                                            animate={{ 
+                                                                left: paymentMethod === 'paypal' ? '4px' : '50%',
+                                                                right: paymentMethod === 'paypal' ? '50%' : '4px'
                                                             }}
                                                         />
+                                                        <button 
+                                                            type="button"
+                                                            onClick={() => setPaymentMethod('paypal')}
+                                                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest z-10 transition-colors ${paymentMethod === 'paypal' ? 'text-primary' : 'text-gray-400'}`}
+                                                        >
+                                                            PayPal / Card
+                                                        </button>
+                                                        <button 
+                                                            type="button"
+                                                            onClick={() => setPaymentMethod('transfer')}
+                                                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest z-10 transition-colors ${paymentMethod === 'transfer' ? 'text-primary' : 'text-gray-400'}`}
+                                                        >
+                                                            Transfer / Wise
+                                                        </button>
                                                     </div>
                                                 )}
+
+                                                <AnimatePresence mode="wait">
+                                                    {paymentMethod === 'paypal' && !isPaid && (
+                                                        <motion.div 
+                                                            key="paypal-tab"
+                                                            initial={{ opacity: 0, x: -10 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            exit={{ opacity: 0, x: -10 }}
+                                                            className="PayPalArea"
+                                                        >
+                                                            <PayPalButtons 
+                                                                style={{ layout: "vertical", shape: "pill", label: "pay", height: 48 }}
+                                                                createOrder={(data, actions) => {
+                                                                    return actions.order.create({
+                                                                        purchase_units: [{
+                                                                            description: `${tourTitle} - ${paymentPlan === 'deposit' ? 'Booking' : 'Full Payment'}`,
+                                                                            amount: { value: currentPayAmount.toString() }
+                                                                        }]
+                                                                    });
+                                                                }}
+                                                                onApprove={(data, actions) => {
+                                                                    return actions.order.capture().then((details) => {
+                                                                        setIsPaid(true);
+                                                                        handleConfirmPaid();
+                                                                    });
+                                                                }}
+                                                            />
+                                                        </motion.div>
+                                                    )}
+
+                                                    {paymentMethod === 'transfer' && !isPaid && (
+                                                        <motion.div 
+                                                            key="transfer-tab"
+                                                            initial={{ opacity: 0, x: 10 }}
+                                                            animate={{ opacity: 1, x: 0 }}
+                                                            exit={{ opacity: 0, x: 10 }}
+                                                            className="space-y-3"
+                                                        >
+                                                            <div className="bg-gray-50 dark:bg-black/20 p-3 rounded-xl border border-black/5 flex justify-between items-center group">
+                                                                <div className="overflow-hidden">
+                                                                    <span className="block text-[8px] font-bold text-gray-400 uppercase">Titular</span>
+                                                                    <span className="text-[10px] font-black truncate max-w-[150px] inline-block">Javier Ignacio Contreras Cifuentes</span>
+                                                                </div>
+                                                                <button type="button" onClick={() => copyToClipboard('Javier Ignacio Contreras Cifuentes', 'name')} className="text-primary hover:scale-110 transition-transform">
+                                                                    {copiedField === 'name' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
+                                                                </button>
+                                                            </div>
+                                                            <div className="bg-primary/5 p-3 rounded-xl border border-primary/20 flex justify-between items-center group">
+                                                                <div>
+                                                                    <span className="block text-[8px] font-bold text-primary uppercase">IBAN Wise</span>
+                                                                    <span className="text-[11px] font-black tracking-wider">BE97 9673 8690 2549</span>
+                                                                </div>
+                                                                <button type="button" onClick={() => copyToClipboard('BE97 9673 8690 2549', 'iban')} className="text-primary hover:scale-110 transition-transform">
+                                                                    {copiedField === 'iban' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
+                                                                </button>
+                                                            </div>
+                                                            <button 
+                                                                type="button"
+                                                                onClick={handleConfirmWhatsApp}
+                                                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-3 rounded-xl text-[10px] font-black shadow-lg flex items-center justify-center gap-2 transition-all mt-2 uppercase tracking-widest"
+                                                            >
+                                                                <MessageCircle size={14} /> {i18n.language === 'en' ? 'Confirm WhatsApp' : 'Confirmar WhatsApp'}
+                                                            </button>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
                                                 
                                                 {isPaid && (
                                                     <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-green-500/10 text-green-500 py-4 rounded-2xl text-center font-black text-sm flex items-center justify-center gap-2 border border-green-500/20">
@@ -647,27 +755,6 @@ ${i18n.language === 'en' ? "I want to book via bank transfer (IBAN). Can you ver
                                                     </motion.div>
                                                 )}
                                             </div>
-                                        </div>
-
-                                        {/* Final Details & Trust */}
-                                        <div className="px-4 space-y-6 pt-2">
-                                            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-gray-400">
-                                                <span>{i18n.language === 'en' ? 'Total Tour Price' : 'Precio Total del Tour'}</span>
-                                                <span className="text-gray-900 dark:text-white">{finalTotalPrice}€</span>
-                                            </div>
-
-                                            {!isPaid && (
-                                                <div className="flex flex-col items-center gap-4">
-                                                    <button onClick={handleAlternativePayment} className="text-[9px] font-black text-gray-400 hover:text-primary transition-all underline underline-offset-4 decoration-primary/30">
-                                                        {i18n.language === 'en' ? 'I PREFER BANK TRANSFER / WISE' : 'PREFIERO TRANSFERENCIA BANCARIA / WISE'}
-                                                    </button>
-                                                    <div className="flex items-center gap-3 grayscale opacity-30">
-                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-3" />
-                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-2" />
-                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4" />
-                                                    </div>
-                                                </div>
-                                            )}
                                         </div>
 
                                         <div className="flex justify-center mt-4">
@@ -679,50 +766,6 @@ ${i18n.language === 'en' ? "I want to book via bank transfer (IBAN). Can you ver
                                                 <ArrowLeft size={16} /> {i18n.language === 'en' ? 'BACK' : 'VOLVER'}
                                             </button>
                                         </div>
-
-                                        {viewBankDetails && (
-                                                <motion.div 
-                                                    initial={{ opacity: 0, height: 0 }}
-                                                    animate={{ opacity: 1, height: 'auto' }}
-                                                    className="bg-white dark:bg-white/5 border-2 border-primary/20 rounded-[32px] p-6 space-y-4 shadow-xl overflow-hidden"
-                                                >
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-wider">
-                                                            <Ticket size={14} />
-                                                            {i18n.language === 'en' ? 'TRANSFER DETAILS' : 'DATOS TRANSFERENCIA'}
-                                                        </div>
-                                                        <button onClick={() => setViewBankDetails(false)} className="text-gray-400 hover:text-primary"><X size={16} /></button>
-                                                    </div>
-                                                    
-                                                    <div className="space-y-3">
-                                                        <div className="bg-gray-50 dark:bg-black/20 p-3 rounded-xl border border-black/5 flex justify-between items-center">
-                                                            <div>
-                                                                <span className="block text-[8px] font-bold text-gray-400 uppercase">Titular</span>
-                                                                <span className="text-[10px] font-black">Javier Ignacio Contreras Cifuentes</span>
-                                                            </div>
-                                                            <button onClick={() => copyToClipboard('Javier Ignacio Contreras Cifuentes', 'name')} className="text-primary"><Ticket size={14} /></button>
-                                                        </div>
-                                                        <div className="bg-primary/5 p-3 rounded-xl border border-primary/20 flex justify-between items-center">
-                                                            <div>
-                                                                <span className="block text-[8px] font-bold text-primary uppercase">IBAN Wise</span>
-                                                                <span className="text-[11px] font-black tracking-wider">BE97 9673 8690 2549</span>
-                                                            </div>
-                                                            <button onClick={() => copyToClipboard('BE97 9673 8690 2549', 'iban')} className="text-primary"><Ticket size={14} /></button>
-                                                        </div>
-                                                        <div className="bg-gray-50 dark:bg-black/20 p-3 rounded-xl border border-black/5 flex justify-between items-center">
-                                                            <div>
-                                                                <span className="block text-[8px] font-bold text-gray-400 uppercase">BIC / Swift</span>
-                                                                <span className="text-[11px] font-black uppercase">TRWIBEB1XXX</span>
-                                                            </div>
-                                                            <button onClick={() => copyToClipboard('TRWIBEB1XXX', 'bic')} className="text-primary"><Ticket size={14} /></button>
-                                                        </div>
-                                                    </div>
-
-                                                    <button onClick={handleConfirmWhatsApp} className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-4 rounded-2xl text-xs font-black shadow-lg flex items-center justify-center gap-2 transition-all mt-2">
-                                                        <MessageCircle size={18} /> {i18n.language === 'en' ? 'SEND RECEIPT VIA WHATSAPP' : 'ENVIAR COMPROBANTE'}
-                                                    </button>
-                                                </motion.div>
-                                            )}
 
                                         {/* Cancellation Policy Shield */}
                                         <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 py-3 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 mt-4">
