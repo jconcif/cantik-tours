@@ -573,20 +573,25 @@ ${i18n.language === 'en' ? "I want to book via bank transfer (IBAN). Can you ver
                                                 <ShieldCheck className="text-primary" size={28} />
                                             </div>
                                             <h4 className="text-[10px] font-black text-primary uppercase tracking-[5px]">{i18n.language === 'en' ? 'FINAL STEP' : 'ÚLTIMO PASO'}</h4>
-                                            <h2 className="text-2xl font-black text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Secure your adventure' : 'Asegura tu aventura'}</h2>
+                                            <h2 className="text-2xl font-black text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Secure your booking' : 'Asegura tu reserva'}</h2>
                                         </div>
 
                                         {/* Layered Luxury Card */}
                                         <div className="relative pt-4">
                                             {/* Background Card (Payment 2) */}
                                             <div className="bg-gray-100 dark:bg-white/5 rounded-[32px] p-8 pt-16 mt-12 border border-black/5 dark:border-white/5 relative z-0">
-                                                <div className="flex justify-between items-center opacity-60">
+                                                <div className="flex justify-between items-start opacity-60">
                                                     <div>
                                                         <div className="flex items-center gap-2 mb-1">
                                                             <div className="w-2 h-2 rounded-full bg-gray-400" />
-                                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{i18n.language === 'en' ? 'PAY IN BALI' : 'PAGO EN BALI'}</span>
+                                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{i18n.language === 'en' ? 'FINAL BALANCE' : 'PAGO RESTANTE'}</span>
                                                         </div>
-                                                        <div className="text-sm font-bold text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Remaining to guide' : 'Restante al guía'}</div>
+                                                        <div className="text-sm font-bold text-gray-900 dark:text-white mb-1">{i18n.language === 'en' ? 'To be paid via Web/Transfer' : 'A pagar vía Web o Transferencia'}</div>
+                                                        <div className="text-[9px] font-black text-secondary leading-tight max-w-[180px] uppercase italic">
+                                                            {i18n.language === 'en' 
+                                                                ? '⚠️ No cash accepted by the driver. Pay via your Traveler Portal.' 
+                                                                : '⚠️ No aceptamos pago al conductor. Todo debe estar pagado por la web o transferencia.'}
+                                                        </div>
                                                     </div>
                                                     <div className="text-xl font-black text-gray-600 dark:text-gray-400">{remainingAmount}€</div>
                                                 </div>
@@ -609,7 +614,7 @@ ${i18n.language === 'en' ? "I want to book via bank transfer (IBAN). Can you ver
                                                     </div>
                                                     <div className="text-right">
                                                         <div className="text-3xl font-black text-primary">{depositAmount}€</div>
-                                                        <div className="text-[8px] font-black text-gray-400 uppercase tracking-tighter mt-1">{i18n.language === 'en' ? 'Taxes included' : 'Impuestos incluidos'}</div>
+                                                        <div className="text-[8px] font-black text-gray-400 uppercase tracking-tighter mt-1">{i18n.language === 'en' ? 'Processing fee included' : 'Gastos de gestión incluidos'}</div>
                                                     </div>
                                                 </div>
 
@@ -665,139 +670,76 @@ ${i18n.language === 'en' ? "I want to book via bank transfer (IBAN). Can you ver
                                             )}
                                         </div>
 
-                                        <div className="flex gap-3 mt-6">
+                                        <div className="flex justify-center mt-4">
                                             <button
                                                 type="button"
                                                 onClick={() => setStep(2)}
-                                                className="w-16 flex-none bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-2xl flex items-center justify-center transition-colors shadow-sm"
-                                                aria-label="Volver"
+                                                className="px-8 py-4 bg-gray-100 dark:bg-white/5 text-gray-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
                                             >
-                                                <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
+                                                <ArrowLeft size={16} /> {i18n.language === 'en' ? 'BACK' : 'VOLVER'}
                                             </button>
-                                            {!isPaid ? (
-                                                <div className="flex-1 flex flex-col gap-3 min-w-[200px]" style={{ zIndex: 0, position: 'relative' }}>
-                                                    <PayPalButtons 
-                                                        style={{ layout: "horizontal", shape: "pill", color: "gold", label: "pay", height: 55, tagline: false }}
-                                                        createOrder={(data, actions) => {
-                                                            return actions.order.create({
-                                                                purchase_units: [{
-                                                                    description: formData.paymentType === 'full' ? `Pago Total - Cantik Tours (${tourTitle.substring(0, 40)})` : `Reserva (30%) - Cantik Tours (${tourTitle.substring(0, 40)})`,
-                                                                    amount: { value: depositAmount.toString() }
-                                                                }]
-                                                            });
-                                                        }}
-                                                        onApprove={(data, actions) => {
-                                                            return actions.order.capture().then((details) => {
-                                                                trackEvent('Ecommerce', 'PayPal Payment Success', tourTitle);
-                                                                setIsPaid(true);
-                                                                saveBookingToDB(true);
-                                                            });
-                                                        }}
-                                                    />
-                                                    {!viewBankDetails && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={(e) => handleAlternativePayment(e)}
-                                                            className="flex items-center justify-center gap-3 w-full h-[55px] bg-white dark:bg-white/5 border-2 border-primary/30 hover:border-primary text-primary font-black text-xs uppercase tracking-[0.2em] rounded-[30px] transition-all duration-300 shadow-sm hover:shadow-md group"
-                                                        >
-                                                            <CreditCard size={18} className="group-hover:scale-110 transition-transform" />
-                                                            {i18n.language === 'en' ? 'Wise / Bank transfer' : 'Transferencia / Wise'}
-                                                        </button>
-                                                    )}
-
-                                                    {viewBankDetails && (
-                                                        <motion.div 
-                                                            initial={{ opacity: 0, height: 0 }}
-                                                            animate={{ opacity: 1, height: 'auto' }}
-                                                            className="mt-2 bg-white dark:bg-white/5 border-2 border-primary/20 rounded-3xl p-5 space-y-4 shadow-xl overflow-hidden relative"
-                                                        >
-                                                            <div className="flex items-center justify-between mb-2">
-                                                                <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-wider">
-                                                                    <Ticket size={14} />
-                                                                    {i18n.language === 'en' ? 'BANK TRANSFER DETAILS' : 'DATOS PARA TRANSFERENCIA'}
-                                                                </div>
-                                                                <button 
-                                                                    onClick={() => setViewBankDetails(false)}
-                                                                    className="text-gray-400 hover:text-primary p-1"
-                                                                >
-                                                                    <X size={16} />
-                                                                </button>
-                                                            </div>
-                                                            
-                                                            <div className="space-y-3">
-                                                                <div className="group relative">
-                                                                    <span className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Nombre Titular</span>
-                                                                    <div className="flex items-center justify-between bg-gray-50 dark:bg-black/20 p-2 rounded-lg border border-black/5">
-                                                                        <span className="text-xs font-black truncate pr-2 italic">Javier Ignacio Contreras Cifuentes</span>
-                                                                        <button onClick={() => copyToClipboard('Javier Ignacio Contreras Cifuentes', 'name')} className="text-primary hover:scale-110 transition-transform">
-                                                                            {copiedField === 'name' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="group relative">
-                                                                    <span className="block text-[10px] font-bold text-gray-400 mb-1 uppercase text-primary font-black">Tu IBAN (Wise)</span>
-                                                                    <div className="flex items-center justify-between bg-primary/5 p-2 rounded-lg border border-primary/20">
-                                                                        <span className="text-xs font-black tracking-wider">BE97 9673 8690 2549</span>
-                                                                        <button onClick={() => copyToClipboard('BE97 9673 8690 2549', 'iban')} className="text-primary hover:scale-110 transition-transform">
-                                                                            {copiedField === 'iban' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-
-                                                                <div className="group relative">
-                                                                    <span className="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Swift / BIC</span>
-                                                                    <div className="flex items-center justify-between bg-gray-50 dark:bg-black/20 p-2 rounded-lg border border-black/5">
-                                                                        <span className="text-xs font-black">TRWIBEB1XXX</span>
-                                                                        <button onClick={() => copyToClipboard('TRWIBEB1XXX', 'bic')} className="text-primary hover:scale-110 transition-transform">
-                                                                            {copiedField === 'bic' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <p className="text-[9px] text-gray-500 italic mt-2 leading-relaxed">
-                                                                {i18n.language === 'en' 
-                                                                    ? 'Once done, send us the receipt via WhatsApp to block your dates.' 
-                                                                    : 'Una vez realizada la transferencia, pulsa el botón de WhatsApp para enviarnos el comprobante.'}
-                                                            </p>
-
-                                                            <button
-                                                                type="button"
-                                                                onClick={handleConfirmWhatsApp}
-                                                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-3 rounded-xl text-sm font-black shadow-lg flex items-center justify-center gap-2 transition-all mt-4"
-                                                            >
-                                                                <MessageCircle size={18} />
-                                                                {i18n.language === 'en' ? 'CONFIRM VIA WHATSAPP' : 'CONFIRMAR POR WHATSAPP'}
-                                                            </button>
-                                                        </motion.div>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <button
-                                                    type="submit"
-                                                    className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#128C7E] text-white"
-                                                >
-                                                    <MessageCircle size={24} />
-                                                    {i18n.language === 'en' ? 'Send Receipt via WhatsApp' : 'Enviar recibo por WhatsApp'}
-                                                </button>
-                                            )}
                                         </div>
 
-                                        {/* Expert UX: Cancellation Guarantee Shield */}
-                                        <div className="flex items-center justify-center gap-2 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 py-2 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
-                                            <Shield size={14} />
+                                        {viewBankDetails && (
+                                                <motion.div 
+                                                    initial={{ opacity: 0, height: 0 }}
+                                                    animate={{ opacity: 1, height: 'auto' }}
+                                                    className="bg-white dark:bg-white/5 border-2 border-primary/20 rounded-[32px] p-6 space-y-4 shadow-xl overflow-hidden"
+                                                >
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <div className="flex items-center gap-2 text-primary font-black text-[10px] uppercase tracking-wider">
+                                                            <Ticket size={14} />
+                                                            {i18n.language === 'en' ? 'TRANSFER DETAILS' : 'DATOS TRANSFERENCIA'}
+                                                        </div>
+                                                        <button onClick={() => setViewBankDetails(false)} className="text-gray-400 hover:text-primary"><X size={16} /></button>
+                                                    </div>
+                                                    
+                                                    <div className="space-y-3">
+                                                        <div className="bg-gray-50 dark:bg-black/20 p-3 rounded-xl border border-black/5 flex justify-between items-center">
+                                                            <div>
+                                                                <span className="block text-[8px] font-bold text-gray-400 uppercase">Titular</span>
+                                                                <span className="text-[10px] font-black">Javier Ignacio Contreras Cifuentes</span>
+                                                            </div>
+                                                            <button onClick={() => copyToClipboard('Javier Ignacio Contreras Cifuentes', 'name')} className="text-primary"><Ticket size={14} /></button>
+                                                        </div>
+                                                        <div className="bg-primary/5 p-3 rounded-xl border border-primary/20 flex justify-between items-center">
+                                                            <div>
+                                                                <span className="block text-[8px] font-bold text-primary uppercase">IBAN Wise</span>
+                                                                <span className="text-[11px] font-black tracking-wider">BE97 9673 8690 2549</span>
+                                                            </div>
+                                                            <button onClick={() => copyToClipboard('BE97 9673 8690 2549', 'iban')} className="text-primary"><Ticket size={14} /></button>
+                                                        </div>
+                                                        <div className="bg-gray-50 dark:bg-black/20 p-3 rounded-xl border border-black/5 flex justify-between items-center">
+                                                            <div>
+                                                                <span className="block text-[8px] font-bold text-gray-400 uppercase">BIC / Swift</span>
+                                                                <span className="text-[11px] font-black uppercase">TRWIBEB1XXX</span>
+                                                            </div>
+                                                            <button onClick={() => copyToClipboard('TRWIBEB1XXX', 'bic')} className="text-primary"><Ticket size={14} /></button>
+                                                        </div>
+                                                    </div>
+
+                                                    <button onClick={handleConfirmWhatsApp} className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-4 rounded-2xl text-xs font-black shadow-lg flex items-center justify-center gap-2 transition-all mt-2">
+                                                        <MessageCircle size={18} /> {i18n.language === 'en' ? 'SEND RECEIPT VIA WHATSAPP' : 'ENVIAR COMPROBANTE'}
+                                                    </button>
+                                                </motion.div>
+                                            )}
+
+                                        {/* Cancellation Policy Shield */}
+                                        <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 py-3 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 mt-4">
+                                            <ShieldCheck size={14} />
                                             {i18n.language === 'en' ? 'Free cancellation up to 48h before the trip' : 'Cancelación gratuita hasta 48h antes del viaje'}
                                         </div>
 
                                         {/* Trust Box: Pago Consciente */}
-                                        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex flex-col items-center text-center gap-1.5 mt-4">
+                                        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex flex-col items-center text-center gap-1.5 mt-2 opacity-60">
                                             <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-[0.2em] mb-1">
-                                                <Heart size={14} className="animate-pulse" />
-                                                {t('detail.fair_payment_title')}
+                                                <Heart size={14} />
+                                                {i18n.language === 'en' ? 'CONSCIOUS PAYMENT' : 'PAGO CONSCIENTE'}
                                             </div>
-                                            <p className="text-[10px] text-gray-600 dark:text-gray-400 font-medium leading-relaxed opacity-90">
-                                                {t('detail.fair_payment_desc')}
+                                            <p className="text-[10px] text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
+                                                {i18n.language === 'en' 
+                                                    ? 'With your booking we ensure a fair commitment to the local team from the first minute, promoting responsible tourism that directly supports Balinese families.'
+                                                    : 'con tu reserva aseguramos un compromiso justo para el equipo local desde el primer minuto, fomentando un turismo responsable y que apoya directamente a las familias de Bali.'}
                                             </p>
                                         </div>
                                     </motion.div>
