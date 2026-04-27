@@ -1,346 +1,253 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Lock, Eye, EyeOff, CheckCircle2, Languages, Plus, RefreshCw, AlertCircle, Trash2, ShieldCheck, Calendar, Users, MapPin, Wallet, TrendingUp, UserCheck } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
-import { reviewService } from '../services/reviewService';
-import { adminService } from '../services/adminService';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import * as api from '../services/adminService';
+import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal } from '../components/AdminComponents';
 
-const AdminReviews = () => {
-    const { i18n } = useTranslation();
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [password, setPassword] = useState('');
-    const [activeTab, setActiveTab] = useState('bookings');
-    const [reviews, setReviews] = useState([]);
-    const [bookings, setBookings] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [updatingId, setUpdatingId] = useState(null);
-    const [successId, setSuccessId] = useState(null);
-    const [message, setMessage] = useState(null);
+const C = '#11BDDB';
+const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'pending',driver_id:'',experience:'comfort'};
+const emptyDriver = {name:'',phone:'',car_model:''};
+const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
+const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
+const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup'];
+const TLABEL = {bookings:'Reservas',drivers:'Staff',reviews:'Reviews',coupons:'Cupones',calendar:'Calendario',stats:'Dashboard',followup:'Seguimiento'};
+const PAY_LABEL = {pending:'Espera',reserved:'Reservado',paid:'Pagado',cancelled:'Cancelado',refunded:'Devolución'};
+const PAY_COLOR = {pending:'#f59e0b',reserved:'#3b82f6',paid:'#10b981',cancelled:'#ef4444',refunded:'#8b5cf6'};
 
-    // Simple password check
-    const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'javiperty2026';
-
-    const fetchData = async () => {
-        setLoading(true);
-        setMessage(null);
-        try {
-            if (activeTab === 'reviews') {
-                const data = await reviewService.getReviews(password);
-                setReviews(data);
-            } else {
-                const data = await adminService.getBookings(password);
-                setBookings(data);
-            }
-            setIsAuthenticated(true);
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Error al conectar con la base de datos' });
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            fetchData();
-        }
-    }, [activeTab, isAuthenticated]);
-
-    const updateReview = async (id, data) => {
-        setUpdatingId(id);
-        setMessage(null);
-        try {
-            await reviewService.updateReview(id, { ...data, token: password });
-            setSuccessId(id);
-            setTimeout(() => setSuccessId(null), 2000);
-            fetchData();
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Error al actualizar' });
-        } finally {
-            setUpdatingId(null);
-            setTimeout(() => setMessage(null), 3000);
-        }
-    };
-
-    const deleteReview = async (id) => {
-        if (!window.confirm('¿Estás seguro de que quieres eliminar esta reseña permanentemente?')) return;
-        try {
-            await reviewService.deleteReview(id, password);
-            fetchData();
-        } catch (error) {
-            setMessage({ type: 'error', text: 'Error al eliminar' });
-        }
-    };
-
-    const createReview = async () => {
-        try {
-            await reviewService.createReview(password);
-            fetchData();
-        } catch (error) {
-            setMessage({ type: 'error', text: error.message });
-        }
-    };
-
-    const countriesList = [
-        { code: 'de', name: '🇩🇪 Alemania' }, { code: 'ad', name: '🇦🇩 Andorra' }, { code: 'ar', name: '🇦🇷 Argentina' },
-        { code: 'au', name: '🇦🇺 Australia' }, { code: 'be', name: '🇧🇪 Bélgica' }, { code: 'bo', name: '🇧🇴 Bolivia' },
-        { code: 'ca', name: '🇨🇦 Canadá' }, { code: 'cl', name: '🇨🇱 Chile' }, { code: 'co', name: '🇨🇴 Colombia' },
-        { code: 'cr', name: '🇨🇷 Costa Rica' }, { code: 'ec', name: '🇪🇨 Ecuador' }, { code: 'es', name: '🇪🇸 España' },
-        { code: 'us', name: '🇺🇸 USA' }, { code: 'fr', name: '🇫🇷 Francia' }, { code: 'gt', name: '🇬🇹 Guatemala' },
-        { code: 'id', name: '🇮🇩 Indonesia' }, { code: 'it', name: '🇮🇹 Italia' }, { code: 'mx', name: '🇲🇽 México' },
-        { code: 'nl', name: '🇳🇱 P. Bajos' }, { code: 'pa', name: '🇵🇦 Panamá' }, { code: 'py', name: '🇵🇾 Paraguay' },
-        { code: 'pe', name: '🇵🇪 Perú' }, { code: 'pt', name: '🇵🇹 Portugal' }, { code: 'gb', name: '🇬🇧 Reino Unido' },
-        { code: 'do', name: '🇩🇴 Rep. Dominicana' }, { code: 'ch', name: '🇨🇭 Suiza' }, { code: 'th', name: '🇹🇭 Tailandia' },
-        { code: 'uy', name: '🇺🇾 Uruguay' }, { code: 'venezuela', name: '🇻🇪 Venezuela' }, { code: 'other', name: '🌐 Otro' }
-    ];
-
-    if (!isAuthenticated) {
-        return (
-            <div className="min-h-screen bg-bg-light dark:bg-bg-dark flex items-center justify-center p-6">
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md bg-white dark:bg-white/5 p-10 rounded-[3rem] border border-black/5 shadow-2xl">
-                    <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 mx-auto">
-                        <ShieldCheck size={40} className="text-primary" />
-                    </div>
-                    <h1 className="text-3xl font-black text-center mb-2">Cantik Dashboard</h1>
-                    <p className="text-center text-gray-500 mb-8 font-medium italic">Acceso restringido</p>
-                    <form onSubmit={(e) => { e.preventDefault(); fetchData(); }} className="space-y-4">
-                        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Contraseña" className="w-full px-6 py-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-2xl outline-none focus:ring-2 focus:ring-primary font-bold text-center" />
-                        <button type="submit" disabled={loading} className="w-full py-4 bg-primary text-white rounded-2xl font-black shadow-lg shadow-primary/25 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3">
-                            {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : 'Entrar al Panel'}
-                        </button>
-                    </form>
-                    {message && <p className={`mt-6 text-center text-sm font-bold ${message.type === 'error' ? 'text-red-500' : 'text-green-500'}`}>{message.text}</p>}
-                </motion.div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="pt-28 pb-20 min-h-screen bg-bg-light dark:bg-bg-dark px-4 md:px-6">
-            <div className="max-w-7xl mx-auto">
-                {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-                    <div>
-                        <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-[0.2em] mb-2">
-                            <ShieldCheck size={14} />
-                            Panel de Administración
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-black">Cantik <span className="text-primary italic">Control</span></h1>
-                    </div>
-                    
-                    {/* Tabs */}
-                    <div className="flex bg-white dark:bg-white/5 p-1.5 rounded-2xl border border-black/5 shadow-sm">
-                        <button 
-                            onClick={() => setActiveTab('bookings')}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all ${activeTab === 'bookings' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                            <Calendar size={18} />
-                            Reservas
-                        </button>
-                        <button 
-                            onClick={() => setActiveTab('reviews')}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-black transition-all ${activeTab === 'reviews' ? 'bg-primary text-white shadow-lg' : 'text-gray-500 hover:text-gray-700'}`}
-                        >
-                            <Star size={18} />
-                            Reseñas
-                        </button>
-                    </div>
-                </div>
-
-                <AnimatePresence mode="wait">
-                    {activeTab === 'bookings' ? (
-                        <motion.div key="bookings" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
-                            {/* Stats */}
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                                <div className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm">
-                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Total Reservas</div>
-                                    <div className="text-3xl font-black text-primary">{bookings.length}</div>
-                                </div>
-                                <div className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm">
-                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Pagadas</div>
-                                    <div className="text-3xl font-black text-emerald-500">{bookings.filter(b => b.is_paid == 1).length}</div>
-                                </div>
-                                <div className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm">
-                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Ingresos Depósitos</div>
-                                    <div className="text-3xl font-black text-secondary">{bookings.reduce((acc, b) => acc + (b.is_paid == 1 ? Number(b.deposit_amount) : 0), 0).toFixed(0)}€</div>
-                                </div>
-                                <div className="bg-white dark:bg-white/5 p-6 rounded-3xl border border-black/5 shadow-sm">
-                                    <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Pendientes</div>
-                                    <div className="text-3xl font-black text-orange-400">{bookings.filter(b => b.is_paid == 0).length}</div>
-                                </div>
-                            </div>
-
-                            <div className="bg-white dark:bg-white/5 rounded-[2.5rem] border border-black/5 shadow-xl overflow-hidden">
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-left">
-                                        <thead>
-                                            <tr className="bg-gray-50 dark:bg-white/5 border-b border-black/5">
-                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Fecha Tour</th>
-                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Tour / Cliente</th>
-                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Grupo / Hotel</th>
-                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Precio / Pago</th>
-                                                <th className="px-6 py-5 text-[10px] font-black uppercase text-gray-400 tracking-widest">Estado</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-black/5">
-                                            {bookings.map((booking) => (
-                                                <tr key={booking.id} className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors group">
-                                                    <td className="px-6 py-6">
-                                                        <div className="text-sm font-black text-gray-900 dark:text-white">
-                                                            {new Date(booking.booking_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-                                                        </div>
-                                                        <div className="text-[10px] font-bold text-gray-400 uppercase">
-                                                            {new Date(booking.booking_date).toLocaleDateString('es-ES', { year: 'numeric' })}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-6">
-                                                        <div className="text-sm font-black text-primary truncate max-w-[180px]">{booking.tour_title}</div>
-                                                        <div className="text-xs font-bold text-gray-500 italic">ID: #{booking.id}</div>
-                                                    </td>
-                                                    <td className="px-6 py-6">
-                                                        <div className="flex items-center gap-1.5 text-xs font-black text-gray-700 dark:text-gray-300">
-                                                            <Users size={12} className="text-gray-400" />
-                                                            {booking.pax} Pers.
-                                                        </div>
-                                                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-gray-400 truncate max-w-[150px]">
-                                                            <MapPin size={10} />
-                                                            {booking.hotel}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-6">
-                                                        <div className="text-sm font-black text-gray-900 dark:text-white">{booking.total_price}€</div>
-                                                        <div className="text-[10px] font-bold text-gray-400">Dep: {booking.deposit_amount}€</div>
-                                                    </td>
-                                                    <td className="px-6 py-6">
-                                                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${booking.is_paid == 1 ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}`}>
-                                                            {booking.is_paid == 1 ? (
-                                                                <><CheckCircle2 size={12} /> PAGADO</>
-                                                            ) : (
-                                                                <><Wallet size={12} /> PENDIENTE</>
-                                                            )}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                {bookings.length === 0 && (
-                                    <div className="p-20 text-center text-gray-400 font-medium italic">No hay reservas registradas aún</div>
-                                )}
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <motion.div key="reviews" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-6">
-                            {/* Reviews Stats */}
-                            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
-                                {[
-                                    { label: 'Reserva', key: 'rating_booking' },
-                                    { label: 'Logística', key: 'rating_logistics' },
-                                    { label: 'Ruta', key: 'rating_route' },
-                                    { label: 'Conductor', key: 'rating_driver' },
-                                    { label: 'Vehículo', key: 'rating_vehicle' },
-                                    { label: 'Precio', key: 'rating_price' }
-                                ].map((stat) => {
-                                    const validReviews = reviews.filter(r => r[stat.key]);
-                                    const avg = validReviews.length > 0 
-                                        ? (validReviews.reduce((acc, r) => acc + Number(r[stat.key]), 0) / validReviews.length).toFixed(1)
-                                        : '-';
-                                    return (
-                                        <div key={stat.key} className="bg-white dark:bg-white/5 p-4 rounded-2xl border border-black/5 text-center shadow-sm">
-                                            <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">{stat.label}</div>
-                                            <div className="text-xl font-black text-primary flex items-center justify-center gap-0.5">{avg}<Star size={12} fill="currentColor" /></div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-
-                            <div className="flex justify-end gap-3 mb-6">
-                                <button onClick={createReview} className="flex items-center gap-2 px-6 py-4 bg-primary text-white rounded-2xl font-black hover:scale-105 transition-all shadow-lg shadow-primary/20">
-                                    <Plus size={20} />
-                                    Nueva Reseña Manual
-                                </button>
-                                <button onClick={fetchData} className="p-4 bg-white dark:bg-white/5 border border-black/5 rounded-2xl hover:bg-gray-50 transition-all shadow-sm">
-                                    <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
-                                </button>
-                            </div>
-
-                            <div className="grid gap-6">
-                                {reviews.map((review) => (
-                                    <motion.div key={review.id} className="bg-white dark:bg-white/5 p-8 rounded-[2.5rem] border border-black/5 flex flex-col gap-8 shadow-xl">
-                                        <div className="grid md:grid-cols-3 gap-6">
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Nombre</label>
-                                                <input id={`nombre-${review.id}`} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary" defaultValue={review.nombre || ''} />
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Tour</label>
-                                                <select id={`tour-${review.id}`} className="w-full px-4 py-3 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary" defaultValue={review.tour_id || ''}>
-                                                    <option value="ubud_central">Ubud Central</option>
-                                                    <option value="ubud_north">Ubud North</option>
-                                                    <option value="lovina">Lovina / Delfines</option>
-                                                    <option value="east">East Bali</option>
-                                                    <option value="lempuyang">Lempuyang</option>
-                                                    <option value="custom">Personalizado</option>
-                                                </select>
-                                            </div>
-                                            <div className="space-y-2">
-                                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest">Estado</label>
-                                                <select id={`aprobado-${review.id}`} className={`w-full px-4 py-3 border border-black/5 rounded-xl text-sm font-bold outline-none focus:ring-1 focus:ring-primary ${review.aprobado == 1 ? 'bg-green-50 text-green-600' : 'bg-gray-50 text-gray-500'}`} defaultValue={review.aprobado}>
-                                                    <option value="1">✅ Publicado</option>
-                                                    <option value="0">❌ Oculto</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        
-                                        <div className="grid md:grid-cols-2 gap-6">
-                                            <textarea id={`orig-${review.id}`} className="w-full p-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary h-32 italic" defaultValue={review.comentario || ''} />
-                                            <textarea id={`trans-${review.id}`} className="w-full p-4 bg-gray-50 dark:bg-white/5 border border-black/5 rounded-xl text-sm outline-none focus:ring-1 focus:ring-primary h-32 italic text-primary" defaultValue={review.comentario_en || ''} placeholder="Traducción al inglés..." />
-                                        </div>
-
-                                        <div className="flex items-center justify-between pt-6 border-t border-black/5">
-                                            <div className="text-[10px] font-bold text-gray-400">ID: #{review.id} · {new Date(review.fecha).toLocaleDateString()}</div>
-                                            <div className="flex gap-3">
-                                                <button onClick={() => deleteReview(review.id)} className="p-3 text-red-400 hover:bg-red-50 rounded-xl transition-all"><Trash2 size={18} /></button>
-                                                <button 
-                                                    onClick={() => {
-                                                        const values = {
-                                                            nombre: document.getElementById(`nombre-${review.id}`).value,
-                                                            tour_id: document.getElementById(`tour-${review.id}`).value,
-                                                            aprobado: document.getElementById(`aprobado-${review.id}`).value,
-                                                            comentario: document.getElementById(`orig-${review.id}`).value,
-                                                            comentario_en: document.getElementById(`trans-${review.id}`).value,
-                                                            // Keep other hidden values
-                                                            driver_name: review.driver_name,
-                                                            find_us: review.find_us,
-                                                            rating_booking: review.rating_booking,
-                                                            rating_logistics: review.rating_logistics,
-                                                            rating_route: review.rating_route,
-                                                            rating_driver: review.rating_driver,
-                                                            rating_vehicle: review.rating_vehicle,
-                                                            rating_price: review.rating_price,
-                                                            pais: review.pais,
-                                                            ig_user: review.ig_user,
-                                                            autorizacion_fotos: review.autorizacion_fotos
-                                                        };
-                                                        updateReview(review.id, values);
-                                                    }}
-                                                    className="px-6 py-3 bg-primary text-white rounded-xl font-black shadow-lg flex items-center gap-2"
-                                                >
-                                                    {updatingId === review.id ? <RefreshCw size={16} className="animate-spin" /> : <CheckCircle2 size={16} />}
-                                                    {successId === review.id ? '¡Guardado!' : 'Guardar'}
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
-            </div>
-        </div>
-    );
+const generateVoucher = (b, drivers) => {
+  const drv = drivers.find(d => d.id == b.driver_id);
+  const due = b.payment_status === 'paid' ? '0.00' : (b.total_price - (b.payment_status === 'reserved' ? b.deposit_amount : 0)).toFixed(2);
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://cantiktours.com/itinerario?ref=CT-${b.id}`)}`;
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>Voucher Cantik - ${b.client_name}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');body{font-family:'Inter',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#1a1a1a}.ticket{max-width:800px;margin:40px auto;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.1);display:flex;flex-direction:column}.header{background:#11BDDB;padding:40px;color:#fff;display:flex;justify-content:space-between;align-items:center}.logo{font-size:32px;font-weight:900}.status-badge{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:99px;font-size:12px;font-weight:900;text-transform:uppercase}.content{padding:40px;display:grid;grid-template-columns:2fr 1fr;gap:40px}.main-info{border-right:2px dashed #f0f2f5;padding-right:40px}.label{font-size:10px;font-weight:900;color:#11BDDB;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}.value{font-size:18px;font-weight:700;margin-bottom:24px}.tour-title{font-size:28px;font-weight:900;margin-bottom:32px;color:#11BDDB}.side-info{display:flex;flex-direction:column;align-items:center;text-align:center}.qr-box{background:#f9fafb;padding:20px;border-radius:24px;margin-bottom:16px;border:1px solid #eee}.qr-box img{width:120px;height:120px}.footer-strip{background:#1a1a1a;color:#fff;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}.price-value{font-size:24px;font-weight:900;color:#11BDDB}@media print{.no-print{display:none}.ticket{margin:0;border-radius:0;box-shadow:none}}</style></head><body><div class="ticket"><div class="header"><div class="logo">CantikTours</div><div class="status-badge">Voucher de Reserva</div></div><div class="content"><div class="main-info"><div class="label">Tour</div><div class="tour-title">${b.tour_title}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div><div class="label">Cliente</div><div class="value">${b.client_name}</div></div><div><div class="label">Fecha</div><div class="value">${new Date(b.booking_date).toLocaleDateString()}</div></div><div><div class="label">Hotel</div><div class="value">${b.hotel}</div></div><div><div class="label">Chofer</div><div class="value">${drv?drv.name:'Por confirmar'}</div></div></div></div><div class="side-info"><div class="qr-box"><img src="${qrUrl}"/></div><div class="label">Soporte y Reseñas</div><div style="font-size:12px;color:#666">Pax: ${b.pax} · #CT-${b.id}</div></div></div><div class="footer-strip"><div><div style="font-weight:700">¡Disfruta tu viaje!</div><div style="font-size:11px;color:#666">ES/EN: +34 642 51 77 87</div><div style="font-size:10px;color:#666">ID/EN: +62 856 9153 3356</div></div><div style="text-align:right"><div class="label">PENDIENTE</div><div class="price-value">${due} €</div></div></div></div><button onclick="window.print()" style="position:fixed;bottom:20px;right:20px;padding:16px 32px;background:#11BDDB;color:#fff;border:none;border-radius:16px;font-weight:900;cursor:pointer" class="no-print">IMPRIMIR</button></body></html>`);
+  w.document.close();
 };
 
-export default AdminReviews;
+export default function AdminPanel() {
+  const [token,setToken]=useState(localStorage.getItem('ctk')||'');
+  const [authed,setAuthed]=useState(false);
+  const [tab,setTab]=useState('bookings');
+  const [loading,setLoading]=useState(false);
+  const [bookings,setBookings]=useState([]);
+  const [drivers,setDrivers]=useState([]);
+  const [reviews,setReviews]=useState([]);
+  const [coupons,setCoupons]=useState([]);
+  const [search,setSearch]=useState('');
+  const [modal,setModal]=useState(null);
+  const [msg,setMsg]=useState(null);
+  const [calMonth,setCalMonth]=useState(new Date());
 
+  const toast=(t,ok=true)=>{setMsg({t,ok});setTimeout(()=>setMsg(null),3000);};
+
+  const load=useCallback(async()=>{
+    if(!token)return;setLoading(true);
+    try{
+      const [b,d,r,c]=await Promise.all([api.getBookings(token),api.getDrivers(token),api.getReviews(token),api.getCoupons(token)]);
+      setBookings(b.data || []);setDrivers(d.data || []);setReviews(r.data || []);setCoupons(c.data || []);
+      setAuthed(true);localStorage.setItem('ctk',token);
+    }catch(e){setAuthed(false);localStorage.removeItem('ctk');toast(e.message,false);}
+    finally{setLoading(false);}
+  },[token]);
+
+  const reload=async()=>{
+    try{
+      const [b,d,r,c]=await Promise.all([
+        api.getBookings(token).catch(()=>({data:bookings})),
+        api.getDrivers(token).catch(()=>({data:drivers})),
+        api.getReviews(token).catch(()=>({data:reviews})),
+        api.getCoupons(token).catch(()=>({data:coupons})),
+      ]);
+      setBookings([...(b.data || [])]);setDrivers([...(d.data || [])]);setReviews([...(r.data || [])]);setCoupons([...(c.data || [])]);
+    }catch(e){toast(e.message,false);}
+  };
+
+  useEffect(()=>{if(token&&!authed)load();},[]);
+
+  const save=async()=>{
+    if(!modal)return;const{type,action,data}=modal;setLoading(true);
+    try{
+      const fn=api[`${action}${type[0].toUpperCase()+type.slice(1)}`];
+      await fn(token,data);setModal(null);await reload();toast('Guardado ✓');
+    }catch(e){toast(e.message,false);}finally{setLoading(false);}
+  };
+
+  const del=async(type,id)=>{
+    if(!confirm('¿Eliminar?'))return;setLoading(true);
+    try{await api[`delete${type[0].toUpperCase()+type.slice(1)}`](token,id);await reload();toast('Eliminado');}
+    catch(e){toast(e.message,false);}finally{setLoading(false);}
+  };
+
+  const setField=(k,v)=>setModal(m=>({...m,data:{...m.data,[k]:v}}));
+  const openNew=(type)=>setModal({type,action:'create',data:{...{booking:emptyBooking,driver:emptyDriver,review:emptyReview,coupon:emptyCoupon}[type]}});
+  const openEdit=(type,row)=>setModal({type,action:'update',data:{...row}});
+
+  const handleAddPayment = async(b) => {
+    const amt = prompt(`Añadir pago para ${b.client_name} (Total: ${b.total_price}€):`, "");
+    if(!amt || isNaN(amt)) return;
+    setLoading(true);
+    try {
+      await api.addPayment(token, { booking_id: b.id, amount: amt, notes: 'Pago manual Admin' });
+      await reload();
+      toast('Pago registrado');
+    } catch(e) { toast(e.message, false); }
+    finally { setLoading(false); }
+  };
+
+  const filter=(l)=>(l||[]).filter(x=>Object.values(x).some(v=>v&&String(v).toLowerCase().includes(search.toLowerCase())));
+  const waLink=(p,m)=>`https://wa.me/${p.replace(/\D/g,'')}?text=${encodeURIComponent(m)}`;
+  const exportCSV=()=>{
+    const h=['ID','Cliente','Fecha','Tour','Pax','Total','Estado'];
+    const r=bookings.map(b=>[b.id,b.client_name,b.booking_date,b.tour_title,b.pax,b.total_price,b.payment_status]);
+    const c=[h,...r].map(e=>e.join(',')).join('\n');
+    const b=new Blob([c],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');
+    a.href=u;a.download='reservas.csv';a.click();
+  };
+
+  const calDays=useMemo(()=>{
+    const d=new Date(calMonth.getFullYear(),calMonth.getMonth(),1);
+    const days=[];for(let i=0;i<d.getDay();i++)days.push(null);
+    while(d.getMonth()===calMonth.getMonth()){days.push(d.getDate());d.setDate(d.getDate()+1);}
+    return days;
+  },[calMonth]);
+
+  const stats=useMemo(()=>{
+    const rev=bookings.filter(b=>b.payment_status==='paid').reduce((a,b)=>a+Number(b.total_price),0);
+    const byTour=bookings.reduce((a,b)=>({...a,[b.tour_title]:(a[b.tour_title]||0)+1}),{});
+    const top=Object.entries(byTour).sort((a,b)=>b[1]-a[1])[0]?.[0]||'-';
+    return{rev,total:bookings.length,top,paid:bookings.filter(b=>b.payment_status==='paid').length};
+  },[bookings]);
+
+  const recent=bookings.filter(b=>{const d=new Date(b.booking_date);const y=new Date();y.setDate(y.getDate()-1);return d<=y && d>new Date(y.getTime()-7*24*60*60*1000);});
+
+  const s={
+    btn:(bg,c='#fff')=>({background:bg,color:c,border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer',fontSize:'12px',transition:'all 0.2s'}),
+    card:{background:'#1a1a1a',borderRadius:'16px',padding:'16px',marginBottom:'8px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px',border:'1px solid #ffffff05'},
+    tag:(c)=>({background:c+'22',color:c,padding:'2px 8px',borderRadius:'8px',fontSize:'10px',fontWeight:900,textTransform:'uppercase'}),
+    tabBtn:(a)=>({background:a?C+'22':'transparent',color:a?C:'#666',border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer'})
+  };
+
+  if(!authed)return(
+    <div style={{minHeight:'100vh',background:'#0f0f0f',display:'flex',alignItems:'center',justifyContent:'center'}}>
+      <div style={{background:'#1a1a1a',padding:'40px',borderRadius:'24px',width:'100%',maxWidth:'360px',borderTop:`6px solid ${C}`}}>
+        <h2 style={{color:'#fff',textAlign:'center',marginBottom:'20px'}}>Cantik <span style={{color:C}}>Admin</span></h2>
+        <form onSubmit={e=>{e.preventDefault();load();}}>
+          <input type="password" value={token} onChange={e=>setToken(e.target.value)} placeholder="Token" style={{width:'100%',padding:'14px',borderRadius:'14px',border:'none',background:'#222',color:'#fff',marginBottom:'12px',boxSizing:'border-box'}}/>
+          <button type="submit" style={{...s.btn(C),width:'100%',padding:'14px'}}>{loading?'...':'Entrar'}</button>
+        </form>
+      </div>
+    </div>
+  );
+
+  return(
+    <div style={{paddingTop:'96px',paddingBottom:'60px',minHeight:'100vh',background:'#0f0f0f',color:'#fff'}}>
+      <div style={{maxWidth:'1100px',margin:'0 auto',padding:'0 16px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'24px'}}>
+          <h1 style={{margin:0,fontSize:'22px',fontWeight:900}}>Cantik<span style={{color:C}}>Admin</span></h1>
+          <div style={{display:'flex',gap:'4px',background:'#1a1a1a',padding:'4px',borderRadius:'16px'}}>
+            {TABS.map(t=><button key={t} style={s.tabBtn(tab===t)} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
+            <button style={s.tabBtn(false)} onClick={()=>{setAuthed(false);localStorage.removeItem('ctk');}}>✕</button>
+          </div>
+        </div>
+
+        {msg&&<div style={{padding:'12px',borderRadius:'12px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'12px',fontWeight:900}}>{msg.t}</div>}
+
+        {['bookings','drivers','reviews','coupons'].includes(tab) && <>
+          <div style={{display:'flex',gap:'8px',marginBottom:'16px'}}>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:1,padding:'12px',borderRadius:'14px',background:'#1a1a1a',border:'none',color:'#fff'}}/>
+            <button style={s.btn(C)} onClick={reload}>↻</button>
+            <button style={s.btn(C)} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])}>+ Nuevo</button>
+            {tab==='bookings'&&<button style={s.btn('#10b981')} onClick={exportCSV}>📥 CSV</button>}
+          </div>
+          {tab==='bookings'&&filter(bookings).map(b=>(
+            <div key={b.id} style={s.card}>
+              <div style={{display:'flex',gap:'12px',alignItems:'center'}}>
+                <div style={{background:C+'22',color:C,padding:'8px',borderRadius:'12px',textAlign:'center',minWidth:'40px'}}>
+                  <div style={{fontSize:'9px',fontWeight:900}}>{new Date(b.booking_date).toLocaleString('es',{month:'short'}).toUpperCase()}</div>
+                  <div style={{fontSize:'18px',fontWeight:900}}>{new Date(b.booking_date).getDate()}</div>
+                </div>
+                <div><div style={{fontWeight:900}}>{b.client_name}</div><div style={{fontSize:'11px',color:'#666'}}>{b.tour_title} · {b.pax}pax</div></div>
+              </div>
+              <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
+                <div style={{textAlign:'right'}}><div style={{fontWeight:900,color:C}}>{b.total_price}€</div><span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status]}</span></div>
+                <button style={s.btn(C+'33',C)} onClick={()=>generateVoucher(b,drivers)}>PDF</button>
+                <button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('booking',b)}>✎</button>
+                <button style={s.btn('#11BDDB22','#11BDDB')} onClick={()=>handleAddPayment(b)}>💸</button>
+                <button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('booking',b.id)}>✕</button>
+              </div>
+            </div>
+          ))}
+          {tab==='drivers'&&filter(drivers).map(d=>(
+            <div key={d.id} style={s.card}>
+              <div><div style={{fontWeight:900}}>{d.name}</div><div style={{color:'#666',fontSize:'12px'}}>{d.car_model}</div></div>
+              <div style={{display:'flex',gap:'6px'}}>
+                <button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('driver',d)}>✎</button>
+                <button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('driver',d.id)}>✕</button>
+              </div>
+            </div>
+          ))}
+          {tab==='reviews'&&filter(reviews).map(r=>(
+            <div key={r.id} style={s.card}>
+              <div style={{flex:1}}><div style={{fontWeight:900}}>{r.nombre} {'★'.repeat(r.puntuacion)}</div><div style={{fontSize:'12px',color:'#888'}}>"{r.comentario}"</div></div>
+              <div style={{display:'flex',gap:'6px'}}><button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('review',r)}>✎</button><button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('review',r.id)}>✕</button></div>
+            </div>
+          ))}
+          {tab==='coupons'&&filter(coupons).map(c=>(
+            <div key={c.id} style={s.card}>
+              <div><div style={{fontWeight:900}}>{c.code}</div><div style={{fontSize:'12px',color:'#666'}}>{c.discount_value}${c.discount_type==='percent'?'%':'€'}</div></div>
+              <div style={{display:'flex',gap:'6px'}}><button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('coupon',c)}>✎</button><button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('coupon',c.id)}>✕</button></div>
+            </div>
+          ))}
+        </>}
+
+        {tab==='calendar'&&(
+          <div style={{background:'#1a1a1a',borderRadius:'24px',padding:'24px'}}>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'20px'}}>
+              <button style={s.btn('#222')} onClick={()=>setCalMonth(new Date(calMonth.getFullYear(),calMonth.getMonth()-1))}>◀</button>
+              <h3 style={{margin:0}}>{calMonth.toLocaleString('es',{month:'long',year:'numeric'})}</h3>
+              <button style={s.btn('#222')} onClick={()=>setCalMonth(new Date(calMonth.getFullYear(),calMonth.getMonth()+1))}>▶</button>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:'4px'}}>
+              {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d=><div key={d} style={{textAlign:'center',fontSize:'10px',fontWeight:900,color:'#444'}}>{d}</div>)}
+              {calDays.map((d,i)=>(
+                <div key={i} style={{minHeight:'60px',background:d?'#222':'transparent',borderRadius:'12px',padding:'8px'}}>
+                  {d&&<div style={{fontSize:'12px',fontWeight:900}}>{d}</div>}
+                  {bookings.filter(b=>new Date(b.booking_date).getDate()===d&&new Date(b.booking_date).getMonth()===calMonth.getMonth()).map(b=>(
+                    <div key={b.id} style={{fontSize:'8px',background:PAY_COLOR[b.payment_status],padding:'2px',borderRadius:'4px',marginTop:'2px',overflow:'hidden'}}>{b.client_name.split(' ')[0]}</div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {tab==='stats'&&(
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:'16px'}}>
+            <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}><h4>Ingresos</h4><div style={{fontSize:'32px',fontWeight:900,color:C}}>{stats.rev}€</div></div>
+            <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}><h4>Reservas</h4><div style={{fontSize:'32px',fontWeight:900,color:'#f59e0b'}}>{stats.total}</div></div>
+            <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}><h4>Top Tour</h4><div style={{fontSize:'18px',fontWeight:900,color:C}}>{stats.top}</div></div>
+          </div>
+        )}
+
+        {tab==='followup'&&(
+          <div>
+            <h3>Seguimiento Post-Venta</h3>
+            {recent.length===0&&<p style={{textAlign:'center',color:'#666'}}>No hay tours recientes.</p>}
+            {recent.map(b=>(
+              <div key={b.id} style={s.card}>
+                <div><div style={{fontWeight:900}}>{b.client_name}</div><div style={{fontSize:'12px',color:'#666'}}>{b.tour_title}</div></div>
+                <a href={waLink(b.client_phone,`¡Hola ${b.client_name}! ✨ ¿Qué te pareció tu tour con Cantik? Nos ayudaría mucho tu reseña: https://cantiktours.com/reviews`)} target="_blank" rel="noopener" style={s.btn('#10b981')}>Pedir Reseña</a>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {modal&&(
+          <Modal title={`${modal.action==='create'?'Nuevo':'Editar'} ${modal.type}`} onClose={()=>setModal(null)} onSave={save} loading={loading}>
+            {modal.type==='booking'&&<BookingForm data={modal.data} drivers={drivers} onChange={setField}/>}
+            {modal.type==='driver'&&<DriverForm data={modal.data} onChange={setField}/>}
+            {modal.type==='review'&&<ReviewForm data={modal.data} onChange={setField}/>}
+            {modal.type==='coupon'&&<CouponForm data={modal.data} onChange={setField}/>}
+          </Modal>
+        )}
+      </div>
+    </div>
+  );
+}

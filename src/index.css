@@ -6,10 +6,10 @@
 
 @layer base {
   :root {
-    --primary: #13c8ec;
-    --primary-dark: #0088a3;
+    --primary: #11BDDB;
+    --primary-dark: #00A8C5;
     /* Darker shade for accessible text on light backgrounds */
-    --secondary: #ec138a;
+    --secondary: #2D3436;
   }
 
   html {
@@ -44,7 +44,7 @@
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#109db8] to-secondary;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary via-[#5EEAD4] to-primary;
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -59,7 +59,7 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-gradient-to-r from-primary to-[#109db8] hover:to-primary text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/25;
+    @apply bg-gradient-to-r from-primary to-[#00A8C5] hover:to-primary text-white font-bold py-3 px-8 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg shadow-primary/25;
   }
 
   .btn-outline {

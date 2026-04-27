@@ -17,7 +17,7 @@ const Testimonials = () => {
             try {
                 const response = await fetch('/api/get_reviews.php');
                 const result = await response.json();
-                if (result.status === 'success' && result.data) {
+                if (result.status === 'success' && result.data && Array.isArray(result.data)) {
                     // Map API fields to match component needs and modal needs
                     const formatted = result.data.map(r => ({
                         name: r.nombre,

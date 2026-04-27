@@ -1,27 +1,16 @@
 <?php
-header("Content-Type: application/json; charset=UTF-8");
-require_once "admin_config.php";
-
+require_once 'admin_config.php';
 handleCors();
 checkAuth();
+header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents("php://input"));
+$id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+if (!$id) { echo json_encode(["status"=>"error","message"=>"ID requerido"]); exit; }
 
-if (!empty($data->id)) {
-    try {
-        $query = "DELETE FROM reviews WHERE id = :id";
-        $stmt = $conn->prepare($query);
-        $stmt->bindParam(":id", $data->id, PDO::PARAM_INT);
-
-        if($stmt->execute()) {
-            echo json_encode(["status" => "success", "message" => "Review deleted"]);
-        } else {
-            echo json_encode(["status" => "error", "message" => "Unable to delete review"]);
-        }
-    } catch(PDOException $e) {
-        echo json_encode(["status" => "error", "message" => $e->getMessage()]);
-    }
-} else {
-    echo json_encode(["status" => "error", "message" => "No ID provided"]);
+try {
+    $stmt = $conn->prepare("DELETE FROM reviews WHERE id=:id");
+    $stmt->execute([':id'=>$id]);
+    echo json_encode(["status"=>"success","message"=>"Reseña eliminada"]);
+} catch(PDOException $e) {
+    echo json_encode(["status"=>"error","message"=>$e->getMessage()]);
 }
-?>

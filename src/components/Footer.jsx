@@ -58,9 +58,17 @@ const Footer = () => {
                 <motion.div variants={columnVariants}>
                     <h3 className="font-bold text-lg mb-6">{t('footer.contact')}</h3>
                     <ul className="space-y-4 font-medium text-gray-600 dark:text-gray-400">
-                        <li>WhatsApp: +376 614 535</li>
-                        <li>Email: info@cantiktours.com</li>
-                        <li>Bali, Indonesia</li>
+                        <li>
+                            <a href="https://wa.me/34642517787" className="hover:text-primary transition-colors block">
+                                WhatsApp: +34 642 51 77 87 <span className="text-[10px] opacity-60">(ES / EN)</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://wa.me/6285691533356" className="hover:text-primary transition-colors block">
+                                WhatsApp: +62 856 9153 3356 <span className="text-[10px] opacity-60">(ID / EN)</span>
+                            </a>
+                        </li>
+                        <li className="pt-2 text-gray-400">Bali, Indonesia</li>
                     </ul>
                 </motion.div>
             </motion.div>

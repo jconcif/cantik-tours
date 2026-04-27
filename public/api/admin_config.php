@@ -1,6 +1,6 @@
 <?php
 // Configuración de Administrador
-$access_token = "javiperty2026"; 
+$access_token = "lokura1486"; 
 
 // Database credentials
 $host = "localhost";
@@ -20,14 +20,21 @@ try {
 
 function handleCors() {
     header("Access-Control-Allow-Origin: *");
-    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, UPDATE");
+    header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
     header("Access-Control-Allow-Headers: Authorization, Content-Type, X-Requested-With");
+    header("Content-Type: application/json; charset=UTF-8");
     
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         http_response_code(200);
         exit();
     }
 }
+
+// Forzar errores de PHP a JSON para que el admin no se rompa
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
+    echo json_encode(["status" => "error", "message" => "PHP Error [$errno]: $errstr in $errfile on line $errline"]);
+    exit();
+});
 
 function checkAuth() {
     global $access_token;

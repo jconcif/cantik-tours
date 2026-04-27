@@ -20,6 +20,7 @@ const AboutPage = lazy(() => import('./pages/AboutPage'));
 const ReviewsPage = lazy(() => import('./pages/ReviewsPage'));
 const Policies = lazy(() => import('./pages/Policies'));
 const VisaPage = lazy(() => import('./pages/VisaPage'));
+const ItineraryPage = lazy(() => import('./pages/ItineraryPage'));
 
 // Admin (Direct import for reliability)
 import AdminReviews from './pages/AdminReviews';
@@ -41,12 +42,16 @@ function App() {
         trackPageView(location.pathname + location.search);
     }, [location]);
 
+    const isItinerary = location.pathname.startsWith('/itinerario');
+    const isAdmin = location.pathname === '/admin' || location.pathname === '/cantik-admin';
+    const hideHeaderFooter = isItinerary || isAdmin;
+
     return (
         <CurrencyProvider>
             <DarkModeProvider>
                 <ScrollToTop />
                 <div className="min-h-screen flex flex-col">
-                    <Navbar />
+                    {!hideHeaderFooter && <Navbar />}
                     <main className="flex-grow">
                         <Suspense fallback={<PageLoader />}>
                             <Routes>
@@ -58,12 +63,14 @@ function App() {
                                 <Route path="/reviews" element={<ReviewsPage />} />
                                 <Route path="/politicas" element={<Policies />} />
                                 <Route path="/visados" element={<VisaPage />} />
+                                <Route path="/itinerario" element={<ItineraryPage />} />
+                                <Route path="/admin" element={<AdminReviews />} />
                                 <Route path="/cantik-admin" element={<AdminReviews />} />
                             </Routes>
                         </Suspense>
                     </main>
-                    <Footer />
-                    {!['/reviews', '/cantik-admin'].includes(location.pathname) && <WhatsAppButton />}
+                    {!hideHeaderFooter && <Footer />}
+                    {!hideHeaderFooter && !['/reviews'].includes(location.pathname) && <WhatsAppButton />}
                 </div>
             </DarkModeProvider>
         </CurrencyProvider>

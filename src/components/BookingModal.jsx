@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, Shield } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, Shield, User, CreditCard, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../context/CurrencyContext';
 import DatePicker from 'react-datepicker';
@@ -14,10 +14,45 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     const { formatPrice } = useCurrency();
     const [step, setStep] = useState(1);
     const [isPaid, setIsPaid] = useState(false);
+    const [availability, setAvailability] = useState({});
     const [viewBankDetails, setViewBankDetails] = useState(false);
     const [copiedField, setCopiedField] = useState(null);
     const [showCoupon, setShowCoupon] = useState(false);
+
+    useEffect(() => {
+        const fetchAvailability = async () => {
+            try {
+                const r = await fetch('https://cantiktours.com/api/get_availability.php');
+                const j = await r.json();
+                if (j.status === 'success') setAvailability(j.data);
+            } catch (e) { console.error("Error fetching availability:", e); }
+        };
+        fetchAvailability();
+    }, []);
+
+    const getLocalISO = (date) => {
+        if (!date) return '';
+        const offset = date.getTimezoneOffset();
+        const localDate = new Date(date.getTime() - (offset * 60 * 1000));
+        return localDate.toISOString().split('T')[0];
+    };
+
+    const getDynamicStatus = (date) => {
+        if (!date) return 'green';
+        const ds = getLocalISO(date);
+        const count = availability[ds] || 0;
+        if (count >= 4) return 'red';
+        if (count >= 2) return 'yellow';
+        return 'green';
+    };
+
+    const isDateFullyBooked = (date) => {
+        const ds = getLocalISO(date);
+        return (availability[ds] || 0) >= 4;
+    };
+
     const [formData, setFormData] = useState({
+        name: '',
         date: null,
         pax: '2',
         hotel: '',
@@ -37,6 +72,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
             const data = {
                 tour_id: tourId || tourTitle.toLowerCase().replace(/\s+/g, '-'),
                 tour_title: tourTitle,
+                client_name: formData.name,
                 date: formData.date,
                 pax: formData.pax,
                 hotel: formData.hotel,
@@ -48,7 +84,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
                 coupon: formData.coupon
             };
 
-            await fetch('/api/save_booking.php', {
+            await fetch('https://cantiktours.com/api/save_booking.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,12 +102,13 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
             setStep(1);
             setIsPaid(false);
             setFormData({
+                name: '',
                 date: null,
                 pax: '2',
                 hotel: '',
                 coupon: '',
                 experience: 'comfort',
-                paymentType: 'full'
+                paymentType: 'deposit'
             });
             setViewBankDetails(false);
             setCopiedField(null);
@@ -101,12 +138,18 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     
     // Expert UX: 5th passenger onwards fee (5€ per extra person)
     const paxNum = parseInt(formData.pax);
-    const extraPaxFee = (!isNaN(paxNum) && paxNum > 4) ? (paxNum - 4) * 5 : 0;
-    const finalTotalPrice = totalPrice + extraPaxFee;
+    const extraPaxFee = paxNum > 4 ? (paxNum - 4) * 5 : 0;
+    
+    // Fee for split payment (Deposit + Remaining)
+    const splitFee = formData.paymentType === 'deposit' ? 5 : 0;
+    
+    const finalTotalPrice = totalPrice + extraPaxFee + splitFee;
+    
+    // Calculation of Deposit (30% + splitFee)
+    const depositAmount = formData.paymentType === 'deposit' 
+        ? Math.round((totalPrice + extraPaxFee) * 0.3) + splitFee 
+        : finalTotalPrice;
 
-    // Updated to 30% deposit rule
-    const calculatedDeposit = Math.max(20, Math.round(finalTotalPrice * 0.3));
-    const depositAmount = formData.paymentType === 'full' ? finalTotalPrice : calculatedDeposit;
     const remainingAmount = finalTotalPrice - depositAmount;
 
     const handleSubmit = (e) => {
@@ -132,12 +175,11 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
 
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
 
-
-
         const message = `¡Hola Cantik Tours!
 Me gustaría reservar este tour, por favor:
 
 🛕 ${t('detail.msg_tour')}: ${tourTitle}
+👤 ${i18n.language === 'en' ? 'Client' : 'Cliente'}: ${formData.name}
 📅 ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
 👥 ${t('detail.msg_pax')}: ${paxLabel}
 🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
@@ -170,15 +212,17 @@ ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looki
 Me gustaría reservar este tour, por favor:
 
 🛕 ${t('detail.msg_tour')}: ${tourTitle}
+👤 ${i18n.language === 'en' ? 'Client' : 'Cliente'}: ${formData.name}
 📅 ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
 👥 ${t('detail.msg_pax')}: ${paxLabel}
 🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
-✨ Experiencia: ${expName}
+✨ Experiencia: ${expName} (${i18n.language === 'en' ? 'English' : 'Español'})
 
-💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPrice} € (${i18n.language === 'en' ? 'Deposit:' : 'Reserva:'} ${depositAmount} €)${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
-
-${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank transfer. Could you provide the account details?" : "Quiero reservar pero me gustaría abonar el depósito por transferencia bancaria (IBAN) o Wise. ¿Me pasáis la cuenta?"}
-¡Muchas gracias!`;
+💶 Total: ${finalTotalPrice} €
+- Reserva: ${depositAmount} €
+- Restante: ${remainingAmount} €
+${showCoupon && formData.coupon ? `🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}\n` : ''}
+${i18n.language === 'en' ? "I want to book via bank transfer (IBAN). Can you verify the payment?\nThank you very much!" : "Quiero reservar con transferencia bancaria (IBAN). ¿Podeis verificar el pago?\n¡Muchas gracias!"}`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
@@ -248,6 +292,23 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                         transition={{ duration: 0.3 }}
                                         className="space-y-6"
                                     >
+                                        {/* Name Input */}
+                                        <div className="space-y-2">
+                                            <label htmlFor="booking-name" className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer">
+                                                <User size={14} className="text-primary" />
+                                                {t('reviews_page.form.name') || 'Nombre Completo'}
+                                            </label>
+                                            <input
+                                                id="booking-name"
+                                                type="text"
+                                                required
+                                                placeholder={i18n.language === 'en' ? 'Your full name' : 'Tu nombre completo'}
+                                                value={formData.name}
+                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                className={`${inputClasses} block w-full`}
+                                            />
+                                        </div>
+
                                         {/* Date Input */}
                                         <div className="space-y-2">
                                             <label htmlFor="booking-date" className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] cursor-pointer">
@@ -259,9 +320,9 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                                 selected={formData.date}
                                                 onChange={(date) => setFormData({ ...formData, date })}
                                                 minDate={new Date()}
-                                                filterDate={(date) => !isDateDisabled(date)}
+                                                filterDate={(date) => !isDateFullyBooked(date)}
                                                 dayClassName={(date) => {
-                                                    const status = getDateStatus(date);
+                                                    const status = getDynamicStatus(date);
                                                     return status === 'yellow' ? 'custom-day-yellow' : (status === 'red' ? 'custom-day-red' : 'custom-day-green');
                                                 }}
                                                 dateFormat="dd/MM/yyyy"
@@ -501,85 +562,107 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                 {step === 3 && (
                                     <motion.div
                                         key="step3"
-                                        initial={{ opacity: 0, x: 20 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        exit={{ opacity: 0, x: 20 }}
-                                        transition={{ duration: 0.3 }}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: 10 }}
                                         className="space-y-6"
                                     >
-                                        {/* Final Summary Card */}
-                                        <div className="bg-gray-50 dark:bg-white/5 p-5 rounded-3xl border border-black/5 dark:border-white/5 space-y-4 shadow-inner">
-                                            <div className="border-b border-black/5 dark:border-white/5 pb-4">
-                                                <h4 className="text-sm font-black text-primary mb-3">Resumen del Viaje</h4>
-                                                <ul className="text-xs font-bold text-gray-600 dark:text-gray-300 space-y-2">
-                                                    <li className="flex justify-between">
-                                                        <span>Tour:</span>
-                                                        <span className="text-right max-w-[60%] truncate">{tourTitle}</span>
-                                                    </li>
-                                                    <li className="flex justify-between">
-                                                        <span>Fecha:</span>
-                                                        <span>{formData.date ? formData.date.toLocaleDateString(i18n.language === 'en' ? 'en-GB' : 'es-ES') : '-'}</span>
-                                                    </li>
-                                                    <li className="flex justify-between">
-                                                        <span>Pasajeros:</span>
-                                                        <span>{t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`)}</span>
-                                                    </li>
-                                                    <li className="flex justify-between text-primary-dark">
-                                                        <span>Experiencia:</span>
-                                                        <span>{expName}</span>
-                                                    </li>
-                                                    {formData.hotel && (
-                                                    <li className="flex justify-between">
-                                                        <span>Hotel:</span>
-                                                        <span className="text-right max-w-[60%] truncate">{formData.hotel}</span>
-                                                    </li>
-                                                    )}
-                                                </ul>
+                                        {/* Luxury Header */}
+                                        <div className="flex flex-col items-center text-center space-y-2 mb-2">
+                                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
+                                                <ShieldCheck className="text-primary" size={28} />
                                             </div>
-                                            
-                                            <div className="pt-2">
-                                                <div className="flex bg-gray-100 dark:bg-white/10 p-1 rounded-2xl mb-4">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setFormData({ ...formData, paymentType: 'full' })}
-                                                        className={`flex-1 py-2.5 text-[10px] font-black rounded-xl transition-all ${formData.paymentType === 'full' ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-gray-500 hover:text-gray-700'}`}
-                                                    >
-                                                        {i18n.language === 'en' ? 'PAY 100% TOTAL' : 'ABONAR TOTAL (100%)'}
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setFormData({ ...formData, paymentType: 'deposit' })}
-                                                        className={`flex-1 py-2.5 text-[10px] font-black rounded-xl transition-all ${formData.paymentType === 'deposit' ? 'bg-white dark:bg-primary shadow-sm text-primary dark:text-white' : 'text-gray-500 hover:text-gray-700'}`}
-                                                    >
-                                                        {i18n.language === 'en' ? 'PAY 30% DEPOSIT' : 'ABONAR RESERVA (30%)'}
-                                                    </button>
+                                            <h4 className="text-[10px] font-black text-primary uppercase tracking-[5px]">{i18n.language === 'en' ? 'FINAL STEP' : 'ÚLTIMO PASO'}</h4>
+                                            <h2 className="text-2xl font-black text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Secure your adventure' : 'Asegura tu aventura'}</h2>
+                                        </div>
+
+                                        {/* Layered Luxury Card */}
+                                        <div className="relative pt-4">
+                                            {/* Background Card (Payment 2) */}
+                                            <div className="bg-gray-100 dark:bg-white/5 rounded-[32px] p-8 pt-16 mt-12 border border-black/5 dark:border-white/5 relative z-0">
+                                                <div className="flex justify-between items-center opacity-60">
+                                                    <div>
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <div className="w-2 h-2 rounded-full bg-gray-400" />
+                                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{i18n.language === 'en' ? 'PAY IN BALI' : 'PAGO EN BALI'}</span>
+                                                        </div>
+                                                        <div className="text-sm font-bold text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Remaining to guide' : 'Restante al guía'}</div>
+                                                    </div>
+                                                    <div className="text-xl font-black text-gray-600 dark:text-gray-400">{remainingAmount}€</div>
+                                                </div>
+                                            </div>
+
+                                            {/* Foreground Card (Payment 1 - Floating) */}
+                                            <div className="absolute top-0 left-0 right-0 bg-white dark:bg-[#1a1a1a] rounded-[32px] p-6 md:p-8 shadow-2xl shadow-primary/20 border border-black/5 dark:border-white/10 z-10">
+                                                <div className="flex justify-between items-start mb-6">
+                                                    <div className="space-y-1">
+                                                        <div className="flex items-center gap-2 mb-2">
+                                                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                                                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">{i18n.language === 'en' ? 'DUE TODAY' : 'ABONAR HOY'}</span>
+                                                        </div>
+                                                        <h3 className="text-lg font-black text-gray-900 dark:text-white leading-tight">
+                                                            {i18n.language === 'en' ? 'Booking Confirmation' : 'Confirmación de Reserva'}
+                                                        </h3>
+                                                        <p className="text-[10px] font-bold text-gray-400 italic">
+                                                            {i18n.language === 'en' ? 'Support & Reservation insurance included' : 'Incluye soporte 24/7 y garantía de reserva'}
+                                                        </p>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <div className="text-3xl font-black text-primary">{depositAmount}€</div>
+                                                        <div className="text-[8px] font-black text-gray-400 uppercase tracking-tighter mt-1">{i18n.language === 'en' ? 'Taxes included' : 'Impuestos incluidos'}</div>
+                                                    </div>
                                                 </div>
 
-                                                <h4 className="text-sm font-black text-primary mb-3">Detalle de Pago</h4>
-                                                <div className="space-y-3">
-                                                    <div className="flex justify-between items-center bg-white dark:bg-black/20 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
-                                                        <span className="text-xs font-bold text-gray-500">Valor Total</span>
-                                                        <span className="text-base font-black text-gray-900 dark:text-white">{finalTotalPrice} €</span>
+                                                {!isPaid && (
+                                                    <div className="PayPalArea mt-4">
+                                                        <PayPalButtons 
+                                                            style={{ layout: "vertical", shape: "pill", label: "pay", height: 48 }}
+                                                            createOrder={(data, actions) => {
+                                                                return actions.order.create({
+                                                                    purchase_units: [{
+                                                                        description: `${tourTitle} - Booking`,
+                                                                        amount: { value: depositAmount.toString() }
+                                                                    }]
+                                                                });
+                                                            }}
+                                                            onApprove={(data, actions) => {
+                                                                return actions.order.capture().then((details) => {
+                                                                    setIsPaid(true);
+                                                                    handleConfirmPaid();
+                                                                });
+                                                            }}
+                                                        />
                                                     </div>
-                                                    
-                                                    <div className="flex justify-between items-center bg-primary/10 border border-primary/20 p-3 rounded-xl">
-                                                        <div>
-                                                            <span className="block text-xs font-black text-primary">
-                                                                {formData.paymentType === 'full' ? (i18n.language === 'en' ? 'Total to pay' : 'Total a pagar') : (i18n.language === 'en' ? 'Deposit (30%)' : 'Abonar ahora (30%)')}
-                                                            </span>
-                                                            <span className="block text-[10px] text-gray-500">
-                                                                {isPaid ? (i18n.language === 'en' ? 'Paid with PayPal' : 'Pagado con PayPal') : 'Vía PayPal o Tarjeta'}
-                                                            </span>
-                                                        </div>
-                                                        <span className="text-lg font-black text-primary">{depositAmount} €</span>
-                                                    </div>
-                                                    
-                                                    <div className="flex justify-between items-center p-3">
-                                                        <span className="text-xs font-bold text-gray-500">{isPaid ? "Pagado ✓" : (i18n.language === 'en' ? "Remaining balance (48h before)" : "Pago Restante (48h antes del viaje)")}</span>
-                                                        <span className="text-sm font-black text-gray-700 dark:text-gray-300">{remainingAmount} €</span>
+                                                )}
+                                                
+                                                {isPaid && (
+                                                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-green-500/10 text-green-500 py-4 rounded-2xl text-center font-black text-sm flex items-center justify-center gap-2 border border-green-500/20">
+                                                        <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-[10px]">✓</div> 
+                                                        {i18n.language === 'en' ? 'RESERVATION SECURED' : 'RESERVA ASEGURADA'}
+                                                    </motion.div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Final Details & Trust */}
+                                        <div className="px-4 space-y-6 pt-2">
+                                            <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-gray-400">
+                                                <span>{i18n.language === 'en' ? 'Total Tour Price' : 'Precio Total del Tour'}</span>
+                                                <span className="text-gray-900 dark:text-white">{finalTotalPrice}€</span>
+                                            </div>
+
+                                            {!isPaid && (
+                                                <div className="flex flex-col items-center gap-4">
+                                                    <button onClick={handleAlternativePayment} className="text-[9px] font-black text-gray-400 hover:text-primary transition-all underline underline-offset-4 decoration-primary/30">
+                                                        {i18n.language === 'en' ? 'I PREFER BANK TRANSFER / WISE' : 'PREFIERO TRANSFERENCIA BANCARIA / WISE'}
+                                                    </button>
+                                                    <div className="flex items-center gap-3 grayscale opacity-30">
+                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-3" />
+                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-2" />
+                                                        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4" />
                                                     </div>
                                                 </div>
-                                            </div>
+                                            )}
                                         </div>
 
                                         <div className="flex gap-3 mt-6">
@@ -615,9 +698,10 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
                                                         <button
                                                             type="button"
                                                             onClick={(e) => handleAlternativePayment(e)}
-                                                            className="text-[11px] font-black text-gray-400 hover:text-primary transition-colors text-center underline decoration-dashed underline-offset-4 mb-2 w-full py-2"
+                                                            className="flex items-center justify-center gap-3 w-full h-[55px] bg-white dark:bg-white/5 border-2 border-primary/30 hover:border-primary text-primary font-black text-xs uppercase tracking-[0.2em] rounded-[30px] transition-all duration-300 shadow-sm hover:shadow-md group"
                                                         >
-                                                            {i18n.language === 'en' ? 'Or pay via Wise / Bank transfer' : 'O prefiere pagar por Transferencia / Wise'}
+                                                            <CreditCard size={18} className="group-hover:scale-110 transition-transform" />
+                                                            {i18n.language === 'en' ? 'Wise / Bank transfer' : 'Transferencia / Wise'}
                                                         </button>
                                                     )}
 
@@ -728,4 +812,3 @@ ${i18n.language === 'en' ? "I would like to pay the deposit via Wise or Bank tra
 };
 
 export default BookingModal;
-

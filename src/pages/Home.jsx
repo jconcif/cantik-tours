@@ -21,7 +21,7 @@ const Home = () => {
         "image": "https://www.cantiktours.com/images/hero-og.webp",
         "@id": "https://www.cantiktours.com",
         "url": "https://www.cantiktours.com",
-        "telephone": "+376 614 535",
+        "telephone": "+34 642 51 77 87",
         "address": {
             "@type": "PostalAddress",
             "streetAddress": "Ubud",
