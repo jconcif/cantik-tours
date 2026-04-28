@@ -33,10 +33,17 @@ try {
     $pay_stmt->execute([':id' => $id]);
     $payments = $pay_stmt->fetchAll(PDO::FETCH_ASSOC);
 
+    // 3. Obtenemos el historial de cargos extra
+    $charge_sql = "SELECT * FROM booking_charges WHERE booking_id = :id ORDER BY charge_date ASC";
+    $charge_stmt = $conn->prepare($charge_sql);
+    $charge_stmt->execute([':id' => $id]);
+    $charges = $charge_stmt->fetchAll(PDO::FETCH_ASSOC);
+
     echo json_encode([
         "status" => "success",
         "data" => $booking,
-        "payments" => $payments
+        "payments" => $payments,
+        "charges" => $charges
     ]);
 
 } catch(Exception $e) {

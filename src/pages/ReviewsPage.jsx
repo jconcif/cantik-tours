@@ -39,6 +39,30 @@ const ReviewsPage = () => {
         auth: false
     });
 
+    const [searchParams] = useSearchParams();
+    const ref = searchParams.get('ref');
+
+    useEffect(() => {
+        if (ref) {
+            const fetchPreFill = async () => {
+                try {
+                    const r = await fetch(`https://cantiktours.com/api/get_itinerary.php?ref=${ref}`);
+                    const j = await r.json();
+                    if (j.status === 'success') {
+                        setFormData(prev => ({
+                            ...prev,
+                            name: j.data.client_name || '',
+                            tour_type: j.data.tour_id || 'ubud_central',
+                            driver_name: j.data.driver_name || '',
+                            // Optionally map country if you have it in booking
+                        }));
+                    }
+                } catch (e) { console.error("Error pre-filling review:", e); }
+            };
+            fetchPreFill();
+        }
+    }, [ref]);
+
     const nextStep = () => {
         if (step < 3) setStep(step + 1);
         window.scrollTo({ top: 300, behavior: 'smooth' });

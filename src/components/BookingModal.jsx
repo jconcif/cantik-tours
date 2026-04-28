@@ -186,15 +186,15 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
         const message = `¡Hola Cantik Tours!
 Me gustaría reservar este tour, por favor:
 
-🛕 ${t('detail.msg_tour')}: ${tourTitle}
-👤 ${i18n.language === 'en' ? 'Client' : 'Cliente'}: ${formData.name}
-📅 ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
-👥 ${t('detail.msg_pax')}: ${paxLabel}
-🏨 ${t('detail.msg_hotel')}: ${formData.hotel}
-✨ Experiencia: ${expName}
+• ${t('detail.msg_tour')}: ${tourTitle}
+• ${i18n.language === 'en' ? 'Client' : 'Cliente'}: ${formData.name}
+• ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
+• ${t('detail.msg_pax')}: ${paxLabel}
+• ${t('detail.msg_hotel')}: ${formData.hotel}
+• Experiencia: ${expName}
 
-💶 ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPriceWithFees} €
-${isPaid ? `✅ ${i18n.language === 'en' ? 'Deposit PAID via PayPal:' : 'Depósito PAGADO por PayPal:'} ${currentPayAmount} €` : `(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${currentPayAmount} €)`}${showCoupon && formData.coupon ? `\n🎟️ ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+• ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPriceWithFees} €
+${isPaid ? `• ${i18n.language === 'en' ? 'Deposit PAID via PayPal:' : 'Depósito PAGADO por PayPal:'} ${currentPayAmount} €` : `(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${currentPayAmount} €)`}${showCoupon && formData.coupon ? `\n• ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
 ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looking forward to your details!' : '¡Acabo de pagar la reserva por PayPal! Quedo a la espera de la confirmación.') : '¿Me pueden confirmar disponibilidad y próximos pasos?'}
 ¡Muchas gracias!`;
@@ -217,22 +217,22 @@ ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looki
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
-        const message = `¡Hola Cantik Tours! 👋
+        const message = `¡Hola Cantik Tours!
 Me gustaría reservar este tour, por favor:
 
-🌴 *Tour:* ${tourTitle}
-👤 *Cliente:* ${formData.name}
-📅 *Fecha:* ${dateStr}
-👥 *Pasajeros:* ${paxLabel}
-📍 *Hotel/Zona:* ${formData.hotel}
-🚐 *Experiencia:* ${expName} (${i18n.language === 'en' ? 'English' : 'Español'})
+• *Tour:* ${tourTitle}
+• *Cliente:* ${formData.name}
+• *Fecha:* ${dateStr}
+• *Pasajeros:* ${paxLabel}
+• *Hotel/Zona:* ${formData.hotel}
+• *Experiencia:* ${expName} (${i18n.language === 'en' ? 'English' : 'Español'})
 
-💰 *Total:* ${finalTotalPriceWithFees} €
-${paymentPlan === 'deposit' ? `💳 *Reserva hoy:* ${currentPayAmount} €\n⏳ *Pendiente:* ${currentRemainingAmount} €` : `✅ *Pago Completo:* ${currentPayAmount} €`}
+• *Total:* ${finalTotalPriceWithFees} €
+${paymentPlan === 'deposit' ? `• *Reserva hoy:* ${currentPayAmount} €\n• *Pendiente:* ${currentRemainingAmount} €` : `• *Pago Completo:* ${currentPayAmount} €`}
 
 ${i18n.language === 'en' 
-    ? "I want to book via bank transfer (IBAN). Can you verify the payment? I attach the screenshot below.\n\nThank you very much! 🙏" 
-    : "Quiero reservar con transferencia bancaria (IBAN). ¿Podéis verificar el pago? Adjunto la captura aquí abajo.\n\n¡Muchas gracias! 🙏"}`;
+    ? "I want to book via bank transfer (IBAN). Can you verify the payment? I attach the screenshot below.\n\nThank you very much!" 
+    : "Quiero reservar con transferencia bancaria (IBAN). ¿Podéis verificar el pago? Adjunto la captura aquí abajo.\n\n¡Muchas gracias!"}`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;

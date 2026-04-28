@@ -1,23 +1,47 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import * as api from '../services/adminService';
-import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal } from '../components/AdminComponents';
+import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement } from '../components/AdminComponents';
 
 const C = '#11BDDB';
-const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'pending',driver_id:'',experience:'comfort'};
+const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'pending',driver_id:'',experience:'driver_en'};
 const emptyDriver = {name:'',phone:'',car_model:''};
 const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
 const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
 const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup'];
 const TLABEL = {bookings:'Reservas',drivers:'Staff',reviews:'Reviews',coupons:'Cupones',calendar:'Calendario',stats:'Dashboard',followup:'Seguimiento'};
-const PAY_LABEL = {pending:'Espera',reserved:'Reservado',paid:'Pagado',cancelled:'Cancelado',refunded:'Devolución'};
-const PAY_COLOR = {pending:'#f59e0b',reserved:'#3b82f6',paid:'#10b981',cancelled:'#ef4444',refunded:'#8b5cf6'};
+const PAY_LABEL = {
+  pending: 'Pago Pendiente',
+  requested: 'Pago Pendiente',
+  'pago pendiente': 'Pago Pendiente',
+  reserved: 'Reservado (Seña)',
+  confirmed: 'Confirmado',
+  confirmado: 'Confirmado',
+  paid: 'Pago Completado',
+  on_tour: 'En Tour',
+  finished: 'Terminado',
+  postponed: 'Pospuesto',
+  cancelled: 'Cancelado',
+  refunded: 'Reembolsado'
+};
+const PAY_COLOR = {
+  pending: '#f59e0b',
+  requested: '#f59e0b',
+  reserved: '#3b82f6',
+  confirmed: '#10b981',
+  paid: '#059669',
+  on_tour: '#8b5cf6',
+  finished: '#64748b',
+  postponed: '#6366f1',
+  cancelled: '#ef4444',
+  refunded: '#ec4899'
+};
 
 const generateVoucher = (b, drivers) => {
   const drv = drivers.find(d => d.id == b.driver_id);
-  const due = b.payment_status === 'paid' ? '0.00' : (b.total_price - (b.payment_status === 'reserved' ? b.deposit_amount : 0)).toFixed(2);
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://cantiktours.com/itinerario?ref=CT-${b.id}`)}`;
+  const itineraryUrl = `https://cantiktours.com/itinerario?ref=CT-${b.id}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(itineraryUrl)}`;
   const w = window.open('', '_blank');
-  w.document.write(`<html><head><title>Voucher Cantik - ${b.client_name}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');body{font-family:'Inter',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#1a1a1a}.ticket{max-width:800px;margin:40px auto;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.1);display:flex;flex-direction:column}.header{background:#11BDDB;padding:40px;color:#fff;display:flex;justify-content:space-between;align-items:center}.logo{font-size:32px;font-weight:900}.status-badge{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:99px;font-size:12px;font-weight:900;text-transform:uppercase}.content{padding:40px;display:grid;grid-template-columns:2fr 1fr;gap:40px}.main-info{border-right:2px dashed #f0f2f5;padding-right:40px}.label{font-size:10px;font-weight:900;color:#11BDDB;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}.value{font-size:18px;font-weight:700;margin-bottom:24px}.tour-title{font-size:28px;font-weight:900;margin-bottom:32px;color:#11BDDB}.side-info{display:flex;flex-direction:column;align-items:center;text-align:center}.qr-box{background:#f9fafb;padding:20px;border-radius:24px;margin-bottom:16px;border:1px solid #eee}.qr-box img{width:120px;height:120px}.footer-strip{background:#1a1a1a;color:#fff;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}.price-value{font-size:24px;font-weight:900;color:#11BDDB}@media print{.no-print{display:none}.ticket{margin:0;border-radius:0;box-shadow:none}}</style></head><body><div class="ticket"><div class="header"><div class="logo">CantikTours</div><div class="status-badge">Voucher de Reserva</div></div><div class="content"><div class="main-info"><div class="label">Tour</div><div class="tour-title">${b.tour_title}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div><div class="label">Cliente</div><div class="value">${b.client_name}</div></div><div><div class="label">Fecha</div><div class="value">${new Date(b.booking_date).toLocaleDateString()}</div></div><div><div class="label">Hotel</div><div class="value">${b.hotel}</div></div><div><div class="label">Chofer</div><div class="value">${drv?drv.name:'Por confirmar'}</div></div></div></div><div class="side-info"><div class="qr-box"><img src="${qrUrl}"/></div><div class="label">Soporte y Reseñas</div><div style="font-size:12px;color:#666">Pax: ${b.pax} · #CT-${b.id}</div></div></div><div class="footer-strip"><div><div style="font-weight:700">¡Disfruta tu viaje!</div><div style="font-size:11px;color:#666">ES/EN: +34 642 51 77 87</div><div style="font-size:10px;color:#666">ID/EN: +62 856 9153 3356</div></div><div style="text-align:right"><div class="label">PENDIENTE</div><div class="price-value">${due} €</div></div></div></div><button onclick="window.print()" style="position:fixed;bottom:20px;right:20px;padding:16px 32px;background:#11BDDB;color:#fff;border:none;border-radius:16px;font-weight:900;cursor:pointer" class="no-print">IMPRIMIR</button></body></html>`);
+  w.document.write(`<html><head><title>Voucher Cantik - ${b.client_name}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');body{font-family:'Inter',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#1a1a1a}.ticket{max-width:800px;margin:40px auto;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.1);display:flex;flex-direction:column}.header{background:#11BDDB;padding:40px;color:#fff;display:flex;justify-content:space-between;align-items:center}.logo{font-size:32px;font-weight:900}.status-badge{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:99px;font-size:12px;font-weight:900;text-transform:uppercase}.content{padding:40px;display:grid;grid-template-columns:2fr 1fr;gap:40px}.main-info{border-right:2px dashed #f0f2f5;padding-right:40px}.label{font-size:10px;font-weight:900;color:#11BDDB;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}.value{font-size:18px;font-weight:700;margin-bottom:24px}.tour-title{font-size:28px;font-weight:900;margin-bottom:32px;color:#11BDDB}.side-info{display:flex;flex-direction:column;align-items:center;text-align:center}.qr-box{background:#f9fafb;padding:20px;border-radius:24px;margin-bottom:16px;border:1px solid #eee}.qr-box img{width:120px;height:120px}.detail-link{display:inline-block;margin-top:12px;padding:8px 16px;background:#11BDDB;color:#fff;text-decoration:none;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:0.5px}.footer-strip{background:#1a1a1a;color:#fff;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}@media print{.no-print{display:none}.ticket{margin:0;border-radius:0;box-shadow:none}}</style></head><body><div class="ticket"><div class="header"><div class="logo">CantikTours</div><div class="status-badge">Voucher de Reserva</div></div><div class="content"><div class="main-info"><div class="label">Tour</div><div class="tour-title">${b.tour_title}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div><div class="label">Cliente</div><div class="value">${b.client_name}</div></div><div><div class="label">Fecha</div><div class="value">${new Date(b.booking_date).toLocaleDateString()}</div></div><div><div class="label">Hotel</div><div class="value">${b.hotel}</div></div><div><div class="label">Chofer</div><div class="value">${drv?drv.name:'Por confirmar'}</div></div></div></div><div class="side-info"><div class="qr-box"><img src="${qrUrl}"/></div><div class="label">Detalle de tu Reserva</div><div style="font-size:12px;color:#666">Pax: ${b.pax} · #CT-${b.id}</div><a href="${itineraryUrl}" target="_blank" class="detail-link no-print">Ver Estado y Pagos →</a></div></div><div class="footer-strip"><div><div style="font-weight:700">¡Disfruta tu viaje!</div><div style="font-size:11px;color:#666">ES/EN: +34 642 51 77 87</div><div style="font-size:10px;color:#666">ID/EN: +62 856 9153 3356</div></div><div style="text-align:right"><div style="font-size:11px;color:#666">cantiktours.com</div></div></div></div><button onclick="window.print()" style="position:fixed;bottom:20px;right:20px;padding:16px 32px;background:#11BDDB;color:#fff;border:none;border-radius:16px;font-weight:900;cursor:pointer" class="no-print">IMPRIMIR</button></body></html>`);
   w.document.close();
 };
 
@@ -33,15 +57,24 @@ export default function AdminPanel() {
   const [search,setSearch]=useState('');
   const [modal,setModal]=useState(null);
   const [msg,setMsg]=useState(null);
+  const [detailedStats, setDetailedStats] = useState(null);
   const [calMonth,setCalMonth]=useState(new Date());
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const toast=(t,ok=true)=>{setMsg({t,ok});setTimeout(()=>setMsg(null),3000);};
 
   const load=useCallback(async()=>{
     if(!token)return;setLoading(true);
     try{
-      const [b,d,r,c]=await Promise.all([api.getBookings(token),api.getDrivers(token),api.getReviews(token),api.getCoupons(token)]);
+      const [b,d,r,c,s]=await Promise.all([api.getBookings(token),api.getDrivers(token),api.getReviews(token),api.getCoupons(token),api.getStats(token)]);
       setBookings(b.data || []);setDrivers(d.data || []);setReviews(r.data || []);setCoupons(c.data || []);
+      setDetailedStats(s.data);
       setAuthed(true);localStorage.setItem('ctk',token);
     }catch(e){setAuthed(false);localStorage.removeItem('ctk');toast(e.message,false);}
     finally{setLoading(false);}
@@ -49,13 +82,15 @@ export default function AdminPanel() {
 
   const reload=async()=>{
     try{
-      const [b,d,r,c]=await Promise.all([
+      const [b,d,r,c,s]=await Promise.all([
         api.getBookings(token).catch(()=>({data:bookings})),
         api.getDrivers(token).catch(()=>({data:drivers})),
         api.getReviews(token).catch(()=>({data:reviews})),
         api.getCoupons(token).catch(()=>({data:coupons})),
+        api.getStats(token).catch(()=>({data:detailedStats})),
       ]);
       setBookings([...(b.data || [])]);setDrivers([...(d.data || [])]);setReviews([...(r.data || [])]);setCoupons([...(c.data || [])]);
+      setDetailedStats(s.data);
     }catch(e){toast(e.message,false);}
   };
 
@@ -79,16 +114,8 @@ export default function AdminPanel() {
   const openNew=(type)=>setModal({type,action:'create',data:{...{booking:emptyBooking,driver:emptyDriver,review:emptyReview,coupon:emptyCoupon}[type]}});
   const openEdit=(type,row)=>setModal({type,action:'update',data:{...row}});
 
-  const handleAddPayment = async(b) => {
-    const amt = prompt(`Añadir pago para ${b.client_name} (Total: ${b.total_price}€):`, "");
-    if(!amt || isNaN(amt)) return;
-    setLoading(true);
-    try {
-      await api.addPayment(token, { booking_id: b.id, amount: amt, notes: 'Pago manual Admin' });
-      await reload();
-      toast('Pago registrado');
-    } catch(e) { toast(e.message, false); }
-    finally { setLoading(false); }
+  const handleManagePayments = (b) => {
+    setModal({type:'finance', action:'view', data:b});
   };
 
   const filter=(l)=>(l||[]).filter(x=>Object.values(x).some(v=>v&&String(v).toLowerCase().includes(search.toLowerCase())));
@@ -119,7 +146,7 @@ export default function AdminPanel() {
 
   const s={
     btn:(bg,c='#fff')=>({background:bg,color:c,border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer',fontSize:'12px',transition:'all 0.2s'}),
-    card:{background:'#1a1a1a',borderRadius:'16px',padding:'16px',marginBottom:'8px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px',border:'1px solid #ffffff05'},
+    card:{background:'#1a1a1a',borderRadius:'16px',padding:'16px',marginBottom:'8px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px',border:'1px solid #ffffff05', flexWrap:'wrap'},
     tag:(c)=>({background:c+'22',color:c,padding:'2px 8px',borderRadius:'8px',fontSize:'10px',fontWeight:900,textTransform:'uppercase'}),
     tabBtn:(a)=>({background:a?C+'22':'transparent',color:a?C:'#666',border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer'})
   };
@@ -141,7 +168,7 @@ export default function AdminPanel() {
       <div style={{maxWidth:'1100px',margin:'0 auto',padding:'0 16px'}}>
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'24px'}}>
           <h1 style={{margin:0,fontSize:'22px',fontWeight:900}}>Cantik<span style={{color:C}}>Admin</span></h1>
-          <div style={{display:'flex',gap:'4px',background:'#1a1a1a',padding:'4px',borderRadius:'16px'}}>
+          <div style={{display:'flex',gap:'4px',background:'#1a1a1a',padding:'4px',borderRadius:'16px', flexWrap:'wrap', justifyContent:'center'}}>
             {TABS.map(t=><button key={t} style={s.tabBtn(tab===t)} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
             <button style={s.tabBtn(false)} onClick={()=>{setAuthed(false);localStorage.removeItem('ctk');}}>✕</button>
           </div>
@@ -150,27 +177,62 @@ export default function AdminPanel() {
         {msg&&<div style={{padding:'12px',borderRadius:'12px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'12px',fontWeight:900}}>{msg.t}</div>}
 
         {['bookings','drivers','reviews','coupons'].includes(tab) && <>
-          <div style={{display:'flex',gap:'8px',marginBottom:'16px'}}>
-            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:1,padding:'12px',borderRadius:'14px',background:'#1a1a1a',border:'none',color:'#fff'}}/>
-            <button style={s.btn(C)} onClick={reload}>↻</button>
-            <button style={s.btn(C)} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])}>+ Nuevo</button>
-            {tab==='bookings'&&<button style={s.btn('#10b981')} onClick={exportCSV}>📥 CSV</button>}
+          <div style={{display:'flex',gap:'8px',marginBottom:'16px', flexWrap:'wrap'}}>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'1 1 200px',padding:'12px',borderRadius:'14px',background:'#1a1a1a',border:'none',color:'#fff'}}/>
+            <div style={{display:'flex', gap:'8px', flex:'1 1 auto', justifyContent:'flex-end'}}>
+              <button style={s.btn(C)} onClick={reload}>↻</button>
+              <button style={s.btn(C)} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])}>+ Nuevo</button>
+              {tab==='bookings'&&<button style={s.btn('#10b981')} onClick={exportCSV}>📥 CSV</button>}
+            </div>
           </div>
           {tab==='bookings'&&filter(bookings).map(b=>(
-            <div key={b.id} style={s.card}>
-              <div style={{display:'flex',gap:'12px',alignItems:'center'}}>
+            <div key={b.id} style={{...s.card, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', gap: isMobile ? '12px' : '20px'}}>
+              {/* FILA 1: Fecha y Cliente */}
+              <div style={{display:'flex', gap:'12px', alignItems:'center', flex:1}}>
                 <div style={{background:C+'22',color:C,padding:'8px',borderRadius:'12px',textAlign:'center',minWidth:'40px'}}>
                   <div style={{fontSize:'9px',fontWeight:900}}>{new Date(b.booking_date).toLocaleString('es',{month:'short'}).toUpperCase()}</div>
                   <div style={{fontSize:'18px',fontWeight:900}}>{new Date(b.booking_date).getDate()}</div>
                 </div>
-                <div><div style={{fontWeight:900}}>{b.client_name}</div><div style={{fontSize:'11px',color:'#666'}}>{b.tour_title} · {b.pax}pax</div></div>
+                <div style={{flex:1}}>
+                  <div style={{fontWeight:900, fontSize: isMobile ? '16px' : '14px'}}>{b.client_name}</div>
+                  <div style={{fontSize:'11px',color:'#666'}}>{b.hotel}</div>
+                </div>
+                {isMobile && <div style={{fontWeight:900, color:C}}>{b.total_price}€</div>}
               </div>
-              <div style={{display:'flex',gap:'8px',alignItems:'center'}}>
-                <div style={{textAlign:'right'}}><div style={{fontWeight:900,color:C}}>{b.total_price}€</div><span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status]}</span></div>
-                <button style={s.btn(C+'33',C)} onClick={()=>generateVoucher(b,drivers)}>PDF</button>
-                <button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('booking',b)}>✎</button>
-                <button style={s.btn('#11BDDB22','#11BDDB')} onClick={()=>handleAddPayment(b)}>💸</button>
-                <button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('booking',b.id)}>✕</button>
+
+              {/* FILA 2: Tour y Estado/Saldo */}
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderTop: isMobile ? '1px solid #ffffff05' : 'none', paddingTop: isMobile ? '12px' : 0}}>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:'12px', fontWeight:700, color:'#aaa'}}>{b.tour_title}</div>
+                  <div style={{fontSize:'10px', color:'#666'}}>{b.pax} pax · {b.experience.toUpperCase()}</div>
+                </div>
+                <div style={{textAlign:'right'}}>
+                  {!isMobile && <div style={{fontWeight:900, color:C, marginBottom:'4px'}}>{b.total_price}€</div>}
+                  <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'4px'}}>
+                    <span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status] || b.payment_status}</span>
+                    {b.total_price - b.total_paid > 0 && (
+                      <div style={{fontSize:'11px', fontWeight:900, color:'#ef4444', background:'#ef444411', padding:'2px 8px', borderRadius:'6px'}}>
+                        Debe: {(b.total_price - b.total_paid).toFixed(2)}€
+                      </div>
+                    )}
+                    <div style={{fontSize:'11px', fontWeight:900, color:'#10b981', background:'#10b98111', padding:'2px 8px', borderRadius:'6px'}}>
+                      Profit: {(b.total_paid - b.total_expenses).toFixed(2)}€
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* FILA 3: Botones (Abajo en móvil) */}
+              <div style={{display:'flex', gap:'6px', justifyContent: isMobile ? 'space-between' : 'flex-end', borderTop: isMobile ? '1px solid #ffffff05' : 'none', paddingTop: isMobile ? '12px' : 0}}>
+                <div style={{display:'flex', gap:'6px', flex: isMobile ? 1 : 'none'}}>
+                  <a href={waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours. ¿Cómo estás?`)} target="_blank" rel="noreferrer" style={{...s.btn('#25D366'), flex: isMobile ? 1 : 'none', textAlign:'center'}}>WSP</a>
+                  <button style={{...s.btn(C+'33',C), flex: isMobile ? 1 : 'none'}} onClick={()=>generateVoucher(b,drivers)}>PDF</button>
+                </div>
+                <div style={{display:'flex', gap:'6px'}}>
+                  <button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('booking',b)}>✎</button>
+                  <button style={s.btn('#11BDDB22','#11BDDB')} title="Finanzas del Tour" onClick={()=>handleManagePayments(b)}>💰</button>
+                  <button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('booking',b.id)}>✕</button>
+                </div>
               </div>
             </div>
           ))}
@@ -219,10 +281,62 @@ export default function AdminPanel() {
         )}
 
         {tab==='stats'&&(
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:'16px'}}>
-            <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}><h4>Ingresos</h4><div style={{fontSize:'32px',fontWeight:900,color:C}}>{stats.rev}€</div></div>
-            <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}><h4>Reservas</h4><div style={{fontSize:'32px',fontWeight:900,color:'#f59e0b'}}>{stats.total}</div></div>
-            <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}><h4>Top Tour</h4><div style={{fontSize:'18px',fontWeight:900,color:C}}>{stats.top}</div></div>
+          <div style={{display:'flex', flexDirection:'column', gap:'24px'}}>
+            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:'16px'}}>
+              <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}>
+                <div style={{fontSize:'12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Ingresos Totales</div>
+                <div style={{fontSize:'32px',fontWeight:900,color:C}}>{(detailedStats?.revenue || stats.rev).toFixed(2)}€</div>
+              </div>
+              <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}>
+                <div style={{fontSize:'12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Gastos Totales</div>
+                <div style={{fontSize:'32px',fontWeight:900,color:'#ef4444'}}>{(detailedStats?.expenses || 0).toFixed(2)}€</div>
+              </div>
+              <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}>
+                <div style={{fontSize:'12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Beneficio Neto</div>
+                <div style={{fontSize:'32px',fontWeight:900,color:'#10b981'}}>{(detailedStats?.profit || 0).toFixed(2)}€</div>
+              </div>
+              <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}>
+                <div style={{fontSize:'12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Tour Estrella</div>
+                <div style={{fontSize:'18px',fontWeight:900,color:C}}>{stats.top}</div>
+              </div>
+            </div>
+
+            {detailedStats && (
+              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'24px'}}>
+                <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                  <h3 style={{marginTop:0, marginBottom:'20px', fontSize:'16px'}}>Rendimiento de Choferes</h3>
+                  <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+                    {detailedStats.driver_performance.map(d => (
+                      <div key={d.driver_name} style={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#222', padding:'12px 16px', borderRadius:'16px'}}>
+                        <div>
+                          <div style={{fontWeight:900}}>{d.driver_name}</div>
+                          <div style={{fontSize:'10px', color:'#666'}}>{d.total_reviews} reseñas</div>
+                        </div>
+                        <div style={{textAlign:'right'}}>
+                          <div style={{color:C, fontWeight:900, fontSize:'18px'}}>{Number(d.avg_rating).toFixed(1)} ★</div>
+                          <div style={{fontSize:'10px', color:'#10b981'}}>Vehículo: {Number(d.avg_vehicle).toFixed(1)}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                  <h3 style={{marginTop:0, marginBottom:'20px', fontSize:'16px'}}>Calidad del Servicio (Promedio)</h3>
+                  <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px'}}>
+                    {Object.entries(detailedStats.service_quality).map(([key, val]) => (
+                      <div key={key} style={{background:'#222', padding:'12px', borderRadius:'16px', textAlign:'center'}}>
+                        <div style={{fontSize:'10px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'4px'}}>{key}</div>
+                        <div style={{fontSize:'20px', fontWeight:900, color:C}}>{Number(val).toFixed(1)}</div>
+                        <div style={{height:'4px', background:'#333', borderRadius:'2px', marginTop:'8px', overflow:'hidden'}}>
+                          <div style={{height:'100%', background:C, width:`${(val/5)*100}%`}}></div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -233,15 +347,22 @@ export default function AdminPanel() {
             {recent.map(b=>(
               <div key={b.id} style={s.card}>
                 <div><div style={{fontWeight:900}}>{b.client_name}</div><div style={{fontSize:'12px',color:'#666'}}>{b.tour_title}</div></div>
-                <a href={waLink(b.client_phone,`¡Hola ${b.client_name}! ✨ ¿Qué te pareció tu tour con Cantik? Nos ayudaría mucho tu reseña: https://cantiktours.com/reviews`)} target="_blank" rel="noopener" style={s.btn('#10b981')}>Pedir Reseña</a>
+                <a href={waLink(b.client_phone,`¡Hola ${b.client_name}! ✨ ¿Qué te pareció tu tour con Cantik? Nos ayudaría mucho tu reseña: https://cantiktours.com/reviews?ref=CT-${b.id}`)} target="_blank" rel="noopener" style={s.btn('#10b981')}>Pedir Reseña</a>
               </div>
             ))}
           </div>
         )}
 
         {modal&&(
-          <Modal title={`${modal.action==='create'?'Nuevo':'Editar'} ${modal.type}`} onClose={()=>setModal(null)} onSave={save} loading={loading}>
+          <Modal title={`${modal.action==='create'?'Nuevo':'Editar'} ${modal.type === 'finance' ? 'Finanzas del Tour' : modal.type}`} onClose={()=>setModal(null)} onSave={save} loading={loading} hideFooter={modal.type === 'finance'}>
             {modal.type==='booking'&&<BookingForm data={modal.data} drivers={drivers} onChange={setField}/>}
+            {modal.type==='finance' && (
+              <FinancialManagement 
+                booking={modal.data} 
+                token={token} 
+                onUpdate={reload} 
+              />
+            )}
             {modal.type==='driver'&&<DriverForm data={modal.data} onChange={setField}/>}
             {modal.type==='review'&&<ReviewForm data={modal.data} onChange={setField}/>}
             {modal.type==='coupon'&&<CouponForm data={modal.data} onChange={setField}/>}

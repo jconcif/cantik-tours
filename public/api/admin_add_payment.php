@@ -12,12 +12,13 @@ if (!isset($data->booking_id) || !isset($data->amount)) {
 
 try {
     // 1. Insertamos el pago
-    $sql = "INSERT INTO booking_payments (booking_id, amount, payment_method, notes) 
-            VALUES (:bid, :amt, :meth, :notes)";
+    $sql = "INSERT INTO booking_payments (booking_id, amount, payment_date, payment_method, notes) 
+            VALUES (:bid, :amt, :pdate, :meth, :notes)";
     $stmt = $conn->prepare($sql);
     $stmt->execute([
         ':bid' => $data->booking_id,
         ':amt' => $data->amount,
+        ':pdate' => $data->payment_date ?? date('Y-m-d'),
         ':meth' => $data->payment_method ?? 'Efectivo/Transferencia',
         ':notes' => $data->notes ?? 'Pago manual desde Admin'
     ]);
