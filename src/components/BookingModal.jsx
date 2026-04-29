@@ -6,7 +6,6 @@ import { useCurrency } from '../context/CurrencyContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getDateStatus, isDateDisabled } from '../data/availability';
-import { PayPalButtons } from "@paypal/react-paypal-js";
 import { trackEvent } from '../utils/analytics';
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
@@ -18,8 +17,11 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     const [viewBankDetails, setViewBankDetails] = useState(false);
     const [copiedField, setCopiedField] = useState(null);
     const [showCoupon, setShowCoupon] = useState(false);
-    const [paymentMethod, setPaymentMethod] = useState('paypal'); // 'paypal' or 'transfer'
+    const [paymentMethod, setPaymentMethod] = useState('transfer'); // Default to transfer only
     const [paymentPlan, setPaymentPlan] = useState('deposit'); // 'deposit' or 'full'
+    const [paymentStatus, setPaymentStatus] = useState('idle'); // 'idle', 'processing', 'success', 'error'
+    const [errorMessage, setErrorMessage] = useState('');
+    const [newBookingId, setNewBookingId] = useState(null);
 
     useEffect(() => {
         const fetchAvailability = async () => {
@@ -79,23 +81,29 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
                 pax: formData.pax,
                 hotel: formData.hotel,
                 experience: formData.experience,
-                payment_type: formData.paymentType,
-                total_price: finalTotalPrice,
-                deposit_amount: depositAmount,
+                payment_type: paymentPlan,
+                total_price: finalTotalPriceWithFees,
+                deposit_amount: currentPayAmount,
                 is_paid: overrideIsPaid !== null ? overrideIsPaid : isPaid,
                 coupon: formData.coupon
             };
 
-            await fetch('https://cantiktours.com/api/save_booking.php', {
+            const response = await fetch('https://cantiktours.com/api/save_booking.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data)
             });
+            const result = await response.json();
+            if (result.status === 'success' && result.id) {
+                setNewBookingId(result.id);
+                return result.id;
+            }
         } catch (error) {
             console.error("Error saving booking:", error);
         }
+        return null;
     };
 
     const resetModal = () => {
@@ -114,7 +122,42 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
             });
             setViewBankDetails(false);
             setCopiedField(null);
+            setPaymentStatus('idle');
+            setErrorMessage('');
         }, 500);
+    };
+
+    const handleConfirmPaid = () => {
+        const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
+        const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
+        
+        const message = `¡Hola Cantik Tours! ✅
+Acabo de realizar el pago para mi reserva:
+
+- *Tour:* ${tourTitle}
+- *Cliente:* ${formData.name}
+- *Fecha:* ${dateStr}
+- *Pasajeros:* ${paxLabel}
+- *Hotel/Zona:* ${formData.hotel}
+- *Experiencia:* ${expName}
+
+- *Pago Realizado:* ${currentPayAmount} € (PayPal/Tarjeta)
+${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `- *Estado:* Pago Total Completado`}
+
+¿Me confirmáis que os ha llegado correctamente? ¡Gracias!`;
+
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
+        
+        saveBookingToDB(true).then(id => {
+            if (id) {
+                 const whatsappUrlWithId = `https://wa.me/34642517787?text=${encodeURIComponent(message + `\n\nReferencia: CT-${id}`)}`;
+                 window.open(whatsappUrlWithId, '_blank');
+            } else {
+                 window.open(whatsappUrl, '_blank');
+            }
+        });
+        // No cerramos el modal inmediatamente para que vean el "RESERVA ASEGURADA"
     };
 
     const basePrice = tourPrice || 0;
@@ -143,10 +186,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     const extraPaxFee = paxNum > 4 ? (paxNum - 4) * 5 : 0;
     
     // Fee for split payment (Deposit + Remaining)
-    const finalTotalPrice = totalPrice + extraPaxFee;
-    
-    // Price calculations based on selected plan
     const splitFee = 5;
+    const finalTotalPrice = totalPrice + extraPaxFee;
     
     const currentPayAmount = paymentPlan === 'deposit' 
         ? Math.round((finalTotalPrice * 0.3) + splitFee) 
@@ -186,17 +227,17 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
         const message = `¡Hola Cantik Tours!
 Me gustaría reservar este tour, por favor:
 
-• ${t('detail.msg_tour')}: ${tourTitle}
-• ${i18n.language === 'en' ? 'Client' : 'Cliente'}: ${formData.name}
-• ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
-• ${t('detail.msg_pax')}: ${paxLabel}
-• ${t('detail.msg_hotel')}: ${formData.hotel}
-• Experiencia: ${expName}
+- ${t('detail.msg_tour')}: ${tourTitle}
+- ${i18n.language === 'en' ? 'Client' : 'Cliente'}: ${formData.name}
+- ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
+- ${t('detail.msg_pax')}: ${paxLabel}
+- ${t('detail.msg_hotel')}: ${formData.hotel}
+- Experiencia: ${expName}
 
-• ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPriceWithFees} €
-${isPaid ? `• ${i18n.language === 'en' ? 'Deposit PAID via PayPal:' : 'Depósito PAGADO por PayPal:'} ${currentPayAmount} €` : `(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${currentPayAmount} €)`}${showCoupon && formData.coupon ? `\n• ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+- ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPriceWithFees} €
+(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${currentPayAmount} €)${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
-${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looking forward to your details!' : '¡Acabo de pagar la reserva por PayPal! Quedo a la espera de la confirmación.') : '¿Me pueden confirmar disponibilidad y próximos pasos?'}
+¿Me pueden confirmar disponibilidad y próximos pasos?
 ¡Muchas gracias!`;
 
         const encodedMessage = encodeURIComponent(message);
@@ -217,30 +258,38 @@ ${isPaid ? (i18n.language === 'en' ? 'Attached is my payment confirmation. Looki
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
-        const message = `¡Hola Cantik Tours!
-Me gustaría reservar este tour, por favor:
+        const message = `🌟 *VOUCHER DE RESERVA - CANTIK TOURS* 🌟
+------------------------------------------
+${newBookingId ? `*Referencia:* #CT-${newBookingId}` : '*Referencia:* Pendiente'}
 
-• *Tour:* ${tourTitle}
-• *Cliente:* ${formData.name}
-• *Fecha:* ${dateStr}
-• *Pasajeros:* ${paxLabel}
-• *Hotel/Zona:* ${formData.hotel}
-• *Experiencia:* ${expName} (${i18n.language === 'en' ? 'English' : 'Español'})
+👤 *CLIENTE:* ${formData.name.toUpperCase()}
+🗺️ *TOUR:* ${tourTitle.toUpperCase()}
+📅 *FECHA:* ${dateStr}
+👥 *PASAJEROS:* ${paxLabel}
+🏨 *HOTEL:* ${formData.hotel}
+✨ *EXPERIENCIA:* ${expName} (${i18n.language === 'en' ? 'English' : 'Español'})
 
-• *Total:* ${finalTotalPriceWithFees} €
-${paymentPlan === 'deposit' ? `• *Reserva hoy:* ${currentPayAmount} €\n• *Pendiente:* ${currentRemainingAmount} €` : `• *Pago Completo:* ${currentPayAmount} €`}
+💰 *DETALLE DEL PAGO:*
+- Total Tour: ${finalTotalPriceWithFees} € ${paymentPlan === 'deposit' ? '(Incluye +5€ gestión de pago fraccionado)' : '(Sin comisiones)'}
+- Pagado hoy: ${currentPayAmount} € (Transferencia)
+${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '- *Estado:* Pago Total Realizado'}
 
-${i18n.language === 'en' 
-    ? "I want to book via bank transfer (IBAN). Can you verify the payment? I attach the screenshot below.\n\nThank you very much!" 
-    : "Quiero reservar con transferencia bancaria (IBAN). ¿Podéis verificar el pago? Adjunto la captura aquí abajo.\n\n¡Muchas gracias!"}`;
+------------------------------------------
+✅ *PASO FINAL:* Adjunto aquí la captura del pago para verificar mi reserva. ¡Gracias!`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
 
         trackEvent('Conversion', 'WhatsApp Bank Details Confirmation', tourTitle);
-        saveBookingToDB();
-        window.open(whatsappUrl, '_blank');
-        resetModal();
+        
+        saveBookingToDB().then(id => {
+            const finalMessage = id 
+                ? message.replace('*Referencia:* Pendiente', `*Referencia:* #CT-${id}`)
+                : message;
+            const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(finalMessage)}`;
+            window.open(finalUrl, '_blank');
+            resetModal();
+        });
     };
 
     const inputClasses = "w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all text-gray-700 dark:text-gray-200 min-h-[62px] block box-border";
@@ -586,21 +635,27 @@ ${i18n.language === 'en'
                                             <h2 className="text-2xl font-black text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Secure your booking' : 'Asegura tu reserva'}</h2>
                                         </div>
 
-                                        {/* Payment Plan Selector */}
-                                        <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-2xl mb-2">
+                                        {/* Payment Plan Selector - Premium Cards */}
+                                        <div className="grid grid-cols-2 gap-3 mb-2">
                                             <button 
                                                 type="button"
                                                 onClick={() => setPaymentPlan('deposit')}
-                                                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${paymentPlan === 'deposit' ? 'bg-primary text-white shadow-lg' : 'text-gray-400'}`}
+                                                className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all flex flex-col items-center text-center gap-1 ${paymentPlan === 'deposit' ? 'border-primary bg-primary/5' : 'border-gray-100 dark:border-white/5 opacity-60'}`}
                                             >
-                                                {i18n.language === 'en' ? 'Pay 30% Deposit' : 'Pagar Reserva (30%)'}
+                                                <div className="text-[9px] font-black uppercase tracking-widest text-primary mb-1">RESERVA (30%)</div>
+                                                <div className="text-sm font-black text-gray-900 dark:text-white">Depósito</div>
+                                                <div className="text-[8px] font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded-full mt-1">+5€ Gestión</div>
+                                                {paymentPlan === 'deposit' && <motion.div layoutId="plan-check" className="absolute top-2 right-2 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center"><ShieldCheck size={10} /></motion.div>}
                                             </button>
                                             <button 
                                                 type="button"
                                                 onClick={() => setPaymentPlan('full')}
-                                                className={`flex-1 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all ${paymentPlan === 'full' ? 'bg-primary text-white shadow-lg' : 'text-gray-400'}`}
+                                                className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all flex flex-col items-center text-center gap-1 ${paymentPlan === 'full' ? 'border-primary bg-primary/5' : 'border-gray-100 dark:border-white/5 opacity-60'}`}
                                             >
-                                                {i18n.language === 'en' ? 'Pay 100% Full' : 'Pago Completo (100%)'}
+                                                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">TOTAL (100%)</div>
+                                                <div className="text-sm font-black text-gray-900 dark:text-white">Pago Único</div>
+                                                <div className="text-[8px] font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full mt-1">Sin Comisiones</div>
+                                                {paymentPlan === 'full' && <motion.div layoutId="plan-check" className="absolute top-2 right-2 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center"><ShieldCheck size={10} /></motion.div>}
                                             </button>
                                         </div>
 
@@ -654,104 +709,94 @@ ${i18n.language === 'en'
                                                     </div>
                                                 </div>
 
-                                                {/* Payment Method Tabs */}
-                                                {!isPaid && (
-                                                    <div className="flex bg-gray-100 dark:bg-black/20 p-1 rounded-2xl mb-6 relative">
-                                                        <motion.div 
-                                                            className="absolute top-1 bottom-1 bg-white dark:bg-white/10 rounded-xl shadow-sm z-0"
-                                                            initial={false}
-                                                            animate={{ 
-                                                                left: paymentMethod === 'paypal' ? '4px' : '50%',
-                                                                right: paymentMethod === 'paypal' ? '50%' : '4px'
-                                                            }}
-                                                        />
-                                                        <button 
-                                                            type="button"
-                                                            onClick={() => setPaymentMethod('paypal')}
-                                                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest z-10 transition-colors ${paymentMethod === 'paypal' ? 'text-primary' : 'text-gray-400'}`}
-                                                        >
-                                                            PayPal / Card
-                                                        </button>
-                                                        <button 
-                                                            type="button"
-                                                            onClick={() => setPaymentMethod('transfer')}
-                                                            className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest z-10 transition-colors ${paymentMethod === 'transfer' ? 'text-primary' : 'text-gray-400'}`}
-                                                        >
-                                                            Transfer / Wise
+                                                <div className="space-y-4">
+                                                    <div className="bg-gray-50 dark:bg-black/20 p-4 rounded-2xl border border-black/5 flex justify-between items-center group transition-all hover:border-primary/30">
+                                                        <div className="overflow-hidden">
+                                                            <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Titular de la cuenta</span>
+                                                            <span className="text-xs font-black truncate max-w-[200px] inline-block">Javier Ignacio Contreras Cifuentes</span>
+                                                        </div>
+                                                        <button type="button" onClick={() => copyToClipboard('Javier Ignacio Contreras Cifuentes', 'name')} className="text-primary hover:scale-110 transition-transform p-2 bg-primary/10 rounded-lg">
+                                                            {copiedField === 'name' ? <Heart size={16} fill="currentColor" /> : <User size={16} />}
                                                         </button>
                                                     </div>
-                                                )}
 
-                                                <AnimatePresence mode="wait">
-                                                    {paymentMethod === 'paypal' && !isPaid && (
-                                                        <motion.div 
-                                                            key="paypal-tab"
-                                                            initial={{ opacity: 0, x: -10 }}
-                                                            animate={{ opacity: 1, x: 0 }}
-                                                            exit={{ opacity: 0, x: -10 }}
-                                                            className="PayPalArea"
-                                                        >
-                                                            <PayPalButtons 
-                                                                style={{ layout: "vertical", shape: "pill", label: "pay", height: 48 }}
-                                                                createOrder={(data, actions) => {
-                                                                    return actions.order.create({
-                                                                        purchase_units: [{
-                                                                            description: `${tourTitle} - ${paymentPlan === 'deposit' ? 'Booking' : 'Full Payment'}`,
-                                                                            amount: { value: currentPayAmount.toString() }
-                                                                        }]
-                                                                    });
-                                                                }}
-                                                                onApprove={(data, actions) => {
-                                                                    return actions.order.capture().then((details) => {
-                                                                        setIsPaid(true);
-                                                                        handleConfirmPaid();
-                                                                    });
-                                                                }}
-                                                            />
-                                                        </motion.div>
-                                                    )}
+                                                    <div className="bg-primary/5 p-4 rounded-2xl border border-primary/20 flex justify-between items-center group transition-all hover:border-primary/50 shadow-sm">
+                                                        <div>
+                                                            <div className="flex items-center gap-1.5 mb-1">
+                                                                <span className="block text-[8px] font-bold text-primary uppercase tracking-widest">IBAN Wise (Bélgica)</span>
+                                                                <span className="text-[8px] bg-primary/20 text-primary px-1 rounded font-black">RECOMENDADO</span>
+                                                            </div>
+                                                            <span className="text-sm font-black tracking-wider font-mono">BE97 9673 8690 2549</span>
+                                                        </div>
+                                                        <button type="button" onClick={() => copyToClipboard('BE97 9673 8690 2549', 'iban')} className="text-primary hover:scale-110 transition-transform p-2 bg-primary/20 rounded-lg">
+                                                            {copiedField === 'iban' ? <Heart size={16} fill="currentColor" /> : <Ticket size={16} />}
+                                                        </button>
+                                                    </div>
 
-                                                    {paymentMethod === 'transfer' && !isPaid && (
-                                                        <motion.div 
-                                                            key="transfer-tab"
-                                                            initial={{ opacity: 0, x: 10 }}
-                                                            animate={{ opacity: 1, x: 0 }}
-                                                            exit={{ opacity: 0, x: 10 }}
-                                                            className="space-y-3"
+                                                    <div className="pt-2">
+                                                        <button 
+                                                            type="button"
+                                                            onClick={handleConfirmWhatsApp}
+                                                            className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-5 rounded-[24px] text-xs font-black shadow-xl shadow-[#25D366]/20 flex flex-col items-center justify-center gap-1 transition-all group active:scale-[0.98]"
                                                         >
-                                                            <div className="bg-gray-50 dark:bg-black/20 p-3 rounded-xl border border-black/5 flex justify-between items-center group">
-                                                                <div className="overflow-hidden">
-                                                                    <span className="block text-[8px] font-bold text-gray-400 uppercase">Titular</span>
-                                                                    <span className="text-[10px] font-black truncate max-w-[150px] inline-block">Javier Ignacio Contreras Cifuentes</span>
-                                                                </div>
-                                                                <button type="button" onClick={() => copyToClipboard('Javier Ignacio Contreras Cifuentes', 'name')} className="text-primary hover:scale-110 transition-transform">
-                                                                    {copiedField === 'name' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
-                                                                </button>
+                                                            <div className="flex items-center gap-2">
+                                                                <MessageCircle size={20} className="group-hover:scale-110 transition-transform" /> 
+                                                                <span>{i18n.language === 'en' ? 'DONE! SEND SCREENSHOT' : '¡LISTO! ENVIAR CAPTURA'}</span>
                                                             </div>
-                                                            <div className="bg-primary/5 p-3 rounded-xl border border-primary/20 flex justify-between items-center group">
-                                                                <div>
-                                                                    <span className="block text-[8px] font-bold text-primary uppercase">IBAN Wise</span>
-                                                                    <span className="text-[11px] font-black tracking-wider">BE97 9673 8690 2549</span>
-                                                                </div>
-                                                                <button type="button" onClick={() => copyToClipboard('BE97 9673 8690 2549', 'iban')} className="text-primary hover:scale-110 transition-transform">
-                                                                    {copiedField === 'iban' ? <Heart size={14} fill="currentColor" /> : <Ticket size={14} />}
-                                                                </button>
-                                                            </div>
-                                                            <button 
-                                                                type="button"
-                                                                onClick={handleConfirmWhatsApp}
-                                                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-3 rounded-xl text-[10px] font-black shadow-lg flex items-center justify-center gap-2 transition-all mt-2 uppercase tracking-widest"
-                                                            >
-                                                                <MessageCircle size={14} /> {i18n.language === 'en' ? 'Confirm WhatsApp' : 'Confirmar WhatsApp'}
-                                                            </button>
-                                                        </motion.div>
-                                                    )}
-                                                </AnimatePresence>
+                                                            <span className="text-[9px] opacity-70 font-bold uppercase tracking-widest">{i18n.language === 'en' ? 'Confirm via WhatsApp' : 'Confirmar vía WhatsApp'}</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 items-start">
+                                                        <Shield size={14} className="text-amber-500 shrink-0 mt-0.5" />
+                                                        <p className="text-[9px] text-amber-700 dark:text-amber-400 font-bold leading-tight">
+                                                            {i18n.language === 'en' 
+                                                                ? 'Important: Your reservation will be confirmed once we verify the deposit in our bank account.' 
+                                                                : 'Importante: Tu reserva se confirmará definitivamente una vez verifiquemos el ingreso en nuestra cuenta bancaria.'}
+                                                        </p>
+                                                    </div>
+                                                </div>
                                                 
                                                 {isPaid && (
-                                                    <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-green-500/10 text-green-500 py-4 rounded-2xl text-center font-black text-sm flex items-center justify-center gap-2 border border-green-500/20">
-                                                        <div className="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-[10px]">✓</div> 
-                                                        {i18n.language === 'en' ? 'RESERVATION SECURED' : 'RESERVA ASEGURADA'}
+                                                    <motion.div 
+                                                        initial={{ scale: 0.9, opacity: 0 }} 
+                                                        animate={{ scale: 1, opacity: 1 }} 
+                                                        className="flex flex-col items-center space-y-6 py-4"
+                                                    >
+                                                        <div className="flex flex-col items-center text-center">
+                                                            <div className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-3xl shadow-lg shadow-green-500/20 mb-4 animate-bounce">✓</div> 
+                                                            <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">{i18n.language === 'en' ? 'RESERVATION SECURED!' : '¡RESERVA ASEGURADA!'}</h3>
+                                                            <p className="text-xs font-bold text-gray-500 mt-1">{i18n.language === 'en' ? 'We have received your payment correctly.' : 'Hemos recibido tu pago correctamente.'}</p>
+                                                        </div>
+
+                                                        <div className="w-full space-y-3">
+                                                            <button 
+                                                                onClick={handleConfirmPaid}
+                                                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-5 rounded-2xl text-sm font-black shadow-xl shadow-[#25D366]/20 flex items-center justify-center gap-3 transition-all uppercase tracking-widest group"
+                                                            >
+                                                                <MessageCircle size={20} className="group-hover:scale-110 transition-transform" /> 
+                                                                {i18n.language === 'en' ? 'Send Confirmation WhatsApp' : 'Enviar Confirmación WhatsApp'}
+                                                            </button>
+
+                                                            {newBookingId && (
+                                                                <a 
+                                                                    href={`/itinerario?ref=CT-${newBookingId}`} 
+                                                                    target="_blank" 
+                                                                    rel="noreferrer"
+                                                                    className="w-full bg-primary/10 hover:bg-primary/20 text-primary py-5 rounded-2xl text-sm font-black flex items-center justify-center gap-3 transition-all uppercase tracking-widest border border-primary/20"
+                                                                >
+                                                                    <Ticket size={20} />
+                                                                    {i18n.language === 'en' ? 'View My Itinerary & Receipt' : 'Ver mi Itinerario y Recibo'}
+                                                                </a>
+                                                            )}
+
+                                                            <button 
+                                                                onClick={resetModal}
+                                                                className="w-full py-4 text-gray-400 hover:text-gray-600 dark:hover:text-white text-[10px] font-black uppercase tracking-[0.2em] transition-colors"
+                                                            >
+                                                                {i18n.language === 'en' ? 'Close & Return to Web' : 'Cerrar y volver a la web'}
+                                                            </button>
+                                                        </div>
                                                     </motion.div>
                                                 )}
                                             </div>

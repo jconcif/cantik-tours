@@ -28,19 +28,21 @@ $data = json_decode(file_get_contents("php://input"));
 
 if (!empty($data->name) && !empty($data->comment)) {
     try {
+        $puntuacion = round(($data->rating_booking + $data->rating_logistics + $data->rating_route + $data->rating_driver + $data->rating_vehicle + $data->rating_price) / 6);
+        
         $query = "INSERT INTO reviews (
                     nombre, tour_id, driver_name, find_us, 
                     rating_booking, rating_logistics, rating_route, 
                     rating_driver, rating_vehicle, rating_price, 
                     comentario, comentario_en, ig_user, pais, 
-                    autorizacion_fotos, aprobado
+                    autorizacion_fotos, aprobado, puntuacion
                   ) 
                   VALUES (
                     :nombre, :tour_id, :driver_name, :find_us, 
                     :rating_booking, :rating_logistics, :rating_route, 
                     :rating_driver, :rating_vehicle, :rating_price, 
                     :comentario, :comentario_en, :ig_user, :pais, 
-                    :autorizacion_fotos, :aprobado
+                    :autorizacion_fotos, :aprobado, :puntuacion
                   )";
         
         $stmt = $conn->prepare($query);
@@ -68,6 +70,7 @@ if (!empty($data->name) && !empty($data->comment)) {
         $stmt->bindParam(":autorizacion_fotos", $data->auth, PDO::PARAM_BOOL);
         $aprobado = 0; 
         $stmt->bindParam(":aprobado", $aprobado, PDO::PARAM_INT);
+        $stmt->bindParam(":puntuacion", $puntuacion, PDO::PARAM_INT);
 
         if($stmt->execute()) {
             http_response_code(201);

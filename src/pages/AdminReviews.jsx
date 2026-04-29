@@ -3,7 +3,7 @@ import * as api from '../services/adminService';
 import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement } from '../components/AdminComponents';
 
 const C = '#11BDDB';
-const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'pending',driver_id:'',experience:'driver_en'};
+const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en'};
 const emptyDriver = {name:'',phone:'',car_model:''};
 const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
 const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
@@ -18,7 +18,7 @@ const PAY_LABEL = {
   confirmado: 'Confirmado',
   paid: 'Pago Completado',
   on_tour: 'En Tour',
-  finished: 'Terminado',
+  finished: 'Finalizado',
   postponed: 'Pospuesto',
   cancelled: 'Cancelado',
   refunded: 'Reembolsado'
@@ -104,9 +104,13 @@ export default function AdminPanel() {
     }catch(e){toast(e.message,false);}finally{setLoading(false);}
   };
 
-  const del=async(type,id)=>{
-    if(!confirm('¿Eliminar?'))return;setLoading(true);
-    try{await api[`delete${type[0].toUpperCase()+type.slice(1)}`](token,id);await reload();toast('Eliminado');}
+  const del=async(type,id,confirmed=false)=>{
+    if(!confirmed){
+      setModal({type,action:'delete',data:{id}});
+      return;
+    }
+    setLoading(true);
+    try{await api[`delete${type[0].toUpperCase()+type.slice(1)}`](token,id);setModal(null);await reload();toast('Eliminado');}
     catch(e){toast(e.message,false);}finally{setLoading(false);}
   };
 
@@ -119,13 +123,19 @@ export default function AdminPanel() {
   };
 
   const filter=(l)=>(l||[]).filter(x=>Object.values(x).some(v=>v&&String(v).toLowerCase().includes(search.toLowerCase())));
-  const waLink=(p,m)=>`https://wa.me/${p.replace(/\D/g,'')}?text=${encodeURIComponent(m)}`;
+  const waLink=(p,m)=>`https://wa.me/${(p||'').replace(/\D/g,'')}?text=${encodeURIComponent(m)}`;
   const exportCSV=()=>{
     const h=['ID','Cliente','Fecha','Tour','Pax','Total','Estado'];
     const r=bookings.map(b=>[b.id,b.client_name,b.booking_date,b.tour_title,b.pax,b.total_price,b.payment_status]);
     const c=[h,...r].map(e=>e.join(',')).join('\n');
     const b=new Blob([c],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');
     a.href=u;a.download='reservas.csv';a.click();
+  };
+
+  const copyReviewLink = (b) => {
+    const link = `https://cantiktours.com/reviews?ref=CT-${b.id}`;
+    navigator.clipboard.writeText(link);
+    toast('Link de review copiado');
   };
 
   const calDays=useMemo(()=>{
@@ -136,10 +146,11 @@ export default function AdminPanel() {
   },[calMonth]);
 
   const stats=useMemo(()=>{
-    const rev=bookings.filter(b=>b.payment_status==='paid').reduce((a,b)=>a+Number(b.total_price),0);
+    const isPaid = s => ['paid','on_tour','finished'].includes(s);
+    const rev=bookings.filter(b=>isPaid(b.payment_status)).reduce((a,b)=>a+Number(b.total_price),0);
     const byTour=bookings.reduce((a,b)=>({...a,[b.tour_title]:(a[b.tour_title]||0)+1}),{});
     const top=Object.entries(byTour).sort((a,b)=>b[1]-a[1])[0]?.[0]||'-';
-    return{rev,total:bookings.length,top,paid:bookings.filter(b=>b.payment_status==='paid').length};
+    return{rev,total:bookings.length,top,paid:bookings.filter(b=>isPaid(b.payment_status)).length};
   },[bookings]);
 
   const recent=bookings.filter(b=>{const d=new Date(b.booking_date);const y=new Date();y.setDate(y.getDate()-1);return d<=y && d>new Date(y.getTime()-7*24*60*60*1000);});
@@ -204,12 +215,12 @@ export default function AdminPanel() {
               <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderTop: isMobile ? '1px solid #ffffff05' : 'none', paddingTop: isMobile ? '12px' : 0}}>
                 <div style={{flex:1}}>
                   <div style={{fontSize:'12px', fontWeight:700, color:'#aaa'}}>{b.tour_title}</div>
-                  <div style={{fontSize:'10px', color:'#666'}}>{b.pax} pax · {b.experience.toUpperCase()}</div>
+                  <div style={{fontSize:'10px', color:'#666'}}>{b.pax} pax · {b.experience ? b.experience.toUpperCase() : ''}</div>
                 </div>
                 <div style={{textAlign:'right'}}>
                   {!isMobile && <div style={{fontWeight:900, color:C, marginBottom:'4px'}}>{b.total_price}€</div>}
                   <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'4px'}}>
-                    <span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status] || b.payment_status}</span>
+                    <span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status] || b.payment_status || 'SIN ESTADO'}</span>
                     {b.total_price - b.total_paid > 0 && (
                       <div style={{fontSize:'11px', fontWeight:900, color:'#ef4444', background:'#ef444411', padding:'2px 8px', borderRadius:'6px'}}>
                         Debe: {(b.total_price - b.total_paid).toFixed(2)}€
@@ -229,6 +240,7 @@ export default function AdminPanel() {
                   <button style={{...s.btn(C+'33',C), flex: isMobile ? 1 : 'none'}} onClick={()=>generateVoucher(b,drivers)}>PDF</button>
                 </div>
                 <div style={{display:'flex', gap:'6px'}}>
+                  <button style={s.btn('#f59e0b22','#f59e0b')} title="Copiar Link Review" onClick={()=>copyReviewLink(b)}>⭐</button>
                   <button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('booking',b)}>✎</button>
                   <button style={s.btn('#11BDDB22','#11BDDB')} title="Finanzas del Tour" onClick={()=>handleManagePayments(b)}>💰</button>
                   <button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('booking',b.id)}>✕</button>
@@ -247,7 +259,22 @@ export default function AdminPanel() {
           ))}
           {tab==='reviews'&&filter(reviews).map(r=>(
             <div key={r.id} style={s.card}>
-              <div style={{flex:1}}><div style={{fontWeight:900}}>{r.nombre} {'★'.repeat(r.puntuacion)}</div><div style={{fontSize:'12px',color:'#888'}}>"{r.comentario}"</div></div>
+              <div style={{flex:1}}>
+                <div style={{display:'flex', gap:'8px', alignItems:'center', marginBottom:'4px', flexWrap:'wrap'}}>
+                  <div style={{fontWeight:900}}>{r.nombre} {'★'.repeat(r.puntuacion || 5)}</div>
+                  {r.tour_id && r.tour_id.includes('[CT-') && (
+                    <button style={s.tag(C)} onClick={() => {
+                        const id = r.tour_id && r.tour_id.match(/\[CT-(\d+)\]/)?.[1];
+                        if(id) {
+                           const b = bookings.find(x => x.id == id);
+                           if(b) openEdit('booking', b);
+                           else toast('Reserva no encontrada en la lista', false);
+                        }
+                    }}>VER RESERVA</button>
+                  )}
+                </div>
+                <div style={{fontSize:'12px',color:'#888'}}>"{r.comentario}"</div>
+              </div>
               <div style={{display:'flex',gap:'6px'}}><button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('review',r)}>✎</button><button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('review',r.id)}>✕</button></div>
             </div>
           ))}
@@ -354,18 +381,36 @@ export default function AdminPanel() {
         )}
 
         {modal&&(
-          <Modal title={`${modal.action==='create'?'Nuevo':'Editar'} ${modal.type === 'finance' ? 'Finanzas del Tour' : modal.type}`} onClose={()=>setModal(null)} onSave={save} loading={loading} hideFooter={modal.type === 'finance'}>
-            {modal.type==='booking'&&<BookingForm data={modal.data} drivers={drivers} onChange={setField}/>}
-            {modal.type==='finance' && (
-              <FinancialManagement 
-                booking={modal.data} 
-                token={token} 
-                onUpdate={reload} 
-              />
+          <Modal title={`${modal.action==='create'?'Nuevo':modal.action==='delete'?'Confirmar Eliminación':'Editar'} ${modal.type === 'finance' ? 'Finanzas del Tour' : modal.type}`} onClose={()=>setModal(null)} onSave={save} loading={loading} hideFooter={modal.type === 'finance' || modal.action === 'delete'}>
+            {modal.action === 'delete' ? (
+               <div style={{textAlign:'center', padding:'20px 0'}}>
+                  <div style={{fontSize:'48px', marginBottom:'16px'}}>⚠️</div>
+                  <h3 style={{marginBottom:'12px', fontSize:'18px'}}>¿Estás seguro?</h3>
+                  <p style={{color:'#aaa', marginBottom:'24px', fontSize:'14px', lineHeight:'1.5'}}>
+                    Esta acción no se puede deshacer. Se eliminará permanentemente {modal.type === 'booking' ? 'la reserva y todo su historial de pagos y gastos' : 'este registro'}.
+                  </p>
+                  <div style={{display:'flex', gap:'12px'}}>
+                    <button style={{flex:1, background:'#ffffff15', color:'#fff', padding:'12px', borderRadius:'12px', fontWeight:900, border:'none'}} onClick={()=>setModal(null)}>Cancelar</button>
+                    <button style={{flex:1, background:'#ef4444', color:'#fff', padding:'12px', borderRadius:'12px', fontWeight:900, border:'none'}} onClick={()=>del(modal.type, modal.data.id, true)}>
+                      {loading ? 'Eliminando...' : 'Sí, eliminar'}
+                    </button>
+                  </div>
+               </div>
+            ) : (
+              <>
+                {modal.type==='booking'&&<BookingForm data={modal.data} drivers={drivers} onChange={setField}/>}
+                {modal.type==='finance' && (
+                  <FinancialManagement 
+                    booking={modal.data} 
+                    token={token} 
+                    onUpdate={reload} 
+                  />
+                )}
+                {modal.type==='driver'&&<DriverForm data={modal.data} onChange={setField}/>}
+                {modal.type==='review'&&<ReviewForm data={modal.data} onChange={setField}/>}
+                {modal.type==='coupon'&&<CouponForm data={modal.data} onChange={setField}/>}
+              </>
             )}
-            {modal.type==='driver'&&<DriverForm data={modal.data} onChange={setField}/>}
-            {modal.type==='review'&&<ReviewForm data={modal.data} onChange={setField}/>}
-            {modal.type==='coupon'&&<CouponForm data={modal.data} onChange={setField}/>}
           </Modal>
         )}
       </div>

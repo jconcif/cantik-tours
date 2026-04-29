@@ -59,27 +59,26 @@ export default function ItineraryPage() {
     </div>
   );
 
-  try {
-    const statusMap = {
-      requested: { label: 'Pago Pendiente', color: 'bg-amber-500', icon: Clock, desc: 'Recibimos tu solicitud, estamos procesándola.' },
-      reserved: { label: 'Reservado', color: 'bg-blue-500', icon: Calendar, desc: 'Depósito recibido. Tu fecha está bloqueada.' },
-      confirmed: { label: 'Confirmado', color: 'bg-emerald-500', icon: ShieldCheck, desc: '¡Todo listo! Chofer y logística asignados.' },
-      paid: { label: 'Pago Completado', color: 'bg-green-600', icon: CheckCircle2, desc: 'Reserva totalmente pagada. ¡A disfrutar!' },
-      on_tour: { label: 'En Tour', color: 'bg-purple-500', icon: Ship, desc: '¡Estás en ruta! Esperamos que lo pases genial.' },
-      finished: { label: 'Terminado', color: 'bg-gray-500', icon: Star, desc: 'Tour finalizado. ¡Gracias por confiar en nosotros!' },
-      postponed: { label: 'Pospuesto', color: 'bg-indigo-500', icon: Clock, desc: 'Tu tour ha sido reprogramado para otra fecha.' },
-      cancelled: { label: 'Cancelado', color: 'bg-red-500', icon: Info, desc: 'Esta reserva ha sido cancelada.' },
-      refunded: { label: 'Reembolsado', color: 'bg-pink-500', icon: CreditCard, desc: 'Se ha procesado la devolución de tu pago.' }
-    };
+  const statusMap = {
+    requested: { label: 'Pago Pendiente', color: 'bg-amber-500', icon: Clock, desc: 'Recibimos tu solicitud, estamos procesándola.' },
+    reserved: { label: 'Reservado', color: 'bg-blue-500', icon: Calendar, desc: 'Depósito recibido. Tu fecha está bloqueada.' },
+    confirmed: { label: 'Confirmado', color: 'bg-emerald-500', icon: ShieldCheck, desc: '¡Todo listo! Chofer y logística asignados.' },
+    paid: { label: 'Pago Completado', color: 'bg-green-600', icon: CheckCircle2, desc: 'Reserva totalmente pagada. ¡A disfrutar!' },
+    on_tour: { label: 'En Tour', color: 'bg-purple-500', icon: Ship, desc: '¡Estás en ruta! Esperamos que lo pases genial.' },
+    finished: { label: 'Finalizado', color: 'bg-gray-500', icon: Star, desc: 'Tour finalizado. ¡Gracias por confiar en nosotros!' },
+    postponed: { label: 'Pospuesto', color: 'bg-indigo-500', icon: Clock, desc: 'Tu tour ha sido reprogramado para otra fecha.' },
+    cancelled: { label: 'Cancelado', color: 'bg-red-500', icon: Info, desc: 'Esta reserva ha sido cancelada.' },
+    refunded: { label: 'Reembolsado', color: 'bg-pink-500', icon: CreditCard, desc: 'Se ha procesado la devolución de tu pago.' }
+  };
 
   const currentStatus = statusMap[booking?.payment_status] || statusMap.requested;
   const StatusIcon = currentStatus.icon;
 
-  const totalPaid = payments.reduce((acc, p) => acc + parseFloat(p.amount), 0);
-  const totalCharges = charges.reduce((acc, c) => acc + parseFloat(c.amount), 0);
+  const totalPaid = payments.reduce((acc, p) => acc + parseFloat(p.amount || 0), 0);
+  const totalCharges = charges.reduce((acc, c) => acc + parseFloat(c.amount || 0), 0);
   const totalOwed = parseFloat(booking?.total_price || 0) + totalCharges;
   const due = totalOwed - totalPaid;
-  const isExpired = new Date(booking?.booking_date) < new Date();
+  const isExpired = booking?.booking_date ? new Date(booking.booking_date) < new Date() : false;
   const supportMsg = encodeURIComponent(`Hola Cantik Tours! Tengo una consulta sobre mi reserva ${ref} - ${booking?.tour_title}`);
 
   return (
@@ -291,8 +290,5 @@ export default function ItineraryPage() {
       </div>
     </div>
   );
-  } catch (err) {
-    return <div className="p-10 text-red-500 font-mono text-xs">{err.message}</div>;
-  }
 }
 

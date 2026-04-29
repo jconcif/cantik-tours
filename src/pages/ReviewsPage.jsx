@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Send, CheckCircle2, Instagram, ArrowRight, ArrowLeft, User, MapPin, Star as StarIcon, MessageSquare } from 'lucide-react';
 import SEO from '../components/SEO';
@@ -78,7 +79,8 @@ const ReviewsPage = () => {
         setStatus('loading');
 
         try {
-            await reviewService.submitReview({ ...formData, ...ratings });
+            const finalTourType = ref ? `${formData.tour_type} [${ref}]` : formData.tour_type;
+            await reviewService.submitReview({ ...formData, tour_type: finalTourType, ...ratings });
             setStatus('success');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {
@@ -149,6 +151,7 @@ const ReviewsPage = () => {
                     <motion.h1 className="text-4xl md:text-6xl font-black mb-4">
                         {t('reviews_page.title')} <span className="text-primary italic">{t('reviews_page.title_accent')}</span>
                     </motion.h1>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium max-w-md mx-auto">Tu opinión transparente es vital para nuestro equipo. Te tomará menos de 1 minuto.</p>
                 </div>
 
                 <motion.div 
@@ -198,7 +201,11 @@ const ReviewsPage = () => {
                                         ))}
                                     </select>
                                 </div>
-                                <button onClick={nextStep} className="w-full btn-primary py-5 rounded-2xl flex items-center justify-center gap-3 group">
+                                <button 
+                                    onClick={nextStep} 
+                                    disabled={!formData.name.trim() || !formData.driver_name.trim()}
+                                    className="w-full btn-primary py-5 rounded-2xl flex items-center justify-center gap-3 group disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                                >
                                     Siguiente <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                 </button>
                             </motion.div>
@@ -212,6 +219,9 @@ const ReviewsPage = () => {
                                 exit={{ opacity: 0, x: -20 }}
                                 className="space-y-8"
                             >
+                                <div className="text-center mb-6">
+                                    <h3 className="text-xl font-bold">¡Genial{formData.name ? `, ${formData.name.split(' ')[0]}` : ''}! Evalúa los detalles</h3>
+                                </div>
                                 <div className="grid gap-6">
                                     {[
                                         { id: 'rating_booking', label: t('reviews_page.form.rating_booking') },
@@ -276,7 +286,7 @@ const ReviewsPage = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="ig_user" className={labelClasses}>{t('reviews_page.form.ig_user')}</label>
+                                    <label htmlFor="ig_user" className={labelClasses}>{t('reviews_page.form.ig_user')} <span className="text-gray-400 font-normal normal-case">(Opcional)</span></label>
                                     <div className="relative">
                                         <Instagram size={20} className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400" />
                                         <input id="ig_user" type="text" placeholder={t('reviews_page.form.ig_placeholder')} className={`${inputClasses} pl-14`} value={formData.ig_user} onChange={(e) => setFormData({ ...formData, ig_user: e.target.value })} />
@@ -300,8 +310,8 @@ const ReviewsPage = () => {
                                     </button>
                                     <button 
                                         onClick={handleSubmit} 
-                                        disabled={status === 'loading'}
-                                        className="flex-[2] btn-primary py-5 rounded-2xl flex items-center justify-center gap-3 group text-lg shadow-xl shadow-primary/20"
+                                        disabled={status === 'loading' || formData.comment.trim().length < 10}
+                                        className="flex-[2] btn-primary py-5 rounded-2xl flex items-center justify-center gap-3 group text-lg shadow-xl shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                                     >
                                         {status === 'loading' ? <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <><Send size={20} /> {t('reviews_page.form.submit')}</>}
                                     </button>

@@ -32,7 +32,7 @@ export const BookingForm = ({data,drivers,onChange}) => (
       {value:'confirmed',label:'Confirmado'},
       {value:'paid',label:'Pago Completado'},
       {value:'on_tour',label:'En Tour'},
-      {value:'finished',label:'Terminado'},
+      {value:'finished',label:'Finalizado'},
       {value:'postponed',label:'Pospuesto'},
       {value:'cancelled',label:'Cancelado'},
       {value:'refunded',label:'Reembolsado'}
