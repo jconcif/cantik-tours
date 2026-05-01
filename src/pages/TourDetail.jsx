@@ -55,12 +55,12 @@ const TourDetail = () => {
 
         try {
             // First attempt: Specific reviews
-            let response = await fetch(`/api/get_reviews.php?tour_id=${apiTourId}`);
+            let response = await fetch(`https://cantiktours.com/api/get_reviews.php?tour_id=${apiTourId}`);
             let result = await response.json();
 
             // If no specific reviews, fetch ALL (global)
             if (result.status === 'success' && (!result.data || result.data.length === 0)) {
-                response = await fetch(`/api/get_reviews.php`);
+                response = await fetch(`https://cantiktours.com/api/get_reviews.php`);
                 result = await response.json();
                 setIsGlobalReviews(true);
             } else {

@@ -18,7 +18,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     const [copiedField, setCopiedField] = useState(null);
     const [showCoupon, setShowCoupon] = useState(false);
     const [paymentMethod, setPaymentMethod] = useState('transfer'); // Default to transfer only
-    const [paymentPlan, setPaymentPlan] = useState('deposit'); // 'deposit' or 'full'
+    const [paymentPlan, setPaymentPlan] = useState('full'); // Default to 100% payment
     const [paymentStatus, setPaymentStatus] = useState('idle'); // 'idle', 'processing', 'success', 'error'
     const [errorMessage, setErrorMessage] = useState('');
     const [newBookingId, setNewBookingId] = useState(null);
@@ -234,8 +234,7 @@ Me gustaría reservar este tour, por favor:
 - ${t('detail.msg_hotel')}: ${formData.hotel}
 - Experiencia: ${expName}
 
-- ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPriceWithFees} €
-(${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${currentPayAmount} €)${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
+- ${i18n.language === 'en' ? 'Total' : 'Total'}: ${finalTotalPriceWithFees} €
 
 ¿Me pueden confirmar disponibilidad y enviarme los datos para realizar la transferencia (Euros/Dólares)? 
 ¡Muchas gracias!`;
@@ -571,15 +570,6 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                         <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_elite_sub')}</span>
                                                         <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_elite_desc')}</span>
 
-                                                        <AnimatePresence>
-                                                            {formData.experience === 'elite' && (
-                                                                <motion.div initial={{ opacity: 0, height: 0, marginTop: 0 }} animate={{ opacity: 1, height: 'auto', marginTop: 12 }} exit={{ opacity: 0, height: 0, marginTop: 0 }} className="overflow-hidden">
-                                                                    <div className="p-3 md:p-3.5 rounded-xl bg-[#D4AF37]/10 text-[#B8860B] dark:text-[#D4AF37] text-[10px] md:text-xs font-bold leading-relaxed border border-[#D4AF37]/20">
-                                                                        {t('detail.exp_elite_warning')}
-                                                                    </div>
-                                                                </motion.div>
-                                                            )}
-                                                        </AnimatePresence>
                                                     </div>
                                                 </label>
                                             </div>
@@ -588,7 +578,7 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                         {/* Expert UX: Real-time price update to avoid sticker shock */}
                                         <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 flex items-center justify-between mt-2">
                                             <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'Total Price Estimated' : 'Precio Total Estimado'}</span>
+                                                <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'Total Price' : 'Precio Total'}</span>
                                                 <span className="text-[9px] text-gray-500 font-bold">{i18n.language === 'en' ? 'Per vehicle up to 4 pax' : 'Por vehículo hasta 4 pax'}</span>
                                             </div>
                                             <div className="text-2xl font-black text-primary flex items-center gap-1">
@@ -635,67 +625,30 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                             <h2 className="text-2xl font-black text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Secure your booking' : 'Asegura tu reserva'}</h2>
                                         </div>
 
-                                        {/* Payment Plan Selector - Premium Cards */}
-                                        <div className="grid grid-cols-2 gap-3 mb-2">
-                                            <button 
-                                                type="button"
-                                                onClick={() => setPaymentPlan('deposit')}
-                                                className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all flex flex-col items-center text-center gap-1 ${paymentPlan === 'deposit' ? 'border-primary bg-primary/5' : 'border-gray-100 dark:border-white/5 opacity-60'}`}
-                                            >
-                                                <div className="text-[9px] font-black uppercase tracking-widest text-primary mb-1">RESERVA (30%)</div>
-                                                <div className="text-sm font-black text-gray-900 dark:text-white">Depósito</div>
-                                                <div className="text-[8px] font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded-full mt-1">+5€ Gestión</div>
-                                                {paymentPlan === 'deposit' && <motion.div layoutId="plan-check" className="absolute top-2 right-2 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center"><ShieldCheck size={10} /></motion.div>}
-                                            </button>
-                                            <button 
-                                                type="button"
-                                                onClick={() => setPaymentPlan('full')}
-                                                className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all flex flex-col items-center text-center gap-1 ${paymentPlan === 'full' ? 'border-primary bg-primary/5' : 'border-gray-100 dark:border-white/5 opacity-60'}`}
-                                            >
-                                                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">TOTAL (100%)</div>
-                                                <div className="text-sm font-black text-gray-900 dark:text-white">Pago Único</div>
-                                                <div className="text-[8px] font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full mt-1">Sin Comisiones</div>
-                                                {paymentPlan === 'full' && <motion.div layoutId="plan-check" className="absolute top-2 right-2 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center"><ShieldCheck size={10} /></motion.div>}
-                                            </button>
+                                        {/* Premium Summary Info */}
+                                        <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-center justify-between mb-2">
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{i18n.language === 'en' ? 'PAYMENT METHOD' : 'MÉTODO DE PAGO'}</span>
+                                                <span className="text-xs font-bold text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Bank Transfer (100%)' : 'Transferencia Bancaria (100%)'}</span>
+                                            </div>
+                                            <div className="bg-primary/10 px-3 py-1.5 rounded-xl">
+                                                <CreditCard className="text-primary" size={18} />
+                                            </div>
                                         </div>
 
-                                        {/* Layered Luxury Card Container */}
-                                        <div className="relative mt-4">
-                                            {/* Background Card (Payment 2 - Absolute behind) */}
-                                            {paymentPlan === 'deposit' && (
-                                                <div className="absolute top-12 left-0 right-0 bg-gray-100 dark:bg-white/5 rounded-[32px] p-8 pb-4 border border-black/5 dark:border-white/5 z-0 opacity-60">
-                                                    <div className="mt-8 flex justify-between items-start">
-                                                        <div>
-                                                            <div className="flex items-center gap-2 mb-1">
-                                                                <div className="w-2 h-2 rounded-full bg-gray-400" />
-                                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{i18n.language === 'en' ? 'FINAL BALANCE' : 'PAGO RESTANTE'}</span>
-                                                            </div>
-                                                            <div className="text-sm font-bold text-gray-900 dark:text-white mb-1">{i18n.language === 'en' ? 'To be paid via Web/Transfer' : 'A pagar vía Web o Transferencia'}</div>
-                                                            <div className="text-[9px] font-black text-secondary leading-tight max-w-[150px] uppercase italic">
-                                                                {i18n.language === 'en' 
-                                                                    ? '⚠️ No cash accepted by the driver.' 
-                                                                    : '⚠️ No aceptamos pago al conductor.'}
-                                                            </div>
-                                                        </div>
-                                                        <div className="text-xl font-black text-gray-600 dark:text-gray-400">{currentRemainingAmount}€</div>
-                                                    </div>
-                                                </div>
-                                            )}
 
-                                            {/* Foreground Card (Payment 1 - Relative on top) */}
-                                            <div className="relative bg-white dark:bg-[#1a1a1a] rounded-[32px] p-6 md:p-8 shadow-2xl shadow-primary/20 border border-black/5 dark:border-white/10 z-10 transition-all">
+
+                                            <div className="bg-white dark:bg-[#1a1a1a] rounded-[32px] p-6 md:p-8 shadow-2xl shadow-primary/20 border border-black/5 dark:border-white/10 transition-all">
                                                 <div className="flex justify-between items-start mb-6">
                                                     <div className="space-y-1">
                                                         <div className="flex items-center gap-2 mb-2">
                                                             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                                                             <span className="text-[10px] font-black text-primary uppercase tracking-widest">
-                                                                {paymentPlan === 'deposit' 
-                                                                    ? (i18n.language === 'en' ? 'RESERVE TODAY' : 'RESERVAR HOY')
-                                                                    : (i18n.language === 'en' ? 'PAYMENT IN FULL' : 'PAGO TOTAL')}
+                                                                {i18n.language === 'en' ? 'PAYMENT IN FULL' : 'PAGO TOTAL'}
                                                             </span>
                                                         </div>
                                                         <h3 className="text-lg font-black text-gray-900 dark:text-white leading-tight">
-                                                            {paymentPlan === 'deposit' ? (i18n.language === 'en' ? 'Booking Confirmation' : 'Confirmación de Reserva') : (i18n.language === 'en' ? 'Full Tour Payment' : 'Pago Completo del Tour')}
+                                                            {i18n.language === 'en' ? 'Full Tour Payment' : 'Pago Completo del Tour'}
                                                         </h3>
                                                         <p className="text-[10px] font-bold text-gray-400 italic">
                                                             {i18n.language === 'en' ? 'Support & Reservation insurance included' : 'Incluye soporte 24/7 y garantía de reserva'}
@@ -710,14 +663,13 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                 </div>
 
                                                 <div className="space-y-4">
-                                                    {/* Next Steps Info Card */}
                                                     <div className="bg-primary/5 p-6 rounded-[24px] border border-primary/20 flex flex-col items-center text-center gap-4 transition-all hover:border-primary/50 shadow-sm">
                                                         <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
                                                             <MessageCircle className="text-primary" size={24} />
                                                         </div>
                                                         <div className="space-y-1">
                                                             <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight">
-                                                                {i18n.language === 'en' ? 'Next: Payment Details' : 'Siguiente: Datos de Pago'}
+                                                                {i18n.language === 'en' ? 'Next: Payment Details' : 'Siguiente Paso: Datos de Pago'}
                                                             </h4>
                                                             <p className="text-[10px] font-bold text-gray-500 leading-relaxed px-4">
                                                                 {i18n.language === 'en' 
@@ -745,7 +697,7 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                         <Shield size={14} className="text-amber-500 shrink-0 mt-0.5" />
                                                         <p className="text-[9px] text-amber-700 dark:text-amber-400 font-bold leading-tight">
                                                             {i18n.language === 'en' 
-                                                                ? 'Important: Your reservation will be confirmed once we verify the deposit in our bank account.' 
+                                                                ? 'Important: Your reservation will be confirmed once we verify the payment in our bank account.' 
                                                                 : 'Importante: Tu reserva se confirmará definitivamente una vez verifiquemos el ingreso en nuestra cuenta bancaria.'}
                                                         </p>
                                                     </div>
@@ -794,7 +746,6 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                     </motion.div>
                                                 )}
                                             </div>
-                                        </div>
 
                                         <div className="flex justify-center mt-4">
                                             <button

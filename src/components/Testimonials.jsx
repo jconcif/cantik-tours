@@ -15,7 +15,7 @@ const Testimonials = () => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await fetch('/api/get_reviews.php');
+                const response = await fetch('https://cantiktours.com/api/get_reviews.php');
                 const result = await response.json();
                 if (result.status === 'success' && result.data && Array.isArray(result.data)) {
                     // Map API fields to match component needs and modal needs
