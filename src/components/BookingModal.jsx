@@ -237,7 +237,7 @@ Me gustaría reservar este tour, por favor:
 - ${i18n.language === 'en' ? 'Estimated Total' : 'Total estimado'}: ${finalTotalPriceWithFees} €
 (${i18n.language === 'en' ? 'Deposit to pay:' : 'Reserva:'} ${currentPayAmount} €)${showCoupon && formData.coupon ? `\n- ${t('detail.msg_coupon')}: ${formData.coupon}` : ''}
 
-¿Me pueden confirmar disponibilidad y próximos pasos?
+¿Me pueden confirmar disponibilidad y enviarme los datos para realizar la transferencia (Euros/Dólares)? 
 ¡Muchas gracias!`;
 
         const encodedMessage = encodeURIComponent(message);
@@ -710,27 +710,21 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                 </div>
 
                                                 <div className="space-y-4">
-                                                    <div className="bg-gray-50 dark:bg-black/20 p-4 rounded-2xl border border-black/5 flex justify-between items-center group transition-all hover:border-primary/30">
-                                                        <div className="overflow-hidden">
-                                                            <span className="block text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Titular de la cuenta</span>
-                                                            <span className="text-xs font-black truncate max-w-[200px] inline-block">Javier Ignacio Contreras Cifuentes</span>
+                                                    {/* Next Steps Info Card */}
+                                                    <div className="bg-primary/5 p-6 rounded-[24px] border border-primary/20 flex flex-col items-center text-center gap-4 transition-all hover:border-primary/50 shadow-sm">
+                                                        <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+                                                            <MessageCircle className="text-primary" size={24} />
                                                         </div>
-                                                        <button type="button" onClick={() => copyToClipboard('Javier Ignacio Contreras Cifuentes', 'name')} className="text-primary hover:scale-110 transition-transform p-2 bg-primary/10 rounded-lg">
-                                                            {copiedField === 'name' ? <Heart size={16} fill="currentColor" /> : <User size={16} />}
-                                                        </button>
-                                                    </div>
-
-                                                    <div className="bg-primary/5 p-4 rounded-2xl border border-primary/20 flex justify-between items-center group transition-all hover:border-primary/50 shadow-sm">
-                                                        <div>
-                                                            <div className="flex items-center gap-1.5 mb-1">
-                                                                <span className="block text-[8px] font-bold text-primary uppercase tracking-widest">IBAN Wise (Bélgica)</span>
-                                                                <span className="text-[8px] bg-primary/20 text-primary px-1 rounded font-black">RECOMENDADO</span>
-                                                            </div>
-                                                            <span className="text-sm font-black tracking-wider font-mono">BE97 9673 8690 2549</span>
+                                                        <div className="space-y-1">
+                                                            <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                                                                {i18n.language === 'en' ? 'Next: Payment Details' : 'Siguiente: Datos de Pago'}
+                                                            </h4>
+                                                            <p className="text-[10px] font-bold text-gray-500 leading-relaxed px-4">
+                                                                {i18n.language === 'en' 
+                                                                    ? 'Once you send the booking, we will provide you with the transfer details (EUR or USD) via WhatsApp to secure your dates.' 
+                                                                    : 'Al enviar la reserva, te proporcionaremos los datos de transferencia (Euros o Dólares) por WhatsApp para bloquear tus fechas.'}
+                                                            </p>
                                                         </div>
-                                                        <button type="button" onClick={() => copyToClipboard('BE97 9673 8690 2549', 'iban')} className="text-primary hover:scale-110 transition-transform p-2 bg-primary/20 rounded-lg">
-                                                            {copiedField === 'iban' ? <Heart size={16} fill="currentColor" /> : <Ticket size={16} />}
-                                                        </button>
                                                     </div>
 
                                                     <div className="pt-2">
@@ -741,9 +735,9 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                         >
                                                             <div className="flex items-center gap-2">
                                                                 <MessageCircle size={20} className="group-hover:scale-110 transition-transform" /> 
-                                                                <span>{i18n.language === 'en' ? 'DONE! SEND SCREENSHOT' : '¡LISTO! ENVIAR CAPTURA'}</span>
+                                                                <span>{i18n.language === 'en' ? 'SEND BOOKING & GET PAYMENT INFO' : 'ENVIAR RESERVA Y RECIBIR DATOS'}</span>
                                                             </div>
-                                                            <span className="text-[9px] opacity-70 font-bold uppercase tracking-widest">{i18n.language === 'en' ? 'Confirm via WhatsApp' : 'Confirmar vía WhatsApp'}</span>
+                                                            <span className="text-[9px] opacity-70 font-bold uppercase tracking-widest">{i18n.language === 'en' ? 'Connect via WhatsApp' : 'Contactar por WhatsApp'}</span>
                                                         </button>
                                                     </div>
 

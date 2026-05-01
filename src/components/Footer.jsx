@@ -59,16 +59,21 @@ const Footer = () => {
                     <h3 className="font-bold text-lg mb-6">{t('footer.contact')}</h3>
                     <ul className="space-y-4 font-medium text-gray-600 dark:text-gray-400">
                         <li>
-                            <a href="https://wa.me/34642517787" className="hover:text-primary transition-colors block">
-                                WhatsApp: +34 642 51 77 87 <span className="text-[10px] opacity-60">(ES / EN)</span>
+                            <div className="text-[10px] uppercase font-black tracking-widest text-primary mb-1 opacity-60">Soporte</div>
+                            <a href="https://wa.me/34642517787" className="hover:text-primary transition-colors block leading-tight">
+                                <span className="block text-xs font-bold text-gray-400">España / Latam:</span>
+                                +34 642 51 77 87 <span className="text-[10px] opacity-60">(ES / EN)</span>
                             </a>
                         </li>
                         <li>
-                            <a href="https://wa.me/6285691533356" className="hover:text-primary transition-colors block">
-                                WhatsApp: +62 856 9153 3356 <span className="text-[10px] opacity-60">(ID / EN)</span>
+                            <a href="https://wa.me/6285691533356" className="hover:text-primary transition-colors block leading-tight">
+                                <span className="block text-xs font-bold text-gray-400">Indonesia:</span>
+                                +62 856 9153 3356 <span className="text-[10px] opacity-60">(ID / EN)</span>
                             </a>
                         </li>
-                        <li className="pt-2 text-gray-400">Bali, Indonesia</li>
+                        <li className="pt-2 text-gray-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+                             Bali, Indonesia
+                        </li>
                     </ul>
                 </motion.div>
             </motion.div>

@@ -26,6 +26,11 @@ i18n
                     },
                     hero: {
                         badge: "Experiencias Premium en Indonesia.",
+                        /* 
+                        title_1: "Bali a tu ritmo,",
+                        title_2: "habla tu idioma.",
+                        subtitle: "Soporte en español para diseñar tu ruta y la libertad de elegir: desde la autenticidad de un conductor local hasta guías en tu idioma.",
+                        */
                         title_1: "Bali no se visita,",
                         title_2: "se vive.",
                         subtitle: "Descubre la esencia de Bali con guías que hablan tu idioma, un servicio honesto y una experiencia diseñada exclusivamente para ti.",
@@ -690,6 +695,11 @@ i18n
                     },
                     hero: {
                         badge: "Premium Experiences in Indonesia.",
+                        /*
+                        title_1: "Bali at your pace,",
+                        title_2: "in your language.",
+                        subtitle: "Expert support to design your custom route and the freedom to choose: from authentic local drivers to guides in your own language.",
+                        */
                         title_1: "Don't just visit Bali.",
                         title_2: "Live it.",
                         subtitle: "Uncover the island's true soul through the eyes of those who call it home — a personalized, honest journey designed just for you.",

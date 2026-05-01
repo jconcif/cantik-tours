@@ -1,0 +1,158 @@
+300:                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+302:                    <motion.div
+311:                    <motion.div
+321:                        <div className="bg-primary/10 p-6 flex flex-col gap-2 border-b border-primary/5">
+322:                            <div className="flex justify-between items-center">
+333:                            </div>
+335:                            <div className="flex items-center gap-2 mt-1">
+336:                                <div className={`h-1.5 flex-1 rounded-full transition-colors duration-500 bg-primary`} />
+337:                                <div className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${step >= 2 ? 'bg-primary' : 'bg-primary/20 dark:bg-white/10'}`} />
+338:                                <div className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${step === 3 ? 'bg-primary' : 'bg-primary/20 dark:bg-white/10'}`} />
+339:                            </div>
+340:                        </div>
+346:                                    <motion.div
+355:                                        <div className="space-y-2">
+369:                                        </div>
+372:                                        <div className="space-y-2">
+392:                                        </div>
+395:                                        <div className="space-y-2">
+420:                                        </div>
+423:                                        <div className="space-y-2">
+437:                                        </div>
+440:                                        <div className="pt-2">
+453:                                                    <motion.div
+459:                                                        <div className="pt-3">
+469:                                                        </div>
+470:                                                    </motion.div>
+473:                                        </div>
+482:                                    </motion.div>
+486:                                    <motion.div
+495:                                        <div className="bg-gray-50 dark:bg-white/5 p-3 rounded-2xl border border-black/5 dark:border-white/5 flex items-center justify-between text-xs font-bold text-gray-600 dark:text-gray-300">
+496:                                            <div className="flex items-center gap-1.5 flex-wrap">
+499:                                            </div>
+500:                                            <div className="flex items-center gap-1.5 flex-wrap">
+503:                                            </div>
+504:                                        </div>
+507:                                        <div className="space-y-4">
+512:                                            <div className="grid gap-3">
+516:                                                    <div className="mt-0.5 mr-3 flex-shrink-0">
+517:                                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${formData.experience === 'economy' ? 'border-gray-500' : 'border-gray-300 dark:border-gray-600'}`}>
+518:                                                            {formData.experience === 'economy' && <div className="w-2 h-2 rounded-full bg-gray-500" />}
+519:                                                        </div>
+520:                                                    </div>
+521:                                                    <div className="flex-1">
+522:                                                        <div className="flex items-center justify-between mb-1">
+527:                                                        </div>
+530:                                                    </div>
+536:                                                    <div className="absolute -top-2.5 right-4 bg-primary text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">
+538:                                                    </div>
+539:                                                    <div className="mt-0.5 mr-3 flex-shrink-0">
+540:                                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${formData.experience === 'comfort' ? 'border-primary' : 'border-gray-300 dark:border-gray-600'}`}>
+541:                                                            {formData.experience === 'comfort' && <div className="w-2 h-2 rounded-full bg-primary" />}
+542:                                                        </div>
+543:                                                    </div>
+544:                                                    <div className="flex-1">
+545:                                                        <div className="flex items-center justify-between mb-1">
+550:                                                        </div>
+553:                                                    </div>
+559:                                                    <div className="mt-0.5 mr-3 flex-shrink-0">
+560:                                                        <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${formData.experience === 'elite' ? 'border-[#D4AF37]' : 'border-gray-300 dark:border-gray-600'}`}>
+561:                                                            {formData.experience === 'elite' && <div className="w-2 h-2 rounded-full bg-[#D4AF37]" />}
+562:                                                        </div>
+563:                                                    </div>
+564:                                                    <div className="flex-1">
+565:                                                        <div className="flex items-center justify-between mb-1">
+570:                                                        </div>
+576:                                                                <motion.div initial={{ opacity: 0, height: 0, marginTop: 0 }} animate={{ opacity: 1, height: 'auto', marginTop: 12 }} exit={{ opacity: 0, height: 0, marginTop: 0 }} className="overflow-hidden">
+577:                                                                    <div className="p-3 md:p-3.5 rounded-xl bg-[#D4AF37]/10 text-[#B8860B] dark:text-[#D4AF37] text-[10px] md:text-xs font-bold leading-relaxed border border-[#D4AF37]/20">
+579:                                                                    </div>
+580:                                                                </motion.div>
+583:                                                    </div>
+585:                                            </div>
+586:                                        </div>
+589:                                        <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 flex items-center justify-between mt-2">
+590:                                            <div className="flex flex-col">
+593:                                            </div>
+594:                                            <div className="text-2xl font-black text-primary flex items-center gap-1">
+597:                                            </div>
+598:                                        </div>
+601:                                        <div className="flex gap-3 mt-6">
+617:                                        </div>
+618:                                    </motion.div>
+622:                                    <motion.div
+630:                                        <div className="flex flex-col items-center text-center space-y-2 mb-2">
+631:                                            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-2">
+633:                                            </div>
+636:                                        </div>
+639:                                        <div className="grid grid-cols-2 gap-3 mb-2">
+645:                                                <div className="text-[9px] font-black uppercase tracking-widest text-primary mb-1">RESERVA (30%)</div>
+646:                                                <div className="text-sm font-black text-gray-900 dark:text-white">Depósito</div>
+647:                                                <div className="text-[8px] font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded-full mt-1">+5€ Gestión</div>
+648:                                                {paymentPlan === 'deposit' && <motion.div layoutId="plan-check" className="absolute top-2 right-2 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center"><ShieldCheck size={10} /></motion.div>}
+655:                                                <div className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-1">TOTAL (100%)</div>
+656:                                                <div className="text-sm font-black text-gray-900 dark:text-white">Pago Único</div>
+657:                                                <div className="text-[8px] font-bold text-green-500 bg-green-500/10 px-2 py-0.5 rounded-full mt-1">Sin Comisiones</div>
+658:                                                {paymentPlan === 'full' && <motion.div layoutId="plan-check" className="absolute top-2 right-2 w-4 h-4 bg-primary text-white rounded-full flex items-center justify-center"><ShieldCheck size={10} /></motion.div>}
+660:                                        </div>
+663:                                        <div className="relative mt-4">
+666:                                                <div className="absolute top-12 left-0 right-0 bg-gray-100 dark:bg-white/5 rounded-[32px] p-8 pb-4 border border-black/5 dark:border-white/5 z-0 opacity-60">
+667:                                                    <div className="mt-8 flex justify-between items-start">
+668:                                                        <div>
+669:                                                            <div className="flex items-center gap-2 mb-1">
+670:                                                                <div className="w-2 h-2 rounded-full bg-gray-400" />
+672:                                                            </div>
+673:                                                            <div className="text-sm font-bold text-gray-900 dark:text-white mb-1">{i18n.language === 'en' ? 'To be paid via Web/Transfer' : 'A pagar vía Web o Transferencia'}</div>
+674:                                                            <div className="text-[9px] font-black text-secondary leading-tight max-w-[150px] uppercase italic">
+678:                                                            </div>
+679:                                                        </div>
+680:                                                        <div className="text-xl font-black text-gray-600 dark:text-gray-400">{currentRemainingAmount}€</div>
+681:                                                    </div>
+682:                                                </div>
+686:                                            <div className="relative bg-white dark:bg-[#1a1a1a] rounded-[32px] p-6 md:p-8 shadow-2xl shadow-primary/20 border border-black/5 dark:border-white/10 z-10 transition-all">
+687:                                                <div className="flex justify-between items-start mb-6">
+688:                                                    <div className="space-y-1">
+689:                                                        <div className="flex items-center gap-2 mb-2">
+690:                                                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+696:                                                        </div>
+703:                                                    </div>
+704:                                                    <div className="text-right">
+705:                                                        <div className="text-3xl font-black text-primary">{currentPayAmount}€</div>
+706:                                                        <div className="text-[8px] font-black text-gray-400 uppercase tracking-tighter mt-1">
+708:                                                        </div>
+709:                                                    </div>
+710:                                                </div>
+712:                                                <div className="space-y-4">
+714:                                                    <div className="bg-primary/5 p-6 rounded-[24px] border border-primary/20 flex flex-col items-center text-center gap-4 transition-all hover:border-primary/50 shadow-sm">
+715:                                                        <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
+717:                                                        </div>
+718:                                                        <div className="space-y-1">
+727:                                                        </div>
+728:                                                    </div>
+730:                                                    <div className="pt-2">
+736:                                                            <div className="flex items-center gap-2">
+739:                                                            </div>
+742:                                                    </div>
+744:                                                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 items-start">
+751:                                                    </div>
+752:                                                </div>
+755:                                                    <motion.div 
+760:                                                        <div className="flex flex-col items-center text-center">
+761:                                                            <div className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-3xl shadow-lg shadow-green-500/20 mb-4 animate-bounce">✓</div> 
+764:                                                        </div>
+766:                                                        <div className="w-full space-y-3">
+793:                                                        </div>
+794:                                                    </div>
+795:                                                </motion.div>
+797:                                            </div>
+798:                                        </div>
+800:                                        <div className="flex justify-center mt-4">
+808:                                        </div>
+811:                                        <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 py-3 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 mt-4">
+814:                                        </div>
+817:                                        <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4 flex flex-col items-center text-center gap-1.5 mt-2 opacity-60">
+818:                                            <div className="flex items-center gap-2 text-primary font-black uppercase text-[10px] tracking-[0.2em] mb-1">
+821:                                            </div>
+827:                                        </div>
+828:                                    </motion.div>
+832:                    </motion.div>
+833:                </div>
