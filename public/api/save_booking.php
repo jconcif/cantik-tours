@@ -26,7 +26,8 @@ try {
         total_price, 
         deposit_amount, 
         is_paid, 
-        coupon
+        coupon,
+        itinerary
     ) VALUES (
         :tour_id, 
         :tour_title, 
@@ -39,7 +40,8 @@ try {
         :total_price, 
         :deposit_amount, 
         :is_paid, 
-        :coupon
+        :coupon,
+        :itinerary
     )";
 
     $stmt = $conn->prepare($sql);
@@ -59,7 +61,8 @@ try {
         ':total_price' => $data->total_price,
         ':deposit_amount' => $data->deposit_amount,
         ':is_paid' => $data->is_paid ? 1 : 0,
-        ':coupon' => $data->coupon ?? null
+        ':coupon' => $data->coupon ?? null,
+        ':itinerary' => $data->itinerary ?? ''
     ]);
 
     $booking_id = $conn->lastInsertId();

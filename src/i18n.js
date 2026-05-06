@@ -98,7 +98,7 @@ i18n
                         included: "Incluido",
                         not_included: "No incluido",
                         reviews: "Reseñas",
-                        book_now: "Comprobar Disponibilidad",
+                        book_now: "RESERVAR MI EXPERIENCIA",
                         share: "Compartir",
                         duration: "Duración",
                         private: "Privado",
@@ -147,17 +147,17 @@ i18n
                         availability_disclaimer: "Confirmaremos la disponibilidad del idioma elegido directamente por wsp.",
                         error_language_required: "Por favor, selecciona un idioma para continuar.",
                         booking_experience: "Tipo de servicio:",
-                        exp_economy_title: "Transporte Privado",
-                        exp_economy_sub: "Conductor Local (idioma inglés)",
+                        exp_economy_title: "Conductor Local (Idioma Inglés)",
+                        exp_economy_sub: "",
                         exp_economy_desc: "Vehículo estándar o superior. Tu conductor te lleva seguro, mientras tú exploras a tu ritmo.",
                         exp_economy_price_label: "",
-                        exp_comfort_title: "Guía en Inglés",
-                        exp_comfort_sub: "Guía local (Idioma Inglés)",
+                        exp_comfort_title: "Guía Local (Idioma Inglés)",
+                        exp_comfort_sub: "",
                         exp_comfort_desc: "Vehículo superior. Descubre la historia profunda de Bali con un experto a tu lado.",
                         exp_comfort_price_label: "",
-                        exp_elite_title: "GUÍA EN ESPAÑOL 💎",
-                        exp_elite_sub: "Guía Local (Idioma español)",
-                        exp_elite_desc: "La máxima comodidad y acompañamiento total sin barreras de idioma.",
+                        exp_elite_title: "Guía Local (Idioma Español)",
+                        exp_elite_sub: "",
+                        exp_elite_desc: "Vehículo superior. La máxima comodidad y acompañamiento total sin barreras de idioma.",
                         exp_elite_warning: "",
                         exp_elite_price_label: "",
                         price_special: "Desde",
@@ -372,9 +372,6 @@ i18n
                         perty_title: "Perty (Fundadora)",
                         perty_text_1: "Con un Magister en Educación y una vida dedicada a la enseñanza, he tenido el honor de representar nuestra cultura en diversos países como profesora de lengua indonesia. Hoy, mi verdadera pasión es ser tu vínculo personal con el alma de Bali.",
                         perty_text_2: "Para mí, acompañarte no es solo seguir un itinerario, es invitarte a sentir la mística de nuestros templos, la devoción de los rituales y esos rincones secretos que solo revelamos a quienes nos visitan con el corazón. Mi mayor deseo es que vivas esta isla con el mismo respeto y profundo amor con el que yo la llamo hogar.",
-                        javi_title: "Javi (Tu Enlace y Logística)",
-                        javi_role: "Logística & Enlace",
-                        javi_text: "Viajero incansable y un profundo enamorado de Bali, mi misión en Cantik es ser tu puente directo y confiable con la isla. Me encargo de que cada detalle de tu itinerario sea impecable y de resolver cualquier inquietud que surja en el camino. Estoy aquí para que te desprendas de la logística y te concentres únicamente en disfrutar, con la seguridad de saber que siempre tienes a alguien a tu lado para que todo fluya sin inconvenientes.",
                         promise_title: "",
                         promise_text: "Para asegurar que siempre tengas la mejor experiencia, contamos con una red de conductores locales de total confianza para que solo te preocupes de disfrutar.",
 
@@ -522,18 +519,18 @@ i18n
                             s1: {
                                 title: "1. PROCESO DE RESERVA Y PAGOS",
                                 items: [
-                                    { label: "Depósito de Confirmación", text: "Se requiere el pago íntegro o un abono del 30% del total por Tour contratado, pagado al momento de realizar la reserva de forma oficial, para bloquear fechas y servicios." },
-                                    { label: "Pago Total", text: "El saldo restante (70% del costo del tour) debe estar liquidado 48 horas antes del inicio del viaje." },
-                                    { label: "Métodos de Pago", text: "Aceptamos pagos vía Transferencia Bancaria y Wise. Los gastos por comisiones bancarias o de conversión de divisa corren por cuenta del cliente." }
+                                    { label: "Depósito de Confirmación", text: "Se requiere el pago íntegro por Tour contratado, pagado al momento de realizar la reserva de forma oficial, para bloquear fechas y servicios." },
+                                    { label: "Pago Total", text: "Si existiese algun saldo pendiente, debe estar liquidado 48-24 horas antes del inicio del viaje." },
+                                    { label: "Métodos de Pago", text: "Aceptamos pagos vía Transferencia Bancaria. Los gastos por comisiones bancarias o de conversión de divisa corren por cuenta del cliente." }
                                 ]
                             },
                             s2: {
                                 title: "2. CANCELACIONES Y PUNTUALIDAD",
                                 items: [
-                                    { label: "Cancelación Gratuita", text: "Si cancelas con más de 24 horas de antelación al inicio del tour, se reembolsará el depósito íntegro." },
-                                    { label: "Penalización Parcial", text: "Si cancelas entre 24 y 12 horas antes del inicio, el depósito inicial no será reembolsable (gastos de gestión)." },
-                                    { label: "Gastos de Gestión Totales", text: "Las cancelaciones con menos de 12 horas de antelación no tendrán derecho a reembolso del pago total." },
-                                    { label: "Tiempo de Espera", text: "El guía/conductor esperará un máximo de 30 minutos en el punto de encuentro. Pasado ese tiempo, sin comunicación por parte del cliente, el servicio se dará por cancelado sin reembolso por \"No Show\" (no presentarse)." },
+                                    { label: "Cancelación Gratuita", text: "Si cancelas con más de 48 horas de antelación al inicio del tour, se reembolsará el depósito íntegro." },
+                                    { label: "Penalización Parcial", text: "Si cancelas entre 48 y 24 horas antes del inicio, el 30% del valor total no será reembolsable (gastos de gestión)." },
+                                    { label: "Gastos de Gestión Totales", text: "Las cancelaciones con menos de 24 horas de antelación no tendrán derecho a reembolso." },
+                                    { label: "Tiempo de Espera", text: "El guía/conductor esperará un máximo de 30 minutos en el punto de encuentro. Pasado ese tiempo, sin comunicación por parte del cliente, el servicio se dará por cancelado por \"No Show\" (no presentarse), sin reembolso asociado." },
                                     { label: "Zona Horaria de Referencia", text: "Para el cumplimiento de los plazos de cancelación y avisos, se utilizará el horario local de Bali (WITA - UTC+8), estimando las 8:00 am como hora de referencia para el inicio del conteo de días/horas." }
                                 ]
                             },
@@ -582,6 +579,12 @@ i18n
                                 ]
                             }
                         }
+                    },
+                    not_found: {
+                        title: "¡Perdido en el paraíso?",
+                        text: "Parece que esta ruta no está en nuestro mapa. No te preocupes, siempre hay un camino de vuelta al hotel.",
+                        back_home: "Volver al Inicio",
+                        see_tours: "Ver todos los Tours"
                     },
                     visa_page: {
                         seo_title: "Asistencia de Visado Indonesia | Cantik Tours",
@@ -767,7 +770,7 @@ i18n
                         included: "Included",
                         not_included: "Not included",
                         reviews: "Reviews",
-                        book_now: "Check Availability",
+                        book_now: "BOOK MY EXPERIENCE",
                         share: "Share",
                         duration: "Duration",
                         private: "Private",
@@ -814,17 +817,17 @@ i18n
                         availability_disclaimer: "We will confirm the availability of the chosen language directly via WhatsApp.",
                         error_language_required: "Please select a language to continue.",
                         booking_experience: "Service Type",
-                        exp_economy_title: "Private Transport",
-                        exp_economy_sub: "Local Driver (English language)",
-                        exp_economy_desc: "Standard or superior vehicle. Your driver takes you safely, while you explore at your own pace.",
+                        exp_economy_title: "Local Driver (English Language)",
+                        exp_economy_sub: "",
+                        exp_economy_desc: "Standard vehicle or superior. Your driver takes you safely, while you explore at your own pace.",
                         exp_economy_price_label: "",
-                        exp_comfort_title: "English Guide",
-                        exp_comfort_sub: "Certified local guide (English language)",
+                        exp_comfort_title: "Local Guide (English Language)",
+                        exp_comfort_sub: "",
                         exp_comfort_desc: "Superior vehicle. Discover the deep history of Bali with an expert by your side.",
                         exp_comfort_price_label: "",
-                        exp_elite_title: "SPANISH GUIDE 💎",
-                        exp_elite_sub: "Local Guide (Spanish language)",
-                        exp_elite_desc: "Maximum comfort and complete accompaniment without language barriers.",
+                        exp_elite_title: "Local Guide (Spanish Language)",
+                        exp_elite_sub: "",
+                        exp_elite_desc: "Superior vehicle. Maximum comfort and full accompaniment without language barriers.",
                         exp_elite_warning: "",
                         exp_elite_price_label: "",
                         price_special: "From",
@@ -1039,9 +1042,6 @@ i18n
                         perty_title: "Perty (Founder)",
                         perty_text_1: "With a Master's degree in Education and a lifetime dedicated to teaching, I have had the honor of representing our culture in various countries as an Indonesian language teacher. Today, my true passion is being your personal connection to the soul of Bali.",
                         perty_text_2: "For me, guiding you is not just following an itinerary; it's about inviting you to feel the mysticism of our temples, the devotion of the rituals, and those secret spots we only share with those who visit us with an open heart. My greatest wish is for you to experience this island with the same respect and profound love with which I call it home.",
-                        javi_title: "Javi (Your Link & Logistics)",
-                        javi_role: "Logistics & Link",
-                        javi_text: "A lifelong traveler and deeply in love with Bali, my mission at Cantik is to be your direct and reliable bridge to the island. I oversee every detail of your itinerary to ensure it's flawless and handle any questions you may have along the way. I am here so you can step away from the logistics and focus entirely on the experience, with the peace of mind that comes from knowing someone is always by your side to ensure everything flows without any issues.",
                         promise_title: "",
                         promise_text: "To ensure you always have the best experience, we have a network of fully trusted local drivers, personally selected by us under the same standards of warmth and safety that define us.",
 
@@ -1189,19 +1189,19 @@ i18n
                             s1: {
                                 title: "1. BOOKING PROCESS AND PAYMENTS",
                                 items: [
-                                    { label: "Confirmation Deposit", text: "Full payment or a 30% deposit of the total per booked Tour is required at the time of booking to officially block dates and services." },
-                                    { label: "Total Payment", text: "The remaining balance (70% of the tour cost) must be settled 48 hours before the start of the trip." },
-                                    { label: "Payment Methods", text: "We accept payments via Bank Transfer and Wise. Costs for bank commissions or currency conversion are the responsibility of the client." }
+                                    { label: "Confirmation Deposit", text: "Full payment per contracted Tour is required at the time of official booking to block dates and services." },
+                                    { label: "Total Payment", text: "If there is any outstanding balance, it must be settled 48-24 hours before the start of the trip." },
+                                    { label: "Payment Methods", text: "We accept payments via Bank Transfer. Bank commission or currency conversion costs are the responsibility of the client." }
                                 ]
                             },
                             s2: {
                                 title: "2. CANCELLATIONS AND PUNCTUALITY",
                                 items: [
-                                    { label: "Free Cancellation", text: "If you cancel more than 48 hours before the start of the tour, the full deposit will be refunded." },
-                                    { label: "Partial Penalty", text: "If you cancel between 48 and 24 hours before the start, the €20 deposit will not be refundable (management fees)." },
-                                    { label: "Total Management Fees", text: "Cancellations less than 24 hours before will not be entitled to a refund of the total payment." },
-                                    { label: "Waiting Time", text: "The guide/driver will wait a maximum of 30 minutes at the meeting point. After that time, without communication from the client, the service will be canceled without a refund due to \"No Show\" (non-appearance)." },
-                                    { label: "Reference Time Zone", text: "For the fulfillment of cancellation deadlines and notices, Bali local time (WITA - UTC+8) will be used, with 8:00 am as the reference time for the start of the day/hour count." }
+                                    { label: "Free Cancellation", text: "If you cancel more than 48 hours before the start of the tour, the full payment will be refunded." },
+                                    { label: "Partial Penalty", text: "If you cancel between 48 and 24 hours before the start, 30% of the total value will be non-refundable (management fees)." },
+                                    { label: "Total Management Fees", text: "Cancellations with less than 24 hours notice will not be entitled to a refund." },
+                                    { label: "Waiting Time", text: "The guide/driver will wait a maximum of 30 minutes at the meeting point. After that time, without communication from the client, the service will be canceled as a \"No Show\" (non-appearance), with no associated refund." },
+                                    { label: "Reference Time Zone", text: "For compliance with cancellation deadlines and notices, Bali local time (WITA - UTC+8) will be used, with 8:00 am as the reference time for the start of the day/hour count." }
                                 ]
                             },
                             s3: {
@@ -1249,6 +1249,12 @@ i18n
                                 ]
                             }
                         }
+                    },
+                    not_found: {
+                        title: "Lost in paradise?",
+                        text: "It seems this route is not on our map. Don't worry, there's always a way back to the hotel.",
+                        back_home: "Back to Home",
+                        see_tours: "See all Tours"
                     },
                     visa_page: {
                         seo_title: "Indonesia Visa Assistance | Cantik Tours",

@@ -21,6 +21,7 @@ const ReviewsPage = lazy(() => import('./pages/ReviewsPage'));
 const Policies = lazy(() => import('./pages/Policies'));
 const VisaPage = lazy(() => import('./pages/VisaPage'));
 const ItineraryPage = lazy(() => import('./pages/ItineraryPage'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Admin (Direct import for reliability)
 import AdminReviews from './pages/AdminReviews';
@@ -66,6 +67,7 @@ function App() {
                                 <Route path="/itinerario" element={<ItineraryPage />} />
                                 <Route path="/admin" element={<AdminReviews />} />
                                 <Route path="/cantik-admin" element={<AdminReviews />} />
+                                <Route path="*" element={<NotFound />} />
                             </Routes>
                         </Suspense>
                     </main>

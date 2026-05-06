@@ -12,7 +12,7 @@ try {
         client_name=:cn, client_phone=:cp, booking_date=:bd,
         hotel=:ho, tour_title=:tt, total_price=:tp,
         deposit_amount=:da, pax=:px, payment_status=:ps,
-        driver_id=:di, experience=:ex
+        driver_id=:di, experience=:ex, itinerary=:it
         WHERE id=:id";
     $stmt = $conn->prepare($sql);
     $stmt->execute([
@@ -27,6 +27,7 @@ try {
         ':ps' => $d['payment_status'] ?? 'pending',
         ':di' => !empty($d['driver_id']) ? $d['driver_id'] : null,
         ':ex' => $d['experience']     ?? 'comfort',
+        ':it' => $d['itinerary']      ?? '',
         ':id' => $d['id'],
     ]);
     echo json_encode(["status"=>"success","message"=>"Reserva #{$d['id']} actualizada","rows"=>$stmt->rowCount()]);

@@ -155,11 +155,30 @@ export default function ItineraryPage() {
             {booking.experience && (
               <div className="col-span-2">
                 <div className="text-[10px] font-black text-[#11BDDB] uppercase tracking-wider mb-1">Experiencia</div>
-                <div className="font-bold text-xs bg-[#11BDDB]/10 text-[#11BDDB] px-3 py-2 rounded-lg inline-block">{{driver_en:'🚗 Conductor privado (inglés)',guide_en:'🗺️ Guía Local (inglés)',guide_es:'⭐ Guía Local Certificado (español)',economy:'Economy',comfort:'Comfort',premium:'Premium'}[booking.experience] || booking.experience}</div>
+                <div className="font-bold text-xs bg-[#11BDDB]/10 text-[#11BDDB] px-3 py-2 rounded-lg inline-block">{{economy:'🚗 Conductor Local (Inglés)',comfort:'🗺️ Guía Local (Inglés)',elite:'⭐ Guía Local (Español)'}[booking.experience] || booking.experience}</div>
               </div>
             )}
           </div>
         </motion.div>
+
+        {/* Personalized Itinerary */}
+        {booking.itinerary && (
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }} className="bg-[#1a1a1a] rounded-3xl p-6 shadow-xl border border-white/5 mb-6">
+            <h3 className="text-xs font-black text-[#11BDDB] uppercase tracking-widest mb-4 flex items-center gap-2">
+              <MapPin size={14} /> Itinerario Personalizado
+            </h3>
+            <div className="space-y-3">
+              {booking.itinerary.split(',').map((stop, idx) => (
+                <div key={idx} className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5">
+                  <div className="w-6 h-6 rounded-full bg-[#11BDDB]/10 flex items-center justify-center text-[#11BDDB] font-black text-[10px]">
+                    {idx + 1}
+                  </div>
+                  <span className="text-sm font-bold text-gray-200">{stop.trim()}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* Conductor Card — sin botón de WSP al conductor */}
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="bg-[#1a1a1a] rounded-3xl p-6 shadow-xl border border-white/5 mb-6 overflow-hidden relative">

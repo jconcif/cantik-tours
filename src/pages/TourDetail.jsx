@@ -28,6 +28,7 @@ const TourDetail = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [tourReviews, setTourReviews] = useState([]);
     const [isGlobalReviews, setIsGlobalReviews] = useState(false);
+    const [selectedStops, setSelectedStops] = useState([]);
     const [showSticky, setShowSticky] = useState(false);
 
     useEffect(() => {
@@ -151,6 +152,10 @@ const TourDetail = () => {
     };
 
     const handleOpenBooking = () => {
+        if (tour.id === 'ubud-flexible' && selectedStops.length === 0) {
+            alert(i18n.language.startsWith('es') ? "Por favor selecciona al menos una parada para tu itinerario." : "Please select at least one stop for your itinerary.");
+            return;
+        }
         if (tour.isTransfer) {
             setIsTransferModalOpen(true);
         } else {
@@ -368,8 +373,69 @@ const TourDetail = () => {
                         <section className="relative">
                             <h2 className="text-2xl font-black mb-10 flex items-center gap-3">
                                 <div className="w-2 h-8 bg-primary rounded-full" />
-                                {t('detail.itinerary')}
+                                {tour.id === 'ubud-flexible' 
+                                    ? (i18n.language.startsWith('es') ? 'Opciones para tu itinerario' : 'Options for your itinerary') 
+                                    : t('detail.itinerary')}
                             </h2>
+
+                            {/* Flexible Tour Stops List */}
+                            {tour.id === 'ubud-flexible' && tour.availableStops && (
+                                <div className="mb-12 space-y-4">
+                                    <p className="text-gray-600 dark:text-gray-400 font-bold text-sm mb-6 bg-primary/5 p-4 rounded-2xl border border-primary/10">
+                                        {i18n.language === 'en' 
+                                            ? 'This is a 100% customizable tour. You can choose up to 5 places from the following list to create your perfect day in Ubud:' 
+                                            : 'Este es un tour 100% personalizable. Puedes elegir hasta 5 lugares de la siguiente lista para crear tu día perfecto en Ubud:'}
+                                    </p>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {tour.availableStops.map((stop) => {
+                                            const isSelected = selectedStops.includes(i18n.language === 'en' ? stop.name_en : stop.name);
+                                            const isDisabled = !isSelected && selectedStops.length >= 5;
+                                            
+                                            return (
+                                                <button 
+                                                    key={stop.id} 
+                                                    onClick={() => {
+                                                        const stopName = i18n.language === 'en' ? stop.name_en : stop.name;
+                                                        if (isSelected) {
+                                                            setSelectedStops(selectedStops.filter(s => s !== stopName));
+                                                        } else if (!isDisabled) {
+                                                            setSelectedStops([...selectedStops, stopName]);
+                                                        }
+                                                    }}
+                                                    className={`p-5 rounded-3xl border-2 transition-all text-left relative group ${
+                                                        isSelected 
+                                                        ? 'bg-primary/5 border-primary shadow-md' 
+                                                        : 'bg-white dark:bg-white/5 border-black/5 dark:border-white/10 hover:border-primary/30'
+                                                    } ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                                >
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <h3 className={`text-lg font-black leading-tight transition-colors ${isSelected ? 'text-primary' : 'text-gray-900 dark:text-white'}`}>
+                                                            {i18n.language === 'en' ? stop.name_en : stop.name}
+                                                        </h3>
+                                                        <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${isSelected ? 'bg-primary border-primary' : 'border-gray-200 dark:border-white/10'}`}>
+                                                            {isSelected && <Check size={14} className="text-white" />}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <span className="text-[10px] font-black text-primary uppercase tracking-widest bg-primary/10 px-2 py-1 rounded-full whitespace-nowrap">
+                                                            {stop.duration}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 font-medium leading-relaxed">
+                                                        {i18n.language === 'en' ? stop.desc_en : stop.desc}
+                                                    </p>
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    <div className="mt-8 flex items-center gap-2 text-gray-400 dark:text-gray-500 font-bold text-sm italic">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-700" />
+                                        {i18n.language === 'en' 
+                                            ? 'Or tell us your own plan if it\'s within the Ubud area!' 
+                                            : '¡O cuéntanos tu propio plan si está dentro de la zona de Ubud!'}
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="relative ml-6">
                                 {/* Vertical Line with Gradient */}
@@ -444,12 +510,12 @@ const TourDetail = () => {
                                 <AlertCircle size={20} className="text-gray-400" /> {t('detail.not_included')}
                             </h3>
                             <ul className="space-y-4">
-                                {[
-                                    i18n.language.startsWith('es') ? 'Entradas y Tickets' : 'Entrance fees & Tickets',
-                                    i18n.language.startsWith('es') ? 'Almuerzo o Comidas' : 'Lunch or Meals',
+                                {(l(tour, 'not_included') || [
+                                    i18n.language.startsWith('es') ? 'Entradas / Tickets' : 'Entrance fees / Tickets',
+                                    i18n.language.startsWith('es') ? 'Refrescos / Comidas' : 'Soft drinks / Meals',
                                     i18n.language.startsWith('es') ? 'Propinas' : 'Tips',
                                     i18n.language.startsWith('es') ? 'Seguro de viaje' : 'Travel Insurance'
-                                ].map((item, idx) => (
+                                ]).map((item, idx) => (
                                     <li key={idx} className="flex items-start gap-3">
                                         <X size={16} className="text-red-400 dark:text-red-500 mt-1 flex-shrink-0" />
                                         <span className="text-sm font-bold text-gray-600 dark:text-gray-400">{item}</span>
@@ -467,9 +533,9 @@ const TourDetail = () => {
                         <div className="space-y-4">
                             {/* Standard FAQs */}
                             {[
-                                { q: "¿Podemos cambiar el orden o lugares del itinerario?", a: "¡Claro! Todos nuestros tours son privados y 100% flexibles. Habla con nosostros y te haremos las mejores recomendaciones segun tus intereses.", q_en: "Can we change the order or places of the itinerary?", a_en: "Sure! All our tours are private and 100% flexible. Talk to us and we will give you the best recommendations based on your interests." },
+                                { q: "¿Podemos cambiar el orden o lugares del itinerario?", a: "¡Claro! Todos nuestros tours son privados y 100% flexibles. Habla con nosotros y te haremos las mejores recomendaciones según tus intereses.", q_en: "Can we change the order or places of the itinerary?", a_en: "Sure! All our tours are private and 100% flexible. Talk to us and we will give you the best recommendations based on your interests." },
                                 { q: "¿En qué idioma es el tour?", a: "La tarifa base es acompañado de un conductor local que habla en Inglés. Puedes añadir Guía certificado en ingles o Español por un suplemento adicional.", q_en: "What language is the tour in?", a_en: "The base rate is accompanied by a local driver who speaks English. You can add a certified English or Spanish Guide for an additional supplement." },
-                                { q: "¿Por qué hay un anticipo (vía Wise)?", a: "Fomentamos el turismo consciente. El adelanto financia directamente a tu guía para preparar el coche y su jornada, sin que tenga que poner dinero de su bolsillo.", q_en: "Why is there an advance payment?", a_en: "We promote conscious tourism. The advance directly funds your guide to prepare the car and their day, without them having to pay out of pocket upfront." }
+                                { q: "¿Por qué hay un pago anticipado?", a: "Turismo de Impacto Positivo: Al realizar un pago por adelantado, garantizamos que tu conductor reciba los fondos necesarios para preparar su vehículo y su jornada sin coste personal. Esto asegura un pago justo, directo y un compromiso real con las familias balinesas desde el primer minuto.", q_en: "Why is there an advance payment?", a_en: "Positive Impact Tourism: By making an advance payment, we guarantee that your driver receives the necessary funds to prepare their vehicle and their day without personal cost. This ensures fair, direct payment and a real commitment to Balinese families from the first minute." }
                             ].map((faq, idx) => (
                                 <div
                                     key={idx}
@@ -662,13 +728,7 @@ const TourDetail = () => {
                             </div>
                         </div>
 
-                        {/* FOMO Message */}
-                        <div className="mb-6 flex items-center gap-3 p-4 rounded-2xl bg-orange-50/80 dark:bg-orange-500/10 border border-orange-100/50 dark:border-orange-500/20 text-orange-800 dark:text-orange-400">
-                            <Clock size={18} className="flex-shrink-0 animate-pulse" />
-                            <span className="text-[11px] font-bold leading-tight">
-                                {i18n.language.startsWith('es') ? '*Fechas limitadas para guía en español.' : '*Limited dates for Spanish guide.'}
-                            </span>
-                        </div>
+
 
                         <button
                             onClick={handleOpenBooking}
@@ -679,7 +739,7 @@ const TourDetail = () => {
 
                         <div className="space-y-2 mt-4">
                             <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
-                                {i18n.language.startsWith('es') ? 'Confirmación vía WhatsApp' : 'WhatsApp Confirmation'}
+                                {i18n.language.startsWith('es') ? 'Hablemos por WhatsApp' : 'Let\'s talk on WhatsApp'}
                             </p>
                         </div>
 
@@ -720,6 +780,7 @@ const TourDetail = () => {
                 tourTitle={l(tour, 'title')}
                 tourPrice={tour.price}
                 tourId={tour.id}
+                initialSelectedStops={selectedStops}
             />
             <TransferModal
                 isOpen={isTransferModalOpen}

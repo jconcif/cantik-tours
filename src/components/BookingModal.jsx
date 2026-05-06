@@ -7,11 +7,14 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getDateStatus, isDateDisabled } from '../data/availability';
 import { trackEvent } from '../utils/analytics';
+import { tours } from '../data/tours';
 
-const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
+const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSelectedStops }) => {
     const { t, i18n } = useTranslation();
     const { formatPrice } = useCurrency();
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(tourId === 'ubud-flexible' ? 1 : 2);
+    const flexibleTour = tours.find(t => t.id === 'ubud-flexible');
+    const availableStops = flexibleTour?.availableStops || [];
     const [isPaid, setIsPaid] = useState(false);
     const [availability, setAvailability] = useState({});
     const [viewBankDetails, setViewBankDetails] = useState(false);
@@ -62,7 +65,9 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
         hotel: '',
         coupon: '',
         experience: 'economy', // Default to cheapest tier
-        paymentType: 'full' // 'deposit' or 'full'
+        paymentType: 'full', // 'deposit' or 'full'
+        selectedStops: [],
+        acceptedTerms: false
     });
 
     const copyToClipboard = (text, field) => {
@@ -85,7 +90,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
                 total_price: finalTotalPriceWithFees,
                 deposit_amount: currentPayAmount,
                 is_paid: overrideIsPaid !== null ? overrideIsPaid : isPaid,
-                coupon: formData.coupon
+                coupon: formData.coupon,
+                itinerary: formData.selectedStops.join(', ')
             };
 
             const response = await fetch('https://cantiktours.com/api/save_booking.php', {
@@ -109,7 +115,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
     const resetModal = () => {
         onClose();
         setTimeout(() => {
-            setStep(1);
+            setStep((tourId === 'ubud-flexible' && formData.selectedStops.length === 0) ? 1 : 2);
             setIsPaid(false);
             setFormData({
                 name: '',
@@ -117,15 +123,37 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId }) => {
                 pax: '2',
                 hotel: '',
                 coupon: '',
-                experience: 'comfort',
-                paymentType: 'deposit'
+                experience: 'economy',
+                paymentType: 'full',
+                selectedStops: [],
+                acceptedTerms: false
             });
             setViewBankDetails(false);
             setCopiedField(null);
             setPaymentStatus('idle');
             setErrorMessage('');
+            setShowCoupon(false);
         }, 500);
     };
+
+    // Auto-populate itinerary for fixed tours or when initialSelectedStops changes
+    useEffect(() => {
+        if (isOpen) {
+            if (tourId === 'ubud-flexible') {
+                if (initialSelectedStops && initialSelectedStops.length > 0) {
+                    setFormData(prev => ({ ...prev, selectedStops: initialSelectedStops }));
+                }
+            } else {
+                const foundTour = tours.find(t => t.id === tourId);
+                if (foundTour && foundTour.itinerary) {
+                    const fixedStops = foundTour.itinerary
+                        .filter(item => item.type === 'visit')
+                        .map(item => i18n.language === 'en' ? item.activity_en : item.activity);
+                    setFormData(prev => ({ ...prev, selectedStops: fixedStops }));
+                }
+            }
+        }
+    }, [isOpen, tourId, initialSelectedStops, i18n.language]);
 
     const handleConfirmPaid = () => {
         const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
@@ -163,27 +191,32 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
     const basePrice = tourPrice || 0;
     let extraPrice = 0;
     let expName = '';
+    let expSub = '';
     switch (formData.experience) {
         case 'economy':
             expName = t('detail.exp_economy_title');
+            expSub = t('detail.exp_economy_sub');
             extraPrice = 0;
             break;
         case 'comfort':
             expName = t('detail.exp_comfort_title');
+            expSub = t('detail.exp_comfort_sub');
             extraPrice = 10;
             break;
         case 'elite':
             expName = t('detail.exp_elite_title');
+            expSub = t('detail.exp_elite_sub');
             extraPrice = 25;
             break;
         default:
             expName = '';
+            expSub = '';
     }
     const totalPrice = basePrice + extraPrice;
     
-    // Expert UX: 5th passenger onwards fee (5€ per extra person)
+    // Extra fee: 5th passenger onwards (2.5€ per extra person)
     const paxNum = parseInt(formData.pax);
-    const extraPaxFee = paxNum > 4 ? (paxNum - 4) * 5 : 0;
+    const extraPaxFee = paxNum > 4 ? (paxNum - 4) * 2.5 : 0;
     
     // Fee for split payment (Deposit + Remaining)
     const splitFee = 5;
@@ -204,48 +237,34 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Si estamos en el paso 1, y la validacion HTML pasó, vamos al paso 2
+        // Paso 1: Selección de paradas (Solo Flexible)
         if (step === 1) {
-            trackEvent('Booking', 'Step 2 reached', tourTitle);
+            if (formData.selectedStops.length === 0) {
+                alert(i18n.language.startsWith('es') ? "Por favor selecciona al menos una parada para continuar." : "Please select at least one stop to continue.");
+                return;
+            }
+            trackEvent('Booking', 'Step 2 reached (Info)', tourTitle);
             setStep(2);
             return;
         }
 
-        // Paso 2: Validar experiencia y pasar al 3
+        // Paso 2: Información básica
         if (step === 2) {
-            if (!formData.experience) {
-                alert(i18n.language.startsWith('es') ? "Por favor selecciona un nivel de experiencia." : "Please select an experience level.");
-                return;
-            }
-            trackEvent('Booking', 'Step 3 reached', `${tourTitle} - ${formData.experience}`);
+            trackEvent('Booking', 'Step 3 reached (Exp)', tourTitle);
             setStep(3);
             return;
         }
 
-        const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
-
-        const message = `¡Hola Cantik Tours!
-Me gustaría reservar este tour, por favor:
-
-- ${t('detail.msg_tour')}: ${tourTitle}
-- ${i18n.language === 'en' ? 'Client' : 'Cliente'}: ${formData.name}
-- ${t('detail.msg_date')}: ${formData.date ? formData.date.toLocaleDateString('es-ES') : ''}
-- ${t('detail.msg_pax')}: ${paxLabel}
-- ${t('detail.msg_hotel')}: ${formData.hotel}
-- Experiencia: ${expName}
-
-- ${i18n.language === 'en' ? 'Total' : 'Total'}: ${finalTotalPriceWithFees} €
-
-¿Me pueden confirmar disponibilidad y enviarme los datos para realizar la transferencia (Euros/Dólares)? 
-¡Muchas gracias!`;
-
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
-
-        trackEvent('Conversion', 'WhatsApp Confirmation', `${tourTitle} (${isPaid ? 'PAID' : 'PENDING'})`);
-        saveBookingToDB();
-        window.open(whatsappUrl, '_blank');
-        resetModal();
+        // Paso 3: Validar experiencia y pasar al resumen
+        if (step === 3) {
+            if (!formData.experience) {
+                alert(i18n.language.startsWith('es') ? "Por favor selecciona un nivel de experiencia." : "Please select an experience level.");
+                return;
+            }
+            trackEvent('Booking', 'Step 4 reached (Summary)', `${tourTitle} - ${formData.experience}`);
+            setStep(4);
+            return;
+        }
     };
 
     const handleAlternativePayment = (e) => {
@@ -266,15 +285,14 @@ ${newBookingId ? `*Referencia:* #CT-${newBookingId}` : '*Referencia:* Pendiente'
 📅 *FECHA:* ${dateStr}
 👥 *PASAJEROS:* ${paxLabel}
 🏨 *HOTEL:* ${formData.hotel}
-✨ *EXPERIENCIA:* ${expName} (${i18n.language === 'en' ? 'English' : 'Español'})
+✨ *EXPERIENCIA:* ${expName} - ${expSub}
+${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARADAS:* ${formData.selectedStops.join(', ')}` : ''}
 
 💰 *DETALLE DEL PAGO:*
-- Total Tour: ${finalTotalPriceWithFees} € ${paymentPlan === 'deposit' ? '(Incluye +5€ gestión de pago fraccionado)' : '(Sin comisiones)'}
-- Pagado hoy: ${currentPayAmount} € (Transferencia)
-${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '- *Estado:* Pago Total Realizado'}
+- Total Tour: ${finalTotalPriceWithFees} € (Sin comisiones)
+- Estado: Pago Pendiente (A la espera de transferencia)
 
-------------------------------------------
-✅ *PASO FINAL:* Adjunto aquí la captura del pago para verificar mi reserva. ¡Gracias!`;
+------------------------------------------`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
@@ -282,9 +300,14 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
         trackEvent('Conversion', 'WhatsApp Bank Details Confirmation', tourTitle);
         
         saveBookingToDB().then(id => {
-            const finalMessage = id 
-                ? message.replace('*Referencia:* Pendiente', `*Referencia:* #CT-${id}`)
-                : message;
+            let finalMessage = message;
+            if (id) {
+                finalMessage = message.replace('*Referencia:* Pendiente', `*Referencia:* #CT-${id}`);
+                finalMessage += `\n\n📄 *Detalles de mi reserva:* https://cantiktours.com/itinerario?ref=CT-${id}`;
+            }
+            
+            finalMessage += `\n------------------------------------------\n✅ *PASO FINAL:* Envíanos la captura del pago realizado (transferencia bancaria) para confirmar la reserva. La verificaremos en un momento. ¡Gracias!`;
+            
             const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(finalMessage)}`;
             window.open(finalUrl, '_blank');
             resetModal();
@@ -320,7 +343,7 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                         <div className="bg-primary/10 p-6 flex flex-col gap-2 border-b border-primary/5">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-xl font-black text-primary uppercase tracking-tight">
-                                    {t('detail.booking_title')}
+                                    {step === 1 ? (i18n.language === 'en' ? 'Build your Route' : 'Arma tu Ruta') : t('detail.booking_title')}
                                 </h3>
                                 <button
                                     onClick={resetModal}
@@ -332,21 +355,111 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                             </div>
                             {/* Progress Indicator */}
                             <div className="flex items-center gap-2 mt-1">
-                                <div className={`h-1.5 flex-1 rounded-full transition-colors duration-500 bg-primary`} />
-                                <div className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${step >= 2 ? 'bg-primary' : 'bg-primary/20 dark:bg-white/10'}`} />
-                                <div className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${step === 3 ? 'bg-primary' : 'bg-primary/20 dark:bg-white/10'}`} />
+                                {[1, 2, 3, 4].map((s) => (
+                                    <div 
+                                        key={s}
+                                        className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${
+                                            step >= s ? 'bg-primary' : 'bg-primary/20 dark:bg-white/10'
+                                        } ${(tourId !== 'ubud-flexible' || (initialSelectedStops && initialSelectedStops.length > 0)) && s === 1 ? 'hidden' : ''}`}
+                                    />
+                                ))}
                             </div>
                         </div>
 
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar overflow-x-hidden">
                             <AnimatePresence mode="wait">
-                                {step === 1 && (
+                                {step === 1 && tourId === 'ubud-flexible' && (
                                     <motion.div
-                                        key="step1"
+                                        key="step1-selection"
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="space-y-6"
+                                    >
+                                        <div className="flex items-center justify-between bg-primary/5 p-4 rounded-2xl border border-primary/10">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-black">
+                                                    {formData.selectedStops.length}
+                                                </div>
+                                                <span className="text-sm font-black text-primary uppercase tracking-wider">
+                                                    {i18n.language === 'en' ? 'Stops Selected' : 'Paradas Seleccionadas'}
+                                                </span>
+                                            </div>
+                                            <span className="text-xs font-bold text-gray-500">
+                                                {i18n.language === 'en' ? 'Limit: 5' : 'Máximo: 5'}
+                                            </span>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                                            {availableStops.map((stop) => {
+                                                const isSelected = formData.selectedStops.includes(stop.name);
+                                                const isDisabled = !isSelected && formData.selectedStops.length >= 5;
+                                                
+                                                return (
+                                                    <button
+                                                        key={stop.id}
+                                                        type="button"
+                                                        disabled={isDisabled}
+                                                        onClick={() => {
+                                                            if (isSelected) {
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    selectedStops: formData.selectedStops.filter(s => s !== stop.name)
+                                                                });
+                                                            } else {
+                                                                setFormData({
+                                                                    ...formData,
+                                                                    selectedStops: [...formData.selectedStops, stop.name]
+                                                                });
+                                                            }
+                                                        }}
+                                                        className={`flex items-center gap-4 p-4 rounded-[1.5rem] border text-left transition-all relative ${
+                                                            isSelected 
+                                                                ? 'bg-primary/5 border-primary shadow-lg shadow-primary/5' 
+                                                                : isDisabled 
+                                                                    ? 'opacity-40 grayscale cursor-not-allowed border-black/5 dark:border-white/5' 
+                                                                    : 'bg-white dark:bg-white/5 border-black/5 dark:border-white/5 hover:border-primary/30 hover:bg-primary/[0.02]'
+                                                        }`}
+                                                    >
+                                                        <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center flex-shrink-0 transition-all ${isSelected ? 'bg-primary border-primary scale-110' : 'border-gray-200 dark:border-gray-700'}`}>
+                                                            {isSelected && <div className="w-2.5 h-2.5 bg-white rounded-[2px]" />}
+                                                        </div>
+                                                        <div className="flex-1">
+                                                            <div className="flex items-center justify-between gap-2">
+                                                                <span className="text-sm font-black leading-tight text-gray-900 dark:text-white">{i18n.language === 'en' ? stop.name_en : stop.name}</span>
+                                                                <span className="text-[10px] bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded-full font-bold text-gray-500 whitespace-nowrap">{stop.duration}</span>
+                                                            </div>
+                                                            <p className="text-[11px] text-gray-500 dark:text-gray-400 font-bold mt-1 line-clamp-1">{i18n.language === 'en' ? stop.desc_en : stop.desc}</p>
+                                                        </div>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            disabled={formData.selectedStops.length < 5}
+                                            onClick={() => setStep(2)}
+                                            className={`w-full py-5 rounded-[1.5rem] text-lg font-black transition-all flex items-center justify-center gap-3 shadow-xl ${
+                                                formData.selectedStops.length === 5 
+                                                    ? 'btn-primary shadow-primary/20 cursor-pointer' 
+                                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
+                                            }`}
+                                        >
+                                            {i18n.language === 'en' ? 'NEXT' : 'SIGUIENTE'}
+                                            <ArrowRight size={20} />
+                                        </button>
+                                    </motion.div>
+                                )}
+
+                                {step === 2 && (
+                                    <motion.div
+                                        key="step2"
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 20 }}
                                         transition={{ duration: 0.3 }}
                                         className="space-y-6"
                                     >
@@ -471,19 +584,30 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                             </AnimatePresence>
                                         </div>
 
-                                        <button
-                                            type="submit"
-                                            className="w-full btn-primary py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex items-center justify-center gap-3 mt-6"
-                                        >
-                                            Siguiente
-                                            <ArrowRight size={20} />
-                                        </button>
+                                        <div className="flex gap-3 mt-6">
+                                            {tourId === 'ubud-flexible' && (!initialSelectedStops || initialSelectedStops.length === 0) && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setStep(1)}
+                                                    className="w-16 flex-none bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-2xl flex items-center justify-center transition-colors shadow-sm"
+                                                >
+                                                    <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
+                                                </button>
+                                            )}
+                                            <button
+                                                type="submit"
+                                                className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex items-center justify-center gap-3"
+                                            >
+                                                Siguiente
+                                                <ArrowRight size={20} />
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 )}
 
-                                {step === 2 && (
+                                {step === 3 && (
                                     <motion.div
-                                        key="step2"
+                                        key="step3"
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: 20 }}
@@ -518,14 +642,15 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                         </div>
                                                     </div>
                                                     <div className="flex-1">
-                                                        <div className="flex items-center justify-between mb-1">
-                                                            <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'economy' ? 'text-gray-900 dark:text-white' : 'text-gray-500'}`}>
-                                                                {t('detail.exp_economy_title')}
-                                                            </span>
-                                                            <span className="text-sm font-black text-gray-900 dark:text-gray-100">{(() => { const p = formatPrice(tourPrice); return `${p.symbol}${p.amount}`; })()}</span>
+                                                        <div className="flex items-center justify-between mb-1.5">
+                                                            <div className="flex flex-col">
+                                                                <span className={`block text-sm font-black transition-colors ${formData.experience === 'economy' ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>
+                                                                    {t('detail.exp_economy_title')}
+                                                                </span>
+                                                            </div>
+                                                            <span className="text-lg font-black text-gray-900 dark:text-gray-100">{(() => { const p = formatPrice(tourPrice); return `${p.symbol}${p.amount}`; })()}</span>
                                                         </div>
-                                                        <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_economy_sub')}</span>
-                                                        <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_economy_desc')}</span>
+                                                        <span className="text-[11px] md:text-xs text-gray-600 dark:text-gray-400 leading-relaxed block font-medium">{t('detail.exp_economy_desc')}</span>
                                                     </div>
                                                 </label>
 
@@ -541,14 +666,15 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                         </div>
                                                     </div>
                                                     <div className="flex-1">
-                                                        <div className="flex items-center justify-between mb-1">
-                                                            <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'comfort' ? 'text-primary' : 'text-gray-500'}`}>
-                                                                {t('detail.exp_comfort_title')}
-                                                            </span>
-                                                            <span className="text-sm font-black text-primary">{(() => { const p = formatPrice(tourPrice + 10); return `${p.symbol}${p.amount}`; })()}</span>
+                                                        <div className="flex items-center justify-between mb-1.5">
+                                                            <div className="flex flex-col">
+                                                                <span className={`block text-sm font-black transition-colors ${formData.experience === 'comfort' ? 'text-primary' : 'text-gray-600 dark:text-gray-400'}`}>
+                                                                    {t('detail.exp_comfort_title')}
+                                                                </span>
+                                                            </div>
+                                                            <span className="text-lg font-black text-primary">{(() => { const p = formatPrice(tourPrice + 10); return `${p.symbol}${p.amount}`; })()}</span>
                                                         </div>
-                                                        <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_comfort_sub')}</span>
-                                                        <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_comfort_desc')}</span>
+                                                        <span className="text-[11px] md:text-xs text-gray-600 dark:text-gray-400 leading-relaxed block font-medium">{t('detail.exp_comfort_desc')}</span>
                                                     </div>
                                                 </label>
 
@@ -561,39 +687,28 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                                         </div>
                                                     </div>
                                                     <div className="flex-1">
-                                                        <div className="flex items-center justify-between mb-1">
-                                                            <span className={`block text-xs font-black uppercase tracking-wide transition-colors ${formData.experience === 'elite' ? 'text-[#D4AF37]' : 'text-gray-500'}`}>
-                                                                {t('detail.exp_elite_title')}
-                                                            </span>
-                                                            <span className="text-sm font-black text-[#D4AF37]">{(() => { const p = formatPrice(tourPrice + 25); return `${p.symbol}${p.amount}`; })()}</span>
+                                                        <div className="flex items-center justify-between mb-1.5">
+                                                            <div className="flex flex-col">
+                                                                <span className={`block text-sm font-black transition-colors ${formData.experience === 'elite' ? 'text-[#D4AF37]' : 'text-gray-600 dark:text-gray-400'}`}>
+                                                                    {t('detail.exp_elite_title')}
+                                                                </span>
+                                                            </div>
+                                                            <span className="text-lg font-black text-[#D4AF37]">{(() => { const p = formatPrice(tourPrice + 25); return `${p.symbol}${p.amount}`; })()}</span>
                                                         </div>
-                                                        <span className="text-xs md:text-sm font-bold text-gray-800 dark:text-gray-200 block mb-1">{t('detail.exp_elite_sub')}</span>
-                                                        <span className="text-[11px] md:text-xs text-gray-500 dark:text-gray-400 leading-snug block">{t('detail.exp_elite_desc')}</span>
-
+                                                        <span className="text-[11px] md:text-xs text-gray-600 dark:text-gray-400 leading-relaxed block font-medium">{t('detail.exp_elite_desc')}</span>
                                                     </div>
                                                 </label>
                                             </div>
                                         </div>
 
-                                        {/* Expert UX: Real-time price update to avoid sticker shock */}
-                                        <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 flex items-center justify-between mt-2">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'Total Price' : 'Precio Total'}</span>
-                                                <span className="text-[9px] text-gray-500 font-bold">{i18n.language === 'en' ? 'Per vehicle up to 4 pax' : 'Por vehículo hasta 4 pax'}</span>
-                                            </div>
-                                            <div className="text-2xl font-black text-primary flex items-center gap-1">
-                                                {finalTotalPrice}
-                                                <span className="text-xs">€</span>
-                                            </div>
-                                        </div>
 
-                                        {/* Navigation Buttons for Step 2 */}
+
+                                        {/* Navigation Buttons for Step 3 */}
                                         <div className="flex gap-3 mt-6">
                                             <button
                                                 type="button"
-                                                onClick={() => setStep(1)}
+                                                onClick={() => setStep(2)}
                                                 className="w-16 flex-none bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-2xl flex items-center justify-center transition-colors shadow-sm"
-                                                aria-label="Volver"
                                             >
                                                 <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
                                             </button>
@@ -608,9 +723,10 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                     </motion.div>
                                 )}
 
-                                {step === 3 && (
+                                {/* Step 4: Summary & Confirm */}
+                                {step === 4 && (
                                     <motion.div
-                                        key="step3"
+                                        key="step4"
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         exit={{ opacity: 0, y: 10 }}
@@ -626,141 +742,149 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : '
                                         </div>
 
                                         {/* Premium Summary Info */}
-                                        <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-center justify-between mb-2">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{i18n.language === 'en' ? 'PAYMENT METHOD' : 'MÉTODO DE PAGO'}</span>
-                                                <span className="text-xs font-bold text-gray-900 dark:text-white">{i18n.language === 'en' ? 'Bank Transfer (100%)' : 'Transferencia Bancaria (100%)'}</span>
+                                        <div className="bg-white dark:bg-white/5 rounded-3xl border border-black/5 dark:border-white/10 overflow-hidden shadow-xl">
+                                            <div className="bg-primary/10 p-4 border-b border-primary/10 flex items-center justify-between">
+                                                <h3 className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">{i18n.language === 'en' ? 'RESERVATION SUMMARY' : 'RESUMEN DE LA RESERVA'}</h3>
+                                                <div className="bg-primary/20 px-2 py-0.5 rounded-full text-[8px] font-black text-primary uppercase">{i18n.language === 'en' ? 'Awaiting Payment' : 'Pendiente de Pago'}</div>
                                             </div>
-                                            <div className="bg-primary/10 px-3 py-1.5 rounded-xl">
-                                                <CreditCard className="text-primary" size={18} />
-                                            </div>
-                                        </div>
-
-
-
-                                            <div className="bg-white dark:bg-[#1a1a1a] rounded-[32px] p-6 md:p-8 shadow-2xl shadow-primary/20 border border-black/5 dark:border-white/10 transition-all">
-                                                <div className="flex justify-between items-start mb-6">
+                                            <div className="p-5 space-y-4">
+                                                <div className="grid grid-cols-2 gap-4">
                                                     <div className="space-y-1">
-                                                        <div className="flex items-center gap-2 mb-2">
-                                                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                                                            <span className="text-[10px] font-black text-primary uppercase tracking-widest">
-                                                                {i18n.language === 'en' ? 'PAYMENT IN FULL' : 'PAGO TOTAL'}
-                                                            </span>
-                                                        </div>
-                                                        <h3 className="text-lg font-black text-gray-900 dark:text-white leading-tight">
-                                                            {i18n.language === 'en' ? 'Full Tour Payment' : 'Pago Completo del Tour'}
-                                                        </h3>
-                                                        <p className="text-[10px] font-bold text-gray-400 italic">
-                                                            {i18n.language === 'en' ? 'Support & Reservation insurance included' : 'Incluye soporte 24/7 y garantía de reserva'}
-                                                        </p>
+                                                        <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">{t('detail.msg_tour')}</span>
+                                                        <p className="text-[11px] font-bold text-gray-900 dark:text-white leading-tight">{tourTitle}</p>
                                                     </div>
-                                                    <div className="text-right">
-                                                        <div className="text-3xl font-black text-primary">{currentPayAmount}€</div>
-                                                        <div className="text-[8px] font-black text-gray-400 uppercase tracking-tighter mt-1">
-                                                            {i18n.language === 'en' ? 'Total tour value:' : 'Valor total del tour:'} {totalPrice}€
-                                                        </div>
+                                                    <div className="space-y-1">
+                                                        <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">{t('detail.msg_date')}</span>
+                                                        <p className="text-[11px] font-bold text-gray-900 dark:text-white">{formData.date?.toLocaleDateString('es-ES')}</p>
                                                     </div>
                                                 </div>
 
-                                                <div className="space-y-4">
-                                                    <div className="bg-primary/5 p-6 rounded-[24px] border border-primary/20 flex flex-col items-center text-center gap-4 transition-all hover:border-primary/50 shadow-sm">
-                                                        <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                                                            <MessageCircle className="text-primary" size={24} />
+                                                <div className="space-y-4 pt-2">
+                                                    <div className="space-y-1 pt-2 border-t border-black/5 dark:border-white/5">
+                                                        <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">{t('detail.msg_pax')}</span>
+                                                        <p className="text-[11px] font-bold text-gray-900 dark:text-white">{formData.pax} {i18n.language === 'en' ? 'People' : 'Personas'}</p>
+                                                    </div>
+                                                    <div className="space-y-1 pt-2 border-t border-black/5 dark:border-white/5">
+                                                        <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">{t('detail.booking_hotel')}</span>
+                                                        <p className="text-[11px] font-bold text-gray-900 dark:text-white">{formData.hotel || '-'}</p>
+                                                    </div>
+                                                    <div className="space-y-1 pt-2 border-t border-black/5 dark:border-white/5">
+                                                        <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest">{i18n.language === 'en' ? 'Experience' : 'Experiencia'}</span>
+                                                        <p className="text-[11px] font-bold text-gray-900 dark:text-white">{expName}</p>
+                                                    </div>
+                                                </div>
+
+                                                {/* Hidden selected stops in modal as per user request */}
+
+
+
+                                                <div className="pt-3 border-t border-black/5 dark:border-white/5 space-y-1">
+                                                    {extraPaxFee > 0 && (
+                                                        <div className="flex justify-between items-center text-[9px] text-gray-500 font-bold">
+                                                            <span>{i18n.language === 'en' ? 'Extra passenger supplement' : 'Suplemento pasajeros extra'}</span>
+                                                            <span>+{extraPaxFee}€</span>
                                                         </div>
-                                                        <div className="space-y-1">
-                                                            <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-tight">
-                                                                {i18n.language === 'en' ? 'Next: Payment Details' : 'Siguiente Paso: Datos de Pago'}
-                                                            </h4>
-                                                            <p className="text-[10px] font-bold text-gray-500 leading-relaxed px-4">
-                                                                {i18n.language === 'en' 
-                                                                    ? 'Once you send the booking, we will provide you with the transfer details (EUR or USD) via WhatsApp to secure your dates.' 
-                                                                    : 'Al enviar la reserva, te proporcionaremos los datos de transferencia (Euros o Dólares) por WhatsApp para bloquear tus fechas.'}
-                                                            </p>
+                                                    )}
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'TOTAL PRICE' : 'PRECIO TOTAL'}</span>
+                                                            <span className="text-[8px] text-gray-400 font-bold italic">{i18n.language === 'en' ? '100% via Bank Transfer' : '100% vía Transferencia Bancaria'}</span>
                                                         </div>
+                                                    <div className="text-2xl font-black text-primary">{finalTotalPriceWithFees}€</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                        {/* Terms & Action */}
+                                        <div className="space-y-4">
+                                            <div className="flex items-start gap-3 p-2">
+                                                <input 
+                                                    id="terms-check"
+                                                    type="checkbox" 
+                                                    checked={formData.acceptedTerms}
+                                                    onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
+                                                    className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                                />
+                                                <label htmlFor="terms-check" className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug cursor-pointer">
+                                                    {i18n.language === 'en' 
+                                                        ? <>I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms and Conditions</a>.</>
+                                                        : <>Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos y Condiciones</a>.</>
+                                                    }
+                                                </label>
+                                            </div>
+                                            
+                                            <button 
+                                                type="button"
+                                                onClick={handleConfirmWhatsApp}
+                                                disabled={!formData.acceptedTerms}
+                                                className={`w-full py-5 rounded-3xl text-[11px] font-black shadow-xl flex flex-col items-center justify-center gap-1 transition-all group ${
+                                                    formData.acceptedTerms 
+                                                        ? 'bg-[#25D366] hover:bg-[#128C7E] text-white shadow-[#25D366]/20 active:scale-[0.98]' 
+                                                        : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                                                }`}
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    <MessageCircle size={22} className={formData.acceptedTerms ? "group-hover:scale-110 transition-transform" : ""} /> 
+                                                    <span>{i18n.language === 'en' ? 'ACCEPT & SEND BOOKING VIA WHATSAPP' : 'ACEPTAR Y ENVIAR RESERVA POR WHATSAPP'}</span>
+                                                </div>
+                                                <span className="text-[8px] opacity-70 font-bold uppercase tracking-[0.2em]">{i18n.language === 'en' ? 'CONNECT WITH OUR TEAM NOW' : 'CONECTA CON NUESTRO EQUIPO AHORA'}</span>
+                                            </button>
+
+                                            {isPaid && (
+                                                <motion.div 
+                                                    initial={{ scale: 0.9, opacity: 0 }} 
+                                                    animate={{ scale: 1, opacity: 1 }} 
+                                                    className="flex flex-col items-center space-y-6 py-4"
+                                                >
+                                                    <div className="flex flex-col items-center text-center">
+                                                        <div className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-3xl shadow-lg shadow-green-500/20 mb-4 animate-bounce">✓</div> 
+                                                        <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">{i18n.language === 'en' ? 'RESERVATION SECURED!' : '¡RESERVA ASEGURADA!'}</h3>
+                                                        <p className="text-xs font-bold text-gray-500 mt-1">{i18n.language === 'en' ? 'We have received your payment correctly.' : 'Hemos recibido tu pago correctamente.'}</p>
                                                     </div>
 
-                                                    <div className="pt-2">
+                                                    <div className="w-full space-y-3">
                                                         <button 
-                                                            type="button"
-                                                            onClick={handleConfirmWhatsApp}
-                                                            className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-5 rounded-[24px] text-xs font-black shadow-xl shadow-[#25D366]/20 flex flex-col items-center justify-center gap-1 transition-all group active:scale-[0.98]"
+                                                            onClick={handleConfirmPaid}
+                                                            className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-5 rounded-2xl text-sm font-black shadow-xl shadow-[#25D366]/20 flex items-center justify-center gap-3 transition-all uppercase tracking-widest group"
                                                         >
-                                                            <div className="flex items-center gap-2">
-                                                                <MessageCircle size={20} className="group-hover:scale-110 transition-transform" /> 
-                                                                <span>{i18n.language === 'en' ? 'SEND BOOKING & GET PAYMENT INFO' : 'ENVIAR RESERVA Y RECIBIR DATOS'}</span>
-                                                            </div>
-                                                            <span className="text-[9px] opacity-70 font-bold uppercase tracking-widest">{i18n.language === 'en' ? 'Connect via WhatsApp' : 'Contactar por WhatsApp'}</span>
+                                                            <MessageCircle size={20} className="group-hover:scale-110 transition-transform" /> 
+                                                            {i18n.language === 'en' ? 'Send Confirmation WhatsApp' : 'Enviar Confirmación WhatsApp'}
+                                                        </button>
+
+                                                        {newBookingId && (
+                                                            <a 
+                                                                href={`/itinerario?ref=CT-${newBookingId}`} 
+                                                                target="_blank" 
+                                                                rel="noreferrer"
+                                                                className="w-full bg-primary/10 hover:bg-primary/20 text-primary py-5 rounded-2xl text-sm font-black flex items-center justify-center gap-3 transition-all uppercase tracking-widest border border-primary/20"
+                                                            >
+                                                                <Ticket size={20} />
+                                                                {i18n.language === 'en' ? 'View My Itinerary & Receipt' : 'Ver mi Itinerario y Recibo'}
+                                                            </a>
+                                                        )}
+
+                                                        <button 
+                                                            onClick={resetModal}
+                                                            className="w-full py-4 text-gray-400 hover:text-gray-600 dark:hover:text-white text-[10px] font-black uppercase tracking-[0.2em] transition-colors"
+                                                        >
+                                                            {i18n.language === 'en' ? 'Close & Return to Web' : 'Cerrar y volver a la web'}
                                                         </button>
                                                     </div>
+                                                </motion.div>
+                                            )}
 
-                                                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 flex gap-3 items-start">
-                                                        <Shield size={14} className="text-amber-500 shrink-0 mt-0.5" />
-                                                        <p className="text-[9px] text-amber-700 dark:text-amber-400 font-bold leading-tight">
-                                                            {i18n.language === 'en' 
-                                                                ? 'Important: Your reservation will be confirmed once we verify the payment in our bank account.' 
-                                                                : 'Importante: Tu reserva se confirmará definitivamente una vez verifiquemos el ingreso en nuestra cuenta bancaria.'}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                
-                                                {isPaid && (
-                                                    <motion.div 
-                                                        initial={{ scale: 0.9, opacity: 0 }} 
-                                                        animate={{ scale: 1, opacity: 1 }} 
-                                                        className="flex flex-col items-center space-y-6 py-4"
-                                                    >
-                                                        <div className="flex flex-col items-center text-center">
-                                                            <div className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-3xl shadow-lg shadow-green-500/20 mb-4 animate-bounce">✓</div> 
-                                                            <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">{i18n.language === 'en' ? 'RESERVATION SECURED!' : '¡RESERVA ASEGURADA!'}</h3>
-                                                            <p className="text-xs font-bold text-gray-500 mt-1">{i18n.language === 'en' ? 'We have received your payment correctly.' : 'Hemos recibido tu pago correctamente.'}</p>
-                                                        </div>
-
-                                                        <div className="w-full space-y-3">
-                                                            <button 
-                                                                onClick={handleConfirmPaid}
-                                                                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-5 rounded-2xl text-sm font-black shadow-xl shadow-[#25D366]/20 flex items-center justify-center gap-3 transition-all uppercase tracking-widest group"
-                                                            >
-                                                                <MessageCircle size={20} className="group-hover:scale-110 transition-transform" /> 
-                                                                {i18n.language === 'en' ? 'Send Confirmation WhatsApp' : 'Enviar Confirmación WhatsApp'}
-                                                            </button>
-
-                                                            {newBookingId && (
-                                                                <a 
-                                                                    href={`/itinerario?ref=CT-${newBookingId}`} 
-                                                                    target="_blank" 
-                                                                    rel="noreferrer"
-                                                                    className="w-full bg-primary/10 hover:bg-primary/20 text-primary py-5 rounded-2xl text-sm font-black flex items-center justify-center gap-3 transition-all uppercase tracking-widest border border-primary/20"
-                                                                >
-                                                                    <Ticket size={20} />
-                                                                    {i18n.language === 'en' ? 'View My Itinerary & Receipt' : 'Ver mi Itinerario y Recibo'}
-                                                                </a>
-                                                            )}
-
-                                                            <button 
-                                                                onClick={resetModal}
-                                                                className="w-full py-4 text-gray-400 hover:text-gray-600 dark:hover:text-white text-[10px] font-black uppercase tracking-[0.2em] transition-colors"
-                                                            >
-                                                                {i18n.language === 'en' ? 'Close & Return to Web' : 'Cerrar y volver a la web'}
-                                                            </button>
-                                                        </div>
-                                                    </motion.div>
-                                                )}
+                                            <div className="flex justify-center pt-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setStep(3)}
+                                                    className="px-8 py-3 text-gray-400 hover:text-gray-600 dark:hover:text-white rounded-2xl font-black text-[10px] uppercase tracking-widest transition-colors flex items-center justify-center gap-2"
+                                                >
+                                                    <ArrowLeft size={14} /> {i18n.language === 'en' ? 'BACK' : 'VOLVER'}
+                                                </button>
                                             </div>
 
-                                        <div className="flex justify-center mt-4">
-                                            <button
-                                                type="button"
-                                                onClick={() => setStep(2)}
-                                                className="px-8 py-4 bg-gray-100 dark:bg-white/5 text-gray-500 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-gray-200 dark:hover:bg-white/10 transition-colors flex items-center justify-center gap-2"
-                                            >
-                                                <ArrowLeft size={16} /> {i18n.language === 'en' ? 'BACK' : 'VOLVER'}
-                                            </button>
-                                        </div>
 
-                                        {/* Cancellation Policy Shield */}
-                                        <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 py-3 rounded-2xl border border-emerald-100 dark:border-emerald-500/20 mt-4">
-                                            <ShieldCheck size={14} />
-                                            {i18n.language === 'en' ? 'Free cancellation up to 48h before the trip' : 'Cancelación gratuita hasta 48h antes del viaje'}
                                         </div>
 
                                         {/* Trust Box: Pago Consciente */}
