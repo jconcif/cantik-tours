@@ -824,13 +824,13 @@ export const tours = [
         title_en: "West Bali: Purification, Temples & Sunset",
         description: "Vive una purificación espiritual intensa, el bosque Sangeh y el atardecer en Tanah Lot.",
         description_en: "Experience intense spiritual purification, explore Sangeh forest and marvel at Tanah Lot.",
-        heroSubtitle: "Desde el ritual de agua en Beji Griya hasta la espectacular danza de fuego frente al océano.",
-        heroSubtitle_en: "From the water ritual in Beji Griya to the spectacular fire dance facing the ocean.",
-        fullDescription: "Prepárate para una inmersión cultural profunda. Empezaremos el día con un viaje interior realizando el ritual de purificación (Melukat) en la cascada y zona de esculturas escondidas de Beji Griya. Continuaremos paseando entre inmensos árboles de Nuez moscada en Sangeh, admiraremos la arquitectura del templo real de Taman Ayun y terminaremos con uno de los momentos más épicos de Bali: el atardecer en Tanah Lot, donde el templo parece flotar sobre el mar, coronado con el espectacular baile Kecak del fuego.",
-        fullDescription_en: "Get ready for a deep cultural immersion. We will start the day with an inner journey performing the purification ritual (Melukat) at the hidden Beji Griya waterfall. We will continue walking among immense nutmeg trees in Sangeh, admire the royal temple of Taman Ayun and finish with sunset at Tanah Lot, crowned with the spectacular Kecak fire dance.",
+        heroSubtitle: "Desde el ritual de agua en Beji Griya hasta el atardecer épico en el Templo Tanah Lot.",
+        heroSubtitle_en: "From the water ritual in Beji Griya to the epic sunset at Tanah Lot Temple.",
+        fullDescription: "Prepárate para una inmersión cultural profunda. Empezaremos el día con un viaje interior realizando el ritual de purificación (Melukat) en la cascada y zona de esculturas escondidas de Beji Griya. Continuaremos paseando entre inmensos árboles de Nuez moscada en Sangeh, admiraremos la arquitectura del templo real de Taman Ayun y terminaremos con uno de los momentos más épicos de Bali: el atardecer en Tanah Lot, donde el templo parece flotar sobre el mar.",
+        fullDescription_en: "Get ready for a deep cultural immersion. We will start the day with an inner journey performing the purification ritual (Melukat) at the hidden Beji Griya waterfall. We will continue walking among immense nutmeg trees in Sangeh, admire the royal temple of Taman Ayun and finish with sunset at Tanah Lot, where the temple seems to float on the sea.",
         price: 69,
-        duration: "10 hrs",
-        duration_en: "10 hrs",
+        duration: "9-10 hrs",
+        duration_en: "9-10 hrs",
         image: "https://www.ministryofvillas.com/wp-content/uploads/2016/04/bali-tanah-lot-temple-sunset.jpg",
         images: [
             "https://www.ministryofvillas.com/wp-content/uploads/2016/04/bali-tanah-lot-temple-sunset.jpg",
@@ -843,22 +843,20 @@ export const tours = [
         packingList: ['swimwear', 'money', 'camera', 'sunscreen'],
         importantInfo: [
             "Para la purificación (Melukat), trae toalla y ropa interior/bañador. La cascada mojará toda tu ropa exterior (te facilitan un sarong para el agua).",
-            "Taman Ayun es un recinto real; no ingresarás a los pabellones internos, la visita es por sus hermosos jardines exteriores.",
-            "La danza Kecak tiene plazas limitadas, por lo que cumpliremos el horario con cierta puntualidad para asegurar vuestro asiento frente al atardecer."
+            "Taman Ayun es un recinto real; no ingresarás a los pabellones internos, la visita es por sus hermosos jardines exteriores."
         ],
         importantInfo_en: [
             "For the purification (Melukat), bring a towel and swimwear. You will receive a water sarong.",
-            "Taman Ayun is a royal precinct; the innermost sanctum is not accessible.",
-            "The Kecak dance has limited seats, so the day's pace must be kept to guarantee good spots."
+            "Taman Ayun is a royal precinct; the innermost sanctum is not accessible."
         ],
         itinerary: [
             {
                 type: 'pickup',
-                duration: "11:00 am",
+                duration: "08:30 am",
                 activity: "Recogida tranquila",
                 activity_en: "Relaxed pickup",
-                desc: "Te pasamos a buscar al hotel un poco más tarde para disfrutar de una mañana relajada antes de empezar la ruta.",
-                desc_en: "We pick you up at your hotel a bit later to enjoy a relaxed morning before starting the route."
+                desc: "Te pasamos a buscar al hotel para ir en dirección suroeste sin prisas.",
+                desc_en: "We pick you up at your hotel to head southwest without rushing."
             },
             {
                 type: 'visit',
@@ -897,31 +895,22 @@ export const tours = [
                 desc_en: "Strategic stop to recharge energies enjoying Balinese gastronomy."
             },
             {
-                type: 'photo',
-                duration: "1.5 horas",
-                duration_en: "1.5 hours",
-                activity: "Llegada al Templo Tanah Lot",
-                activity_en: "Tanah Lot Temple arrival",
-                desc: "Llegaremos con margen al sur de la isla. Tendremos el tiempo perfecto para recorrer este icónico peñón sobre el mar y encontrar el encuadre ideal antes de que caiga el sol.",
-                desc_en: "We will arrive with plenty of time to explore this iconic rock formation in the sea and find the perfect photo frame."
-            },
-            {
                 type: 'visit',
-                duration: "1 hora",
-                duration_en: "1 hour",
-                activity: "Atardecer de Fuego: Danza Kecak",
-                activity_en: "Fire Sunset: Kecak Dance",
-                desc: "A las 18:00, el anfiteatro cobra vida frente al mar. Déjate hipnotizar por el coro de 50 hombres que forman una orquesta humana única, mientras las llamas y el atardecer iluminan la legendaria danza del Ramayana en un escenario inolvidable.",
-                desc_en: "At 6:00 PM, the oceanfront amphitheater comes alive. Be mesmerized by the choir of 50 men forming a unique human orchestra, as flames and the sunset illuminate the legendary Ramayana dance in an unforgettable setting."
+                duration: "2 horas",
+                duration_en: "2 hours",
+                activity: "Templo Tanah Lot",
+                activity_en: "Tanah Lot Temple",
+                desc: "Tendremos el tiempo perfecto para recorrer este icónico peñón sobre el mar, descubrir sus rincones sagrados y disfrutar de uno de los atardeceres más hermosos de Bali.",
+                desc_en: "We will have perfect time to explore this iconic rock formation in the sea, discover its sacred corners and enjoy one of the most beautiful sunsets in Bali."
             },
             {
                 type: 'dropoff',
-                duration: "20:00 - 21:00",
-                duration_en: "8:00 pm - 9:00 pm",
+                duration: "18:30 - 19:30",
+                duration_en: "6:30 pm - 7:30 pm",
                 activity: "Regreso a casa",
                 activity_en: "Return home",
-                desc: "Te dejamos de vuelta en tu alojamiento para que descanses tras un día inolvidable. La llegada suele ser entre las 20:00 y 21:00, dependiendo de la ubicación de tu hotel y el tráfico.",
-                desc_en: "We drop you back at your accommodation to rest after an unforgettable day. Arrival is usually between 8:00 PM and 9:00 PM, depending on your hotel location and traffic."
+                desc: "Te dejamos de vuelta en tu alojamiento para que descanses tras un día inolvidable. La llegada suele ser entre las 18:30 y 19:30, dependiendo de la ubicación de tu hotel y el tráfico.",
+                desc_en: "We drop you back at your accommodation to rest after an unforgettable day. Arrival is usually between 6:30 PM and 7:30 PM, depending on your hotel location and traffic."
             }
         ],
         location: "Mengwi / Tanah Lot",
