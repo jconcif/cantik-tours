@@ -8,14 +8,14 @@ const router = Router();
 // ── Public: Save a new booking from the frontend form ──
 router.post(
   '/public',
-  sanitize({ client_name: 200, hotel: 200, tour_title: 200, coupon: 50, itinerary: 2000 }),
+  sanitize({ client_name: 200, hotel: 200, tour_title: 200, coupon: 50, itinerary: 2000, reference: 20 }),
   validateBody(['tour_id', 'client_name', 'date', 'pax']),
   async (req, res) => {
     try {
       const {
         tour_id, tour_title, client_name, date, pax, hotel,
         experience, payment_type, total_price, deposit_amount,
-        is_paid, coupon, itinerary,
+        is_paid, coupon, itinerary, reference
       } = req.body;
 
       // Server-side price validation would go here
@@ -38,6 +38,7 @@ router.post(
           coupon: coupon || '',
           itinerary: itinerary || '',
           payment_status: is_paid ? 'reserved' : 'requested',
+          reference: reference || null
         })
         .select('id')
         .single();

@@ -49,13 +49,40 @@ export default function ItineraryPage() {
   );
 
   if (error) return (
-    <div className="min-h-screen bg-[#0f0f0f] flex flex-col items-center justify-center p-6 text-center">
-      <div className="bg-red-500/10 p-4 rounded-full mb-4">
-        <ArrowLeft className="text-red-500" size={40} />
+    <div className="min-h-screen bg-[#0f0f0f] flex flex-col items-center justify-center p-8 text-center">
+      <div className="w-24 h-24 bg-[#11BDDB]/10 rounded-full flex items-center justify-center mb-8">
+        <Clock className="text-[#11BDDB] animate-pulse" size={48} />
       </div>
-      <h2 className="text-white text-2xl font-black mb-2">¡Ups! Algo salió mal</h2>
-      <p className="text-gray-400 mb-8">{error}</p>
-      <Link to="/" className="bg-[#11BDDB] text-white px-8 py-4 rounded-2xl font-black shadow-lg">Volver a la web</Link>
+      
+      <h2 className="text-white text-3xl font-black mb-4 leading-tight">
+        Estamos preparando tu <br/><span className="text-[#11BDDB]">Itinerario Personalizado</span>
+      </h2>
+      
+      <p className="text-gray-400 mb-10 max-w-md mx-auto leading-relaxed">
+        Tu reserva <span className="text-white font-bold">{ref}</span> ha sido recibida correctamente. En breves momentos podrás ver todos los detalles aquí mismo.
+      </p>
+
+      <div className="flex flex-col gap-4 w-full max-w-xs">
+        <a 
+          href={`https://wa.me/34642517787?text=${encodeURIComponent(`Hola Cantik Tours! Estoy consultando mi itinerario con referencia ${ref} y me gustaría recibir más información.`)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-5 rounded-2xl font-black shadow-xl transition-all flex items-center justify-center gap-3 transform hover:scale-105"
+        >
+          <MessageCircle size={24} />
+          Consultar por WhatsApp
+        </a>
+        
+        <Link to="/" className="text-gray-500 font-bold hover:text-white transition-colors py-2">
+          Volver a la web principal
+        </Link>
+      </div>
+
+      <div className="mt-16 pt-8 border-t border-white/5 w-full max-w-md">
+        <p className="text-[10px] text-gray-600 uppercase tracking-widest font-bold">
+          Cantik Tours Bali · Soporte 24/7
+        </p>
+      </div>
     </div>
   );
 

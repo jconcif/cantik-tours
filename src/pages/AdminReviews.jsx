@@ -4,7 +4,7 @@ import { login as apiLogin, getToken, clearToken } from '../services/api';
 import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement } from '../components/AdminComponents';
 
 const C = '#11BDDB';
-const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en'};
+const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en',reference:''};
 const emptyDriver = {name:'',phone:'',car_model:''};
 const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
 const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
