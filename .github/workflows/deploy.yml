@@ -31,14 +31,20 @@ jobs:
           VITE_PAYPAL_CLIENT_ID: ${{ secrets.VITE_PAYPAL_CLIENT_ID }}
           VITE_PAYPAL_CURRENCY: ${{ secrets.VITE_PAYPAL_CURRENCY }}
 
+      - name: 🔍 Inspect dist folder
+        run: ls -R dist
+
       - name: 🚀 Sync files via FTP
-        uses: AtheSJH/ftp-deploy@v1.2
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          ftp-ip: 45.130.228.19
-          ftp-username: ${{ secrets.FTP_USERNAME }}
-          ftp-password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist
-          remote-dir: ./public_html
+          server: 45.130.228.19
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          server-dir: ./public_html/
+          protocol: ftp
+          security: loose
+
 
 
 
