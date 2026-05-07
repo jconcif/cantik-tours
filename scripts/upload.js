@@ -15,12 +15,22 @@ async function upload() {
             secure: false
         });
         
-        console.log("🚀 Conectado al FTP. Empezando subida limpia...");
+        console.log("🚀 Conectado al FTP.");
         
-        // Entrar en public_html
-        await client.cd("public_html");
+        // Listar archivos para saber dónde estamos
+        const list = await client.list();
+        console.log("📂 Archivos en el servidor:", list.map(f => f.name).join(", "));
         
-        // Subir el contenido de dist
+        const hasPublicHtml = list.some(f => f.name === "public_html");
+        
+        if (hasPublicHtml) {
+            console.log("📁 Entrando en public_html...");
+            await client.cd("public_html");
+        } else {
+            console.log("ℹ️ Ya parecemos estar en la carpeta destino o public_html no existe aquí.");
+        }
+        
+        console.log("📤 Subiendo archivos de dist...");
         await client.uploadFromDir(path.join(__dirname, "../dist"));
         
         console.log("✅ ¡Subida completada con éxito!");
