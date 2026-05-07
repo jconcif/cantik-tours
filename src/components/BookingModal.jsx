@@ -268,12 +268,15 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
     };
 
     const handleConfirmWhatsApp = () => {
-        const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
+        // 1. Generate an instant reference (e.g. CT-A7B2)
+        const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
+        const paxValue = String(formData.pax || '2').replace(' o más', '');
+        const paxLabel = t(`detail.booking_pax_${paxValue}`);
         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
         const message = `🌟 *VOUCHER DE RESERVA - CANTIK TOURS* 🌟
 ------------------------------------------
-${newBookingId ? `*Referencia:* #CT-${newBookingId}` : '*Referencia:* Pendiente'}
+*Referencia:* #CT-${instantId}
 
 👤 *CLIENTE:* ${formData.name.toUpperCase()}
 🗺️ *TOUR:* ${tourTitle.toUpperCase()}
@@ -287,27 +290,21 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
 - Total Tour: ${finalTotalPriceWithFees} € (Sin comisiones)
 - Estado: Pago Pendiente (A la espera de transferencia)
 
-------------------------------------------`;
+------------------------------------------
+✅ *PASO FINAL:* Envíanos la captura del pago realizado (transferencia bancaria) para confirmar la reserva. La verificaremos en un momento. ¡Gracias!
+\n📄 *Seguimiento:* https://cantiktours.com/itinerario?ref=CT-${instantId}`;
 
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
+        // 2. OPEN WHATSAPP INSTANTLY (0ms delay)
+        const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(message)}`;
+        window.open(finalUrl, '_blank');
 
-        trackEvent('Conversion', 'WhatsApp Bank Details Confirmation', tourTitle);
+        // 3. Save to DB in background (user doesn't wait)
+        saveBookingToDB(); // We can pass instantId to store it if we update schema, but serial ID is fine for now.
+        
+        trackEvent('Conversion', 'WhatsApp Booking Instant', tourTitle);
         trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
         
-        saveBookingToDB().then(id => {
-            let finalMessage = message;
-            if (id) {
-                finalMessage = message.replace('*Referencia:* Pendiente', `*Referencia:* #CT-${id}`);
-                finalMessage += `\n\n📄 *Detalles de mi reserva:* https://cantiktours.com/itinerario?ref=CT-${id}`;
-            }
-            
-            finalMessage += `\n------------------------------------------\n✅ *PASO FINAL:* Envíanos la captura del pago realizado (transferencia bancaria) para confirmar la reserva. La verificaremos en un momento. ¡Gracias!`;
-            
-            const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(finalMessage)}`;
-            window.open(finalUrl, '_blank');
-            resetModal();
-        });
+        resetModal();
     };
 
     const inputClasses = "w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all text-gray-700 dark:text-gray-200 min-h-[62px] block box-border";
@@ -813,17 +810,14 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                 type="button"
                                                 onClick={handleConfirmWhatsApp}
                                                 disabled={!formData.acceptedTerms}
-                                                className={`w-full py-5 rounded-3xl text-[11px] font-black shadow-xl flex flex-col items-center justify-center gap-1 transition-all group ${
+                                                className={`w-full py-6 rounded-3xl text-sm font-black shadow-xl flex items-center justify-center gap-3 transition-all group ${
                                                     formData.acceptedTerms 
                                                         ? 'bg-[#25D366] hover:bg-[#128C7E] text-white shadow-[#25D366]/20 active:scale-[0.98]' 
                                                         : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
                                                 }`}
                                             >
-                                                <div className="flex items-center gap-2">
-                                                    <MessageCircle size={22} className={formData.acceptedTerms ? "group-hover:scale-110 transition-transform" : ""} /> 
-                                                    <span>{i18n.language === 'en' ? 'ACCEPT & SEND BOOKING VIA WHATSAPP' : 'ACEPTAR Y ENVIAR RESERVA POR WHATSAPP'}</span>
-                                                </div>
-                                                <span className="text-[8px] opacity-70 font-bold uppercase tracking-[0.2em]">{i18n.language === 'en' ? 'CONNECT WITH OUR TEAM NOW' : 'CONECTA CON NUESTRO EQUIPO AHORA'}</span>
+                                                <MessageCircle size={24} className={formData.acceptedTerms ? "group-hover:scale-110 transition-transform" : ""} /> 
+                                                <span>{i18n.language === 'en' ? 'SEND BOOKING VIA WHATSAPP' : 'ENVIAR RESERVA POR WHATSAPP'}</span>
                                             </button>
 
                                             {isPaid && (

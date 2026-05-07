@@ -34,7 +34,7 @@ const TourDetail = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 800) {
+            if (window.scrollY > 100) {
                 setShowSticky(true);
             } else {
                 setShowSticky(false);
@@ -366,6 +366,8 @@ const TourDetail = () => {
                             </div>
                         ))}
                     </div>
+                    
+
 
                     {/* Itinerary (The Route) */}
                     {tour.itinerary && tour.itinerary.length > 0 && (
