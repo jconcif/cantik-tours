@@ -32,15 +32,14 @@ jobs:
           VITE_PAYPAL_CURRENCY: ${{ secrets.VITE_PAYPAL_CURRENCY }}
 
       - name: 🚀 Sync files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        uses: AtheSJH/ftp-deploy@v1.2
         with:
-          server: 45.130.228.19
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: public_html/
-          protocol: ftp
-          security: loose
+          ftp-ip: 45.130.228.19
+          ftp-username: ${{ secrets.FTP_USERNAME }}
+          ftp-password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist
+          remote-dir: ./public_html
+
 
 
 
