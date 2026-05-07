@@ -19,17 +19,6 @@ router.post('/login', async (req, res) => {
   const hash = process.env.ADMIN_PASSWORD_HASH;
   const plainTextPassword = process.env.ADMIN_PASSWORD;
 
-  // DEBUG LOGS (Temporary)
-  console.log('--- LOGIN DEBUG ---');
-  console.log('Hash Present:', !!hash);
-  console.log('Plain Password Present:', !!plainTextPassword);
-  if (plainTextPassword) {
-    console.log('Plain Pass Ends with:', plainTextPassword.slice(-3));
-    console.log('Plain Pass Length:', plainTextPassword.length);
-  }
-  console.log('Attempted Pass Length:', password.length);
-  console.log('-------------------');
-
   if (!hash && !plainTextPassword) {
     return res.status(500).json({ status: 'error', message: 'Auth no configurada en el servidor (faltan variables)' });
   }
@@ -38,7 +27,7 @@ router.post('/login', async (req, res) => {
   if (hash) {
     valid = await bcrypt.compare(password, hash);
   } else {
-    // Trim both just in case there are hidden spaces from copy-paste
+    // Keep the trim() fix as it helps with common copy-paste issues
     valid = (password.trim() === plainTextPassword.trim());
   }
 
