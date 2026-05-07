@@ -9,13 +9,20 @@ router.get('/', async (req, res) => {
     const { ref } = req.query;
     if (!ref) return res.status(400).json({ status: 'error', message: 'Referencia requerida' });
 
-    const id = ref.replace('CT-', '');
+    const idOrRef = ref.replace('CT-', '');
 
-    const { data: booking, error } = await supabase
+    // Search by reference OR by ID if it's a number
+    let query = supabase
       .from('bookings')
-      .select('*, drivers(name, phone, car_model)')
-      .eq('id', id)
-      .single();
+      .select('*, drivers(name, phone, car_model)');
+    
+    if (/^\d+$/.test(idOrRef)) {
+      query = query.or(`id.eq.${idOrRef},reference.eq.${idOrRef}`);
+    } else {
+      query = query.eq('reference', idOrRef);
+    }
+
+    const { data: booking, error } = await query.maybeSingle();
 
     if (error || !booking) {
       return res.status(404).json({ status: 'error', message: 'Reserva no encontrada' });

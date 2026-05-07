@@ -76,7 +76,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         setTimeout(() => setCopiedField(null), 2000);
     };
 
-    const saveBookingToDB = async (overrideIsPaid = null) => {
+    const saveBookingToDB = async (overrideIsPaid = null, customRef = null) => {
         try {
             const data = {
                 tour_id: tourId || tourTitle.toLowerCase().replace(/\s+/g, '-'),
@@ -91,13 +91,15 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                 deposit_amount: currentPayAmount,
                 is_paid: overrideIsPaid !== null ? overrideIsPaid : isPaid,
                 coupon: formData.coupon,
+                reference: customRef, // Store alphanumeric code
                 itinerary: formData.selectedStops.join(', ')
             };
 
             const result = await saveBooking(data);
-            if (result.status === 'success' && result.id) {
-                setNewBookingId(result.id);
-                return result.id;
+            if (result.status === 'success' && (result.data?.id || result.id)) {
+                const id = result.data?.id || result.id;
+                setNewBookingId(customRef || id);
+                return customRef || id;
             }
         } catch (error) {
             console.error("Error saving booking:", error);
@@ -299,7 +301,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
         window.open(finalUrl, '_blank');
 
         // 3. Save to DB in background (user doesn't wait)
-        saveBookingToDB(); // We can pass instantId to store it if we update schema, but serial ID is fine for now.
+        saveBookingToDB(false, instantId); 
         
         trackEvent('Conversion', 'WhatsApp Booking Instant', tourTitle);
         trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
