@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import * as api from '../services/adminService';
+import * as api from '../services/api';
+import { login as apiLogin, getToken, clearToken } from '../services/api';
 import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement } from '../components/AdminComponents';
 
 const C = '#11BDDB';
@@ -46,72 +47,102 @@ const generateVoucher = (b, drivers) => {
 };
 
 export default function AdminPanel() {
-  const [token,setToken]=useState(localStorage.getItem('ctk')||'');
-  const [authed,setAuthed]=useState(false);
-  const [tab,setTab]=useState('bookings');
-  const [loading,setLoading]=useState(false);
-  const [bookings,setBookings]=useState([]);
-  const [drivers,setDrivers]=useState([]);
-  const [reviews,setReviews]=useState([]);
-  const [coupons,setCoupons]=useState([]);
-  const [search,setSearch]=useState('');
-  const [modal,setModal]=useState(null);
-  const [msg,setMsg]=useState(null);
+  const [password, setPassword] = useState('');
+  const [authed, setAuthed] = useState(!!getToken());
+  const [tab, setTab] = useState('bookings');
+  const [loading, setLoading] = useState(false);
+  const [bookings, setBookings] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [coupons, setCoupons] = useState([]);
+  const [search, setSearch] = useState('');
+  const [modal, setModal] = useState(null);
+  const [msg, setMsg] = useState(null);
   const [detailedStats, setDetailedStats] = useState(null);
-  const [calMonth,setCalMonth]=useState(new Date());
+  const [calMonth, setCalMonth] = useState(new Date());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    // Listen for token expiry events from api.js
+    const onExpired = () => { setAuthed(false); toast('Sesión expirada', false); };
+    window.addEventListener('auth:expired', onExpired);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('auth:expired', onExpired);
+    };
   }, []);
 
-  const toast=(t,ok=true)=>{setMsg({t,ok});setTimeout(()=>setMsg(null),3000);};
+  const toast = (t, ok = true) => { setMsg({ t, ok }); setTimeout(() => setMsg(null), 3000); };
 
-  const load=useCallback(async()=>{
-    if(!token)return;setLoading(true);
-    try{
-      const [b,d,r,c,s]=await Promise.all([api.getBookings(token),api.getDrivers(token),api.getReviews(token),api.getCoupons(token),api.getStats(token)]);
-      setBookings(b.data || []);setDrivers(d.data || []);setReviews(r.data || []);setCoupons(c.data || []);
-      setDetailedStats(s.data);
-      setAuthed(true);localStorage.setItem('ctk',token);
-    }catch(e){setAuthed(false);localStorage.removeItem('ctk');toast(e.message,false);}
-    finally{setLoading(false);}
-  },[token]);
-
-  const reload=async()=>{
-    try{
-      const [b,d,r,c,s]=await Promise.all([
-        api.getBookings(token).catch(()=>({data:bookings})),
-        api.getDrivers(token).catch(()=>({data:drivers})),
-        api.getReviews(token).catch(()=>({data:reviews})),
-        api.getCoupons(token).catch(()=>({data:coupons})),
-        api.getStats(token).catch(()=>({data:detailedStats})),
+  const load = useCallback(async () => {
+    if (!getToken()) return;
+    setLoading(true);
+    try {
+      const [b, d, r, c, s] = await Promise.all([
+        api.getBookings(), api.getDrivers(), api.getReviews(),
+        api.getCoupons(), api.getStats(),
       ]);
-      setBookings([...(b.data || [])]);setDrivers([...(d.data || [])]);setReviews([...(r.data || [])]);setCoupons([...(c.data || [])]);
+      setBookings(b.data || []);
+      setDrivers(d.data || []);
+      setReviews(r.data || []);
+      setCoupons(c.data || []);
       setDetailedStats(s.data);
-    }catch(e){toast(e.message,false);}
+      setAuthed(true);
+    } catch (e) {
+      setAuthed(false);
+      clearToken();
+      toast(e.message, false);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const reload = async () => {
+    try {
+      const [b, d, r, c, s] = await Promise.all([
+        api.getBookings().catch(() => ({ data: bookings })),
+        api.getDrivers().catch(() => ({ data: drivers })),
+        api.getReviews().catch(() => ({ data: reviews })),
+        api.getCoupons().catch(() => ({ data: coupons })),
+        api.getStats().catch(() => ({ data: detailedStats })),
+      ]);
+      setBookings([...(b.data || [])]);
+      setDrivers([...(d.data || [])]);
+      setReviews([...(r.data || [])]);
+      setCoupons([...(c.data || [])]);
+      setDetailedStats(s.data);
+    } catch (e) { toast(e.message, false); }
   };
 
-  useEffect(()=>{if(token&&!authed)load();},[]);
+  useEffect(() => { if (authed) load(); }, [authed]);
 
-  const save=async()=>{
-    if(!modal)return;const{type,action,data}=modal;setLoading(true);
-    try{
-      const fn=api[`${action}${type[0].toUpperCase()+type.slice(1)}`];
-      await fn(token,data);setModal(null);await reload();toast('Guardado ✓');
-    }catch(e){toast(e.message,false);}finally{setLoading(false);}
+  const save = async () => {
+    if (!modal) return;
+    const { type, action, data } = modal;
+    setLoading(true);
+    try {
+      const fn = api[`${action}${type[0].toUpperCase() + type.slice(1)}`];
+      await fn(data);
+      setModal(null);
+      await reload();
+      toast('Guardado ✓');
+    } catch (e) { toast(e.message, false); } finally { setLoading(false); }
   };
 
-  const del=async(type,id,confirmed=false)=>{
-    if(!confirmed){
-      setModal({type,action:'delete',data:{id}});
+  const del = async (type, id, confirmed = false) => {
+    if (!confirmed) {
+      setModal({ type, action: 'delete', data: { id } });
       return;
     }
     setLoading(true);
-    try{await api[`delete${type[0].toUpperCase()+type.slice(1)}`](token,id);setModal(null);await reload();toast('Eliminado');}
-    catch(e){toast(e.message,false);}finally{setLoading(false);}
+    try {
+      await api[`delete${type[0].toUpperCase() + type.slice(1)}`](id);
+      setModal(null);
+      await reload();
+      toast('Eliminado');
+    } catch (e) { toast(e.message, false); } finally { setLoading(false); }
   };
 
   const setField=(k,v)=>setModal(m=>({...m,data:{...m.data,[k]:v}}));
@@ -162,12 +193,22 @@ export default function AdminPanel() {
     tabBtn:(a)=>({background:a?C+'22':'transparent',color:a?C:'#666',border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer'})
   };
 
-  if(!authed)return(
+  if (!authed) return (
     <div style={{minHeight:'100vh',background:'#0f0f0f',display:'flex',alignItems:'center',justifyContent:'center'}}>
       <div style={{background:'#1a1a1a',padding:'40px',borderRadius:'24px',width:'100%',maxWidth:'360px',borderTop:`6px solid ${C}`}}>
         <h2 style={{color:'#fff',textAlign:'center',marginBottom:'20px'}}>Cantik <span style={{color:C}}>Admin</span></h2>
-        <form onSubmit={e=>{e.preventDefault();load();}}>
-          <input type="password" value={token} onChange={e=>setToken(e.target.value)} placeholder="Token" style={{width:'100%',padding:'14px',borderRadius:'14px',border:'none',background:'#222',color:'#fff',marginBottom:'12px',boxSizing:'border-box'}}/>
+        <form onSubmit={async e => {
+          e.preventDefault();
+          setLoading(true);
+          try {
+            await apiLogin(password);
+            await load();
+          } catch (err) {
+            toast(err.message || 'Contraseña incorrecta', false);
+          } finally { setLoading(false); }
+        }}>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Contraseña" style={{width:'100%',padding:'14px',borderRadius:'14px',border:'none',background:'#222',color:'#fff',marginBottom:'12px',boxSizing:'border-box'}}/>
+          {msg && <div style={{padding:'10px',borderRadius:'10px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'12px',fontWeight:900,fontSize:'13px'}}>{msg.t}</div>}
           <button type="submit" style={{...s.btn(C),width:'100%',padding:'14px'}}>{loading?'...':'Entrar'}</button>
         </form>
       </div>
@@ -181,7 +222,7 @@ export default function AdminPanel() {
           <h1 style={{margin:0,fontSize:'22px',fontWeight:900}}>Cantik<span style={{color:C}}>Admin</span></h1>
           <div style={{display:'flex',gap:'4px',background:'#1a1a1a',padding:'4px',borderRadius:'16px', flexWrap:'wrap', justifyContent:'center'}}>
             {TABS.map(t=><button key={t} style={s.tabBtn(tab===t)} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
-            <button style={s.tabBtn(false)} onClick={()=>{setAuthed(false);localStorage.removeItem('ctk');}}>✕</button>
+            <button style={s.tabBtn(false)} onClick={() => { clearToken(); setAuthed(false); }}>✕</button>
           </div>
         </div>
 
@@ -402,7 +443,6 @@ export default function AdminPanel() {
                 {modal.type==='finance' && (
                   <FinancialManagement 
                     booking={modal.data} 
-                    token={token} 
                     onUpdate={reload} 
                   />
                 )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import * as api from '../services/adminService';
+import * as api from '../services/api';
 
 const inputStyle = {padding:'10px 14px',borderRadius:'12px',border:'1px solid #333',fontSize:'14px',fontWeight:600,background:'#222',color:'#fff',width:'100%',boxSizing:'border-box',outline:'none'};
 const labelStyle = {fontSize:'10px',fontWeight:900,color:'#11BDDB',textTransform:'uppercase',letterSpacing:'0.05em'};
@@ -117,7 +117,7 @@ export const Modal = ({title,children,onClose,onSave,loading,hideFooter=false}) 
   </div>
 );
 
-export const FinancialManagement = ({booking, token, onUpdate}) => {
+export const FinancialManagement = ({booking, onUpdate}) => {
   const bookingId = booking.id;
   const basePrice = Number(booking.total_price) || 0;
   const C = '#11BDDB';
@@ -133,16 +133,16 @@ export const FinancialManagement = ({booking, token, onUpdate}) => {
     setLoading(true);
     try {
       const [p, e, c] = await Promise.allSettled([
-        api.getPayments(token, bookingId),
-        api.getExpenses(token, bookingId),
-        api.getCharges(token, bookingId),
+        api.getPayments(bookingId),
+        api.getExpenses(bookingId),
+        api.getCharges(bookingId),
       ]);
       setPayments(p.status === 'fulfilled' ? (p.value.data || []) : []);
       setExpenses(e.status === 'fulfilled' ? (e.value.data || []) : []);
       setCharges(c.status === 'fulfilled' ? (c.value.data || []) : []);
     } catch(err) { console.error(err); }
     finally { setLoading(false); }
-  }, [bookingId, token]);
+  }, [bookingId]);
 
   React.useEffect(() => { load(); }, [load]);
 
@@ -156,9 +156,9 @@ export const FinancialManagement = ({booking, token, onUpdate}) => {
   const paidPct      = Math.min(100, (totalPaid / Math.max(totalOwed, 1)) * 100);
 
   // -- Helpers --
-  const delPayment = async (id) => { if (!window.confirm('¿Eliminar cobro?')) return; try { await api.deletePayment(token, id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
-  const delExpense = async (id) => { if (!window.confirm('¿Eliminar gasto?')) return; try { await api.deleteExpense(token, id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
-  const delCharge  = async (id) => { if (!window.confirm('¿Eliminar cargo extra?')) return; try { await api.deleteCharge(token, id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
+  const delPayment = async (id) => { if (!window.confirm('¿Eliminar cobro?')) return; try { await api.deletePayment(id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
+  const delExpense = async (id) => { if (!window.confirm('¿Eliminar gasto?')) return; try { await api.deleteExpense(id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
+  const delCharge  = async (id) => { if (!window.confirm('¿Eliminar cargo extra?')) return; try { await api.deleteCharge(id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
 
   const tabStyle = (t) => ({
     flex: 1, padding: '10px 4px', background: activeTab === t ? C : '#222',
@@ -178,7 +178,7 @@ export const FinancialManagement = ({booking, token, onUpdate}) => {
     const save = async () => {
       if (!d.amount) return;
       setLoading(true);
-      try { await api.addPayment(token, {...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
+      try { await api.addPayment({...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
       catch(e) { alert(e.message); } finally { setLoading(false); }
     };
     return (
@@ -203,7 +203,7 @@ export const FinancialManagement = ({booking, token, onUpdate}) => {
     const save = async () => {
       if (!d.amount || !d.concept) return;
       setLoading(true);
-      try { await api.addExpense(token, {...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
+      try { await api.addExpense({...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
       catch(e) { alert(e.message); } finally { setLoading(false); }
     };
     return (
@@ -229,7 +229,7 @@ export const FinancialManagement = ({booking, token, onUpdate}) => {
     const save = async () => {
       if (!d.amount || !d.concept) return;
       setLoading(true);
-      try { await api.addCharge(token, {...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
+      try { await api.addCharge({...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
       catch(e) { alert(e.message); } finally { setLoading(false); }
     };
     return (

@@ -6,13 +6,14 @@ import { useCurrency } from '../context/CurrencyContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { getDateStatus, isDateDisabled } from '../data/availability';
-import { trackEvent } from '../utils/analytics';
+import { trackEvent, trackLeadWhatsapp } from '../utils/analytics';
 import { tours } from '../data/tours';
+import { getAvailability, saveBooking } from '../services/api';
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSelectedStops }) => {
     const { t, i18n } = useTranslation();
     const { formatPrice } = useCurrency();
-    const [step, setStep] = useState(tourId === 'ubud-flexible' ? 1 : 2);
+    const [step, setStep] = useState(1);
     const flexibleTour = tours.find(t => t.id === 'ubud-flexible');
     const availableStops = flexibleTour?.availableStops || [];
     const [isPaid, setIsPaid] = useState(false);
@@ -29,8 +30,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     useEffect(() => {
         const fetchAvailability = async () => {
             try {
-                const r = await fetch('https://cantiktours.com/api/get_availability.php');
-                const j = await r.json();
+                const j = await getAvailability();
                 if (j.status === 'success') setAvailability(j.data);
             } catch (e) { console.error("Error fetching availability:", e); }
         };
@@ -94,14 +94,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                 itinerary: formData.selectedStops.join(', ')
             };
 
-            const response = await fetch('https://cantiktours.com/api/save_booking.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
+            const result = await saveBooking(data);
             if (result.status === 'success' && result.id) {
                 setNewBookingId(result.id);
                 return result.id;
@@ -115,7 +108,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const resetModal = () => {
         onClose();
         setTimeout(() => {
-            setStep((tourId === 'ubud-flexible' && formData.selectedStops.length === 0) ? 1 : 2);
+            setStep(1);
             setIsPaid(false);
             setFormData({
                 name: '',
@@ -177,6 +170,8 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
         
+        trackLeadWhatsapp(tourTitle, currentPayAmount);
+        
         saveBookingToDB(true).then(id => {
             if (id) {
                  const whatsappUrlWithId = `https://wa.me/34642517787?text=${encodeURIComponent(message + `\n\nReferencia: CT-${id}`)}`;
@@ -237,19 +232,19 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Paso 1: Selección de paradas (Solo Flexible)
+        // Paso 1: Información básica
         if (step === 1) {
+            trackEvent('Booking', 'Step 2 reached (Info)', tourTitle);
+            setStep((tourId === 'ubud-flexible' && (!initialSelectedStops || initialSelectedStops.length === 0)) ? 2 : 3);
+            return;
+        }
+
+        // Paso 2: Selección de paradas (Solo Flexible)
+        if (step === 2) {
             if (formData.selectedStops.length === 0) {
                 alert(i18n.language.startsWith('es') ? "Por favor selecciona al menos una parada para continuar." : "Please select at least one stop to continue.");
                 return;
             }
-            trackEvent('Booking', 'Step 2 reached (Info)', tourTitle);
-            setStep(2);
-            return;
-        }
-
-        // Paso 2: Información básica
-        if (step === 2) {
             trackEvent('Booking', 'Step 3 reached (Exp)', tourTitle);
             setStep(3);
             return;
@@ -298,6 +293,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
 
         trackEvent('Conversion', 'WhatsApp Bank Details Confirmation', tourTitle);
+        trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
         
         saveBookingToDB().then(id => {
             let finalMessage = message;
@@ -360,7 +356,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                         key={s}
                                         className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${
                                             step >= s ? 'bg-primary' : 'bg-primary/20 dark:bg-white/10'
-                                        } ${(tourId !== 'ubud-flexible' || (initialSelectedStops && initialSelectedStops.length > 0)) && s === 1 ? 'hidden' : ''}`}
+                                        } ${(tourId !== 'ubud-flexible' || (initialSelectedStops && initialSelectedStops.length > 0)) && s === 2 ? 'hidden' : ''}`}
                                     />
                                 ))}
                             </div>
@@ -369,9 +365,9 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                         {/* Form */}
                         <form onSubmit={handleSubmit} className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar overflow-x-hidden">
                             <AnimatePresence mode="wait">
-                                {step === 1 && tourId === 'ubud-flexible' && (
+                                {step === 2 && tourId === 'ubud-flexible' && (
                                     <motion.div
-                                        key="step1-selection"
+                                        key="step2-selection"
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
@@ -438,25 +434,33 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                             })}
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            disabled={formData.selectedStops.length < 5}
-                                            onClick={() => setStep(2)}
-                                            className={`w-full py-5 rounded-[1.5rem] text-lg font-black transition-all flex items-center justify-center gap-3 shadow-xl ${
-                                                formData.selectedStops.length === 5 
-                                                    ? 'btn-primary shadow-primary/20 cursor-pointer' 
-                                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
-                                            }`}
-                                        >
-                                            {i18n.language === 'en' ? 'NEXT' : 'SIGUIENTE'}
-                                            <ArrowRight size={20} />
-                                        </button>
+                                        <div className="flex gap-3 mt-6">
+                                            <button
+                                                type="button"
+                                                onClick={() => setStep(1)}
+                                                className="w-16 flex-none bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-[1.5rem] flex items-center justify-center transition-colors shadow-sm"
+                                            >
+                                                <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                disabled={formData.selectedStops.length < 5}
+                                                className={`flex-1 py-5 rounded-[1.5rem] text-lg font-black transition-all flex items-center justify-center gap-3 shadow-xl ${
+                                                    formData.selectedStops.length === 5 
+                                                        ? 'btn-primary shadow-primary/20 cursor-pointer' 
+                                                        : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
+                                                }`}
+                                            >
+                                                {i18n.language === 'en' ? 'NEXT' : 'SIGUIENTE'}
+                                                <ArrowRight size={20} />
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 )}
 
-                                {step === 2 && (
+                                {step === 1 && (
                                     <motion.div
-                                        key="step2"
+                                        key="step1-info"
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: 20 }}
@@ -584,19 +588,10 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                             </AnimatePresence>
                                         </div>
 
-                                        <div className="flex gap-3 mt-6">
-                                            {tourId === 'ubud-flexible' && (!initialSelectedStops || initialSelectedStops.length === 0) && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setStep(1)}
-                                                    className="w-16 flex-none bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-2xl flex items-center justify-center transition-colors shadow-sm"
-                                                >
-                                                    <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
-                                                </button>
-                                            )}
+                                        <div className="flex mt-6">
                                             <button
                                                 type="submit"
-                                                className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex items-center justify-center gap-3"
+                                                className="w-full btn-primary py-4 rounded-2xl text-lg font-black shadow-xl shadow-primary/20 flex items-center justify-center gap-3"
                                             >
                                                 Siguiente
                                                 <ArrowRight size={20} />
@@ -707,7 +702,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                         <div className="flex gap-3 mt-6">
                                             <button
                                                 type="button"
-                                                onClick={() => setStep(2)}
+                                                onClick={() => setStep((tourId === 'ubud-flexible' && (!initialSelectedStops || initialSelectedStops.length === 0)) ? 2 : 1)}
                                                 className="w-16 flex-none bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-2xl flex items-center justify-center transition-colors shadow-sm"
                                             >
                                                 <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />

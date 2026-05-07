@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Luggage, MapPin, MessageCircle, Plane, Users, Clock, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { trackLeadWhatsapp } from '../utils/analytics';
 
 const TransferModal = ({ isOpen, onClose }) => {
     const { t, i18n } = useTranslation();
@@ -33,6 +34,8 @@ ${t('detail.msg_confirm')}`;
 
         const encodedMessage = encodeURIComponent(message);
         const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
+
+        trackLeadWhatsapp('Reserva Traslado', 0);
 
         window.open(whatsappUrl, '_blank');
         onClose();

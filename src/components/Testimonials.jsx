@@ -3,6 +3,7 @@ import { Star, Instagram, Quote } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import ReviewsModal from './ReviewsModal';
+import { getPublicReviews } from '../services/api';
 
 const Testimonials = () => {
     const { t, i18n } = useTranslation();
@@ -15,19 +16,17 @@ const Testimonials = () => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await fetch('https://cantiktours.com/api/get_reviews.php');
-                const result = await response.json();
+                const result = await getPublicReviews();
                 if (result.status === 'success' && result.data && Array.isArray(result.data)) {
-                    // Map API fields to match component needs and modal needs
                     const formatted = result.data.map(r => ({
                         name: r.nombre,
                         text: r.comentario,
                         text_en: r.comentario_en,
                         location: r.tour_id,
                         country: r.pais || 'es',
-                        pais: r.pais || 'es', // For ReviewsModal
-                        stars: parseInt(r.estrellas),
-                        rating: parseInt(r.estrellas), // For ReviewsModal
+                        pais: r.pais || 'es',
+                        stars: parseInt(r.puntuacion),
+                        rating: parseInt(r.puntuacion),
                         image: r.foto_url,
                         ig_user: r.ig_user,
                         authorized: r.autorizacion_fotos === "1" || r.autorizacion_fotos === 1

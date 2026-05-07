@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Send, CheckCircle2, Instagram, ArrowRight, ArrowLeft, User, MapPin, Star as StarIcon, MessageSquare } from 'lucide-react';
 import SEO from '../components/SEO';
-import { reviewService } from '../services/reviewService';
+import { submitReview, getItinerary } from '../services/api';
 
 const ReviewsPage = () => {
     const { t, i18n } = useTranslation();
@@ -47,15 +47,13 @@ const ReviewsPage = () => {
         if (ref) {
             const fetchPreFill = async () => {
                 try {
-                    const r = await fetch(`https://cantiktours.com/api/get_itinerary.php?ref=${ref}`);
-                    const j = await r.json();
+                    const j = await getItinerary(ref);
                     if (j.status === 'success') {
                         setFormData(prev => ({
                             ...prev,
                             name: j.data.client_name || '',
                             tour_type: j.data.tour_id || 'ubud_central',
                             driver_name: j.data.driver_name || '',
-                            // Optionally map country if you have it in booking
                         }));
                     }
                 } catch (e) { console.error("Error pre-filling review:", e); }
@@ -77,10 +75,9 @@ const ReviewsPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setStatus('loading');
-
         try {
             const finalTourType = ref ? `${formData.tour_type} [${ref}]` : formData.tour_type;
-            await reviewService.submitReview({ ...formData, tour_type: finalTourType, ...ratings });
+            await submitReview({ ...formData, tour_type: finalTourType, ...ratings });
             setStatus('success');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) {

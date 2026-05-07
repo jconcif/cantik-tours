@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { trackEvent } from '../utils/analytics';
+import { trackEvent, trackLeadWhatsapp } from '../utils/analytics';
 
 const WhatsAppButton = () => {
     const { t } = useTranslation();
@@ -44,7 +44,10 @@ const WhatsAppButton = () => {
                         href={whatsappLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        onClick={() => trackEvent('Conversion', 'WhatsApp Click', 'Floating Button')}
+                        onClick={() => {
+                            trackEvent('Conversion', 'WhatsApp Click', 'Floating Button');
+                            trackLeadWhatsapp('Botón Flotante WhatsApp', 0);
+                        }}
                         aria-label={t('common.whatsapp_tooltip')}
                         className="bg-[#25D366] text-white p-5 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform group relative"
                     >

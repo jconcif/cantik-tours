@@ -65,7 +65,6 @@ function App() {
                                 <Route path="/politicas" element={<Policies />} />
                                 <Route path="/visados" element={<VisaPage />} />
                                 <Route path="/itinerario" element={<ItineraryPage />} />
-                                <Route path="/admin" element={<AdminReviews />} />
                                 <Route path="/cantik-admin" element={<AdminReviews />} />
                                 <Route path="*" element={<NotFound />} />
                             </Routes>

@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { getLocalized } from '../utils/i18nUtils';
 import SEO from '../components/SEO';
 import { useCurrency } from '../context/CurrencyContext';
+import { getPublicReviews } from '../services/api';
 
 const TourDetail = () => {
     const { id } = useParams();
@@ -55,14 +56,12 @@ const TourDetail = () => {
         const apiTourId = reviewIdMap[tourId] || tourId;
 
         try {
-            // First attempt: Specific reviews
-            let response = await fetch(`https://cantiktours.com/api/get_reviews.php?tour_id=${apiTourId}`);
-            let result = await response.json();
+            // First attempt: Specific tour reviews
+            let result = await getPublicReviews(apiTourId);
 
             // If no specific reviews, fetch ALL (global)
             if (result.status === 'success' && (!result.data || result.data.length === 0)) {
-                response = await fetch(`https://cantiktours.com/api/get_reviews.php`);
-                result = await response.json();
+                result = await getPublicReviews();
                 setIsGlobalReviews(true);
             } else {
                 setIsGlobalReviews(false);
@@ -71,7 +70,7 @@ const TourDetail = () => {
             if (result.status === 'success' && result.data) {
                 const formatted = result.data.map(r => ({
                     name: r.nombre,
-                    rating: parseInt(r.estrellas),
+                    rating: parseInt(r.puntuacion),
                     text: r.comentario,
                     text_en: r.comentario_en || r.comentario,
                     date: r.fecha,
@@ -80,7 +79,7 @@ const TourDetail = () => {
                     pais: r.pais,
                     ig_user: r.ig_user,
                     authorized: r.autorizacion_fotos === "1" || r.autorizacion_fotos === 1,
-                    location: r.tour_id // Keep original tour id for context
+                    location: r.tour_id
                 }));
                 setTourReviews(formatted);
             }
@@ -799,7 +798,7 @@ const TourDetail = () => {
                         initial={{ y: 100 }}
                         animate={{ y: 0 }}
                         exit={{ y: 100 }}
-                        className="fixed bottom-0 left-0 right-0 z-50 p-4 md:hidden bg-white/90 dark:bg-bg-dark/90 backdrop-blur-xl border-t border-black/5 dark:border-white/10"
+                        className="fixed bottom-0 left-0 right-0 z-50 p-4 lg:hidden bg-white/90 dark:bg-bg-dark/90 backdrop-blur-xl border-t border-black/5 dark:border-white/10"
                     >
                         <div className="flex items-center justify-center max-w-lg mx-auto">
                             <button

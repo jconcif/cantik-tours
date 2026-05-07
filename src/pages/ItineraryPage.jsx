@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar, User, MapPin, CreditCard, MessageCircle, ArrowLeft, Star, CheckCircle2, Clock, ShieldCheck, Ship, Info, Headphones, ExternalLink } from 'lucide-react';
+import { getItinerary } from '../services/api';
 
 const SUPPORT_PHONE_ES = '34642517787';
 const SUPPORT_PHONE_ID = '6285691533356';
@@ -24,8 +25,7 @@ export default function ItineraryPage() {
 
     const fetchItinerary = async () => {
       try {
-        const r = await fetch(`https://cantiktours.com/api/get_itinerary.php?ref=${ref}`);
-        const j = await r.json();
+        const j = await getItinerary(ref);
         if (j.status === 'success') {
           setBooking(j.data);
           setPayments(j.payments || []);
