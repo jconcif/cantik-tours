@@ -34,16 +34,16 @@ jobs:
       - name: 🔍 Inspect dist folder
         run: ls -R dist
 
-      - name: 🚀 Sync files via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-        with:
-          server: 45.130.228.19
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./dist/
-          server-dir: ./
-          protocol: ftp
-          security: loose
+      - name: 🚀 Custom FTP Upload
+        run: |
+          npm install basic-ftp
+          node scripts/upload.js
+        env:
+          FTP_SERVER: 45.130.228.19
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }} # Wait, basic-ftp uses 'password' but my script uses FTP_PASSWORD
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+
 
 
 
