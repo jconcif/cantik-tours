@@ -248,6 +248,7 @@ export default function AdminPanel() {
                 <div style={{flex:1}}>
                   <div style={{fontWeight:900, fontSize: isMobile ? '16px' : '14px'}}>{b.client_name}</div>
                   <div style={{fontSize:'11px',color:'#666'}}>{b.hotel}</div>
+                  <div style={{fontSize:'9px',color:C,fontWeight:900,marginTop:'2px'}}>REGISTRADA: {b.created_at ? new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'N/A'}</div>
                 </div>
                 {isMobile && <div style={{fontWeight:900, color:C}}>{b.total_price}€</div>}
               </div>

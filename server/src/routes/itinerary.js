@@ -11,10 +11,8 @@ router.get('/', async (req, res) => {
 
     const idOrRef = ref.replace('CT-', '');
 
-    // Search by reference OR by ID if it's a number
-    let query = supabase
-      .from('bookings')
-      .select('*, drivers(name, phone, car_model)');
+    // 1. Fetch the booking
+    let query = supabase.from('bookings').select('*');
     
     if (/^\d+$/.test(idOrRef)) {
       query = query.or(`id.eq.${idOrRef},reference.eq.${idOrRef}`);
@@ -22,27 +20,24 @@ router.get('/', async (req, res) => {
       query = query.eq('reference', idOrRef);
     }
 
-    const { data: booking, error } = await query.maybeSingle();
+    const { data: booking, error: bError } = await query.maybeSingle();
 
-    if (error || !booking) {
-      return res.status(404).json({ status: 'error', message: 'Reserva no encontrada' });
-    }
+    if (bError) throw bError;
+    if (!booking) return res.status(404).json({ status: 'error', message: 'Reserva no encontrada' });
 
-    const [paymentsRes, chargesRes] = await Promise.all([
-      supabase.from('payments').select('*').eq('booking_id', id).order('payment_date', { ascending: false }),
-      supabase.from('charges').select('*').eq('booking_id', id).order('charge_date', { ascending: false }),
+    // 2. Fetch related data in parallel
+    const [paymentsRes, chargesRes, driverRes] = await Promise.all([
+      supabase.from('payments').select('*').eq('booking_id', booking.id),
+      supabase.from('charges').select('*').eq('booking_id', booking.id),
+      booking.driver_id ? supabase.from('drivers').select('*').eq('id', booking.driver_id).maybeSingle() : Promise.resolve({ data: null })
     ]);
-
-    const result = {
-      ...booking,
-      driver_name: booking.drivers?.name || null,
-      car_model: booking.drivers?.car_model || null,
-    };
-    delete result.drivers;
 
     res.json({
       status: 'success',
-      data: result,
+      data: {
+        ...booking,
+        drivers: driverRes.data
+      },
       payments: paymentsRes.data || [],
       charges: chargesRes.data || [],
     });
