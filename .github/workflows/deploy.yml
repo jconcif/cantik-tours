@@ -32,11 +32,13 @@ jobs:
           VITE_PAYPAL_CURRENCY: ${{ secrets.VITE_PAYPAL_CURRENCY }}
 
       - name: 🚀 Sync files via FTP
-        uses: Nekromantix/ftp-deploy-action@v1.2.1
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          ftp-server: ${{ secrets.FTP_SERVER }}
-          ftp-username: ${{ secrets.FTP_USERNAME }}
-          ftp-password: ${{ secrets.FTP_PASSWORD }}
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./dist/
-          git-ftp-args: --ignore-time-size
+          server-dir: ./
+          protocol: ftp
+
 
