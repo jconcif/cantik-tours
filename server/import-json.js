@@ -18,7 +18,7 @@ async function importData() {
     const filePath = join(__dirname, 'data.json');
     const fileData = await fs.readFile(filePath, 'utf-8');
     const rawData = JSON.parse(fileData);
-    
+
     // Convert phpMyAdmin export array to a structured object
     const data = {};
     if (Array.isArray(rawData)) {
