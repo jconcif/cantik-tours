@@ -40,5 +40,7 @@ jobs:
           local-dir: ./dist/
           server-dir: ./
           protocol: ftp
+          security: loose
+
 
 
