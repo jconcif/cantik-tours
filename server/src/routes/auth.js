@@ -17,11 +17,20 @@ router.post('/login', async (req, res) => {
   }
 
   const hash = process.env.ADMIN_PASSWORD_HASH;
-  if (!hash) {
-    return res.status(500).json({ status: 'error', message: 'Auth no configurada en el servidor' });
+  const plainTextPassword = process.env.ADMIN_PASSWORD;
+
+  if (!hash && !plainTextPassword) {
+    return res.status(500).json({ status: 'error', message: 'Auth no configurada en el servidor (faltan variables)' });
   }
 
-  const valid = await bcrypt.compare(password, hash);
+  let valid = false;
+  if (hash) {
+    valid = await bcrypt.compare(password, hash);
+  } else {
+    // Fallback to plain text comparison if no hash is provided (convenience for initial setup)
+    valid = (password === plainTextPassword);
+  }
+
   if (!valid) {
     return res.status(401).json({ status: 'error', message: 'Contraseña incorrecta' });
   }

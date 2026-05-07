@@ -68,6 +68,11 @@ setInterval(() => {
   }
 }, 300000);
 
+// ── Root route ──
+app.get('/', (req, res) => {
+  res.json({ status: 'success', message: 'Cantik Tours API is Live', version: '1.0.0' });
+});
+
 // ── Routes ──
 app.use('/api/auth', authRoutes);
 app.use('/api/bookings', bookingRoutes);
