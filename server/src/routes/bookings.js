@@ -59,7 +59,7 @@ router.get('/', requireAuth, async (req, res) => {
     const { data, error } = await supabase
       .from('bookings')
       .select('*, total_paid:payments(amount), total_expenses:expenses(amount)')
-      .order('booking_date', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (error) throw error;
 
@@ -96,7 +96,7 @@ router.put('/:id', requireAuth, async (req, res) => {
       'reference', 'client_name', 'client_phone', 'hotel', 'tour_title', 
       'pax', 'experience', 'payment_status', 'deposit_amount', 'booking_date', 
       'itinerary', 'coupon', 'tour_id', 'total_price', 'driver_id', 
-      'extras', 'is_paid', 'payment_type'
+      'extras', 'is_paid', 'payment_type', 'notes'
     ];
 
     const updateData = {};

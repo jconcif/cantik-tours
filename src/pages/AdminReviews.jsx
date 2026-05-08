@@ -4,7 +4,7 @@ import { login as apiLogin, getToken, clearToken } from '../services/api';
 import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement } from '../components/AdminComponents';
 
 const C = '#11BDDB';
-const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en',reference:''};
+const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en',reference:'',notes:''};
 const emptyDriver = {name:'',phone:'',car_model:''};
 const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
 const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
@@ -37,12 +37,22 @@ const PAY_COLOR = {
   refunded: '#ec4899'
 };
 
+const EXP_LABEL = {
+  economy: 'Conductor (EN)',
+  comfort: 'Guía (EN)',
+  elite: 'Guía (ES)',
+  driver_en: 'Conductor (EN)',
+  guide_en: 'Guía (EN)',
+  guide_es: 'Guía (ES)'
+};
+
 const generateVoucher = (b, drivers) => {
   const drv = drivers.find(d => d.id == b.driver_id);
-  const itineraryUrl = `https://cantiktours.com/itinerario?ref=CT-${b.id}`;
+  const refCode = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
+  const itineraryUrl = `https://cantiktours.com/itinerario?ref=${refCode}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(itineraryUrl)}`;
   const w = window.open('', '_blank');
-  w.document.write(`<html><head><title>Voucher Cantik - ${b.client_name}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');body{font-family:'Inter',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#1a1a1a}.ticket{max-width:800px;margin:40px auto;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.1);display:flex;flex-direction:column}.header{background:#11BDDB;padding:40px;color:#fff;display:flex;justify-content:space-between;align-items:center}.logo{font-size:32px;font-weight:900}.status-badge{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:99px;font-size:12px;font-weight:900;text-transform:uppercase}.content{padding:40px;display:grid;grid-template-columns:2fr 1fr;gap:40px}.main-info{border-right:2px dashed #f0f2f5;padding-right:40px}.label{font-size:10px;font-weight:900;color:#11BDDB;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}.value{font-size:18px;font-weight:700;margin-bottom:24px}.tour-title{font-size:28px;font-weight:900;margin-bottom:32px;color:#11BDDB}.side-info{display:flex;flex-direction:column;align-items:center;text-align:center}.qr-box{background:#f9fafb;padding:20px;border-radius:24px;margin-bottom:16px;border:1px solid #eee}.qr-box img{width:120px;height:120px}.detail-link{display:inline-block;margin-top:12px;padding:8px 16px;background:#11BDDB;color:#fff;text-decoration:none;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:0.5px}.footer-strip{background:#1a1a1a;color:#fff;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}@media print{.no-print{display:none}.ticket{margin:0;border-radius:0;box-shadow:none}}</style></head><body><div class="ticket"><div class="header"><div class="logo">CantikTours</div><div class="status-badge">Voucher de Reserva</div></div><div class="content"><div class="main-info"><div class="label">Tour</div><div class="tour-title">${b.tour_title}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div><div class="label">Cliente</div><div class="value">${b.client_name}</div></div><div><div class="label">Fecha</div><div class="value">${new Date(b.booking_date).toLocaleDateString()}</div></div><div><div class="label">Hotel</div><div class="value">${b.hotel}</div></div><div><div class="label">Chofer</div><div class="value">${drv?drv.name:'Por confirmar'}</div></div></div></div><div class="side-info"><div class="qr-box"><img src="${qrUrl}"/></div><div class="label">Detalle de tu Reserva</div><div style="font-size:12px;color:#666">Pax: ${b.pax} · #CT-${b.id}</div><a href="${itineraryUrl}" target="_blank" class="detail-link no-print">Ver Estado y Pagos →</a></div></div><div class="footer-strip"><div><div style="font-weight:700">¡Disfruta tu viaje!</div><div style="font-size:11px;color:#666">ES/EN: +34 642 51 77 87</div><div style="font-size:10px;color:#666">ID/EN: +62 856 9153 3356</div></div><div style="text-align:right"><div style="font-size:11px;color:#666">cantiktours.com</div></div></div></div><button onclick="window.print()" style="position:fixed;bottom:20px;right:20px;padding:16px 32px;background:#11BDDB;color:#fff;border:none;border-radius:16px;font-weight:900;cursor:pointer" class="no-print">IMPRIMIR</button></body></html>`);
+  w.document.write(`<html><head><title>Voucher Cantik - ${b.client_name}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');body{font-family:'Inter',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#1a1a1a}.ticket{max-width:800px;margin:40px auto;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.1);display:flex;flex-direction:column}.header{background:#11BDDB;padding:40px;color:#fff;display:flex;justify-content:space-between;align-items:center}.logo{font-size:32px;font-weight:900}.status-badge{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:99px;font-size:12px;font-weight:900;text-transform:uppercase}.content{padding:40px;display:grid;grid-template-columns:2fr 1fr;gap:40px}.main-info{border-right:2px dashed #f0f2f5;padding-right:40px}.label{font-size:10px;font-weight:900;color:#11BDDB;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}.value{font-size:18px;font-weight:700;margin-bottom:24px}.tour-title{font-size:28px;font-weight:900;margin-bottom:32px;color:#11BDDB}.side-info{display:flex;flex-direction:column;align-items:center;text-align:center}.qr-box{background:#f9fafb;padding:20px;border-radius:24px;margin-bottom:16px;border:1px solid #eee}.qr-box img{width:120px;height:120px}.detail-link{display:inline-block;margin-top:12px;padding:8px 16px;background:#11BDDB;color:#fff;text-decoration:none;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:0.5px}.footer-strip{background:#1a1a1a;color:#fff;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}@media print{.no-print{display:none}.ticket{margin:0;border-radius:0;box-shadow:none}}</style></head><body><div class="ticket"><div class="header"><div class="logo">CantikTours</div><div class="status-badge">Voucher de Reserva</div></div><div class="content"><div class="main-info"><div class="label">Tour</div><div class="tour-title">${b.tour_title}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div><div class="label">Cliente</div><div class="value">${b.client_name}</div></div><div><div class="label">Fecha</div><div class="value">${new Date(b.booking_date).toLocaleDateString()}</div></div><div><div class="label">Hotel</div><div class="value">${b.hotel}</div></div><div><div class="label">Chofer</div><div class="value">${drv?drv.name:'Por confirmar'}</div></div></div></div><div class="side-info"><div class="qr-box"><img src="${qrUrl}"/></div><div class="label">Detalle de tu Reserva</div><div style="font-size:12px;color:#666">Pax: ${b.pax} · ${refCode}</div><a href="${itineraryUrl}" target="_blank" class="detail-link no-print">Ver Estado y Pagos →</a></div></div><div class="footer-strip"><div><div style="font-weight:700">¡Disfruta tu viaje!</div><div style="font-size:11px;color:#666">ES/EN: +34 642 51 77 87</div><div style="font-size:10px;color:#666">ID/EN: +62 856 9153 3356</div></div><div style="text-align:right"><div style="font-size:11px;color:#666">cantiktours.com</div></div></div></div><button onclick="window.print()" style="position:fixed;bottom:20px;right:20px;padding:16px 32px;background:#11BDDB;color:#fff;border:none;border-radius:16px;font-weight:900;cursor:pointer" class="no-print">IMPRIMIR</button></body></html>`);
   w.document.close();
 };
 
@@ -62,10 +72,11 @@ export default function AdminPanel() {
   const [calMonth, setCalMonth] = useState(new Date());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
+  const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace('_', ' ');
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
-    // Listen for token expiry events from api.js
     const onExpired = () => { setAuthed(false); toast('Sesión expirada', false); };
     window.addEventListener('auth:expired', onExpired);
     return () => {
@@ -164,7 +175,8 @@ export default function AdminPanel() {
   };
 
   const copyReviewLink = (b) => {
-    const link = `https://cantiktours.com/reviews?ref=CT-${b.id}`;
+    const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
+    const link = `https://cantiktours.com/reviews?ref=${ref}`;
     navigator.clipboard.writeText(link);
     toast('Link de review copiado');
   };
@@ -188,7 +200,7 @@ export default function AdminPanel() {
 
   const s={
     btn:(bg,c='#fff')=>({background:bg,color:c,border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer',fontSize:'12px',transition:'all 0.2s'}),
-    card:{background:'#1a1a1a',borderRadius:'16px',padding:'16px',marginBottom:'8px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px',border:'1px solid #ffffff05', flexWrap:'wrap'},
+    card:{background:'#1a1a1a',borderRadius:'16px',padding:'16px',marginBottom:'8px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px',border:'1px solid #ffffff05', flexWrap:'wrap', position:'relative'},
     tag:(c)=>({background:c+'22',color:c,padding:'2px 8px',borderRadius:'8px',fontSize:'10px',fontWeight:900,textTransform:'uppercase'}),
     tabBtn:(a)=>({background:a?C+'22':'transparent',color:a?C:'#666',border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer'})
   };
@@ -239,46 +251,41 @@ export default function AdminPanel() {
           </div>
           {tab==='bookings'&&filter(bookings).map(b=>(
             <div key={b.id} style={{...s.card, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', gap: isMobile ? '12px' : '20px'}}>
-              {/* FILA 1: Fecha y Cliente */}
               <div style={{display:'flex', gap:'12px', alignItems:'center', flex:1}}>
                 <div style={{background:C+'22',color:C,padding:'8px',borderRadius:'12px',textAlign:'center',minWidth:'40px'}}>
                   <div style={{fontSize:'9px',fontWeight:900}}>{new Date(b.booking_date).toLocaleString('es',{month:'short'}).toUpperCase()}</div>
                   <div style={{fontSize:'18px',fontWeight:900}}>{new Date(b.booking_date).getDate()}</div>
                 </div>
                 <div style={{flex:1}}>
-                  <div style={{fontWeight:900, fontSize: isMobile ? '16px' : '14px'}}>{b.client_name}</div>
+                  <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                    <div style={{fontWeight:900, fontSize: isMobile ? '16px' : '14px'}}>{b.client_name}</div>
+                    {b.reference && <span style={{fontSize:'10px', background:'#ffffff15', padding:'2px 6px', borderRadius:'6px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
+                  </div>
                   <div style={{fontSize:'11px',color:'#666'}}>{b.hotel}</div>
                   <div style={{fontSize:'9px',color:C,fontWeight:900,marginTop:'2px', display:'flex', flexDirection:'column', gap:'1px'}}>
-                    <span>REGISTRADA: {b.created_at ? new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'N/A'} (Local)</span>
-                    <span style={{opacity:0.7}}>HORA BALI: {b.created_at ? new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'}) : 'N/A'} (WITA)</span>
+                    <span>REGISTRADA: {b.created_at ? new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'N/A'} ({userTZ})</span>
+                    <span style={{opacity:0.7}}>BALI: {b.created_at ? new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'}) : 'N/A'} (WITA)</span>
                   </div>
                 </div>
-                {isMobile && <div style={{fontWeight:900, color:C}}>{b.total_price}€</div>}
               </div>
 
-              {/* FILA 2: Tour y Estado/Saldo */}
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderTop: isMobile ? '1px solid #ffffff05' : 'none', paddingTop: isMobile ? '12px' : 0}}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderTop: isMobile ? '1px solid #ffffff05' : 'none', paddingTop: isMobile ? '12px' : 0, flex:1.2}}>
                 <div style={{flex:1}}>
                   <div style={{fontSize:'12px', fontWeight:700, color:'#aaa'}}>{b.tour_title}</div>
-                  <div style={{fontSize:'10px', color:'#666'}}>{b.pax} pax · {b.experience ? b.experience.toUpperCase() : ''}</div>
+                  <div style={{fontSize:'10px', color:'#666'}}>{b.pax} pax · <span style={{color:C, fontWeight:900}}>{EXP_LABEL[b.experience] || b.experience?.toUpperCase()}</span></div>
                 </div>
                 <div style={{textAlign:'right'}}>
-                  {!isMobile && <div style={{fontWeight:900, color:C, marginBottom:'4px'}}>{b.total_price}€</div>}
+                  <div style={{fontSize:'10px', fontWeight:900, color:'#555', marginBottom:'2px'}}>TOTAL: <span style={{color:C}}>{b.total_price}€</span></div>
                   <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'4px'}}>
                     <span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status] || b.payment_status || 'SIN ESTADO'}</span>
-                    {b.total_price - b.total_paid > 0 && (
-                      <div style={{fontSize:'11px', fontWeight:900, color:'#ef4444', background:'#ef444411', padding:'2px 8px', borderRadius:'6px'}}>
-                        Debe: {(b.total_price - b.total_paid).toFixed(2)}€
-                      </div>
-                    )}
-                    <div style={{fontSize:'11px', fontWeight:900, color:'#10b981', background:'#10b98111', padding:'2px 8px', borderRadius:'6px'}}>
-                      Profit: {(b.total_paid - b.total_expenses).toFixed(2)}€
+                    <div style={{display:'flex', gap:'6px', fontSize:'9px', fontWeight:900, marginTop:'2px'}}>
+                       <span style={{color:'#10b981'}}>PAGADO: {Number(b.total_paid || 0).toFixed(1)}€</span>
+                       {b.total_price - (b.total_paid || 0) > 0 && <span style={{color:'#ef4444'}}>FALTA: {(b.total_price - (b.total_paid || 0)).toFixed(1)}€</span>}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* FILA 3: Botones (Abajo en móvil) */}
               <div style={{display:'flex', gap:'6px', justifyContent: isMobile ? 'space-between' : 'flex-end', borderTop: isMobile ? '1px solid #ffffff05' : 'none', paddingTop: isMobile ? '12px' : 0}}>
                 <div style={{display:'flex', gap:'6px', flex: isMobile ? 1 : 'none'}}>
                   <a href={waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours. ¿Cómo estás?`)} target="_blank" rel="noreferrer" style={{...s.btn('#25D366'), flex: isMobile ? 1 : 'none', textAlign:'center'}}>WSP</a>
@@ -372,43 +379,6 @@ export default function AdminPanel() {
                 <div style={{fontSize:'18px',fontWeight:900,color:C}}>{stats.top}</div>
               </div>
             </div>
-
-            {detailedStats && (
-              <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'24px'}}>
-                <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff05'}}>
-                  <h3 style={{marginTop:0, marginBottom:'20px', fontSize:'16px'}}>Rendimiento de Choferes</h3>
-                  <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
-                    {detailedStats.driver_performance.map(d => (
-                      <div key={d.driver_name} style={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#222', padding:'12px 16px', borderRadius:'16px'}}>
-                        <div>
-                          <div style={{fontWeight:900}}>{d.driver_name}</div>
-                          <div style={{fontSize:'10px', color:'#666'}}>{d.total_reviews} reseñas</div>
-                        </div>
-                        <div style={{textAlign:'right'}}>
-                          <div style={{color:C, fontWeight:900, fontSize:'18px'}}>{Number(d.avg_rating).toFixed(1)} ★</div>
-                          <div style={{fontSize:'10px', color:'#10b981'}}>Vehículo: {Number(d.avg_vehicle).toFixed(1)}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff05'}}>
-                  <h3 style={{marginTop:0, marginBottom:'20px', fontSize:'16px'}}>Calidad del Servicio (Promedio)</h3>
-                  <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px'}}>
-                    {Object.entries(detailedStats.service_quality).map(([key, val]) => (
-                      <div key={key} style={{background:'#222', padding:'12px', borderRadius:'16px', textAlign:'center'}}>
-                        <div style={{fontSize:'10px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'4px'}}>{key}</div>
-                        <div style={{fontSize:'20px', fontWeight:900, color:C}}>{Number(val).toFixed(1)}</div>
-                        <div style={{height:'4px', background:'#333', borderRadius:'2px', marginTop:'8px', overflow:'hidden'}}>
-                          <div style={{height:'100%', background:C, width:`${(val/5)*100}%`}}></div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         )}
 

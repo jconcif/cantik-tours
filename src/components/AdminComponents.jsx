@@ -40,6 +40,7 @@ export const BookingForm = ({data,drivers,onChange}) => (
     <Select label="Chofer" value={data.driver_id} onChange={v=>onChange('driver_id',v)} options={[{value:'',label:'Sin asignar'},...drivers.map(d=>({value:d.id,label:d.name}))]} />
     <Select label="Experiencia" value={data.experience} onChange={v=>onChange('experience',v)} options={[{value:'driver_en',label:'Conductor privado (inglés)'},{value:'guide_en',label:'Guía Local (inglés)'},{value:'guide_es',label:'Guía Local Certificado (español)'}]} />
     <Input label="Código Referencia (ej: GP7D)" value={data.reference} onChange={v=>onChange('reference',v)} />
+    <div style={{gridColumn:'1/-1'}}><Field label="Notas Internas (Seguimiento)"><textarea rows={3} value={data.notes||''} onChange={e=>onChange('notes',e.target.value)} style={{...inputStyle,resize:'vertical'}} /></Field></div>
   </div>
 );
 
