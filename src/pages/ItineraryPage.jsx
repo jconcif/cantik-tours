@@ -3,12 +3,15 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar, User, MapPin, CreditCard, MessageCircle, ArrowLeft, Star, CheckCircle2, Clock, ShieldCheck, Ship, Info, Headphones, ExternalLink } from 'lucide-react';
 import { getItinerary } from '../services/api';
+import { tours } from '../data/tours';
+import { useTranslation } from 'react-i18next';
 
 const SUPPORT_PHONE_ES = '34642517787';
 const SUPPORT_PHONE_ID = '6285691533356';
 
 export default function ItineraryPage() {
   const [searchParams] = useSearchParams();
+  const { i18n } = useTranslation();
   const ref = searchParams.get('ref');
   const [booking, setBooking] = useState(null);
   const [payments, setPayments] = useState([]);
@@ -188,24 +191,108 @@ export default function ItineraryPage() {
           </div>
         </motion.div>
 
-        {/* Personalized Itinerary */}
-        {booking.itinerary && (
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }} className="bg-[#1a1a1a] rounded-3xl p-6 shadow-xl border border-white/5 mb-6">
-            <h3 className="text-xs font-black text-[#11BDDB] uppercase tracking-widest mb-4 flex items-center gap-2">
-              <MapPin size={14} /> Itinerario Personalizado
+        {/* Personalized Itinerary Timeline */}
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }} className="bg-[#1a1a1a] rounded-[2.5rem] p-8 shadow-2xl border border-white/5 mb-8 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#11BDDB]/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+          
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-sm font-black text-[#11BDDB] uppercase tracking-[0.2em] flex items-center gap-3">
+              <MapPin size={18} className="animate-bounce" /> 
+              <span>Itinerario del Viaje</span>
             </h3>
-            <div className="space-y-3">
-              {booking.itinerary.split(',').map((stop, idx) => (
-                <div key={idx} className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/5">
-                  <div className="w-6 h-6 rounded-full bg-[#11BDDB]/10 flex items-center justify-center text-[#11BDDB] font-black text-[10px]">
-                    {idx + 1}
-                  </div>
-                  <span className="text-sm font-bold text-gray-200">{stop.trim()}</span>
-                </div>
-              ))}
+            <div className="text-[10px] font-bold text-gray-500 bg-white/5 px-3 py-1 rounded-full">
+              {booking.tour_id === 'ubud-flexible' ? '100% FLEXIBLE' : 'PLANIFICADO'}
             </div>
-          </motion.div>
-        )}
+          </div>
+
+          <div className="relative">
+            {/* Vertical Line */}
+            <div className="absolute left-[11px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-[#11BDDB] via-[#11BDDB]/50 to-transparent"></div>
+
+            <div className="space-y-8 relative">
+              {(() => {
+                let items = [];
+                try {
+                  if (booking.itinerary && booking.itinerary.startsWith('[')) {
+                    // NEW JSON FORMAT
+                    items = JSON.parse(booking.itinerary);
+                  } else if (booking.itinerary) {
+                    // OLD STRING FORMAT
+                    items = booking.itinerary.split(',').map(s => ({ time: '--:--', desc: s.trim() }));
+                  } else {
+                    // FALLBACK TO TOUR DEFAULT
+                    const tourData = tours.find(t => t.id === booking.tour_id);
+                    if (tourData && tourData.itinerary) {
+                      items = tourData.itinerary.map(it => ({
+                        time: it.duration || '--:--',
+                        desc: i18n.language.startsWith('en') ? (it.activity_en || it.activity) : it.activity
+                      }));
+                    }
+                  }
+                } catch(e) {
+                  console.error("Itinerary Parse Error", e);
+                }
+
+                if (items.length === 0) return (
+                  <div className="text-center py-8">
+                    <p className="text-xs text-gray-500 italic">Tu itinerario se está terminando de preparar...</p>
+                  </div>
+                );
+
+                return items.map((item, idx) => {
+                  const isLast = idx === items.length - 1;
+                  const isFirst = idx === 0;
+                  
+                  // Simple icon logic based on text
+                  const text = item.desc.toLowerCase();
+                  let Icon = MapPin;
+                  if (text.includes('recogida') || text.includes('pickup') || text.includes('hotel')) Icon = Clock;
+                  if (text.includes('foto') || text.includes('photo')) Icon = Star;
+                  if (text.includes('comida') || text.includes('lunch') || text.includes('almuerzo')) Icon = Info;
+                  if (text.includes('regreso') || text.includes('dropoff') || text.includes('fin')) Icon = CheckCircle2;
+
+                  return (
+                    <motion.div 
+                      key={idx} 
+                      initial={{ x: -10, opacity: 0 }} 
+                      animate={{ x: 0, opacity: 1 }} 
+                      transition={{ delay: 0.2 + (idx * 0.05) }}
+                      className="flex gap-6 items-start"
+                    >
+                      {/* Timeline Dot & Icon Overlay */}
+                      <div className="relative flex-shrink-0 z-10">
+                        <div className={`w-6 h-6 rounded-full ${isFirst ? 'bg-[#11BDDB]' : 'bg-[#1a1a1a]'} border-2 border-[#11BDDB] flex items-center justify-center shadow-[0_0_15px_rgba(17,189,219,0.3)]`}>
+                          <div className={`w-2 h-2 rounded-full ${isFirst ? 'bg-white' : 'bg-[#11BDDB]'}`}></div>
+                        </div>
+                      </div>
+
+                      <div className="flex-1 pb-2">
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="text-[10px] font-black text-[#11BDDB] bg-[#11BDDB]/10 px-2 py-0.5 rounded-md border border-[#11BDDB]/20">
+                            {item.time}
+                          </span>
+                          <div className="h-[1px] flex-1 bg-white/5"></div>
+                        </div>
+                        <h4 className="text-sm font-bold text-gray-200 leading-tight">
+                          {item.desc}
+                        </h4>
+                      </div>
+                    </motion.div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+          
+          <div className="mt-8 pt-6 border-t border-white/5 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+              <ShieldCheck size={20} />
+            </div>
+            <p className="text-[10px] text-gray-500 font-bold leading-relaxed">
+              Itinerario sujeto a cambios según condiciones climáticas o tráfico, siempre priorizando tu mejor experiencia.
+            </p>
+          </div>
+        </motion.div>
 
         {/* Conductor Card — sin botón de WSP al conductor */}
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="bg-[#1a1a1a] rounded-3xl p-6 shadow-xl border border-white/5 mb-6 overflow-hidden relative">

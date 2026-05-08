@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, Shield, User, CreditCard, ShieldCheck } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, Shield, User, CreditCard, ShieldCheck, Plus } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../context/CurrencyContext';
 import DatePicker from 'react-datepicker';
@@ -247,13 +247,9 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
         // Paso 1: Información básica
         if (step === 1) {
             trackEvent('Booking', 'Step 2 reached (Info)', tourTitle);
-            setStep((tourId === 'ubud-flexible' && (!initialSelectedStops || initialSelectedStops.length === 0)) ? 2 : 3);
-            return;
-        }
-
-        // Paso 2: Selección de paradas (Solo Flexible)
-        if (step === 2) {
-            if (formData.selectedStops.length === 0) {
+            setStep((tourId === 'ubud-flexible' && (!initialSelectedStops || (initialSelectedStops?.length || 0) === 0)) ? 2 : 3);
+        } else if (step === 2) {
+            if ((formData.selectedStops?.length || 0) === 0) {
                 alert(i18n.language.startsWith('es') ? "Por favor selecciona al menos una parada para continuar." : "Please select at least one stop to continue.");
                 return;
             }
@@ -286,8 +282,8 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
         const paxLabel = t(`detail.booking_pax_${paxValue}`);
         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
-        const extrasText = formData.extras.length > 0 
-            ? `\n⚡ *EXTRAS:* \n${formData.extras.map(e => `  • ${e.name} (+${e.price}€)`).join('\n')}`
+        const extrasText = (formData.extras || []).length > 0 
+            ? `\n⚡ *EXTRAS:* \n${(formData.extras || []).map(e => `  • ${e.name} (+${e.price}€)`).join('\n')}`
             : '';
 
         const message = `🌟 *VOUCHER DE RESERVA - CANTIK TOURS* 🌟
@@ -403,8 +399,8 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
 
                                         <div className="grid grid-cols-1 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                                             {availableStops.map((stop) => {
-                                                const isSelected = formData.selectedStops.includes(stop.name);
-                                                const isDisabled = !isSelected && formData.selectedStops.length >= 5;
+                                                const isSelected = (formData.selectedStops || []).includes(stop.name);
+                                                const isDisabled = !isSelected && (formData.selectedStops?.length || 0) >= 5;
                                                 
                                                 return (
                                                     <button
@@ -412,15 +408,16 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                         type="button"
                                                         disabled={isDisabled}
                                                         onClick={() => {
+                                                            const currentStops = formData.selectedStops || [];
                                                             if (isSelected) {
                                                                 setFormData({
                                                                     ...formData,
-                                                                    selectedStops: formData.selectedStops.filter(s => s !== stop.name)
+                                                                    selectedStops: currentStops.filter(s => s !== stop.name)
                                                                 });
-                                                            } else {
+                                                            } else if (currentStops.length < 5) {
                                                                 setFormData({
                                                                     ...formData,
-                                                                    selectedStops: [...formData.selectedStops, stop.name]
+                                                                    selectedStops: [...currentStops, stop.name]
                                                                 });
                                                             }
                                                         }}
@@ -456,12 +453,13 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                 <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />
                                             </button>
                                             <button
-                                                type="submit"
-                                                disabled={formData.selectedStops.length < 5}
-                                                className={`flex-1 py-5 rounded-[1.5rem] text-lg font-black transition-all flex items-center justify-center gap-3 shadow-xl ${
-                                                    formData.selectedStops.length === 5 
-                                                        ? 'btn-primary shadow-primary/20 cursor-pointer' 
-                                                        : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
+                                                type="button"
+                                                onClick={() => setStep(3)}
+                                                disabled={(formData.selectedStops?.length || 0) < 5}
+                                                className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all shadow-lg active:scale-95 ${
+                                                    (formData.selectedStops?.length || 0) === 5 
+                                                        ? 'bg-secondary text-white shadow-secondary/20 hover:shadow-secondary/40' 
+                                                        : 'bg-gray-100 dark:bg-white/5 text-gray-400 cursor-not-allowed'
                                                 }`}
                                             >
                                                 {i18n.language === 'en' ? 'NEXT' : 'SIGUIENTE'}
@@ -709,7 +707,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                             </div>
                                         </div>
 
-                                        {/* Extras Upselling Section */}
+                                        {/* Extras Upselling Section (Oculto por ahora)
                                         <div className="space-y-4 pt-4 border-t border-black/5 dark:border-white/5">
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
                                                 <Plus size={14} className="text-secondary" />
@@ -721,16 +719,17 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                     { id: 'sim', name: 'Tarjeta SIM 4G/5G (60GB)', price: 20, icon: '📶' },
                                                     { id: 'visa', name: 'Visado Fast Track (VIP)', price: 45, icon: '🛂' }
                                                 ].map((extra) => {
-                                                    const isSelected = formData.extras.some(e => e.id === extra.id);
+                                                    const currentExtras = formData.extras || [];
+                                                    const isSelected = currentExtras.some(e => e.id === extra.id);
                                                     return (
                                                         <button
                                                             key={extra.id}
                                                             type="button"
                                                             onClick={() => {
                                                                 if (isSelected) {
-                                                                    setFormData({ ...formData, extras: formData.extras.filter(e => e.id !== extra.id) });
+                                                                    setFormData({ ...formData, extras: currentExtras.filter(e => e.id !== extra.id) });
                                                                 } else {
-                                                                    setFormData({ ...formData, extras: [...formData.extras, extra] });
+                                                                    setFormData({ ...formData, extras: [...currentExtras, extra] });
                                                                 }
                                                             }}
                                                             className={`flex items-center justify-between p-3 rounded-xl border-2 transition-all ${isSelected ? 'border-secondary bg-secondary/5' : 'border-black/5 dark:border-white/5 bg-transparent opacity-70'}`}
@@ -748,6 +747,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                 })}
                                             </div>
                                         </div>
+                                        */}
 
 
 
@@ -755,7 +755,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                         <div className="flex gap-3 mt-6">
                                             <button
                                                 type="button"
-                                                onClick={() => setStep((tourId === 'ubud-flexible' && (!initialSelectedStops || initialSelectedStops.length === 0)) ? 2 : 1)}
+                                                onClick={() => setStep((tourId === 'ubud-flexible' && (!initialSelectedStops || (initialSelectedStops?.length || 0) === 0)) ? 2 : 1)}
                                                 className="w-16 flex-none bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-2xl flex items-center justify-center transition-colors shadow-sm"
                                             >
                                                 <ArrowLeft size={20} className="text-gray-600 dark:text-gray-300" />

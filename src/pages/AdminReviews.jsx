@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import * as api from '../services/api';
 import { login as apiLogin, getToken, clearToken } from '../services/api';
-import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement } from '../components/AdminComponents';
+import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor } from '../components/AdminComponents';
 
 const C = '#11BDDB';
 const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en',reference:'',notes:''};
@@ -164,7 +164,17 @@ export default function AdminPanel() {
     setModal({type:'finance', action:'view', data:b});
   };
 
-  const filter=(l)=>(l||[]).filter(x=>Object.values(x).some(v=>v&&String(v).toLowerCase().includes(search.toLowerCase())));
+  const filter = (l) => {
+    if (!l || !Array.isArray(l)) return [];
+    return l.filter(x => {
+      if (!x) return false;
+      try {
+        return Object.values(x).some(v => 
+          v !== null && v !== undefined && String(v).toLowerCase().includes((search || '').toLowerCase())
+        );
+      } catch (e) { return false; }
+    });
+  };
   const waLink=(p,m)=>`https://wa.me/${(p||'').replace(/\D/g,'')}?text=${encodeURIComponent(m)}`;
   const exportCSV=()=>{
     const h=['ID','Cliente','Fecha','Tour','Pax','Total','Estado'];
@@ -189,26 +199,30 @@ export default function AdminPanel() {
   },[calMonth]);
 
   const stats=useMemo(()=>{
+    const list = bookings || [];
     const isPaid = s => ['paid','on_tour','finished'].includes(s);
-    const rev=bookings.filter(b=>isPaid(b.payment_status)).reduce((a,b)=>a+Number(b.total_price),0);
-    const byTour=bookings.reduce((a,b)=>({...a,[b.tour_title]:(a[b.tour_title]||0)+1}),{});
-    const top=Object.entries(byTour).sort((a,b)=>b[1]-a[1])[0]?.[0]||'-';
-    return{rev,total:bookings.length,top,paid:bookings.filter(b=>isPaid(b.payment_status)).length};
-  },[bookings]);
+    const rev = list.filter(b => b && isPaid(b.payment_status)).reduce((a,b) => a + Number(b.total_price || 0), 0);
+    const byTour = list.reduce((a,b) => {
+      if (!b || !b.tour_title) return a;
+      return {...a, [b.tour_title]: (a[b.tour_title] || 0) + 1};
+    }, {});
+    const top = Object.entries(byTour).sort((a,b) => b[1] - a[1])[0]?.[0] || 'Ninguno';
+    return {rev, total: list.length, top, paid: list.filter(b => b && isPaid(b.payment_status)).length};
+  }, [bookings]);
 
   const recent=bookings.filter(b=>{const d=new Date(b.booking_date);const y=new Date();y.setDate(y.getDate()-1);return d<=y && d>new Date(y.getTime()-7*24*60*60*1000);});
 
   const s={
-    btn:(bg,c='#fff')=>({background:bg,color:c,border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer',fontSize:'12px',transition:'all 0.2s'}),
-    card:{background:'#1a1a1a',borderRadius:'16px',padding:'16px',marginBottom:'8px',display:'flex',justifyContent:'space-between',alignItems:'center',gap:'12px',border:'1px solid #ffffff05', flexWrap:'wrap', position:'relative'},
+    btn:(bg,c='#fff')=>({background:bg,color:c,border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer',fontSize:'12px',transition:'all 0.2s', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px'}),
+    card:{background:'#1a1a1a',borderRadius:'16px',padding:'16px',marginBottom:'12px',display:'flex',flexDirection:'column',gap:'16px',border:'1px solid #ffffff05', position:'relative', boxShadow:'0 10px 20px rgba(0,0,0,0.2)'},
     tag:(c)=>({background:c+'22',color:c,padding:'2px 8px',borderRadius:'8px',fontSize:'10px',fontWeight:900,textTransform:'uppercase'}),
-    tabBtn:(a)=>({background:a?C+'22':'transparent',color:a?C:'#666',border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer'})
+    tabBtn:(a)=>({background:a?C+'22':'transparent',color:a?C:'#fff',border:'none',padding:'10px 20px',borderRadius:'14px',fontWeight:900,cursor:'pointer', whiteSpace:'nowrap', fontSize:'13px', transition:'all 0.3s'})
   };
 
   if (!authed) return (
-    <div style={{minHeight:'100vh',background:'#0f0f0f',display:'flex',alignItems:'center',justifyContent:'center'}}>
-      <div style={{background:'#1a1a1a',padding:'40px',borderRadius:'24px',width:'100%',maxWidth:'360px',borderTop:`6px solid ${C}`}}>
-        <h2 style={{color:'#fff',textAlign:'center',marginBottom:'20px'}}>Cantik <span style={{color:C}}>Admin</span></h2>
+    <div style={{minHeight:'100vh',background:'#0f0f0f',display:'flex',alignItems:'center',justifyContent:'center', padding:'20px'}}>
+      <div style={{background:'#1a1a1a',padding:'40px',borderRadius:'32px',width:'100%',maxWidth:'380px',borderTop:`8px solid ${C}`, boxShadow:'0 30px 60px rgba(0,0,0,0.5)'}}>
+        <h2 style={{color:'#fff',textAlign:'center',marginBottom:'30px', fontSize:'28px', fontWeight:900}}>Cantik <span style={{color:C}}>Admin</span></h2>
         <form onSubmit={async e => {
           e.preventDefault();
           setLoading(true);
@@ -219,20 +233,20 @@ export default function AdminPanel() {
             toast(err.message || 'Contraseña incorrecta', false);
           } finally { setLoading(false); }
         }}>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Contraseña" style={{width:'100%',padding:'14px',borderRadius:'14px',border:'none',background:'#222',color:'#fff',marginBottom:'12px',boxSizing:'border-box'}}/>
-          {msg && <div style={{padding:'10px',borderRadius:'10px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'12px',fontWeight:900,fontSize:'13px'}}>{msg.t}</div>}
-          <button type="submit" style={{...s.btn(C),width:'100%',padding:'14px'}}>{loading?'...':'Entrar'}</button>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Introduce el PIN" style={{width:'100%',padding:'16px',borderRadius:'16px',border:'1px solid #333',background:'#0f0f0f',color:'#fff',marginBottom:'16px',boxSizing:'border-box', textAlign:'center', fontSize:'18px', fontWeight:900}}/>
+          {msg && <div style={{padding:'12px',borderRadius:'12px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'16px',fontWeight:900,fontSize:'14px'}}>{msg.t}</div>}
+          <button type="submit" style={{...s.btn(C),width:'100%',padding:'16px', fontSize:'16px'}}>{loading?'Autenticando...':'Entrar'}</button>
         </form>
       </div>
     </div>
   );
 
   return(
-    <div style={{paddingTop:'96px',paddingBottom:'60px',minHeight:'100vh',background:'#0f0f0f',color:'#fff'}}>
+    <div style={{paddingTop: isMobile ? '80px' : '100px', paddingBottom:'40px',minHeight:'100vh',background:'#0f0f0f',color:'#fff', fontFamily:'"Inter", sans-serif'}}>
       <div style={{maxWidth:'1100px',margin:'0 auto',padding:'0 16px'}}>
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'24px'}}>
-          <h1 style={{margin:0,fontSize:'22px',fontWeight:900}}>Cantik<span style={{color:C}}>Admin</span></h1>
-          <div style={{display:'flex',gap:'4px',background:'#1a1a1a',padding:'4px',borderRadius:'16px', flexWrap:'wrap', justifyContent:'center'}}>
+        <div style={{display:'flex',flexDirection: isMobile ? 'column' : 'row', justifyContent:'space-between',alignItems: isMobile ? 'flex-start' : 'center',marginBottom:'32px', gap:'20px'}}>
+          <h1 style={{margin:0,fontSize:'26px',fontWeight:900, letterSpacing:'-1px'}}>Cantik<span style={{color:C}}>Admin</span></h1>
+          <div style={{display:'flex',gap:'4px',background:'#1a1a1a',padding:'6px',borderRadius:'20px', overflowX:'auto', maxWidth:'100%', scrollbarWidth:'none', msOverflowStyle:'none'}}>
             {TABS.map(t=><button key={t} style={s.tabBtn(tab===t)} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
             <button style={s.tabBtn(false)} onClick={() => { clearToken(); setAuthed(false); }}>✕</button>
           </div>
@@ -241,61 +255,65 @@ export default function AdminPanel() {
         {msg&&<div style={{padding:'12px',borderRadius:'12px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'12px',fontWeight:900}}>{msg.t}</div>}
 
         {['bookings','drivers','reviews','coupons'].includes(tab) && <>
-          <div style={{display:'flex',gap:'8px',marginBottom:'16px', flexWrap:'wrap'}}>
-            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'1 1 200px',padding:'12px',borderRadius:'14px',background:'#1a1a1a',border:'none',color:'#fff'}}/>
-            <div style={{display:'flex', gap:'8px', flex:'1 1 auto', justifyContent:'flex-end'}}>
-              <button style={s.btn(C)} onClick={reload}>↻</button>
-              <button style={s.btn(C)} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])}>+ Nuevo</button>
-              {tab==='bookings'&&<button style={s.btn('#10b981')} onClick={exportCSV}>📥 CSV</button>}
-            </div>
+          <div style={{display:'flex',gap:'8px',marginBottom:'16px', flexWrap:'nowrap', overflowX:'auto', paddingBottom:'8px', scrollbarWidth:'none'}}>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'0 0 150px',padding:'12px',borderRadius:'14px',background:'#1a1a1a',border:'none',color:'#fff', fontSize:'13px'}}/>
+            <button style={{...s.btn(C), flexShrink:0}} onClick={reload}>↻</button>
+            <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])}>+ Nuevo</button>
+            {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV}>CSV</button>}
           </div>
           {tab==='bookings'&&filter(bookings).map(b=>(
-            <div key={b.id} style={{...s.card, flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'stretch' : 'center', gap: isMobile ? '12px' : '20px'}}>
-              <div style={{display:'flex', gap:'12px', alignItems:'center', flex:1}}>
-                <div style={{background:C+'22',color:C,padding:'8px',borderRadius:'12px',textAlign:'center',minWidth:'40px'}}>
+            <div key={b.id} style={s.card}>
+              {/* BLOQUE SUPERIOR: Info Principal */}
+              <div style={{display:'flex', gap:'16px', alignItems:'flex-start', width:'100%'}}>
+                <div style={{background:C+'22',color:C,padding:'8px',borderRadius:'14px',textAlign:'center',minWidth:'40px', height:'fit-content'}}>
                   <div style={{fontSize:'9px',fontWeight:900}}>{new Date(b.booking_date).toLocaleString('es',{month:'short'}).toUpperCase()}</div>
                   <div style={{fontSize:'18px',fontWeight:900}}>{new Date(b.booking_date).getDate()}</div>
                 </div>
-                <div style={{flex:1}}>
-                  <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                    <div style={{fontWeight:900, fontSize: isMobile ? '16px' : '14px'}}>{b.client_name}</div>
-                    {b.reference && <span style={{fontSize:'10px', background:'#ffffff15', padding:'2px 6px', borderRadius:'6px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
+                <div style={{flex:1, minWidth:0}}>
+                  <div style={{display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap', marginBottom:'2px'}}>
+                    <div style={{fontWeight:900, fontSize: isMobile ? '14px' : '16px', color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{b.client_name}</div>
+                    {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
                   </div>
-                  <div style={{fontSize:'11px',color:'#666'}}>{b.hotel}</div>
-                  <div style={{fontSize:'9px',color:C,fontWeight:900,marginTop:'2px', display:'flex', flexDirection:'column', gap:'1px'}}>
-                    <span>REGISTRADA: {b.created_at ? new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit'}) : 'N/A'} ({userTZ})</span>
-                    <span style={{opacity:0.7}}>BALI: {b.created_at ? new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'}) : 'N/A'} (WITA)</span>
+                  <div style={{fontSize:'11px',color:'#777', marginBottom:'4px', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{b.hotel}</div>
+                  <div style={{fontSize:'9px',color:'#555',fontWeight:900, display:'flex', gap: isMobile ? '6px' : '12px', flexWrap:'wrap'}}>
+                    <span style={{color:C}}>🕒 {new Date(b.created_at).toLocaleString('es-ES', {hour:'2-digit', minute:'2-digit'})}</span>
+                    <span style={{opacity:0.6}}>🌴 {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
                   </div>
+                </div>
+                <div style={{textAlign:'right', flexShrink:0}}>
+                   <div style={{fontSize:'16px', fontWeight:900, color:C}}>{b.total_price}€</div>
+                   <div style={{fontSize:'9px', fontWeight:700, color:'#555'}}>{b.pax} PAX</div>
                 </div>
               </div>
 
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', borderTop: isMobile ? '1px solid #ffffff05' : 'none', paddingTop: isMobile ? '12px' : 0, flex:1.2}}>
-                <div style={{flex:1}}>
-                  <div style={{fontSize:'12px', fontWeight:700, color:'#aaa'}}>{b.tour_title}</div>
-                  <div style={{fontSize:'10px', color:'#666'}}>{b.pax} pax · <span style={{color:C, fontWeight:900}}>{EXP_LABEL[b.experience] || b.experience?.toUpperCase()}</span></div>
-                </div>
-                <div style={{textAlign:'right'}}>
-                  <div style={{fontSize:'10px', fontWeight:900, color:'#555', marginBottom:'2px'}}>TOTAL: <span style={{color:C}}>{b.total_price}€</span></div>
-                  <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'4px'}}>
-                    <span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status] || b.payment_status || 'SIN ESTADO'}</span>
-                    <div style={{display:'flex', gap:'6px', fontSize:'9px', fontWeight:900, marginTop:'2px'}}>
-                       <span style={{color:'#10b981'}}>PAGADO: {Number(b.total_paid || 0).toFixed(1)}€</span>
-                       {b.total_price - (b.total_paid || 0) > 0 && <span style={{color:'#ef4444'}}>FALTA: {(b.total_price - (b.total_paid || 0)).toFixed(1)}€</span>}
-                    </div>
-                  </div>
+              {/* BLOQUE MEDIO: Detalles del Tour */}
+              <div style={{background:'#ffffff03', padding:'12px', borderRadius:'14px', border:'1px solid #ffffff05', width:'100%'}}>
+                <div style={{fontSize:'13px', fontWeight:800, color:'#ddd', marginBottom:'6px'}}>{b.tour_title}</div>
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                   <div style={{fontSize:'11px', color:C, fontWeight:900, textTransform:'uppercase', letterSpacing:'0.5px'}}>✨ {EXP_LABEL[b.experience] || b.experience?.toUpperCase()}</div>
+                   <span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status]}</span>
                 </div>
               </div>
 
-              <div style={{display:'flex', gap:'6px', justifyContent: isMobile ? 'space-between' : 'flex-end', borderTop: isMobile ? '1px solid #ffffff05' : 'none', paddingTop: isMobile ? '12px' : 0}}>
-                <div style={{display:'flex', gap:'6px', flex: isMobile ? 1 : 'none'}}>
-                  <a href={waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours. ¿Cómo estás?`)} target="_blank" rel="noreferrer" style={{...s.btn('#25D366'), flex: isMobile ? 1 : 'none', textAlign:'center'}}>WSP</a>
-                  <button style={{...s.btn(C+'33',C), flex: isMobile ? 1 : 'none'}} onClick={()=>generateVoucher(b,drivers)}>PDF</button>
+              {/* BLOQUE INFERIOR: Finanzas Rápidas */}
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%', background:'#00000033', padding:'8px 12px', borderRadius:'12px'}}>
+                <div style={{display:'flex', gap:'12px'}}>
+                  <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>PAGADO:</span> <span style={{color:'#10b981'}}>{Number(b.total_paid||0).toFixed(0)}€</span></div>
+                  {(b.total_price - (b.total_paid||0)) > 0 && <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>FALTA:</span> <span style={{color:'#ef4444'}}>{(b.total_price - (b.total_paid||0)).toFixed(0)}€</span></div>}
                 </div>
-                <div style={{display:'flex', gap:'6px'}}>
-                  <button style={s.btn('#f59e0b22','#f59e0b')} title="Copiar Link Review" onClick={()=>copyReviewLink(b)}>⭐</button>
-                  <button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('booking',b)}>✎</button>
-                  <button style={s.btn('#11BDDB22','#11BDDB')} title="Finanzas del Tour" onClick={()=>handleManagePayments(b)}>💰</button>
-                  <button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('booking',b.id)}>✕</button>
+                {b.notes && <div style={{fontSize:'10px', color:'#f59e0b', fontWeight:900}}>📝 NOTA</div>}
+              </div>
+
+              {/* BOTONES DE ACCIÓN: Siempre accesibles */}
+              <div style={{display:'flex', gap:'8px', width:'100%', marginTop:'4px'}}>
+                <a href={waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`)} target="_blank" rel="noreferrer" style={{...s.btn('#25D366'), flex:2, height:'40px'}}>WHATSAPP</a>
+                <button style={{...s.btn(C+'22',C), flex:1.2, height:'40px'}} onClick={()=>generateVoucher(b,drivers)}>VOUCHER</button>
+                <div style={{display:'flex', gap: isMobile ? '4px' : '6px', overflowX: isMobile ? 'auto' : 'visible', scrollbarWidth:'none', paddingBottom:'2px', width:'100%'}}>
+                  <button style={{...s.btn('#f59e0b22','#f59e0b'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Copiar Link Review" onClick={()=>copyReviewLink(b)}>⭐</button>
+                  <button style={{...s.btn('#ffffff11','#fff'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} onClick={()=>openEdit('booking',b)}>✎</button>
+                  <button style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Editar Itinerario" onClick={()=>setModal({type:'itinerary', action:'edit', data:b})}>📍</button>
+                  <button style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Finanzas del Tour" onClick={()=>handleManagePayments(b)}>💰</button>
+                  <button style={{...s.btn('#ef444411','#ef4444'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} onClick={()=>del('booking',b.id)}>✕</button>
                 </div>
               </div>
             </div>
@@ -360,23 +378,23 @@ export default function AdminPanel() {
         )}
 
         {tab==='stats'&&(
-          <div style={{display:'flex', flexDirection:'column', gap:'24px'}}>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(200px,1fr))',gap:'16px'}}>
-              <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}>
-                <div style={{fontSize:'12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Ingresos Totales</div>
-                <div style={{fontSize:'32px',fontWeight:900,color:C}}>{(detailedStats?.revenue || stats.rev).toFixed(2)}€</div>
+          <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
+            <div style={{display:'grid',gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit,minmax(200px,1fr))',gap: isMobile ? '10px' : '16px'}}>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Ingresos</div>
+                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:C}}>{(detailedStats?.revenue || stats.rev).toFixed(0)}€</div>
               </div>
-              <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}>
-                <div style={{fontSize:'12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Gastos Totales</div>
-                <div style={{fontSize:'32px',fontWeight:900,color:'#ef4444'}}>{(detailedStats?.expenses || 0).toFixed(2)}€</div>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Gastos</div>
+                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:'#ef4444'}}>{(detailedStats?.expenses || 0).toFixed(0)}€</div>
               </div>
-              <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}>
-                <div style={{fontSize:'12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Beneficio Neto</div>
-                <div style={{fontSize:'32px',fontWeight:900,color:'#10b981'}}>{(detailedStats?.profit || 0).toFixed(2)}€</div>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Beneficio</div>
+                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:'#10b981'}}>{(detailedStats?.profit || 0).toFixed(0)}€</div>
               </div>
-              <div style={{background:'#1a1a1a',padding:'24px',borderRadius:'24px'}}>
-                <div style={{fontSize:'12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Tour Estrella</div>
-                <div style={{fontSize:'18px',fontWeight:900,color:C}}>{stats.top}</div>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Tour Top</div>
+                <div style={{fontSize: isMobile ? '12px' : '18px',fontWeight:900,color:C, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{stats.top}</div>
               </div>
             </div>
           </div>
@@ -416,6 +434,12 @@ export default function AdminPanel() {
                 {modal.type==='booking'&&<BookingForm data={modal.data} drivers={drivers} onChange={setField}/>}
                 {modal.type==='finance' && (
                   <FinancialManagement 
+                    booking={modal.data} 
+                    onUpdate={reload} 
+                  />
+                )}
+                {modal.type==='itinerary' && (
+                  <ItineraryEditor 
                     booking={modal.data} 
                     onUpdate={reload} 
                   />

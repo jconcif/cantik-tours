@@ -408,3 +408,74 @@ export const FinancialManagement = ({booking, onUpdate}) => {
 };
 
 
+
+export const ItineraryEditor = ({booking, onUpdate}) => {
+  const [items, setItems] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    if (booking.itinerary) {
+      try {
+        if (booking.itinerary.startsWith('[')) {
+          setItems(JSON.parse(booking.itinerary));
+        } else {
+          // Compatibility with old comma-separated format
+          setItems(booking.itinerary.split(',').map(s => ({time: '--:--', desc: s.trim()})));
+        }
+      } catch(e) {
+        setItems([]);
+      }
+    }
+  }, [booking.itinerary]);
+
+  const save = async () => {
+    setLoading(true);
+    try {
+      await api.updateBooking(booking.id, { itinerary: JSON.stringify(items) });
+      if (onUpdate) onUpdate();
+      alert('Itinerario guardado ✓');
+    } catch(e) {
+      alert(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const addItem = () => setItems([...items, {time: '08:00', desc: 'Nueva parada'}]);
+  const removeItem = (idx) => setItems(items.filter((_, i) => i !== idx));
+  const updateItem = (idx, k, v) => {
+    const next = [...items];
+    next[idx][k] = v;
+    setItems(next);
+  };
+
+  return (
+    <div style={{color:'#fff'}}>
+      <p style={{fontSize:'12px', color:'#666', marginBottom:'20px'}}>
+        Configura el cronograma del viaje. Estos cambios se verán reflejados instantáneamente en el itinerario del cliente.
+      </p>
+      
+      <div style={{display:'flex', flexDirection:'column', gap:'10px', marginBottom:'24px'}}>
+        {items.map((item, idx) => (
+          <div key={idx} style={{display:'flex', gap:'10px', alignItems:'center', background:'#222', padding:'10px', borderRadius:'16px', border:'1px solid #333'}}>
+            <div style={{width:'80px'}}>
+              <input value={item.time} onChange={e=>updateItem(idx, 'time', e.target.value)} style={{...inputStyle, textAlign:'center', padding:'8px'}} placeholder="08:00" />
+            </div>
+            <div style={{flex:1}}>
+              <input value={item.desc} onChange={e=>updateItem(idx, 'desc', e.target.value)} style={{...inputStyle, padding:'8px'}} placeholder="Actividad o parada..." />
+            </div>
+            <button onClick={()=>removeItem(idx)} style={{background:'#ef444422', border:'none', color:'#ef4444', width:'32px', height:'32px', borderRadius:'10px', cursor:'pointer'}}>✕</button>
+          </div>
+        ))}
+        
+        <button onClick={addItem} style={{padding:'12px', background:'#ffffff05', border:'1px dashed #333', color:'#fff', borderRadius:'16px', cursor:'pointer', fontWeight:900, fontSize:'11px'}}>
+          + AÑADIR PARADA O HORA
+        </button>
+      </div>
+
+      <button onClick={save} disabled={loading} style={{width:'100%', padding:'16px', background:'#11BDDB', color:'#fff', border:'none', borderRadius:'16px', fontWeight:900, cursor:'pointer', opacity:loading?0.5:1}}>
+        {loading ? 'GUARDANDO...' : 'GUARDAR ITINERARIO PERSONALIZADO'}
+      </button>
+    </div>
+  );
+};
