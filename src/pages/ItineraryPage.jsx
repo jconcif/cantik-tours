@@ -12,7 +12,8 @@ const SUPPORT_PHONE_ID = '6285691533356';
 export default function ItineraryPage() {
   const [searchParams] = useSearchParams();
   const { i18n } = useTranslation();
-  const ref = searchParams.get('ref');
+  const rawRef = searchParams.get('ref') || '';
+  const ref = rawRef.replace(/^CT-/, ''); // Clean prefix if exists
   const [booking, setBooking] = useState(null);
   const [payments, setPayments] = useState([]);
   const [charges, setCharges] = useState([]);
