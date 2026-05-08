@@ -8,6 +8,10 @@ async function upload() {
     const client = new ftp.Client();
     client.ftp.verbose = true;
     try {
+        if (!process.env.FTP_USERNAME || !process.env.FTP_PASSWORD) {
+            throw new Error("❌ Faltan las credenciales FTP (FTP_USERNAME o FTP_PASSWORD) en las variables de entorno.");
+        }
+
         await client.access({
             host: process.env.FTP_SERVER || "45.130.228.19",
             user: process.env.FTP_USERNAME,

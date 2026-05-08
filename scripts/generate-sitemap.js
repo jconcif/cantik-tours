@@ -31,5 +31,13 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
     </url>`).join('')}
 </urlset>`;
 
+
+if (!fs.existsSync('public')) fs.mkdirSync('public', { recursive: true });
 fs.writeFileSync('public/sitemap.xml', sitemap);
+
+if (fs.existsSync('dist')) {
+    fs.writeFileSync('dist/sitemap.xml', sitemap);
+    console.log('Sitemap copied to dist/sitemap.xml');
+}
+
 console.log('Sitemap generated successfully at public/sitemap.xml');
