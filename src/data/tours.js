@@ -9,7 +9,7 @@ export const tours = [
         heroSubtitle_en: "A full day discovering the spiritual heart of Bali, at your own pace and without rush.",
         fullDescription: "Sumérgete en el corazón espiritual de Bali. Este tour está diseñado para quienes buscan autenticidad, combinando templos históricos, cascadas escondidas y la belleza inigualable de Tegalalang Rice Terrace. Desde rituales de purificación tradicional hasta el relax en los mejores restaurantes con vistas a los arrozales, vive la experiencia completa de los alrededores de Ubud en un solo dia.",
         fullDescription_en: "Immerse yourself in Bali's spiritual heart. This tour is designed for those seeking authenticity, combining historic temples, hidden waterfalls, and the unparalleled beauty of Tegalalang Rice Terrace. From traditional purification rituals to relaxing in the best restaurants with views of the rice fields, live the complete experience of the surroundings of Ubud in a single day.",
-        price: 59,
+        price: 1,
         duration: "8-10 hrs",
         duration_en: "8-10 hrs",
         image: "/images/tours/ubud-central/ubud-central-columpio.webp",

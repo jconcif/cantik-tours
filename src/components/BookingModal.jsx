@@ -817,25 +817,8 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                  <div className="relative z-[100] animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-4">
                                                      <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-2xl p-4">
                                                          <p className="text-[10px] text-indigo-500 font-bold text-center uppercase tracking-widest">
-                                                             {i18n.language === 'en' ? 'Pay now to secure instant confirmation' : 'Paga ahora para asegurar confirmación instantánea'}
+                                                             {i18n.language === 'en' ? 'Pay now with your credit / debit card' : 'Paga ahora con tu tarjeta de crédito / débito'}
                                                          </p>
-                                                     </div>
-
-                                                     {/* Terms for PayPal */}
-                                                     <div className="flex items-start gap-3 p-2 border border-black/5 dark:border-white/5 rounded-xl bg-gray-50/50 dark:bg-white/5">
-                                                         <input 
-                                                             id="terms-check-paypal"
-                                                             type="checkbox" 
-                                                             checked={formData.acceptedTerms}
-                                                             onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
-                                                             className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                                                         />
-                                                         <label htmlFor="terms-check-paypal" className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug cursor-pointer">
-                                                             {i18n.language === 'en' 
-                                                                 ? <>I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms and Conditions</a>.</>
-                                                                 : <>Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos y Condiciones</a>.</>
-                                                             }
-                                                         </label>
                                                      </div>
 
                                                      <div className="relative">
@@ -864,19 +847,40 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                              <div className="absolute inset-0 bg-transparent z-10 cursor-not-allowed" title={i18n.language === 'en' ? 'Accept terms first' : 'Acepta los términos primero'} />
                                                          )}
                                                      </div>
-                                                     <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest">
-                                                         {i18n.language === 'en' ? 'Accept terms to enable PayPal' : 'Acepta los términos para habilitar PayPal'}
-                                                     </p>
+
+                                                     {/* Terms for PayPal */}
+                                                     <div className={`flex items-start gap-3 p-3 border rounded-xl transition-all ${!formData.acceptedTerms ? 'border-amber-500/50 bg-amber-500/5' : 'border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-white/5'}`}>
+                                                         <input 
+                                                             id="terms-check-paypal"
+                                                             type="checkbox" 
+                                                             checked={formData.acceptedTerms}
+                                                             onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
+                                                             className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                                         />
+                                                         <label htmlFor="terms-check-paypal" className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug cursor-pointer">
+                                                             {i18n.language === 'en' 
+                                                                 ? <>I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms and Conditions</a> to enable payment.</>
+                                                                 : <>Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos y Condiciones</a> para habilitar el pago.</>
+                                                             }
+                                                         </label>
+                                                     </div>
                                                  </div>
                                              ) : (
                                                  <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                                     {/* Instruction Banner */}
+                                                     <div className="bg-primary/5 border border-primary/20 rounded-2xl p-4">
+                                                         <p className="text-[10px] text-primary font-bold text-center uppercase tracking-widest">
+                                                             {i18n.language === 'en' ? 'Transfer directly to our account in euros or dollars.' : 'Transfiere directamente a nuestra cuenta en euros o dólares.'}
+                                                         </p>
+                                                     </div>
+
                                                      {/* Bank Details Section for Transfer */}
-                                                     <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 space-y-4">
-                                                         <div className="flex items-center justify-between border-b border-primary/10 pb-2">
-                                                             <span className="text-[9px] font-black text-primary uppercase tracking-widest">Datos para Transferencia</span>
+                                                     <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-2xl p-5 space-y-4">
+                                                         <div className="flex items-center justify-between border-b border-black/10 dark:border-white/10 pb-3">
+                                                             <span className="text-[9px] font-black text-gray-600 dark:text-gray-400 uppercase tracking-widest">Datos para Transferencia</span>
                                                              <div className="flex gap-2">
-                                                                 <button type="button" onClick={() => setCurrency('EUR')} className={`text-[8px] font-black px-2 py-1 rounded ${currency === 'EUR' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}>EUR</button>
-                                                                 <button type="button" onClick={() => setCurrency('USD')} className={`text-[8px] font-black px-2 py-1 rounded ${currency === 'USD' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}>USD</button>
+                                                                 <button type="button" onClick={() => setCurrency('EUR')} className={`text-[8px] font-black px-3 py-1.5 rounded-lg transition-colors ${currency === 'EUR' ? 'bg-primary text-white shadow-md' : 'bg-white dark:bg-[#1A1A1A] text-gray-500 border border-black/10 dark:border-white/10'}`}>EUR</button>
+                                                                 <button type="button" onClick={() => setCurrency('USD')} className={`text-[8px] font-black px-3 py-1.5 rounded-lg transition-colors ${currency === 'USD' ? 'bg-primary text-white shadow-md' : 'bg-white dark:bg-[#1A1A1A] text-gray-500 border border-black/10 dark:border-white/10'}`}>USD</button>
                                                              </div>
                                                          </div>
                                                          
