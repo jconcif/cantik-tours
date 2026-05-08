@@ -116,21 +116,26 @@ export default function ItineraryPage() {
       {/* Header */}
       <div className={`p-8 pb-16 rounded-b-[40px] shadow-2xl relative overflow-hidden transition-colors duration-500 ${currentStatus.color}`}>
         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
-        <div className="relative z-10 flex justify-between items-center mb-6">
-          <span className="text-white/80 font-black tracking-widest text-xs uppercase">Mi Viaje · {ref}</span>
-          <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/20">
-            <StatusIcon size={10} className="text-white" />
-            <span className="text-[10px] font-black uppercase text-white">
-              {currentStatus.label}
-            </span>
+        <div className="relative z-10 mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="h-[2px] w-8 bg-white/30"></div>
+            <span className="text-white/60 font-black tracking-[0.3em] text-[10px] uppercase">Official Voucher</span>
           </div>
+          <h1 className="text-4xl font-black text-white tracking-tight leading-none mb-1">
+            TOUR ITINERARY
+          </h1>
+          <p className="text-white/80 font-bold text-lg uppercase tracking-tight">
+            {booking.client_name}
+          </p>
         </div>
-        <h1 className="text-3xl font-black text-white leading-tight mb-2 relative z-10">
-          {booking.tour_title}
-        </h1>
-        <div className="flex items-center gap-2 text-white/80 font-bold relative z-10">
-          <Calendar size={16} />
-          {new Date(booking.booking_date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+        <div className="flex items-center justify-between relative z-10 pt-4 border-t border-white/10">
+          <div className="flex items-center gap-2 text-white font-black text-[10px] uppercase tracking-widest">
+            <Calendar size={14} className="text-[#11BDDB]" />
+            {booking.tour_title}
+          </div>
+          <div className="text-white/40 font-black text-[10px] tracking-widest uppercase">
+            REF: {ref}
+          </div>
         </div>
       </div>
 

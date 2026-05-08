@@ -262,8 +262,8 @@ export default function AdminPanel() {
             {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV}>CSV</button>}
           </div>
           {tab==='bookings'&&filter(bookings).map(b=>(
-            <div key={b.id} style={s.card}>
-              {/* BLOQUE SUPERIOR: Info Principal */}
+            <div key={b.id} style={{...s.card, cursor:'pointer', border: expandedId===b.id ? `1px solid ${C}` : '1px solid #ffffff05'}} onClick={()=>setExpandedId(expandedId===b.id?null:b.id)}>
+              {/* BLOQUE SUPERIOR: Siempre visible */}
               <div style={{display:'flex', gap:'16px', alignItems:'flex-start', width:'100%'}}>
                 <div style={{background:C+'22',color:C,padding:'8px',borderRadius:'14px',textAlign:'center',minWidth:'40px', height:'fit-content'}}>
                   <div style={{fontSize:'9px',fontWeight:900}}>{new Date(b.booking_date).toLocaleString('es',{month:'short'}).toUpperCase()}</div>
@@ -274,11 +274,8 @@ export default function AdminPanel() {
                     <div style={{fontWeight:900, fontSize: isMobile ? '14px' : '16px', color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{b.client_name}</div>
                     {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
                   </div>
-                  <div style={{fontSize:'11px',color:'#777', marginBottom:'4px', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{b.hotel}</div>
-                  <div style={{fontSize:'9px',color:'#555',fontWeight:900, display:'flex', gap: isMobile ? '6px' : '12px', flexWrap:'wrap'}}>
-                    <span style={{color:C}}>🕒 {new Date(b.created_at).toLocaleString('es-ES', {hour:'2-digit', minute:'2-digit'})}</span>
-                    <span style={{opacity:0.6}}>🌴 {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
-                  </div>
+                  <div style={{fontSize:'11px',color:C, fontWeight:900}}>{b.tour_title}</div>
+                  <div style={{fontSize:'10px', color:'#555', fontWeight:900, marginTop:'2px'}}>{PAY_LABEL[b.payment_status]}</div>
                 </div>
                 <div style={{textAlign:'right', flexShrink:0}}>
                    <div style={{fontSize:'16px', fontWeight:900, color:C}}>{b.total_price}€</div>
@@ -286,36 +283,38 @@ export default function AdminPanel() {
                 </div>
               </div>
 
-              {/* BLOQUE MEDIO: Detalles del Tour */}
-              <div style={{background:'#ffffff03', padding:'12px', borderRadius:'14px', border:'1px solid #ffffff05', width:'100%'}}>
-                <div style={{fontSize:'13px', fontWeight:800, color:'#ddd', marginBottom:'6px'}}>{b.tour_title}</div>
-                <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                   <div style={{fontSize:'11px', color:C, fontWeight:900, textTransform:'uppercase', letterSpacing:'0.5px'}}>✨ {EXP_LABEL[b.experience] || b.experience?.toUpperCase()}</div>
-                   <span style={s.tag(PAY_COLOR[b.payment_status]||'#666')}>{PAY_LABEL[b.payment_status]}</span>
-                </div>
-              </div>
+              {/* DETALLES OCULTOS: Se expanden al hacer clic */}
+              {expandedId === b.id && (
+                <div style={{marginTop:'16px', paddingTop:'16px', borderTop:'1px solid #ffffff05', width:'100%', display:'flex', flexDirection:'column', gap:'12px'}}>
+                  <div style={{fontSize:'12px', color:'#fff', background:'#ffffff05', padding:'12px', borderRadius:'12px'}}>
+                    <div style={{marginBottom:'8px'}}><span style={{color:'#666', fontWeight:900}}>HOTEL:</span> {b.hotel}</div>
+                    {b.notes && <div style={{marginBottom:'8px'}}><span style={{color:'#666', fontWeight:900}}>NOTAS:</span> {b.notes}</div>}
+                    <div style={{display:'flex', gap:'12px', fontSize:'10px'}}>
+                      <span style={{color:C}}>🕒 Creado: {new Date(b.created_at).toLocaleString('es-ES', {hour:'2-digit', minute:'2-digit'})}</span>
+                      <span style={{opacity:0.6}}>🌴 Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
+                    </div>
+                  </div>
 
-              {/* BLOQUE INFERIOR: Finanzas Rápidas */}
-              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%', background:'#00000033', padding:'8px 12px', borderRadius:'12px'}}>
-                <div style={{display:'flex', gap:'12px'}}>
-                  <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>PAGADO:</span> <span style={{color:'#10b981'}}>{Number(b.total_paid||0).toFixed(0)}€</span></div>
-                  {(b.total_price - (b.total_paid||0)) > 0 && <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>FALTA:</span> <span style={{color:'#ef4444'}}>{(b.total_price - (b.total_paid||0)).toFixed(0)}€</span></div>}
-                </div>
-                {b.notes && <div style={{fontSize:'10px', color:'#f59e0b', fontWeight:900}}>📝 NOTA</div>}
-              </div>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%', background:'#00000033', padding:'8px 12px', borderRadius:'12px'}}>
+                    <div style={{display:'flex', gap:'12px'}}>
+                      <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>PAGADO:</span> <span style={{color:'#10b981'}}>{Number(b.total_paid||0).toFixed(0)}€</span></div>
+                      {(b.total_price - (b.total_paid||0)) > 0 && <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>FALTA:</span> <span style={{color:'#ef4444'}}>{(b.total_price - (b.total_paid||0)).toFixed(0)}€</span></div>}
+                    </div>
+                  </div>
 
-              {/* BOTONES DE ACCIÓN: Siempre accesibles */}
-              <div style={{display:'flex', gap:'8px', width:'100%', marginTop:'4px'}}>
-                <a href={waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`)} target="_blank" rel="noreferrer" style={{...s.btn('#25D366'), flex:2, height:'40px'}}>WHATSAPP</a>
-                <button style={{...s.btn(C+'22',C), flex:1.2, height:'40px'}} onClick={()=>generateVoucher(b,drivers)}>VOUCHER</button>
-                <div style={{display:'flex', gap: isMobile ? '4px' : '6px', overflowX: isMobile ? 'auto' : 'visible', scrollbarWidth:'none', paddingBottom:'2px', width:'100%'}}>
-                  <button style={{...s.btn('#f59e0b22','#f59e0b'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Copiar Link Review" onClick={()=>copyReviewLink(b)}>⭐</button>
-                  <button style={{...s.btn('#ffffff11','#fff'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} onClick={()=>openEdit('booking',b)}>✎</button>
-                  <button style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Editar Itinerario" onClick={()=>setModal({type:'itinerary', action:'edit', data:b})}>📍</button>
-                  <button style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Finanzas del Tour" onClick={()=>handleManagePayments(b)}>💰</button>
-                  <button style={{...s.btn('#ef444411','#ef4444'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} onClick={()=>del('booking',b.id)}>✕</button>
+                  <div style={{display:'flex', gap:'8px', width:'100%', marginTop:'4px'}}>
+                    <a href={waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`)} target="_blank" rel="noreferrer" onClick={e=>e.stopPropagation()} style={{...s.btn('#25D366'), flex:2, height:'40px'}}>WHATSAPP</a>
+                    <button style={{...s.btn(C+'22',C), flex:1.2, height:'40px'}} onClick={e=>{e.stopPropagation(); generateVoucher(b,drivers)}}>VOUCHER</button>
+                    <div style={{display:'flex', gap: isMobile ? '4px' : '6px', overflowX: isMobile ? 'auto' : 'visible', scrollbarWidth:'none', paddingBottom:'2px', width:'100%'}}>
+                      <button style={{...s.btn('#f59e0b22','#f59e0b'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Copiar Link Review" onClick={e=>{e.stopPropagation(); copyReviewLink(b)}}>⭐</button>
+                      <button style={{...s.btn('#ffffff11','#fff'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} onClick={e=>{e.stopPropagation(); openEdit('booking',b)}}>✎</button>
+                      <button style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Editar Itinerario" onClick={e=>{e.stopPropagation(); setModal({type:'itinerary', action:'edit', data:b})}}>📍</button>
+                      <button style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Finanzas del Tour" onClick={e=>{e.stopPropagation(); handleManagePayments(b)}}>💰</button>
+                      <button style={{...s.btn('#ef444411','#ef4444'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} onClick={e=>{e.stopPropagation(); del('booking',b.id)}}>✕</button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
           {tab==='drivers'&&filter(drivers).map(d=>(
