@@ -187,12 +187,13 @@ const TourDetail = () => {
     } : null;
 
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="bg-bg-light dark:bg-bg-dark min-h-screen pb-32 pt-20"
-        >
-            <SEO
+        <>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="bg-bg-light dark:bg-bg-dark min-h-screen pb-32 pt-20"
+            >
+                <SEO
                 title={l(tour, 'title')}
                 description={l(tour, 'description')}
                 image={tour.image}
@@ -775,6 +776,8 @@ const TourDetail = () => {
                 Actually, let's remove this fixed one and keep only the sticky one.
             */}
 
+            </motion.div>
+
             <BookingModal
                 isOpen={isBookingModalOpen}
                 onClose={() => setIsBookingModalOpen(false)}
@@ -800,7 +803,7 @@ const TourDetail = () => {
                         initial={{ y: 100 }}
                         animate={{ y: 0 }}
                         exit={{ y: 100 }}
-                        className="fixed bottom-0 left-0 right-0 z-50 p-4 lg:hidden bg-white/90 dark:bg-bg-dark/90 backdrop-blur-xl border-t border-black/5 dark:border-white/10"
+                        className="fixed bottom-0 left-0 right-0 z-[100] p-4 lg:hidden bg-white/95 dark:bg-bg-dark/95 backdrop-blur-xl border-t border-black/5 dark:border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
                     >
                         <div className="flex items-center justify-center max-w-lg mx-auto">
                             <button
@@ -813,7 +816,7 @@ const TourDetail = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </motion.div>
+        </>
     );
 };
 

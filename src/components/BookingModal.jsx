@@ -156,38 +156,41 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     }, [isOpen, tourId, initialSelectedStops, i18n.language]);
 
     const handleConfirmPaid = () => {
-        const paxLabel = t(`detail.booking_pax_${formData.pax.replace(' o más', '')}`);
+        const instantId = newBookingId || Math.random().toString(36).substring(2, 6).toUpperCase();
+        const paxValue = String(formData.pax || '2').replace(' o más', '');
+        const paxLabel = t(`detail.booking_pax_${paxValue}`);
         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
-        const message = `¡Hola Cantik Tours! ✅
-Acabo de realizar el pago para mi reserva:
+        const extrasText = (formData.extras || []).length > 0 
+            ? `\n⚡ *EXTRAS:* \n${(formData.extras || []).map(e => `  • ${e.name} (+${e.price}€)`).join('\n')}`
+            : '';
 
-- *Tour:* ${tourTitle}
-- *Cliente:* ${formData.name}
-- *Fecha:* ${dateStr}
-- *Pasajeros:* ${paxLabel}
-- *Hotel/Zona:* ${formData.hotel}
-- *Experiencia:* ${expName}
+        const message = `🌟 *NUEVA RESERVA - CANTIK TOURS* 🌟
+------------------------------------------
+*Referencia:* #CT-${instantId}
 
-- *Pago Realizado:* ${currentPayAmount} € (PayPal/Tarjeta)
-${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `- *Estado:* Pago Total Completado`}
+👤 *CLIENTE:* ${formData.name.toUpperCase()}
+🗺️ *TOUR:* ${tourTitle.toUpperCase()}
+📅 *FECHA:* ${dateStr}
+👥 *PASAJEROS:* ${paxLabel}
+🏨 *HOTEL:* ${formData.hotel.toUpperCase()}
+✨ *EXPERIENCIA:* ${expName} - ${expSub}${extrasText}
+${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARADAS:* ${formData.selectedStops.join(', ')}` : ''}
 
-¿Me confirmáis que os ha llegado correctamente? ¡Gracias!`;
+💰 *DETALLE DEL PAGO:*
+- Pago Realizado: ${currentPayAmount} € (PayPal/Tarjeta)
+${paymentPlan === 'deposit' ? `- Pendiente: ${currentRemainingAmount} € (A pagar en Bali)` : `- Estado: Pago Total Completado`}
 
-        const encodedMessage = encodeURIComponent(message);
-        const whatsappUrl = `https://wa.me/34642517787?text=${encodedMessage}`;
+------------------------------------------
+✅ *PASO FINAL:* Hola Cantik Tours, acabo de realizar el pago por PayPal. ¿Me confirmáis que está todo listo? ¡Gracias!
+\n📄 *Mi Ficha de Reserva:* https://cantiktours.com/itinerario?ref=CT-${instantId}`;
+
+        const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(message)}`;
         
         trackLeadWhatsapp(tourTitle, currentPayAmount);
         
-        saveBookingToDB(true).then(id => {
-            if (id) {
-                 const whatsappUrlWithId = `https://wa.me/34642517787?text=${encodeURIComponent(message + `\n\nReferencia: CT-${id}`)}`;
-                 window.open(whatsappUrlWithId, '_blank');
-            } else {
-                 window.open(whatsappUrl, '_blank');
-            }
-        });
-        // No cerramos el modal inmediatamente para que vean el "RESERVA ASEGURADA"
+        window.open(finalUrl, '_blank');
+        resetModal();
     };
 
     const basePrice = tourPrice || 0;
@@ -290,7 +293,7 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
             ? `\n⚡ *EXTRAS:* \n${(formData.extras || []).map(e => `  • ${e.name} (+${e.price}€)`).join('\n')}`
             : '';
 
-        const message = `🌟 *VOUCHER DE RESERVA - CANTIK TOURS* 🌟
+        const message = `🌟 *NUEVA RESERVA - CANTIK TOURS* 🌟
 ------------------------------------------
 *Referencia:* #CT-${instantId}
 
@@ -303,12 +306,12 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
 ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARADAS:* ${formData.selectedStops.join(', ')}` : ''}
 
 💰 *DETALLE DEL PAGO:*
-- Total Reserva: ${finalTotalPriceWithFees} € (Con comisiones)
-- Estado: Pago Pendiente (A la espera de transferencia)
+- Pago: ${finalTotalPriceWithFees} € (Transferencia Bancaria)
+- Estado: A la espera de comprobante
 
 ------------------------------------------
-✅ *PASO FINAL:* Envíanos la captura del pago realizado (transferencia bancaria) para confirmar la reserva. La verificaremos en un momento. ¡Gracias!
-\n📄 *Seguimiento:* https://cantiktours.com/itinerario?ref=CT-${instantId}`;
+✅ *PASO FINAL:* Hola Cantik Tours, he seleccionado pago por transferencia bancaria. Aquí adjunto el comprobante. ¿Me confirmáis que está todo listo? ¡Gracias!
+\n📄 *Mi Ficha de Reserva:* https://cantiktours.com/itinerario?ref=CT-${instantId}`;
 
         // 2. OPEN WHATSAPP INSTANTLY (0ms delay)
         const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(message)}`;
@@ -821,7 +824,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                          </p>
                                                      </div>
 
-                                                     <div className="relative">
+                                                     <div className="relative bg-white rounded-[1.5rem] p-4 border border-black/5 shadow-inner">
                                                          <PayPalScriptProvider options={{ 
                                                              "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
                                                              currency: "EUR"
@@ -839,7 +842,9 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                                  onApprove={async (data, actions) => {
                                                                      const details = await actions.order.capture();
                                                                      setIsPaid(true);
-                                                                     handleConfirmPaid();
+                                                                     saveBookingToDB(true).then(id => {
+                                                                         if (id) setNewBookingId(id);
+                                                                     });
                                                                  }}
                                                              />
                                                          </PayPalScriptProvider>
@@ -951,8 +956,8 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                             onClick={handleConfirmPaid}
                                                             className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-5 rounded-2xl text-sm font-black shadow-xl shadow-[#25D366]/20 flex items-center justify-center gap-3 transition-all uppercase tracking-widest group"
                                                         >
-                                                            <MessageCircle size={20} className="group-hover:scale-110 transition-transform" /> 
-                                                            {i18n.language === 'en' ? 'Send Confirmation WhatsApp' : 'Enviar Confirmación WhatsApp'}
+                                                            <MessageCircle size={24} className="group-hover:scale-110 transition-transform" /> 
+                                                            {i18n.language === 'en' ? 'CONFIRM VIA WHATSAPP NOW' : 'CONFIRMAR POR WHATSAPP AHORA'}
                                                         </button>
 
                                                         {newBookingId && (
