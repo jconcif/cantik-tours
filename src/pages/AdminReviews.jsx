@@ -66,6 +66,7 @@ export default function AdminPanel() {
   const [reviews, setReviews] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [search, setSearch] = useState('');
+  const [expandedId, setExpandedId] = useState(null);
   const [modal, setModal] = useState(null);
   const [msg, setMsg] = useState(null);
   const [detailedStats, setDetailedStats] = useState(null);
