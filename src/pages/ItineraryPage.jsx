@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Calendar, User, MapPin, CreditCard, MessageCircle, ArrowLeft, Star, CheckCircle2, Clock, ShieldCheck, Ship, Info, Headphones, ExternalLink } from 'lucide-react';
+import { Calendar, User, MapPin, CreditCard, MessageCircle, ArrowLeft, Star, CheckCircle2, Clock, ShieldCheck, Ship, Info, Headphones, ExternalLink, Globe, Wallet } from 'lucide-react';
 import { getItinerary } from '../services/api';
 import { tours } from '../data/tours';
 import { useTranslation } from 'react-i18next';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const SUPPORT_PHONE_ES = '34642517787';
 const SUPPORT_PHONE_ID = '6285691533356';
@@ -20,6 +21,7 @@ export default function ItineraryPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currency, setCurrency] = useState('EUR');
+  const [paymentMethod, setPaymentMethod] = useState('transfer'); // 'transfer' | 'paypal'
 
   useEffect(() => {
     if (!ref) {
@@ -290,40 +292,7 @@ export default function ItineraryPage() {
                 <span className={`text-2xl font-black tracking-tighter ${due > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>{Math.max(0, due).toFixed(2)}€</span>
               </div>
 
-              {due > 0 && (
-                <div className="mt-8 pt-6 border-t border-white/10 space-y-4">
-                  <div className="flex gap-2 p-1 bg-black/30 rounded-xl">
-                    {['EUR', 'USD'].map(curr => (
-                      <button key={curr} onClick={() => setCurrency(curr)} className={`flex-1 py-2 rounded-lg text-[9px] font-black transition-all ${currency === curr ? 'bg-[#11BDDB] text-white shadow-lg' : 'text-gray-600'}`}>{curr}</button>
-                    ))}
-                  </div>
 
-                  <div className="space-y-4 bg-black/20 p-4 rounded-xl border border-white/5">
-                    <div className="group cursor-pointer" onClick={() => { navigator.clipboard.writeText(currency === 'EUR' ? 'BE97967386902549' : '101019628'); alert('Copied!'); }}>
-                      <span className="text-[8px] font-black text-gray-700 uppercase block mb-1">{currency === 'EUR' ? 'IBAN' : 'ROUTING'}</span>
-                      <code className="text-xs font-bold text-gray-300 block tracking-wider">{currency === 'EUR' ? 'BE97 9673 8690 2549' : '101019628'}</code>
-                    </div>
-                    {currency === 'USD' && (
-                      <div className="group cursor-pointer" onClick={() => { navigator.clipboard.writeText('214247934891'); alert('Copied!'); }}>
-                        <span className="text-[8px] font-black text-gray-700 uppercase block mb-1">ACCOUNT</span>
-                        <code className="text-xs font-bold text-gray-300 block tracking-wider">2142 4793 4891</code>
-                      </div>
-                    )}
-                    <div className="group cursor-pointer" onClick={() => { navigator.clipboard.writeText(currency === 'EUR' ? 'TRWIBEB1XXX' : 'TRWIUS35XXX'); alert('Copied!'); }}>
-                      <span className="text-[8px] font-black text-gray-700 uppercase block mb-1">SWIFT / BIC</span>
-                      <code className="text-xs font-bold text-gray-300 block tracking-wider">{currency === 'EUR' ? 'TRWIBEB1XXX' : 'TRWIUS35XXX'}</code>
-                    </div>
-                  </div>
-
-                  <a 
-                    href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${encodeURIComponent(`Hello! Here is the proof of payment for CT-${ref}`)}`}
-                    target="_blank" rel="noreferrer"
-                    className="w-full flex items-center justify-center gap-3 bg-[#25D366] text-white font-black text-[10px] py-4 rounded-xl shadow-lg shadow-[#25D366]/20 transition-all uppercase tracking-widest"
-                  >
-                    <MessageCircle size={16} /> Send Receipt
-                  </a>
-                </div>
-              )}
             </motion.div>
 
             {/* Compact Support */}

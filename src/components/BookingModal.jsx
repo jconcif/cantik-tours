@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, Shield, User, CreditCard, ShieldCheck, Plus } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, Shield, User, CreditCard, ShieldCheck, Plus, Wallet, Globe } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useCurrency } from '../context/CurrencyContext';
 import DatePicker from 'react-datepicker';
@@ -9,6 +9,7 @@ import { getDateStatus, isDateDisabled } from '../data/availability';
 import { trackEvent, trackLeadWhatsapp } from '../utils/analytics';
 import { tours } from '../data/tours';
 import { getAvailability, saveBooking } from '../services/api';
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSelectedStops }) => {
     const { t, i18n } = useTranslation();
@@ -21,6 +22,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const [viewBankDetails, setViewBankDetails] = useState(false);
     const [copiedField, setCopiedField] = useState(null);
     const [showCoupon, setShowCoupon] = useState(false);
+    const [currency, setCurrency] = useState('EUR');
     const [paymentMethod, setPaymentMethod] = useState('transfer'); // Default to transfer only
     const [paymentPlan, setPaymentPlan] = useState('full'); // Default to 100% payment
     const [paymentStatus, setPaymentStatus] = useState('idle'); // 'idle', 'processing', 'success', 'error'
@@ -64,7 +66,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         pax: '2',
         hotel: '',
         coupon: '',
-        experience: 'economy', // Default to cheapest tier
+        experience: 'comfort', // Default to cheapest tier
+        paymentMethod: 'transfer', // transfer | paypal
         paymentType: 'full', // 'deposit' or 'full'
         selectedStops: [],
         acceptedTerms: false
@@ -118,7 +121,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                 pax: '2',
                 hotel: '',
                 coupon: '',
-                experience: 'economy',
+                experience: 'comfort',
+                paymentMethod: 'transfer',
                 paymentType: 'full',
                 selectedStops: [],
                 extras: [],
@@ -489,6 +493,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                 type="text"
                                                 required
                                                 placeholder={i18n.language === 'en' ? 'Your full name' : 'Tu nombre completo'}
+                                                autoComplete="name"
                                                 value={formData.name}
                                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                                 className={`${inputClasses} block w-full`}
@@ -707,50 +712,6 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                             </div>
                                         </div>
 
-                                        {/* Extras Upselling Section (Oculto por ahora)
-                                        <div className="space-y-4 pt-4 border-t border-black/5 dark:border-white/5">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                                                <Plus size={14} className="text-secondary" />
-                                                Complementos para tu viaje
-                                            </label>
-                                            <div className="grid gap-2">
-                                                {[
-                                                    { id: 'airport', name: 'Traslado Aeropuerto (Privado)', price: 35, icon: '🚗' },
-                                                    { id: 'sim', name: 'Tarjeta SIM 4G/5G (60GB)', price: 20, icon: '📶' },
-                                                    { id: 'visa', name: 'Visado Fast Track (VIP)', price: 45, icon: '🛂' }
-                                                ].map((extra) => {
-                                                    const currentExtras = formData.extras || [];
-                                                    const isSelected = currentExtras.some(e => e.id === extra.id);
-                                                    return (
-                                                        <button
-                                                            key={extra.id}
-                                                            type="button"
-                                                            onClick={() => {
-                                                                if (isSelected) {
-                                                                    setFormData({ ...formData, extras: currentExtras.filter(e => e.id !== extra.id) });
-                                                                } else {
-                                                                    setFormData({ ...formData, extras: [...currentExtras, extra] });
-                                                                }
-                                                            }}
-                                                            className={`flex items-center justify-between p-3 rounded-xl border-2 transition-all ${isSelected ? 'border-secondary bg-secondary/5' : 'border-black/5 dark:border-white/5 bg-transparent opacity-70'}`}
-                                                        >
-                                                            <div className="flex items-center gap-3">
-                                                                <span className="text-xl">{extra.icon}</span>
-                                                                <div className="text-left">
-                                                                    <div className={`text-xs font-black ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>{extra.name}</div>
-                                                                    <div className="text-[10px] font-bold text-gray-400">Entrega en mano</div>
-                                                                </div>
-                                                            </div>
-                                                            <div className={`text-sm font-black ${isSelected ? 'text-secondary' : 'text-gray-500'}`}>+{extra.price}€</div>
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                        */}
-
-
-
                                         {/* Navigation Buttons for Step 3 */}
                                         <div className="flex gap-3 mt-6">
                                             <button
@@ -822,10 +783,6 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                     </div>
                                                 </div>
 
-                                                {/* Hidden selected stops in modal as per user request */}
-
-
-
                                                 <div className="pt-3 border-t border-black/5 dark:border-white/5 space-y-1">
                                                     {extraPaxFee > 0 && (
                                                         <div className="flex justify-between items-center text-[9px] text-gray-500 font-bold">
@@ -836,7 +793,6 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex flex-col">
                                                             <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'TOTAL PRICE' : 'PRECIO TOTAL'}</span>
-                                                            <span className="text-[8px] text-gray-400 font-bold italic">{i18n.language === 'en' ? '100% via Bank Transfer' : '100% vía Transferencia Bancaria'}</span>
                                                         </div>
                                                     <div className="text-2xl font-black text-primary">{finalTotalPriceWithFees}€</div>
                                                 </div>
@@ -844,37 +800,135 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                         </div>
                                     </div>
 
-                                        {/* Terms & Action */}
+                                        {/* Payment Method Selector */}
+                                        <div className="space-y-4 pt-4 border-t border-black/5 dark:border-white/5">
+                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                                {i18n.language === 'en' ? 'Select Payment Method' : 'Selecciona método de pago'}
+                                            </label>
+                                            <div className="flex gap-4">
+                                                 <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'transfer'})} className={`flex-1 p-3 rounded-xl border-2 text-[10px] font-black uppercase ${formData.paymentMethod === 'transfer' ? 'border-primary bg-primary/5' : 'border-black/5 dark:border-white/5'}`}>Transferencia</button>
+                                                 <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'paypal'})} className={`flex-1 p-3 rounded-xl border-2 text-[10px] font-black uppercase ${formData.paymentMethod === 'paypal' ? 'border-primary bg-primary/5' : 'border-black/5 dark:border-white/5'}`}>PayPal</button>
+                                             </div>
+                                        </div>
+
+                                        {/* Action Sections */}
                                         <div className="space-y-4">
-                                            <div className="flex items-start gap-3 p-2">
-                                                <input 
-                                                    id="terms-check"
-                                                    type="checkbox" 
-                                                    checked={formData.acceptedTerms}
-                                                    onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
-                                                    className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
-                                                />
-                                                <label htmlFor="terms-check" className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug cursor-pointer">
-                                                    {i18n.language === 'en' 
-                                                        ? <>I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms and Conditions</a>.</>
-                                                        : <>Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos y Condiciones</a>.</>
-                                                    }
-                                                </label>
-                                            </div>
-                                            
-                                            <button 
-                                                type="button"
-                                                onClick={handleConfirmWhatsApp}
-                                                disabled={!formData.acceptedTerms}
-                                                className={`w-full py-6 rounded-3xl text-sm font-black shadow-xl flex items-center justify-center gap-3 transition-all group ${
-                                                    formData.acceptedTerms 
-                                                        ? 'bg-[#25D366] hover:bg-[#128C7E] text-white shadow-[#25D366]/20 active:scale-[0.98]' 
-                                                        : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-                                                }`}
-                                            >
-                                                <MessageCircle size={24} className={formData.acceptedTerms ? "group-hover:scale-110 transition-transform" : ""} /> 
-                                                <span>{i18n.language === 'en' ? 'SEND BOOKING VIA WHATSAPP' : 'ENVIAR RESERVA POR WHATSAPP'}</span>
-                                            </button>
+                                            {formData.paymentMethod === 'paypal' ? (
+                                                 <div className="relative z-[100] animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-4">
+                                                     <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-2xl p-4">
+                                                         <p className="text-[10px] text-indigo-500 font-bold text-center uppercase tracking-widest">
+                                                             {i18n.language === 'en' ? 'Pay now to secure instant confirmation' : 'Paga ahora para asegurar confirmación instantánea'}
+                                                         </p>
+                                                     </div>
+
+                                                     {/* Terms for PayPal */}
+                                                     <div className="flex items-start gap-3 p-2 border border-black/5 dark:border-white/5 rounded-xl bg-gray-50/50 dark:bg-white/5">
+                                                         <input 
+                                                             id="terms-check-paypal"
+                                                             type="checkbox" 
+                                                             checked={formData.acceptedTerms}
+                                                             onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
+                                                             className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                                         />
+                                                         <label htmlFor="terms-check-paypal" className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug cursor-pointer">
+                                                             {i18n.language === 'en' 
+                                                                 ? <>I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms and Conditions</a>.</>
+                                                                 : <>Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos y Condiciones</a>.</>
+                                                             }
+                                                         </label>
+                                                     </div>
+
+                                                     <div className="relative">
+                                                         <PayPalScriptProvider options={{ 
+                                                             "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
+                                                             currency: "EUR"
+                                                         }}>
+                                                             <PayPalButtons 
+                                                                 style={{ layout: "vertical", shape: "pill", color: "blue", label: "pay" }}
+                                                                 disabled={!formData.acceptedTerms}
+                                                                 createOrder={(data, actions) => {
+                                                                     return actions.order.create({
+                                                                         purchase_units: [{
+                                                                             amount: { value: finalTotalPriceWithFees.toString() }
+                                                                         }]
+                                                                     });
+                                                                 }}
+                                                                 onApprove={async (data, actions) => {
+                                                                     const details = await actions.order.capture();
+                                                                     setIsPaid(true);
+                                                                     handleConfirmPaid();
+                                                                 }}
+                                                             />
+                                                         </PayPalScriptProvider>
+                                                         {!formData.acceptedTerms && (
+                                                             <div className="absolute inset-0 bg-transparent z-10 cursor-not-allowed" title={i18n.language === 'en' ? 'Accept terms first' : 'Acepta los términos primero'} />
+                                                         )}
+                                                     </div>
+                                                     <p className="text-[9px] text-center text-gray-400 font-bold uppercase tracking-widest">
+                                                         {i18n.language === 'en' ? 'Accept terms to enable PayPal' : 'Acepta los términos para habilitar PayPal'}
+                                                     </p>
+                                                 </div>
+                                             ) : (
+                                                 <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                                     {/* Bank Details Section for Transfer */}
+                                                     <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 space-y-4">
+                                                         <div className="flex items-center justify-between border-b border-primary/10 pb-2">
+                                                             <span className="text-[9px] font-black text-primary uppercase tracking-widest">Datos para Transferencia</span>
+                                                             <div className="flex gap-2">
+                                                                 <button type="button" onClick={() => setCurrency('EUR')} className={`text-[8px] font-black px-2 py-1 rounded ${currency === 'EUR' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}>EUR</button>
+                                                                 <button type="button" onClick={() => setCurrency('USD')} className={`text-[8px] font-black px-2 py-1 rounded ${currency === 'USD' ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400'}`}>USD</button>
+                                                             </div>
+                                                         </div>
+                                                         
+                                                         <div className="space-y-3">
+                                                             <div>
+                                                                 <span className="text-[8px] font-black text-gray-400 uppercase block mb-0.5">Beneficiario / Titular</span>
+                                                                 <span className="text-xs font-bold text-gray-900 dark:text-white block tracking-wide">Javier Ignacio Contreras Cifuentes</span>
+                                                             </div>
+                                                             <div className="group cursor-pointer" onClick={() => { navigator.clipboard.writeText(currency === 'EUR' ? 'BE97967386902549' : '101019628'); alert('Copiado!'); }}>
+                                                                 <span className="text-[8px] font-black text-gray-400 uppercase block mb-0.5">{currency === 'EUR' ? 'IBAN (Bélgica)' : 'ROUTING (USA)'}</span>
+                                                                 <code className="text-xs font-bold text-gray-900 dark:text-white block tracking-wider">{currency === 'EUR' ? 'BE97 9673 8690 2549' : '101019628'}</code>
+                                                             </div>
+                                                             <div className="group cursor-pointer" onClick={() => { navigator.clipboard.writeText(currency === 'EUR' ? 'TRWIBEB1XXX' : 'TRWIUS35XXX'); alert('Copiado!'); }}>
+                                                                 <span className="text-[8px] font-black text-gray-400 uppercase block mb-0.5">SWIFT / BIC</span>
+                                                                 <code className="text-xs font-bold text-gray-900 dark:text-white block tracking-wider">{currency === 'EUR' ? 'TRWIBEB1XXX' : 'TRWIUS35XXX'}</code>
+                                                             </div>
+                                                         </div>
+                                                         <p className="text-[8px] text-gray-400 font-bold italic text-center">Haz clic sobre los datos para copiarlos</p>
+                                                     </div>
+
+                                                     {/* Terms for Transfer */}
+                                                     <div className="flex items-start gap-3 p-2 border border-black/5 dark:border-white/5 rounded-xl bg-gray-50/50 dark:bg-white/5 mt-6 mb-2">
+                                                         <input 
+                                                             id="terms-check-transfer"
+                                                             type="checkbox" 
+                                                             checked={formData.acceptedTerms}
+                                                             onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
+                                                             className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                                         />
+                                                         <label htmlFor="terms-check-transfer" className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug cursor-pointer">
+                                                             {i18n.language === 'en' 
+                                                                 ? <>I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms and Conditions</a>.</>
+                                                                 : <>Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos y Condiciones</a>.</>
+                                                             }
+                                                         </label>
+                                                     </div>
+
+                                                     <button 
+                                                         type="button"
+                                                         onClick={handleConfirmWhatsApp}
+                                                         disabled={!formData.acceptedTerms}
+                                                         className={`w-full py-6 rounded-3xl text-sm font-black shadow-xl flex items-center justify-center gap-3 transition-all group ${
+                                                             formData.acceptedTerms 
+                                                                 ? 'bg-[#25D366] hover:bg-[#128C7E] text-white shadow-[#25D366]/20 active:scale-[0.98]' 
+                                                                 : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                                                         }`}
+                                                     >
+                                                         <MessageCircle size={24} className={formData.acceptedTerms ? "group-hover:scale-110 transition-transform" : ""} /> 
+                                                         <span>{i18n.language === 'en' ? 'SEND PROOF VIA WHATSAPP' : 'ENVIAR COMPROBANTE POR WHATSAPP'}</span>
+                                                     </button>
+                                                 </div>
+                                             )}
 
                                             {isPaid && (
                                                 <motion.div 
