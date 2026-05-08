@@ -18,6 +18,7 @@ export default function ItineraryPage() {
   const [charges, setCharges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currency, setCurrency] = useState('EUR');
 
   useEffect(() => {
     if (!ref) {
@@ -28,449 +29,333 @@ export default function ItineraryPage() {
 
     const fetchItinerary = async () => {
       try {
-        const j = await getItinerary(ref);
-        if (j.status === 'success') {
-          setBooking(j.data);
-          setPayments(j.payments || []);
-          setCharges(j.charges || []);
+        const data = await getItinerary(ref);
+        if (data && data.status === 'success') {
+          setBooking(data.data);
+          setPayments(data.payments || []);
+          setCharges(data.charges || []);
         } else {
-          setError(j.message);
+          setError("Reserva no encontrada");
         }
-      } catch (e) {
-        setError("Error al cargar los datos");
+      } catch (err) {
+        setError("Error al cargar el itinerario");
       } finally {
         setLoading(false);
       }
     };
+
     fetchItinerary();
   }, [ref]);
 
   if (loading) return (
     <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#11BDDB]"></div>
+      <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="w-12 h-12 border-t-2 border-[#11BDDB] rounded-full" />
     </div>
   );
 
-  if (error) return (
-    <div className="min-h-screen bg-[#0f0f0f] flex flex-col items-center justify-center p-8 text-center">
-      <div className="w-24 h-24 bg-[#11BDDB]/10 rounded-full flex items-center justify-center mb-8">
-        <Clock className="text-[#11BDDB] animate-pulse" size={48} />
+  if (error || !booking) return (
+    <div className="min-h-screen bg-[#0f0f0f] text-white flex flex-col items-center justify-center p-6 text-center">
+      <div className="bg-red-500/10 p-6 rounded-3xl border border-red-500/20 mb-8">
+        <Info size={48} className="text-red-500 mx-auto mb-4" />
+        <h2 className="text-2xl font-black mb-2">{error || "Reserva no encontrada"}</h2>
+        <p className="text-gray-400 font-bold">Por favor, verifica el enlace enviado por WhatsApp o contacta con soporte.</p>
       </div>
-      
-      <h2 className="text-white text-3xl font-black mb-4 leading-tight">
-        Estamos preparando tu <br/><span className="text-[#11BDDB]">Itinerario Personalizado</span>
-      </h2>
-      
-      <p className="text-gray-400 mb-10 max-w-md mx-auto leading-relaxed">
-        Tu reserva <span className="text-white font-bold">{ref}</span> ha sido recibida correctamente. En breves momentos podrás ver todos los detalles aquí mismo.
-      </p>
-
-      <div className="flex flex-col gap-4 w-full max-w-xs">
-        <a 
-          href={`https://wa.me/34642517787?text=${encodeURIComponent(`Hola Cantik Tours! Estoy consultando mi itinerario con referencia ${ref} y me gustaría recibir más información.`)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-emerald-500 hover:bg-emerald-600 text-white px-8 py-5 rounded-2xl font-black shadow-xl transition-all flex items-center justify-center gap-3 transform hover:scale-105"
-        >
-          <MessageCircle size={24} />
-          Consultar por WhatsApp
-        </a>
-        
-        <Link to="/" className="text-gray-500 font-bold hover:text-white transition-colors py-2">
-          Volver a la web principal
-        </Link>
-      </div>
-
-      <div className="mt-16 pt-8 border-t border-white/5 w-full max-w-md">
-        <p className="text-[10px] text-gray-600 uppercase tracking-widest font-bold">
-          Cantik Tours Bali · Soporte 24/7
-        </p>
-      </div>
+      <Link to="/" className="bg-[#11BDDB] text-white px-8 py-4 rounded-2xl font-black shadow-xl shadow-[#11BDDB]/20">Volver al Inicio</Link>
     </div>
   );
+
+  const totalPayments = payments.reduce((acc, p) => acc + parseFloat(p.amount), 0);
+  const totalCharges = charges.reduce((acc, c) => acc + parseFloat(c.amount), 0);
+  const due = (parseFloat(booking.total_price) + totalCharges) - totalPayments;
+  const isExpired = new Date(booking.tour_date) < new Date();
 
   const statusMap = {
-    requested: { label: 'Pago Pendiente', color: 'bg-amber-500', icon: Clock, desc: 'Recibimos tu solicitud, estamos procesándola.' },
-    reserved: { label: 'Reservado', color: 'bg-blue-500', icon: Calendar, desc: 'Depósito recibido. Tu fecha está bloqueada.' },
-    confirmed: { label: 'Confirmado', color: 'bg-emerald-500', icon: ShieldCheck, desc: '¡Todo listo! Chofer y logística asignados.' },
-    paid: { label: 'Pago Completado', color: 'bg-green-600', icon: CheckCircle2, desc: 'Reserva totalmente pagada. ¡A disfrutar!' },
-    on_tour: { label: 'En Tour', color: 'bg-purple-500', icon: Ship, desc: '¡Estás en ruta! Esperamos que lo pases genial.' },
-    finished: { label: 'Finalizado', color: 'bg-gray-500', icon: Star, desc: 'Tour finalizado. ¡Gracias por confiar en nosotros!' },
-    postponed: { label: 'Pospuesto', color: 'bg-indigo-500', icon: Clock, desc: 'Tu tour ha sido reprogramado para otra fecha.' },
-    cancelled: { label: 'Cancelado', color: 'bg-red-500', icon: Info, desc: 'Esta reserva ha sido cancelada.' },
-    refunded: { label: 'Reembolsado', color: 'bg-pink-500', icon: CreditCard, desc: 'Se ha procesado la devolución de tu pago.' }
+    requested: { label: i18n.language.startsWith('en') ? 'REQUESTED' : 'SOLICITADO', color: 'bg-amber-500', desc: i18n.language.startsWith('en') ? 'We have received your request.' : 'Hemos recibido tu solicitud.' },
+    reserved: { label: i18n.language.startsWith('en') ? 'RESERVED' : 'RESERVADO', color: 'bg-[#11BDDB]', desc: i18n.language.startsWith('en') ? 'Your spot is saved, waiting for confirmation.' : 'Tu plaza está bloqueada, a la espera de confirmación.' },
+    confirmed: { label: i18n.language.startsWith('en') ? 'CONFIRMED' : 'CONFIRMADO', color: 'bg-emerald-500', desc: i18n.language.startsWith('en') ? 'Everything is ready for your tour!' : '¡Todo listo para tu tour!' },
+    paid: { label: i18n.language.startsWith('en') ? 'FULLY PAID' : 'PAGADO', color: 'bg-emerald-500', desc: i18n.language.startsWith('en') ? 'Booking fully paid. Enjoy Bali!' : 'Reserva totalmente pagada. ¡Disfruta Bali!' }
   };
 
-  const currentStatus = statusMap[booking?.payment_status] || statusMap.requested;
-  const StatusIcon = currentStatus.icon;
-
-  const totalPaid = payments.reduce((acc, p) => acc + parseFloat(p.amount || 0), 0);
-  const totalCharges = charges.reduce((acc, c) => acc + parseFloat(c.amount || 0), 0);
-  const totalOwed = parseFloat(booking?.total_price || 0) + totalCharges;
-  const due = totalOwed - totalPaid;
-  const isExpired = booking?.booking_date ? new Date(booking.booking_date) < new Date() : false;
-  const supportMsg = encodeURIComponent(`Hola Cantik Tours! Tengo una consulta sobre mi reserva ${ref} - ${booking?.tour_title}`);
+  const currentStatus = statusMap[booking.payment_status] || statusMap.requested;
+  const StatusIcon = currentStatus.label.includes('CONFIRMED') || currentStatus.label.includes('PAID') ? ShieldCheck : Clock;
+  const supportMsg = encodeURIComponent(`Hola! Necesito ayuda con mi reserva CT-${ref}`);
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white font-sans pb-12">
-      {/* Premium Header / Ticket Design */}
-      <div className={`p-8 pb-12 rounded-b-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden transition-all duration-700 ${currentStatus.color}`}>
-        {/* Animated Background Elements */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-[80px] animate-pulse"></div>
-        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-black/20 rounded-full blur-[60px]"></div>
+    <div className="min-h-screen bg-[#0a0a0a] text-white font-sans pb-12 overflow-x-hidden">
+      
+      {/* Refined Header */}
+      <div className="relative pt-16 pb-24 px-6">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#11BDDB]/10 via-transparent to-transparent opacity-30"></div>
         
-        <div className="relative z-10">
-          {/* Badge & Slogan */}
-          <div className="flex items-center justify-between mb-10">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xl flex items-center justify-center border border-white/30 shadow-inner">
-                <ShieldCheck size={20} className="text-white" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] leading-none mb-1">
-                  {i18n.language.startsWith('en') ? 'Authenticated' : 'Autenticado'}
-                </p>
-                <p className="text-xs font-black text-white uppercase tracking-widest">
-                  {i18n.language.startsWith('en') ? 'Official Voucher' : 'Voucher Oficial'}
-                </p>
-              </div>
-            </div>
-            <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10">
-              <span className="text-[10px] font-black text-white/90 uppercase tracking-tighter">
-                ID: {ref}
-              </span>
-            </div>
-          </div>
-
-          {/* Main Titles */}
-          <div className="mb-10">
-            <motion.h1 
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="text-5xl font-black text-white tracking-tighter leading-[0.9] mb-4"
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="flex flex-col items-center mb-10">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }}
+              className="bg-white/5 border border-white/10 px-4 py-1.5 rounded-full mb-6"
             >
-              {i18n.language.startsWith('en') ? <>TOUR<br />ITINERARY</> : <>ITINERARIO<br />DEL VIAJE</>}
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#11BDDB]"></div>
+                <span className="text-[9px] font-black tracking-[0.2em] text-[#11BDDB] uppercase">
+                  {i18n.language.startsWith('en') ? 'Official Voucher' : 'Voucher Oficial'}
+                </span>
+              </div>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ y: 10, opacity: 0 }} 
+              animate={{ y: 0, opacity: 1 }}
+              className="text-4xl md:text-5xl font-black text-white tracking-tighter leading-tight mb-4 text-center uppercase"
+            >
+              {i18n.language.startsWith('en') ? <>TOUR <span className="text-[#11BDDB]">ITINERARY</span></> : <>ITINERARIO <span className="text-[#11BDDB]">DE VIAJE</span></>}
             </motion.h1>
-            <div className="flex items-center gap-4">
-              <div className="h-[2px] w-12 bg-[#11BDDB]"></div>
-              <p className="text-xl font-bold text-white/90 tracking-tight">
+            
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-lg font-bold text-gray-300 tracking-tight">
                 {booking.client_name}
               </p>
             </div>
           </div>
 
-          {/* Footer Info Row */}
-          <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/10">
-            <div className="flex flex-col gap-1">
-              <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">
-                {i18n.language.startsWith('en') ? 'Experience' : 'Experiencia'}
-              </span>
-              <div className="flex items-center gap-2 text-white font-bold text-sm">
-                <MapPin size={14} className="text-[#11BDDB]" />
-                <span className="truncate">{booking.tour_title}</span>
+          {/* Compact Quick Info Bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            {[
+              { label: 'REF', val: `CT-${ref}` },
+              { label: 'DATE', val: new Date(booking.booking_date).toLocaleDateString(i18n.language, { day:'2-digit', month:'short' }) },
+              { label: 'PAX', val: `${booking.pax} PAX` },
+              { label: 'STATUS', val: currentStatus.label, highlight: true }
+            ].map((item, i) => (
+              <div key={i} className={`p-4 rounded-2xl border ${item.highlight ? 'bg-[#11BDDB] border-[#11BDDB] text-white' : 'bg-white/5 border-white/5 text-gray-400'}`}>
+                <span className={`text-[8px] font-black uppercase tracking-widest block mb-1 ${item.highlight ? 'text-white/70' : 'text-[#11BDDB]'}`}>{item.label}</span>
+                <div className="text-xs font-black uppercase tracking-tight">{item.val}</div>
               </div>
-            </div>
-            <div className="flex flex-col gap-1 items-end">
-              <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">
-                {i18n.language.startsWith('en') ? 'Status' : 'Estado'}
-              </span>
-              <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full border border-white/10">
-                <div className={`w-2 h-2 rounded-full bg-white animate-pulse`}></div>
-                <span className="text-[10px] font-black text-white uppercase tracking-tight">{currentStatus.label}</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-md mx-auto px-6 -mt-8 relative z-20">
+      {/* Main Content Grid */}
+      <div className="max-w-5xl mx-auto px-6 -mt-12 relative z-20 pb-20">
         
-        {/* Status Timeline */}
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-[#1a1a1a] rounded-3xl p-6 shadow-xl border border-white/5 mb-6">
-          <div className="flex items-start gap-4">
-            <div className={`p-3 rounded-2xl ${currentStatus.color} bg-opacity-20`}>
-              <StatusIcon className={`${currentStatus.color.replace('bg-', 'text-')}`} size={24} />
-            </div>
-            <div>
-              <div className="text-xs font-black text-gray-400 uppercase tracking-wider mb-1">Estado de tu reserva</div>
-              <div className="font-black text-lg text-white mb-1">{currentStatus.label}</div>
-              <p className="text-xs text-gray-500 leading-relaxed">{currentStatus.desc}</p>
-            </div>
-          </div>
-          
-          {/* Simple Timeline visual */}
-          <div className="mt-6 flex justify-between items-center px-2">
-            {['requested', 'reserved', 'confirmed', 'paid'].map((s, idx) => {
-              const active = Object.keys(statusMap).indexOf(booking.payment_status) >= Object.keys(statusMap).indexOf(s);
-              return (
-                <React.Fragment key={s}>
-                  <div className={`w-3 h-3 rounded-full ${active ? 'bg-[#11BDDB]' : 'bg-gray-800'} transition-colors`} />
-                  {idx < 3 && <div className={`flex-1 h-[2px] ${active ? 'bg-[#11BDDB]' : 'bg-gray-800'} mx-1`} />}
-                </React.Fragment>
-              );
-            })}
-          </div>
-        </motion.div>
-
-        {/* Info Card */}
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="bg-[#1a1a1a] rounded-3xl p-6 shadow-xl border border-white/5 mb-6">
-          <div className="grid grid-cols-2 gap-6">
-            <div>
-              <div className="text-[10px] font-black text-[#11BDDB] uppercase tracking-wider mb-1">Cliente</div>
-              <div className="font-bold text-sm truncate">{booking.client_name}</div>
-            </div>
-            <div>
-              <div className="text-[10px] font-black text-[#11BDDB] uppercase tracking-wider mb-1">Pasajeros</div>
-              <div className="font-bold text-sm">{booking.pax} PAX</div>
-            </div>
-            <div className="col-span-2">
-              <div className="text-[10px] font-black text-[#11BDDB] uppercase tracking-wider mb-1">Lugar de Recogida</div>
-              <div className="font-bold text-sm flex items-center gap-2">
-                <MapPin size={14} className="text-[#11BDDB]" />
-                {booking.hotel}
+        {/* Status Box - More subtle */}
+        <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-[#141414] rounded-3xl p-6 shadow-xl border border-white/5 mb-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="flex items-center gap-5">
+              <div className={`p-3 rounded-xl ${currentStatus.color} bg-opacity-10 flex-shrink-0`}>
+                <StatusIcon className={`${currentStatus.color.replace('bg-', 'text-')}`} size={20} />
+              </div>
+              <div>
+                <div className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Booking Status</div>
+                <div className="font-black text-sm text-white uppercase tracking-tight">{currentStatus.desc}</div>
               </div>
             </div>
-            {booking.experience && (
-              <div className="col-span-2">
-                <div className="text-[10px] font-black text-[#11BDDB] uppercase tracking-wider mb-1">Experiencia</div>
-                <div className="font-bold text-xs bg-[#11BDDB]/10 text-[#11BDDB] px-3 py-2 rounded-lg inline-block">{{economy:'🚗 Conductor Local (Inglés)',comfort:'🗺️ Guía Local (Inglés)',elite:'⭐ Guía Local (Español)'}[booking.experience] || booking.experience}</div>
-              </div>
-            )}
-          </div>
-        </motion.div>
-
-        {/* Personalized Itinerary Timeline */}
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.15 }} className="bg-[#1a1a1a] rounded-[2.5rem] p-8 shadow-2xl border border-white/5 mb-8 overflow-hidden relative">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#11BDDB]/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-          
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-sm font-black text-[#11BDDB] uppercase tracking-[0.2em] flex items-center gap-3">
-              <MapPin size={18} className="animate-bounce" /> 
-              <span>Itinerario del Viaje</span>
-            </h3>
-            <div className="text-[10px] font-bold text-gray-500 bg-white/5 px-3 py-1 rounded-full">
-              {booking.tour_id === 'ubud-flexible' ? '100% FLEXIBLE' : 'PLANIFICADO'}
-            </div>
-          </div>
-
-          <div className="relative">
-            {/* Vertical Line */}
-            <div className="absolute left-[11px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-[#11BDDB] via-[#11BDDB]/50 to-transparent"></div>
-
-            <div className="space-y-8 relative">
-              {(() => {
-                let items = [];
-                try {
-                  if (booking.itinerary && booking.itinerary.startsWith('[')) {
-                    // NEW JSON FORMAT
-                    items = JSON.parse(booking.itinerary);
-                  } else if (booking.itinerary) {
-                    // OLD STRING FORMAT
-                    items = booking.itinerary.split(',').map(s => ({ time: '--:--', desc: s.trim() }));
-                  } else {
-                    // FALLBACK TO TOUR DEFAULT
-                    const tourData = tours.find(t => t.id === booking.tour_id);
-                    if (tourData && tourData.itinerary) {
-                      items = tourData.itinerary.map(it => ({
-                        time: it.duration || '--:--',
-                        desc: i18n.language.startsWith('en') ? (it.activity_en || it.activity) : it.activity
-                      }));
-                    }
-                  }
-                } catch(e) {
-                  console.error("Itinerary Parse Error", e);
-                }
-
-                if (items.length === 0) return (
-                  <div className="text-center py-8">
-                    <p className="text-xs text-gray-500 italic">Tu itinerario se está terminando de preparar...</p>
-                  </div>
+            
+            <div className="flex-1 max-w-xs flex justify-between items-center px-2">
+              {['requested', 'reserved', 'confirmed', 'paid'].map((s, idx) => {
+                const active = Object.keys(statusMap).indexOf(booking.payment_status) >= Object.keys(statusMap).indexOf(s);
+                return (
+                  <React.Fragment key={s}>
+                    <div className={`w-2 h-2 rounded-full ${active ? 'bg-[#11BDDB]' : 'bg-gray-800'} transition-all`} />
+                    {idx < 3 && <div className={`flex-1 h-[1px] ${active ? 'bg-[#11BDDB]' : 'bg-gray-800'} mx-1`} />}
+                  </React.Fragment>
                 );
-
-                return items.map((item, idx) => {
-                  const isLast = idx === items.length - 1;
-                  const isFirst = idx === 0;
-                  
-                  // Simple icon logic based on text
-                  const text = item.desc.toLowerCase();
-                  let Icon = MapPin;
-                  if (text.includes('recogida') || text.includes('pickup') || text.includes('hotel')) Icon = Clock;
-                  if (text.includes('foto') || text.includes('photo')) Icon = Star;
-                  if (text.includes('comida') || text.includes('lunch') || text.includes('almuerzo')) Icon = Info;
-                  if (text.includes('regreso') || text.includes('dropoff') || text.includes('fin')) Icon = CheckCircle2;
-
-                  return (
-                    <motion.div 
-                      key={idx} 
-                      initial={{ x: -10, opacity: 0 }} 
-                      animate={{ x: 0, opacity: 1 }} 
-                      transition={{ delay: 0.2 + (idx * 0.05) }}
-                      className="flex gap-6 items-start"
-                    >
-                      {/* Timeline Dot & Icon Overlay */}
-                      <div className="relative flex-shrink-0 z-10">
-                        <div className={`w-6 h-6 rounded-full ${isFirst ? 'bg-[#11BDDB]' : 'bg-[#1a1a1a]'} border-2 border-[#11BDDB] flex items-center justify-center shadow-[0_0_15px_rgba(17,189,219,0.3)]`}>
-                          <div className={`w-2 h-2 rounded-full ${isFirst ? 'bg-white' : 'bg-[#11BDDB]'}`}></div>
-                        </div>
-                      </div>
-
-                      <div className="flex-1 pb-2">
-                        <div className="flex items-center gap-3 mb-1">
-                          <span className="text-[10px] font-black text-[#11BDDB] bg-[#11BDDB]/10 px-2 py-0.5 rounded-md border border-[#11BDDB]/20">
-                            {item.time}
-                          </span>
-                          <div className="h-[1px] flex-1 bg-white/5"></div>
-                        </div>
-                        <h4 className="text-sm font-bold text-gray-200 leading-tight">
-                          {item.desc}
-                        </h4>
-                      </div>
-                    </motion.div>
-                  );
-                });
-              })()}
-            </div>
-          </div>
-          
-          <div className="mt-8 pt-6 border-t border-white/5 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-              <ShieldCheck size={20} />
-            </div>
-            <p className="text-[10px] text-gray-500 font-bold leading-relaxed">
-              Itinerario sujeto a cambios según condiciones climáticas o tráfico, siempre priorizando tu mejor experiencia.
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Conductor Card — sin botón de WSP al conductor */}
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="bg-[#1a1a1a] rounded-3xl p-6 shadow-xl border border-white/5 mb-6 overflow-hidden relative">
-          <div className="flex items-center gap-4">
-            <div className="bg-[#11BDDB]/20 p-3 rounded-2xl">
-              <User className="text-[#11BDDB]" size={24} />
-            </div>
-            <div className="flex-1">
-              <div className="text-[10px] font-black text-[#11BDDB] uppercase tracking-wider mb-1">Tu Conductor</div>
-              <div className="font-bold text-lg">{booking.driver_name || 'Pendiente de asignar'}</div>
-              {booking.car_model && <div className="text-xs text-gray-500">{booking.car_model}</div>}
+              })}
             </div>
           </div>
         </motion.div>
 
-        {/* Pagos + Cargos Extra */}
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="bg-[#1a1a1a] rounded-3xl p-6 shadow-xl border border-white/5 mb-6">
-          <h3 className="text-xs font-black text-[#11BDDB] uppercase tracking-widest mb-4 flex items-center gap-2">
-            <CreditCard size={14} /> Estado de Cuenta
-          </h3>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          {/* Pagos realizados */}
-          <div className="space-y-2 mb-4">
-            {payments.map((p) => (
-              <div key={p.id} className="flex justify-between items-center text-xs bg-white/5 p-3 rounded-xl border border-white/5">
+          {/* LEFT: Timeline */}
+          <div className="lg:col-span-7 xl:col-span-8 space-y-6">
+            
+            {/* Info Summary */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-[#141414] rounded-2xl p-6 border border-white/5">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
-                  <div className="font-black text-gray-300">{p.payment_method}</div>
-                  <div className="text-[9px] text-gray-500">
-                    {new Date(p.payment_date).toLocaleDateString('es-ES')}
-                    {p.notes && ` · ${p.notes}`}
-                  </div>
+                  <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-2">EXPERIENCE</span>
+                  <div className="font-bold text-sm text-gray-200">{booking.tour_title}</div>
                 </div>
-                <div className="font-black text-green-400">+{parseFloat(p.amount).toFixed(2)} €</div>
-              </div>
-            ))}
-          </div>
-
-          {/* Cargos extra al cliente */}
-          {charges.length > 0 && (
-            <div className="space-y-2 mb-4">
-              <div className="text-[9px] font-black text-amber-400 uppercase tracking-wider mb-2">Servicios Adicionales</div>
-              {charges.map((c) => (
-                <div key={c.id} className="flex justify-between items-center text-xs bg-amber-500/5 p-3 rounded-xl border border-amber-500/20">
-                  <div>
-                    <div className="font-black text-gray-300">{c.concept}</div>
-                    <div className="text-[9px] text-gray-500">{new Date(c.charge_date).toLocaleDateString('es-ES')}</div>
-                  </div>
-                  <div className="font-black text-amber-400">+{parseFloat(c.amount).toFixed(2)} €</div>
+                <div>
+                  <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-2">PICKUP LOCATION</span>
+                  <div className="font-bold text-sm text-gray-200 truncate">{booking.hotel}</div>
                 </div>
-              ))}
-            </div>
-          )}
-
-          {/* Resumen */}
-          <div className="pt-4 border-t border-white/10 space-y-2">
-            <div className="flex justify-between items-center">
-              <span className="font-bold text-xs text-gray-500">Precio Base</span>
-              <span className="font-black text-sm">{parseFloat(booking.total_price).toFixed(2)} €</span>
-            </div>
-            {charges.length > 0 && (
-              <div className="flex justify-between items-center">
-                <span className="font-bold text-xs text-amber-400">+ Extras</span>
-                <span className="font-black text-sm text-amber-400">+{totalCharges.toFixed(2)} €</span>
+                <div>
+                  <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-2">VEHICLE</span>
+                  <div className="font-bold text-sm text-gray-200 uppercase tracking-tighter">{booking.car_model || 'Premium Unit'}</div>
+                </div>
               </div>
-            )}
-            <div className="flex justify-between items-center pt-2 border-t border-white/10">
-              <span className="font-bold text-xs text-white">Saldo Pendiente</span>
-              <span className={`text-xl font-black ${due > 0 ? 'text-amber-400' : 'text-green-400'}`}>{Math.max(0, due).toFixed(2)} €</span>
+            </motion.div>
+
+            {/* ITINERARY */}
+            <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="bg-[#141414] rounded-[2rem] p-8 md:p-10 shadow-xl border border-white/5 relative overflow-hidden">
+              <h3 className="text-[10px] font-black text-[#11BDDB] uppercase tracking-[0.3em] flex items-center gap-3 mb-12">
+                <Clock size={14} /> {i18n.language.startsWith('en') ? 'Daily Timeline' : 'Cronograma'}
+              </h3>
+
+              <div className="relative">
+                <div className="absolute left-[11px] top-4 bottom-4 w-[1px] bg-white/5"></div>
+                
+                <div className="space-y-10">
+                  {(() => {
+                    let items = [];
+                    try {
+                      items = JSON.parse(booking.itinerary || '[]');
+                      if (!Array.isArray(items)) items = [];
+                    } catch (e) {
+                      // If it's not JSON, treat as plain text
+                      if (booking.itinerary) {
+                        items = [{ time: 'Full Day', desc: booking.itinerary }];
+                      }
+                    }
+
+                    if (items.length === 0) return <p className="text-center text-gray-600 font-bold italic py-10">Preparing itinerary...</p>;
+                    
+                    return items.map((item, idx) => {
+                      const isFirst = idx === 0;
+                      return (
+                        <div key={idx} className="flex gap-8 items-start group">
+                          <div className="relative flex-shrink-0 z-10 pt-1.5">
+                            <div className={`w-6 h-6 rounded-full ${isFirst ? 'bg-[#11BDDB]' : 'bg-[#141414]'} border border-[#11BDDB] flex items-center justify-center transition-all`}>
+                              <div className={`w-1.5 h-1.5 rounded-full ${isFirst ? 'bg-white' : 'bg-[#11BDDB]'}`}></div>
+                            </div>
+                          </div>
+
+                          <div className="flex-1">
+                            <div className="flex items-center gap-4 mb-2">
+                              <span className="text-[10px] font-black text-white bg-white/5 border border-white/10 px-3 py-1 rounded-lg">
+                                {item.time || 'Schedule'}
+                              </span>
+                              <div className="h-[1px] flex-1 bg-white/5"></div>
+                            </div>
+                            <h4 className="text-base font-bold text-gray-200 tracking-tight leading-snug">
+                              {item.desc}
+                            </h4>
+                          </div>
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+              </div>
+              
+              <div className="mt-12 pt-6 border-t border-white/5 flex items-start gap-4">
+                <ShieldCheck size={18} className="text-emerald-500 shrink-0" />
+                <p className="text-[9px] text-gray-500 font-bold leading-relaxed">
+                  {i18n.language.startsWith('en') 
+                    ? 'Flexible itinerary subject to local conditions. We prioritize your comfort.' 
+                    : 'Itinerario flexible sujeto a condiciones locales. Priorizamos tu comodidad.'}
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* RIGHT: Sidebar */}
+          <div className="lg:col-span-5 xl:col-span-4 space-y-6 lg:sticky lg:top-8">
+            
+            {/* Driver */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="bg-[#141414] rounded-2xl p-6 border border-white/5">
+              <div className="flex items-center gap-5">
+                <div className="bg-[#11BDDB]/10 p-3 rounded-xl border border-[#11BDDB]/20">
+                  <User className="text-[#11BDDB]" size={20} />
+                </div>
+                <div>
+                  <span className="text-[8px] font-black text-gray-500 uppercase tracking-widest block mb-1">Your Specialist</span>
+                  <div className="font-black text-lg text-white tracking-tight uppercase">{booking.drivers?.name || 'ASSIGNING...'}</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Financials */}
+            <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="bg-[#141414] rounded-2xl p-6 border border-white/5 shadow-xl">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[9px] font-black text-[#11BDDB] uppercase tracking-widest flex items-center gap-2">
+                  <CreditCard size={14} /> Financial Summary
+                </h3>
+                {due <= 0 && <span className="text-[8px] font-black text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-2 py-1 rounded">Voucher Paid</span>}
+              </div>
+              
+              <div className="space-y-3 mb-6">
+                {payments.map((p) => (
+                  <div key={p.id} className="flex justify-between items-center text-[11px] bg-black/20 p-3 rounded-xl border border-white/5">
+                    <span className="font-bold text-gray-400">{p.payment_method}</span>
+                    <span className="font-black text-emerald-400">+{parseFloat(p.amount).toFixed(2)}€</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-4 border-t border-white/10 flex justify-between items-end">
+                <span className="font-black text-[9px] text-gray-600 uppercase tracking-widest">Balance Due</span>
+                <span className={`text-2xl font-black tracking-tighter ${due > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>{Math.max(0, due).toFixed(2)}€</span>
+              </div>
+
+              {due > 0 && (
+                <div className="mt-8 pt-6 border-t border-white/10 space-y-4">
+                  <div className="flex gap-2 p-1 bg-black/30 rounded-xl">
+                    {['EUR', 'USD'].map(curr => (
+                      <button key={curr} onClick={() => setCurrency(curr)} className={`flex-1 py-2 rounded-lg text-[9px] font-black transition-all ${currency === curr ? 'bg-[#11BDDB] text-white shadow-lg' : 'text-gray-600'}`}>{curr}</button>
+                    ))}
+                  </div>
+
+                  <div className="space-y-4 bg-black/20 p-4 rounded-xl border border-white/5">
+                    <div className="group cursor-pointer" onClick={() => { navigator.clipboard.writeText(currency === 'EUR' ? 'BE97967386902549' : '101019628'); alert('Copied!'); }}>
+                      <span className="text-[8px] font-black text-gray-700 uppercase block mb-1">{currency === 'EUR' ? 'IBAN' : 'ROUTING'}</span>
+                      <code className="text-xs font-bold text-gray-300 block tracking-wider">{currency === 'EUR' ? 'BE97 9673 8690 2549' : '101019628'}</code>
+                    </div>
+                    {currency === 'USD' && (
+                      <div className="group cursor-pointer" onClick={() => { navigator.clipboard.writeText('214247934891'); alert('Copied!'); }}>
+                        <span className="text-[8px] font-black text-gray-700 uppercase block mb-1">ACCOUNT</span>
+                        <code className="text-xs font-bold text-gray-300 block tracking-wider">2142 4793 4891</code>
+                      </div>
+                    )}
+                    <div className="group cursor-pointer" onClick={() => { navigator.clipboard.writeText(currency === 'EUR' ? 'TRWIBEB1XXX' : 'TRWIUS35XXX'); alert('Copied!'); }}>
+                      <span className="text-[8px] font-black text-gray-700 uppercase block mb-1">SWIFT / BIC</span>
+                      <code className="text-xs font-bold text-gray-300 block tracking-wider">{currency === 'EUR' ? 'TRWIBEB1XXX' : 'TRWIUS35XXX'}</code>
+                    </div>
+                  </div>
+
+                  <a 
+                    href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${encodeURIComponent(`Hello! Here is the proof of payment for CT-${ref}`)}`}
+                    target="_blank" rel="noreferrer"
+                    className="w-full flex items-center justify-center gap-3 bg-[#25D366] text-white font-black text-[10px] py-4 rounded-xl shadow-lg shadow-[#25D366]/20 transition-all uppercase tracking-widest"
+                  >
+                    <MessageCircle size={16} /> Send Receipt
+                  </a>
+                </div>
+              )}
+            </motion.div>
+
+            {/* Compact Support */}
+            <div className="p-6 bg-white/5 rounded-2xl border border-white/5 text-center">
+              <Headphones size={24} className="text-[#11BDDB] mx-auto mb-3 opacity-50" />
+              <p className="text-[9px] font-black text-gray-600 uppercase tracking-widest mb-3">Concierge Support</p>
+              <a href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} target="_blank" rel="noreferrer" className="text-[10px] font-black text-white hover:text-[#11BDDB] transition-colors underline decoration-[#11BDDB]/30 underline-offset-4">
+                WHATSAPP CHAT
+              </a>
             </div>
           </div>
+        </div>
 
-          <div className="bg-primary/5 p-4 rounded-2xl text-[10px] text-primary font-bold leading-relaxed text-center italic border border-primary/10 mt-4">
-            {due <= 0 
-              ? "¡Tu reserva está totalmente pagada! Disfruta el viaje." 
-              : "El pago completo debe realizarse al menos 48 horas antes del tour."}
-          </div>
-        </motion.div>
-
-        {/* Botón Soporte WSP */}
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="mb-6">
-          <p className="text-[10px] font-black text-gray-500 uppercase tracking-wider text-center mb-3">¿Necesitas ayuda?</p>
-          <div className="grid grid-cols-2 gap-3">
-            <a 
-              href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`}
-              target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-black text-xs py-4 rounded-2xl hover:bg-[#25D366]/20 transition-colors"
-            >
-              <Headphones size={16} />
-              Español / English
-            </a>
-            <a 
-              href={`https://wa.me/${SUPPORT_PHONE_ID}?text=${supportMsg}`}
-              target="_blank" rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] font-black text-xs py-4 rounded-2xl hover:bg-[#25D366]/20 transition-colors"
-            >
-              <Headphones size={16} />
-              Indonesio / English
-            </a>
-          </div>
-        </motion.div>
-
-        {/* Feedback / Review */}
+        {/* Feedback Section */}
         {isExpired && (
           <motion.a 
             href={`https://cantiktours.com/reviews?ref=${ref}`}
-            initial={{ scale: 0.9, opacity: 0 }} 
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-gradient-to-r from-[#11BDDB] to-[#0ea5be] w-full p-6 rounded-3xl flex flex-col items-center text-center shadow-2xl shadow-[#11BDDB]/20 border border-white/10 mb-8"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            className="mt-12 bg-white/5 w-full p-10 rounded-[2rem] flex flex-col items-center text-center border border-white/5"
           >
-            <Star className="text-white mb-2" size={32} fill="white" />
-            <h4 className="font-black text-lg">¿Qué te ha parecido el viaje?</h4>
-            <p className="text-xs text-white/80 font-bold">Tu reseña nos ayuda a seguir creciendo</p>
+            <Star className="text-[#11BDDB] mb-4 opacity-50" size={32} />
+            <h4 className="font-black text-xl text-white uppercase tracking-tight">Your Feedback</h4>
+            <p className="text-xs text-gray-500 font-bold mt-1">Help us maintain our 5-star service quality.</p>
           </motion.a>
         )}
 
         {/* Footer */}
-        <div className="mt-8 text-center">
-          <a 
-            href="https://cantiktours.com" 
-            target="_blank" rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-[#11BDDB] font-black text-xs uppercase tracking-[3px] hover:opacity-80 transition-opacity"
-          >
-            <ExternalLink size={12} />
-            cantiktours.com
+        <div className="mt-16 text-center opacity-30">
+          <a href="https://cantiktours.com" target="_blank" rel="noopener noreferrer" className="text-white font-black text-[8px] uppercase tracking-[10px]">
+            CANTIKTOURS.COM
           </a>
-          <p className="text-[9px] text-gray-700 mt-1">Bali · Indonesia</p>
         </div>
       </div>
     </div>
   );
 }
-
