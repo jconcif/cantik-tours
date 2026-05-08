@@ -7,42 +7,30 @@ const MEASUREMENT_ID = "G-HSVS7RPZP7"; // Bali Tours Flow
  * Only initializes if not on localhost and measurement ID is present
  */
 export const initGA = () => {
-    // Check if we are on localhost
     const isLocalhost = window.location.hostname === "localhost" ||
         window.location.hostname === "127.0.0.1";
+    
+    // Check if the user is an admin (has a token or is on admin path)
+    const isAdmin = localStorage.getItem('ctk_jwt') || window.location.pathname.includes('admin');
 
-    if (!isLocalhost) {
+    if (!isLocalhost && !isAdmin) {
         ReactGA.initialize(MEASUREMENT_ID);
-        console.log("GA4 & Google Tag Initialized");
+        console.log("GA4 Initialized (Customer View)");
     } else {
-        console.log("GA4 Skipped (Localhost)");
+        console.log("GA4 Skipped (Admin or Localhost)");
     }
 };
 
-/**
- * Tracks a page view
- * @param {string} path - The path to track
- */
 export const trackPageView = (path) => {
-    const isLocalhost = window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1";
-
-    if (!isLocalhost) {
+    const isAdmin = localStorage.getItem('ctk_jwt') || path.includes('admin');
+    if (window.location.hostname !== "localhost" && !isAdmin) {
         ReactGA.send({ hitType: "pageview", page: path });
     }
 };
 
-/**
- * Tracks a custom event
- * @param {string} category - The event category (e.g., 'Conversion')
- * @param {string} action - The action (e.g., 'WhatsApp Click')
- * @param {string} label - Optional label
- */
 export const trackEvent = (category, action, label) => {
-    const isLocalhost = window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1";
-
-    if (!isLocalhost) {
+    const isAdmin = localStorage.getItem('ctk_jwt') || window.location.pathname.includes('admin');
+    if (window.location.hostname !== "localhost" && !isAdmin) {
         ReactGA.event({
             category: category,
             action: action,

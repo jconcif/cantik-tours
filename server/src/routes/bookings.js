@@ -90,10 +90,33 @@ router.post('/', requireAuth, validateBody(['client_name', 'tour_title']), async
 router.put('/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    const { data, error } = await supabase.from('bookings').update(req.body).eq('id', id).select().single();
+    
+    // STRICT WHITELIST: Only these columns exist in the DB
+    const allowedColumns = [
+      'reference', 'client_name', 'client_phone', 'hotel', 'tour_title', 
+      'pax', 'experience', 'payment_status', 'deposit_amount', 'booking_date', 
+      'itinerary', 'coupon', 'tour_id', 'total_price', 'driver_id', 
+      'extras', 'is_paid', 'payment_type'
+    ];
+
+    const updateData = {};
+    allowedColumns.forEach(col => {
+      if (req.body[col] !== undefined) {
+        updateData[col] = req.body[col];
+      }
+    });
+    
+    const { data, error } = await supabase
+      .from('bookings')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
     if (error) throw error;
     res.json({ status: 'success', data });
   } catch (err) {
+    console.error('Update Booking Error:', err);
     res.status(500).json({ status: 'error', message: err.message });
   }
 });

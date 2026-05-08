@@ -342,7 +342,8 @@ export const FinancialManagement = ({booking, onUpdate}) => {
               </div>
               <div style={{fontSize:'11px',color:'#555',marginTop:'2px'}}>
                 {new Date(p.payment_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
-                <span style={{marginLeft:'6px', opacity:0.5}}>{p.created_at ? new Date(p.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                <span style={{marginLeft:'6px', opacity:0.5}}>{p.created_at ? new Date(p.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''} (Local)</span>
+                <span style={{marginLeft:'6px', opacity:0.3}}>· Bali: {p.created_at ? new Date(p.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
                 {p.notes && <span style={{marginLeft:'8px'}}>· {p.notes}</span>}
               </div>
             </div>
@@ -367,7 +368,8 @@ export const FinancialManagement = ({booking, onUpdate}) => {
               </div>
               <div style={{fontSize:'11px',color:'#555',marginTop:'2px'}}>
                 {new Date(c.charge_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
-                <span style={{marginLeft:'6px', opacity:0.5}}>{c.created_at ? new Date(c.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                <span style={{marginLeft:'6px', opacity:0.5}}>{c.created_at ? new Date(c.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''} (L)</span>
+                <span style={{marginLeft:'4px', opacity:0.3}}>B: {c.created_at ? new Date(c.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
                 <span style={{marginLeft:'8px',fontSize:'10px',color:'#f59e0b',background:'#f59e0b11',padding:'2px 6px',borderRadius:'4px'}}>CARGO AL CLIENTE</span>
               </div>
             </div>
@@ -391,7 +393,8 @@ export const FinancialManagement = ({booking, onUpdate}) => {
               </div>
               <div style={{fontSize:'11px',color:'#555',marginTop:'2px'}}>
                 {new Date(e.expense_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
-                <span style={{marginLeft:'6px', opacity:0.5}}>{e.created_at ? new Date(e.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                <span style={{marginLeft:'6px', opacity:0.5}}>{e.created_at ? new Date(e.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''} (L)</span>
+                <span style={{marginLeft:'4px', opacity:0.3}}>B: {e.created_at ? new Date(e.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
                 <span style={{marginLeft:'8px',fontSize:'10px',color:'#ef4444',background:'#ef444411',padding:'2px 6px',borderRadius:'4px'}}>{(e.category||'').toUpperCase()}</span>
               </div>
             </div>

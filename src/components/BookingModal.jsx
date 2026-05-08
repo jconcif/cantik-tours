@@ -121,6 +121,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                 experience: 'economy',
                 paymentType: 'full',
                 selectedStops: [],
+                extras: [],
                 acceptedTerms: false
             });
             setViewBankDetails(false);
@@ -219,17 +220,26 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
     const splitFee = 5;
     const finalTotalPrice = totalPrice + extraPaxFee;
     
+    // Calculate Extras Price
+    const extrasPrice = (formData.extras || []).reduce((sum, extra) => {
+        if (extra.id === 'airport' || extra.id === 'sim' || extra.id === 'visa') {
+            // Some might be per person, some per group. Let's keep it simple for now (per group)
+            return sum + extra.price;
+        }
+        return sum;
+    }, 0);
+
     const currentPayAmount = paymentPlan === 'deposit' 
-        ? Math.round((finalTotalPrice * 0.3) + splitFee) 
-        : finalTotalPrice;
+        ? Math.round(((finalTotalPrice + extrasPrice) * 0.3) + splitFee) 
+        : (finalTotalPrice + extrasPrice);
     
     const currentRemainingAmount = paymentPlan === 'deposit' 
-        ? finalTotalPrice - (currentPayAmount - splitFee) 
+        ? (finalTotalPrice + extrasPrice) - (currentPayAmount - splitFee) 
         : 0;
 
     const finalTotalPriceWithFees = paymentPlan === 'deposit' 
-        ? finalTotalPrice + splitFee 
-        : finalTotalPrice;
+        ? (finalTotalPrice + extrasPrice) + splitFee 
+        : (finalTotalPrice + extrasPrice);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -276,6 +286,10 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
         const paxLabel = t(`detail.booking_pax_${paxValue}`);
         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
+        const extrasText = formData.extras.length > 0 
+            ? `\n⚡ *EXTRAS:* \n${formData.extras.map(e => `  • ${e.name} (+${e.price}€)`).join('\n')}`
+            : '';
+
         const message = `🌟 *VOUCHER DE RESERVA - CANTIK TOURS* 🌟
 ------------------------------------------
 *Referencia:* #CT-${instantId}
@@ -284,12 +298,12 @@ ${paymentPlan === 'deposit' ? `- *Pendiente:* ${currentRemainingAmount} €` : `
 🗺️ *TOUR:* ${tourTitle.toUpperCase()}
 📅 *FECHA:* ${dateStr}
 👥 *PASAJEROS:* ${paxLabel}
-🏨 *HOTEL:* ${formData.hotel}
-✨ *EXPERIENCIA:* ${expName} - ${expSub}
+🏨 *HOTEL:* ${formData.hotel.toUpperCase()}
+✨ *EXPERIENCIA:* ${expName} - ${expSub}${extrasText}
 ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARADAS:* ${formData.selectedStops.join(', ')}` : ''}
 
 💰 *DETALLE DEL PAGO:*
-- Total Tour: ${finalTotalPriceWithFees} € (Sin comisiones)
+- Total Reserva: ${finalTotalPriceWithFees} € (Con comisiones)
 - Estado: Pago Pendiente (A la espera de transferencia)
 
 ------------------------------------------
@@ -692,6 +706,46 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                         <span className="text-[11px] md:text-xs text-gray-600 dark:text-gray-400 leading-relaxed block font-medium">{t('detail.exp_elite_desc')}</span>
                                                     </div>
                                                 </label>
+                                            </div>
+                                        </div>
+
+                                        {/* Extras Upselling Section */}
+                                        <div className="space-y-4 pt-4 border-t border-black/5 dark:border-white/5">
+                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                                <Plus size={14} className="text-secondary" />
+                                                Complementos para tu viaje
+                                            </label>
+                                            <div className="grid gap-2">
+                                                {[
+                                                    { id: 'airport', name: 'Traslado Aeropuerto (Privado)', price: 35, icon: '🚗' },
+                                                    { id: 'sim', name: 'Tarjeta SIM 4G/5G (60GB)', price: 20, icon: '📶' },
+                                                    { id: 'visa', name: 'Visado Fast Track (VIP)', price: 45, icon: '🛂' }
+                                                ].map((extra) => {
+                                                    const isSelected = formData.extras.some(e => e.id === extra.id);
+                                                    return (
+                                                        <button
+                                                            key={extra.id}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (isSelected) {
+                                                                    setFormData({ ...formData, extras: formData.extras.filter(e => e.id !== extra.id) });
+                                                                } else {
+                                                                    setFormData({ ...formData, extras: [...formData.extras, extra] });
+                                                                }
+                                                            }}
+                                                            className={`flex items-center justify-between p-3 rounded-xl border-2 transition-all ${isSelected ? 'border-secondary bg-secondary/5' : 'border-black/5 dark:border-white/5 bg-transparent opacity-70'}`}
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <span className="text-xl">{extra.icon}</span>
+                                                                <div className="text-left">
+                                                                    <div className={`text-xs font-black ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-400'}`}>{extra.name}</div>
+                                                                    <div className="text-[10px] font-bold text-gray-400">Entrega en mano</div>
+                                                                </div>
+                                                            </div>
+                                                            <div className={`text-sm font-black ${isSelected ? 'text-secondary' : 'text-gray-500'}`}>+{extra.price}€</div>
+                                                        </button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
 
