@@ -113,28 +113,72 @@ export default function ItineraryPage() {
 
   return (
     <div className="min-h-screen bg-[#0f0f0f] text-white font-sans pb-12">
-      {/* Header */}
-      <div className={`p-8 pb-16 rounded-b-[40px] shadow-2xl relative overflow-hidden transition-colors duration-500 ${currentStatus.color}`}>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl"></div>
-        <div className="relative z-10 mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="h-[2px] w-8 bg-white/30"></div>
-            <span className="text-white/60 font-black tracking-[0.3em] text-[10px] uppercase">Official Voucher</span>
+      {/* Premium Header / Ticket Design */}
+      <div className={`p-8 pb-12 rounded-b-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] relative overflow-hidden transition-all duration-700 ${currentStatus.color}`}>
+        {/* Animated Background Elements */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-[80px] animate-pulse"></div>
+        <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-black/20 rounded-full blur-[60px]"></div>
+        
+        <div className="relative z-10">
+          {/* Badge & Slogan */}
+          <div className="flex items-center justify-between mb-10">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-xl flex items-center justify-center border border-white/30 shadow-inner">
+                <ShieldCheck size={20} className="text-white" />
+              </div>
+              <div>
+                <p className="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] leading-none mb-1">
+                  {i18n.language.startsWith('en') ? 'Authenticated' : 'Autenticado'}
+                </p>
+                <p className="text-xs font-black text-white uppercase tracking-widest">
+                  {i18n.language.startsWith('en') ? 'Official Voucher' : 'Voucher Oficial'}
+                </p>
+              </div>
+            </div>
+            <div className="bg-black/20 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10">
+              <span className="text-[10px] font-black text-white/90 uppercase tracking-tighter">
+                ID: {ref}
+              </span>
+            </div>
           </div>
-          <h1 className="text-4xl font-black text-white tracking-tight leading-none mb-1">
-            TOUR ITINERARY
-          </h1>
-          <p className="text-white/80 font-bold text-lg uppercase tracking-tight">
-            {booking.client_name}
-          </p>
-        </div>
-        <div className="flex items-center justify-between relative z-10 pt-4 border-t border-white/10">
-          <div className="flex items-center gap-2 text-white font-black text-[10px] uppercase tracking-widest">
-            <Calendar size={14} className="text-[#11BDDB]" />
-            {booking.tour_title}
+
+          {/* Main Titles */}
+          <div className="mb-10">
+            <motion.h1 
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="text-5xl font-black text-white tracking-tighter leading-[0.9] mb-4"
+            >
+              {i18n.language.startsWith('en') ? <>TOUR<br />ITINERARY</> : <>ITINERARIO<br />DEL VIAJE</>}
+            </motion.h1>
+            <div className="flex items-center gap-4">
+              <div className="h-[2px] w-12 bg-[#11BDDB]"></div>
+              <p className="text-xl font-bold text-white/90 tracking-tight">
+                {booking.client_name}
+              </p>
+            </div>
           </div>
-          <div className="text-white/40 font-black text-[10px] tracking-widest uppercase">
-            REF: {ref}
+
+          {/* Footer Info Row */}
+          <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/10">
+            <div className="flex flex-col gap-1">
+              <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">
+                {i18n.language.startsWith('en') ? 'Experience' : 'Experiencia'}
+              </span>
+              <div className="flex items-center gap-2 text-white font-bold text-sm">
+                <MapPin size={14} className="text-[#11BDDB]" />
+                <span className="truncate">{booking.tour_title}</span>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1 items-end">
+              <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">
+                {i18n.language.startsWith('en') ? 'Status' : 'Estado'}
+              </span>
+              <div className="flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                <div className={`w-2 h-2 rounded-full bg-white animate-pulse`}></div>
+                <span className="text-[10px] font-black text-white uppercase tracking-tight">{currentStatus.label}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

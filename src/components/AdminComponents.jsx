@@ -1,5 +1,6 @@
 import React from 'react';
 import * as api from '../services/api';
+import { useTranslation } from 'react-i18next';
 
 const inputStyle = {padding:'10px 14px',borderRadius:'12px',border:'1px solid #333',fontSize:'14px',fontWeight:600,background:'#222',color:'#fff',width:'100%',boxSizing:'border-box',outline:'none'};
 const labelStyle = {fontSize:'10px',fontWeight:900,color:'#11BDDB',textTransform:'uppercase',letterSpacing:'0.05em'};
@@ -412,28 +413,35 @@ export const FinancialManagement = ({booking, onUpdate}) => {
 export const ItineraryEditor = ({booking, onUpdate}) => {
   const [items, setItems] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
+  const { t, i18n } = useTranslation();
+  const isEn = i18n.language.startsWith('en');
 
   React.useEffect(() => {
-    if (booking.itinerary) {
+    if (booking?.itinerary) {
       try {
         if (booking.itinerary.startsWith('[')) {
           setItems(JSON.parse(booking.itinerary));
         } else {
-          // Compatibility with old comma-separated format
           setItems(booking.itinerary.split(',').map(s => ({time: '--:--', desc: s.trim()})));
         }
       } catch(e) {
         setItems([]);
       }
+    } else {
+      setItems([]);
     }
-  }, [booking.itinerary]);
+  }, [booking]);
 
   const save = async () => {
+    if (!booking?.id) {
+      alert('Error: ID de reserva no encontrado');
+      return;
+    }
     setLoading(true);
     try {
-      await api.updateBooking(booking.id, { itinerary: JSON.stringify(items) });
+      await api.updateBooking({ id: booking.id, itinerary: JSON.stringify(items) });
       if (onUpdate) onUpdate();
-      alert('Itinerario guardado ✓');
+      alert(isEn ? 'Itinerary saved ✓' : 'Itinerario guardado ✓');
     } catch(e) {
       alert(e.message);
     } finally {
@@ -452,7 +460,7 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
   return (
     <div style={{color:'#fff'}}>
       <p style={{fontSize:'12px', color:'#666', marginBottom:'20px'}}>
-        Configura el cronograma del viaje. Estos cambios se verán reflejados instantáneamente en el itinerario del cliente.
+        {isEn ? 'Configure the trip schedule. These changes will be reflected instantly on the client itinerary.' : 'Configura el cronograma del viaje. Estos cambios se verán reflejados instantáneamente en el itinerario del cliente.'}
       </p>
       
       <div style={{display:'flex', flexDirection:'column', gap:'10px', marginBottom:'24px'}}>
@@ -462,19 +470,19 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
               <input value={item.time} onChange={e=>updateItem(idx, 'time', e.target.value)} style={{...inputStyle, textAlign:'center', padding:'8px'}} placeholder="08:00" />
             </div>
             <div style={{flex:1}}>
-              <input value={item.desc} onChange={e=>updateItem(idx, 'desc', e.target.value)} style={{...inputStyle, padding:'8px'}} placeholder="Actividad o parada..." />
+              <input value={item.desc} onChange={e=>updateItem(idx, 'desc', e.target.value)} style={{...inputStyle, padding:'8px'}} placeholder={isEn ? 'Activity or stop...' : 'Actividad o parada...'} />
             </div>
             <button onClick={()=>removeItem(idx)} style={{background:'#ef444422', border:'none', color:'#ef4444', width:'32px', height:'32px', borderRadius:'10px', cursor:'pointer'}}>✕</button>
           </div>
         ))}
         
         <button onClick={addItem} style={{padding:'12px', background:'#ffffff05', border:'1px dashed #333', color:'#fff', borderRadius:'16px', cursor:'pointer', fontWeight:900, fontSize:'11px'}}>
-          + AÑADIR PARADA O HORA
+          {isEn ? '+ ADD STOP OR TIME' : '+ AÑADIR PARADA O HORA'}
         </button>
       </div>
 
       <button onClick={save} disabled={loading} style={{width:'100%', padding:'16px', background:'#11BDDB', color:'#fff', border:'none', borderRadius:'16px', fontWeight:900, cursor:'pointer', opacity:loading?0.5:1}}>
-        {loading ? 'GUARDANDO...' : 'GUARDAR ITINERARIO PERSONALIZADO'}
+        {loading ? (isEn ? 'SAVING...' : 'GUARDANDO...') : (isEn ? 'SAVE CUSTOM ITINERARY' : 'GUARDAR ITINERARIO PERSONALIZADO')}
       </button>
     </div>
   );
