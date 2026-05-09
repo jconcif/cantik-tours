@@ -829,10 +829,10 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                  <div className="relative z-[100] animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-4">
                                                      <div className="bg-indigo-500/5 border border-indigo-500/20 rounded-2xl p-4">
                                                          <p className="text-[10px] text-indigo-500 font-bold text-center uppercase tracking-widest">
-                                                             {i18n.language === 'en' ? '🔒 Pay securely with your PayPal account' : '🔒 Paga de forma segura con tu cuenta PayPal'}
+                                                             {i18n.language === 'en' ? '🔒 Pay with PayPal or card' : '🔒 Paga con PayPal o tarjeta'}
                                                          </p>
                                                          <p className="text-[9px] text-indigo-400 font-medium text-center mt-1">
-                                                             {i18n.language === 'en' ? 'You need a PayPal account to complete the payment.' : 'Necesitas una cuenta PayPal para completar el pago.'}
+                                                             {i18n.language === 'en' ? 'Visa, Mastercard and PayPal accepted. Wise prepaid cards not supported.' : 'Se acepta Visa, Mastercard y PayPal. Tarjetas prepago Wise no admitidas.'}
                                                          </p>
                                                      </div>
 
@@ -841,8 +841,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                              "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
                                                              currency: "EUR",
                                                              intent: "capture",
-                                                             components: "buttons",
-                                                             "disable-funding": "card,credit,paylater"
+                                                             components: "buttons"
                                                          }}>
                                                              <PayPalButtons 
                                                                  style={{ layout: "vertical", shape: "pill", color: "blue", label: "pay" }}
