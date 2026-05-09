@@ -27,6 +27,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const [paymentPlan, setPaymentPlan] = useState('full'); // Default to 100% payment
     const [paymentStatus, setPaymentStatus] = useState('idle'); // 'idle', 'processing', 'success', 'error'
     const [errorMessage, setErrorMessage] = useState('');
+    const [paypalError, setPaypalError] = useState('');
     const [newBookingId, setNewBookingId] = useState(null);
 
     useEffect(() => {
@@ -132,6 +133,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             setCopiedField(null);
             setPaymentStatus('idle');
             setErrorMessage('');
+            setPaypalError('');
             setShowCoupon(false);
         }, 500);
     };
@@ -826,32 +828,98 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
 
                                                      <div className="relative bg-white rounded-[1.5rem] p-4 border border-black/5 shadow-inner">
                                                          <PayPalScriptProvider options={{ 
-                                                             "client-id": "AVcDXxFT1PgH1BRpyniACx7VWQ7tfclG4fBfaLFXaaLinweRWZhG1reUTyHfGrwgV0lPfsEG_QZEEVMv",
-                                                             currency: "EUR"
+                                                             "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID,
+                                                             currency: "EUR",
+                                                             intent: "capture"
                                                          }}>
                                                              <PayPalButtons 
                                                                  style={{ layout: "vertical", shape: "pill", color: "blue", label: "pay" }}
-                                                                 disabled={!formData.acceptedTerms}
+                                                                 disabled={!formData.acceptedTerms || paymentStatus === 'processing'}
                                                                  createOrder={(data, actions) => {
+                                                                     setPaypalError('');
                                                                      return actions.order.create({
+                                                                         intent: "CAPTURE",
                                                                          purchase_units: [{
-                                                                             amount: { value: finalTotalPriceWithFees.toString() }
+                                                                             description: `Cantik Tours - ${tourTitle}`,
+                                                                             amount: {
+                                                                                 currency_code: "EUR",
+                                                                                 value: finalTotalPriceWithFees.toFixed(2)
+                                                                             }
                                                                          }]
                                                                      });
                                                                  }}
                                                                  onApprove={async (data, actions) => {
-                                                                     const details = await actions.order.capture();
-                                                                     setIsPaid(true);
-                                                                     const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
-                                                                     setNewBookingId(instantId);
-                                                                     saveBookingToDB(true, instantId);
+                                                                     setPaymentStatus('processing');
+                                                                     try {
+                                                                         const details = await actions.order.capture();
+                                                                         const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
+                                                                         setNewBookingId(instantId);
+                                                                         await saveBookingToDB(true, instantId);
+                                                                         setIsPaid(true);
+                                                                         setPaymentStatus('success');
+                                                                         // Auto-open WhatsApp with confirmation
+                                                                         const paxValue = String(formData.pax || '2').replace(' o más', '');
+                                                                         const paxLabel = t(`detail.booking_pax_${paxValue}`);
+                                                                         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
+                                                                         const extrasText = (formData.extras || []).length > 0
+                                                                             ? `\n⚡ *EXTRAS:* \n${(formData.extras || []).map(e => `  • ${e.name} (+${e.price}€)`).join('\n')}`
+                                                                             : '';
+                                                                         const paypalMsg = `🌟 *NUEVA RESERVA - CANTIK TOURS* 🌟
+------------------------------------------
+*Referencia:* #CT-${instantId}
+
+👤 *CLIENTE:* ${formData.name.toUpperCase()}
+🗺️ *TOUR:* ${tourTitle.toUpperCase()}
+📅 *FECHA:* ${dateStr}
+👥 *PASAJEROS:* ${paxLabel}
+🏨 *HOTEL:* ${formData.hotel.toUpperCase()}
+✨ *EXPERIENCIA:* ${expName} - ${expSub}${extrasText}
+${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARADAS:* ${formData.selectedStops.join(', ')}` : ''}
+
+💰 *DETALLE DEL PAGO:*
+- Pago Realizado: ${finalTotalPriceWithFees.toFixed(2)} € (PayPal ✅)
+- ID Transacción PayPal: ${details.id}
+- Estado: ${details.status}
+
+------------------------------------------
+✅ *PASO FINAL:* Hola Cantik Tours, acabo de realizar el pago por PayPal (ID: ${details.id}). ¿Me confirmáis que está todo listo? ¡Gracias!
+\n📄 *Mi Ficha de Reserva:* https://cantiktours.com/itinerario?ref=CT-${instantId}`;
+                                                                         trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
+                                                                         window.open(`https://wa.me/34642517787?text=${encodeURIComponent(paypalMsg)}`, '_blank');
+                                                                     } catch (err) {
+                                                                         setPaymentStatus('error');
+                                                                         setPaypalError(i18n.language === 'en' ? 'Payment capture failed. Please try again or contact us.' : 'Error al procesar el pago. Intenta de nuevo o contáctanos.');
+                                                                         console.error('PayPal capture error:', err);
+                                                                     }
+                                                                 }}
+                                                                 onError={(err) => {
+                                                                     setPaymentStatus('error');
+                                                                     setPaypalError(i18n.language === 'en' ? 'An error occurred with PayPal. Please try again.' : 'Ocurrió un error con PayPal. Por favor, inténtalo de nuevo.');
+                                                                     console.error('PayPal error:', err);
+                                                                 }}
+                                                                 onCancel={() => {
+                                                                     setPaypalError(i18n.language === 'en' ? 'Payment cancelled. You can try again whenever you want.' : 'Pago cancelado. Puedes intentarlo de nuevo cuando quieras.');
                                                                  }}
                                                              />
                                                          </PayPalScriptProvider>
-                                                         {!formData.acceptedTerms && (
-                                                             <div className="absolute inset-0 bg-transparent z-10 cursor-not-allowed" title={i18n.language === 'en' ? 'Accept terms first' : 'Acepta los términos primero'} />
+                                                         {paymentStatus === 'processing' && (
+                                                             <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-[1.5rem] z-20 flex flex-col items-center justify-center gap-3">
+                                                                 <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                                                                 <p className="text-xs font-black text-primary uppercase tracking-widest">{i18n.language === 'en' ? 'Processing payment...' : 'Procesando pago...'}</p>
+                                                             </div>
+                                                         )}
+                                                         {!formData.acceptedTerms && paymentStatus !== 'processing' && (
+                                                             <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 rounded-[1.5rem] cursor-not-allowed flex items-center justify-center">
+                                                                 <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest text-center px-4">{i18n.language === 'en' ? '↓ Accept terms below to enable payment' : '↓ Acepta los términos para habilitar el pago'}</p>
+                                                             </div>
                                                          )}
                                                      </div>
+                                                     {paypalError && (
+                                                         <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2">
+                                                             <span className="text-red-500 text-lg">⚠️</span>
+                                                             <p className="text-[10px] font-bold text-red-600">{paypalError}</p>
+                                                         </div>
+                                                     )}
 
                                                      {/* Terms for PayPal */}
                                                      <div className={`flex items-start gap-3 p-3 border rounded-xl transition-all ${!formData.acceptedTerms ? 'border-amber-500/50 bg-amber-500/5' : 'border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-white/5'}`}>
