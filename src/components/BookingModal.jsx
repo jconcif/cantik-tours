@@ -30,6 +30,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const [paypalError, setPaypalError] = useState('');
     const [paypalDebugLog, setPaypalDebugLog] = useState([]);
     const addDebugLog = (msg, type = 'info') => setPaypalDebugLog(prev => [...prev.slice(-5), { msg, type, t: new Date().toLocaleTimeString() }]);
+    const [paypalWhatsAppMsg, setPaypalWhatsAppMsg] = useState('');
+    const [paypalTransactionId, setPaypalTransactionId] = useState('');
     const [newBookingId, setNewBookingId] = useState(null);
 
     useEffect(() => {
@@ -137,6 +139,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             setErrorMessage('');
             setPaypalError('');
             setPaypalDebugLog([]);
+            setPaypalWhatsAppMsg('');
+            setPaypalTransactionId('');
             setShowCoupon(false);
         }, 500);
     };
@@ -869,8 +873,6 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                                          const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
                                                                          setNewBookingId(instantId);
                                                                          await saveBookingToDB(true, instantId);
-                                                                         setIsPaid(true);
-                                                                         setPaymentStatus('success');
                                                                          const paxValue = String(formData.pax || '2').replace(' o más', '');
                                                                          const paxLabel = t(`detail.booking_pax_${paxValue}`);
                                                                          const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
@@ -898,7 +900,10 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
 ✅ *PASO FINAL:* Hola Cantik Tours, acabo de realizar el pago por PayPal (ID: ${details.id}). ¿Me confirmáis que está todo listo? ¡Gracias!
 \n📄 *Mi Ficha de Reserva:* https://cantiktours.com/itinerario?ref=CT-${instantId}`;
                                                                          trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
-                                                                         window.open(`https://wa.me/34642517787?text=${encodeURIComponent(paypalMsg)}`, '_blank');
+                                                                         setPaypalWhatsAppMsg(paypalMsg);
+                                                                         setPaypalTransactionId(details.id);
+                                                                         setIsPaid(true);
+                                                                         setPaymentStatus('success');
                                                                      } catch (err) {
                                                                          const errDetail = err?.message || JSON.stringify(err) || 'unknown';
                                                                          addDebugLog(`❌ Capture error: ${errDetail}`, 'error');
@@ -1046,28 +1051,25 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                         <div className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center text-3xl shadow-lg shadow-green-500/20 mb-4 animate-bounce">✓</div> 
                                                         <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight">{i18n.language === 'en' ? 'RESERVATION SECURED!' : '¡RESERVA ASEGURADA!'}</h3>
                                                         <p className="text-xs font-bold text-gray-500 mt-1">{i18n.language === 'en' ? 'We have received your payment correctly.' : 'Hemos recibido tu pago correctamente.'}</p>
+                                                        {paypalTransactionId && (
+                                                            <p className="text-[9px] font-mono text-gray-400 mt-2 bg-gray-100 dark:bg-white/5 px-3 py-1 rounded-full">
+                                                                ID: {paypalTransactionId}
+                                                            </p>
+                                                        )}
                                                     </div>
 
                                                     <div className="w-full space-y-3">
                                                         <button 
-                                                            onClick={handleConfirmPaid}
+                                                            onClick={() => {
+                                                                const msg = paypalWhatsAppMsg || '';
+                                                                window.open(`https://wa.me/34642517787?text=${encodeURIComponent(msg)}`, '_blank');
+                                                                resetModal();
+                                                            }}
                                                             className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white py-5 rounded-2xl text-sm font-black shadow-xl shadow-[#25D366]/20 flex items-center justify-center gap-3 transition-all uppercase tracking-widest group"
                                                         >
                                                             <MessageCircle size={24} className="group-hover:scale-110 transition-transform" /> 
                                                             {i18n.language === 'en' ? 'CONFIRM VIA WHATSAPP NOW' : 'CONFIRMAR POR WHATSAPP AHORA'}
                                                         </button>
-
-                                                        {newBookingId && (
-                                                            <a 
-                                                                href={`/itinerario?ref=CT-${newBookingId}`} 
-                                                                target="_blank" 
-                                                                rel="noreferrer"
-                                                                className="w-full bg-primary/10 hover:bg-primary/20 text-primary py-5 rounded-2xl text-sm font-black flex items-center justify-center gap-3 transition-all uppercase tracking-widest border border-primary/20"
-                                                            >
-                                                                <Ticket size={20} />
-                                                                {i18n.language === 'en' ? 'View My Itinerary & Receipt' : 'Ver mi Itinerario y Recibo'}
-                                                            </a>
-                                                        )}
 
                                                         <button 
                                                             onClick={resetModal}
