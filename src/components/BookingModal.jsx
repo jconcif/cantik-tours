@@ -826,7 +826,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
 
                                                      <div className="relative bg-white rounded-[1.5rem] p-4 border border-black/5 shadow-inner">
                                                          <PayPalScriptProvider options={{ 
-                                                             "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test",
+                                                             "client-id": "AVcDXxFT1PgH1BRpyniACx7VWQ7tfclG4fBfaLFXaaLinweRWZhG1reUTyHfGrwgV0lPfsEG_QZEEVMv",
                                                              currency: "EUR"
                                                          }}>
                                                              <PayPalButtons 
