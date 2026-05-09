@@ -28,6 +28,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const [paymentStatus, setPaymentStatus] = useState('idle'); // 'idle', 'processing', 'success', 'error'
     const [errorMessage, setErrorMessage] = useState('');
     const [paypalError, setPaypalError] = useState('');
+    const [paypalDebugLog, setPaypalDebugLog] = useState([]);
+    const addDebugLog = (msg, type = 'info') => setPaypalDebugLog(prev => [...prev.slice(-5), { msg, type, t: new Date().toLocaleTimeString() }]);
     const [newBookingId, setNewBookingId] = useState(null);
 
     useEffect(() => {
@@ -134,6 +136,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             setPaymentStatus('idle');
             setErrorMessage('');
             setPaypalError('');
+            setPaypalDebugLog([]);
             setShowCoupon(false);
         }, 500);
     };
@@ -838,6 +841,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                                  disabled={!formData.acceptedTerms || paymentStatus === 'processing'}
                                                                  createOrder={(data, actions) => {
                                                                      setPaypalError('');
+                                                                     addDebugLog('✅ createOrder llamado', 'info');
                                                                      return actions.order.create({
                                                                          intent: "CAPTURE",
                                                                          purchase_units: [{
@@ -847,18 +851,26 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                                                  value: finalTotalPriceWithFees.toFixed(2)
                                                                              }
                                                                          }]
+                                                                     }).then(orderId => {
+                                                                         addDebugLog(`Orden creada ID: ${orderId}`, 'success');
+                                                                         return orderId;
+                                                                     }).catch(err => {
+                                                                         addDebugLog(`❌ Error orden: ${err?.message || err}`, 'error');
+                                                                         throw err;
                                                                      });
                                                                  }}
                                                                  onApprove={async (data, actions) => {
+                                                                     addDebugLog(`✅ onApprove! OrderID: ${data.orderID}`, 'success');
                                                                      setPaymentStatus('processing');
                                                                      try {
+                                                                         addDebugLog('⏳ Ejecutando capture...', 'info');
                                                                          const details = await actions.order.capture();
+                                                                         addDebugLog(`Capture: ${details.status} | ${details.id}`, 'success');
                                                                          const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
                                                                          setNewBookingId(instantId);
                                                                          await saveBookingToDB(true, instantId);
                                                                          setIsPaid(true);
                                                                          setPaymentStatus('success');
-                                                                         // Auto-open WhatsApp with confirmation
                                                                          const paxValue = String(formData.pax || '2').replace(' o más', '');
                                                                          const paxLabel = t(`detail.booking_pax_${paxValue}`);
                                                                          const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
@@ -888,17 +900,20 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                                          trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
                                                                          window.open(`https://wa.me/34642517787?text=${encodeURIComponent(paypalMsg)}`, '_blank');
                                                                      } catch (err) {
+                                                                         const errDetail = err?.message || JSON.stringify(err) || 'unknown';
+                                                                         addDebugLog(`❌ Capture error: ${errDetail}`, 'error');
                                                                          setPaymentStatus('error');
-                                                                         setPaypalError(i18n.language === 'en' ? 'Payment capture failed. Please try again or contact us.' : 'Error al procesar el pago. Intenta de nuevo o contáctanos.');
-                                                                         console.error('PayPal capture error:', err);
+                                                                         setPaypalError(`Error al capturar el pago: ${errDetail}`);
                                                                      }
                                                                  }}
                                                                  onError={(err) => {
+                                                                     const errDetail = err?.message || JSON.stringify(err) || 'unknown';
+                                                                     addDebugLog(`❌ onError: ${errDetail}`, 'error');
                                                                      setPaymentStatus('error');
-                                                                     setPaypalError(i18n.language === 'en' ? 'An error occurred with PayPal. Please try again.' : 'Ocurrió un error con PayPal. Por favor, inténtalo de nuevo.');
-                                                                     console.error('PayPal error:', err);
+                                                                     setPaypalError(`Error PayPal: ${errDetail}`);
                                                                  }}
                                                                  onCancel={() => {
+                                                                     addDebugLog('⚠️ Pago cancelado por usuario', 'warn');
                                                                      setPaypalError(i18n.language === 'en' ? 'Payment cancelled. You can try again whenever you want.' : 'Pago cancelado. Puedes intentarlo de nuevo cuando quieras.');
                                                                  }}
                                                              />
@@ -915,6 +930,19 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                              </div>
                                                          )}
                                                      </div>
+                                                     {paypalDebugLog.length > 0 && (
+                                                         <div className="bg-gray-900 rounded-xl p-3 space-y-1 font-mono">
+                                                             <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">🔍 Debug PayPal</p>
+                                                             {paypalDebugLog.map((log, i) => (
+                                                                 <p key={i} className={`text-[9px] break-all ${
+                                                                     log.type === 'error' ? 'text-red-400' :
+                                                                     log.type === 'success' ? 'text-green-400' :
+                                                                     log.type === 'warn' ? 'text-yellow-400' :
+                                                                     'text-blue-300'
+                                                                 }`}>[{log.t}] {log.msg}</p>
+                                                             ))}
+                                                         </div>
+                                                     )}
                                                      {paypalError && (
                                                          <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2">
                                                              <span className="text-red-500 text-lg">⚠️</span>
