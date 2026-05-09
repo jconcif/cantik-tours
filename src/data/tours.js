@@ -9,7 +9,7 @@ export const tours = [
         heroSubtitle_en: "A full day discovering the spiritual heart of Bali, at your own pace and without rush.",
         fullDescription: "Sumérgete en el corazón espiritual de Bali. Este tour está diseñado para quienes buscan autenticidad, combinando templos históricos, cascadas escondidas y la belleza inigualable de Tegalalang Rice Terrace. Desde rituales de purificación tradicional hasta el relax en los mejores restaurantes con vistas a los arrozales, vive la experiencia completa de los alrededores de Ubud en un solo dia.",
         fullDescription_en: "Immerse yourself in Bali's spiritual heart. This tour is designed for those seeking authenticity, combining historic temples, hidden waterfalls, and the unparalleled beauty of Tegalalang Rice Terrace. From traditional purification rituals to relaxing in the best restaurants with views of the rice fields, live the complete experience of the surroundings of Ubud in a single day.",
-        price: 1,
+        price: 59,
         duration: "8-10 hrs",
         duration_en: "8-10 hrs",
         image: "/images/tours/ubud-central/ubud-central-columpio.webp",
@@ -1190,6 +1190,43 @@ export const tours = [
         included_en: ["Private transport", "Driver / Guide", "Gasoline", "Parking / Tolls", "Mineral water", "Snacks"],
         not_included: ["Tickets, entradas o donativos", "Comidas / Bebestibles", "Seguro médico (Se recomienda siempre tener un seguro medico internacional)"],
         not_included_en: ["Tickets, entrance fees or donations", "Meals / Drinks", "Medical insurance (International medical insurance is always recommended)"],
+        rating: 5.0,
+        reviews: 0
+    },
+    {
+        id: 'test-tour-paypal',
+        title: "⚙️ TOUR DE PRUEBAS (SOLO ADMIN)",
+        title_en: "⚙️ TEST TOUR (ADMIN ONLY)",
+        description: "Tour exclusivo para pruebas internas de la pasarela de pagos.",
+        description_en: "Exclusive tour for internal payment gateway testing.",
+        heroSubtitle: "Tour de 1 euro para probar el checkout.",
+        heroSubtitle_en: "1 euro tour to test checkout.",
+        fullDescription: "Este tour es una entidad falsa para validar el sistema de extremo a extremo sin mover grandes sumas de dinero.",
+        fullDescription_en: "This tour is a fake entity to validate the end-to-end system without moving large sums of money.",
+        price: 1,
+        duration: "1 min",
+        duration_en: "1 min",
+        image: "/images/tours/placeholder.webp",
+        images: ["/images/tours/placeholder.webp"],
+        badge: "Test",
+        badge_en: "Test",
+        category: ['test'],
+        itinerary: [
+            {
+                type: 'pickup',
+                duration: "09:00",
+                duration_en: "09:00",
+                activity: "Test Checkout",
+                activity_en: "Test Checkout",
+                desc: "Prueba de checkout exitosa.",
+                desc_en: "Checkout test successful."
+            }
+        ],
+        location: "Test",
+        included: ["Nada"],
+        included_en: ["Nothing"],
+        not_included: ["Todo"],
+        not_included_en: ["Everything"],
         rating: 5.0,
         reviews: 0
     }

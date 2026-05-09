@@ -842,9 +842,9 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                                  onApprove={async (data, actions) => {
                                                                      const details = await actions.order.capture();
                                                                      setIsPaid(true);
-                                                                     saveBookingToDB(true).then(id => {
-                                                                         if (id) setNewBookingId(id);
-                                                                     });
+                                                                     const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
+                                                                     setNewBookingId(instantId);
+                                                                     saveBookingToDB(true, instantId);
                                                                  }}
                                                              />
                                                          </PayPalScriptProvider>
