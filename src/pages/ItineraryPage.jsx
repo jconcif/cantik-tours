@@ -179,6 +179,25 @@ export default function ItineraryPage() {
     }
   }
 
+  // ── Manual Override ──────────────────────────────────────────
+  // If the admin has manually edited the itinerary (JSON format), use it as top priority
+  if (booking.itinerary && booking.itinerary.startsWith('[')) {
+    try {
+      const manualItems = JSON.parse(booking.itinerary);
+      if (Array.isArray(manualItems) && manualItems.length > 0) {
+        finalItinerary = manualItems.map(item => ({
+          type: item.type || (item.desc?.toLowerCase().includes('recogida') || item.desc?.toLowerCase().includes('pickup') ? 'pickup' : 
+                item.desc?.toLowerCase().includes('regreso') || item.desc?.toLowerCase().includes('dropoff') ? 'dropoff' : 'visit'),
+          duration: item.time,
+          activity: item.desc,
+          activity_en: item.desc,
+          desc: '',
+          desc_en: ''
+        }));
+      }
+    } catch(e) { /* ignore */ }
+  }
+
   const getActivityIcon = (type) => {
     switch (type) {
       case 'pickup':  return <Plane size={14} className="rotate-90 text-primary" />;
