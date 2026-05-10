@@ -51,7 +51,7 @@ function App() {
         <CurrencyProvider>
             <DarkModeProvider>
                 <ScrollToTop />
-                <div className="min-h-screen flex flex-col">
+                <div className="min-h-screen flex flex-col overflow-x-hidden">
                     {!hideHeaderFooter && <Navbar />}
                     <main className="flex-grow">
                         <Suspense fallback={<PageLoader />}>

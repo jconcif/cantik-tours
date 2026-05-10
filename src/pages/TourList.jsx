@@ -33,7 +33,7 @@ const TourList = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="pt-32 pb-24 px-6 max-w-7xl mx-auto min-h-screen"
+            className="pt-32 pb-24 px-6 max-w-7xl mx-auto min-h-screen overflow-x-hidden"
         >
             <div className="mb-20 text-center max-w-3xl mx-auto">
                 <motion.div

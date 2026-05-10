@@ -3,10 +3,12 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   MessageCircle, Star, CheckCircle2, ShieldCheck, Info,
-  Heart, Sun, Moon, Plane, Copy, ExternalLink
+  Heart, Sun, Moon, Plane, Copy, ExternalLink,
+  Clock, MapPin, Coffee, Camera, Waves, Map
 } from 'lucide-react';
 import { getItinerary } from '../services/api';
 import { useTranslation } from 'react-i18next';
+import { tours } from '../data/tours';
 
 const SUPPORT_PHONE_ES = '34642517787';
 
@@ -89,11 +91,15 @@ export default function ItineraryPage() {
     pending_payment:  { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'We sent payment details via WhatsApp. Please transfer to secure your spot.' : 'Te hemos enviado los datos de pago por WhatsApp. Realiza la transferencia para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
     payment_sent:     { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'We sent payment details via WhatsApp. Please transfer to secure your spot.' : 'Te hemos enviado los datos de pago por WhatsApp. Realiza la transferencia para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
     payment_received: { step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Payment received! Thank you. We are now preparing your experience.' : '¡Pago recibido! Gracias. Estamos preparando tu experiencia.', color: 'text-primary',     bg_: 'bg-primary/10' },
+    payment_confirmed:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Payment received! Thank you. We are now preparing your experience.' : '¡Pago recibido! Gracias. Estamos preparando tu experiencia.', color: 'text-primary',     bg_: 'bg-primary/10' },
     verifying_payment:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Payment received! Thank you. We are now preparing your experience.' : '¡Pago recibido! Gracias. Estamos preparando tu experiencia.', color: 'text-primary',     bg_: 'bg-primary/10' },
     reserved:         { step: 4, label: en ? 'CONFIRMING AVAILABILITY'    : 'RATIFICANDO DISPONIBILIDAD',    desc: en ? 'Coordinating with our local Bali team to ensure every detail is perfect.' : 'Estamos coordinando con nuestro equipo local en Bali para asegurar todos los detalles.', color: 'text-primary',     bg_: 'bg-primary/10' },
     confirmed:        { step: 5, label: en ? 'TOUR CONFIRMED'             : 'TOUR CONFIRMADO',               desc: en ? 'See you in Bali! Everything is ready for your adventure.' : '¡Nos vemos en Bali! Todo está listo para tu aventura.', color: 'text-emerald-400', bg_: 'bg-emerald-400/10' },
     in_progress:      { step: 6, label: en ? 'TOUR IN PROGRESS'           : 'TOUR EN CURSO',                 desc: en ? 'Your tour is underway! Enjoy every moment in Bali.' : '¡Tu tour está en marcha! Disfruta cada momento en Bali.', color: 'text-primary',     bg_: 'bg-primary/10' },
     completed:        { step: 7, label: en ? 'COMPLETED'                  : 'TOUR FINALIZADO',               desc: en ? 'We hope it was an unforgettable experience. Thank you for choosing Cantik Tours!' : '¡Esperamos que haya sido una experiencia inolvidable. Gracias por confiar en Cantik Tours!', color: 'text-gray-400',   bg_: 'bg-white/5' },
+    postponed:        { step: 1, label: en ? 'POSTPONED'                  : 'TOUR POSPUESTO',                desc: en ? 'Your tour has been postponed. Please contact us for new dates.' : 'Tu tour ha sido pospuesto. Contacta con nosotros para acordar nuevas fechas.', color: 'text-indigo-400', bg_: 'bg-indigo-400/10' },
+    cancelled:        { step: 0, label: en ? 'CANCELLED'                  : 'CANCELADO',                     desc: en ? 'This booking has been cancelled.' : 'Esta reserva ha sido cancelada.', color: 'text-red-400',    bg_: 'bg-red-400/10' },
+    refunded:         { step: 0, label: en ? 'REFUNDED'                   : 'REEMBOLSADO',                   desc: en ? 'Your payment has been refunded.' : 'Tu pago ha sido reembolsado.', color: 'text-pink-400',   bg_: 'bg-pink-400/10' },
   };
 
   const priceLabel = booking.payment_status === 'confirmed' ? (en ? 'Total Paid' : 'Total Pagado') : (en ? 'Estimated Total' : 'Total Estimado');
@@ -131,6 +137,59 @@ export default function ItineraryPage() {
     { done: status.step >= 6, text: en ? 'Tour in progress'                  : 'Tour en curso' },
     { done: status.step >= 7, text: en ? 'Completed — Thank you!'            : 'Finalizado — ¡Gracias!' },
   ];
+
+  // ── Resolved Itinerary ───────────────────────────────────────
+  const tourData = tours.find(t => t.id === booking.tour_id) || tours.find(t => t.title === booking.tour_title);
+  
+  // If we have selected_stops, we use those for the 'visit' parts
+  const customStops = booking.selected_stops ? booking.selected_stops.split(',').map(s => s.trim()) : [];
+  
+  const displayItinerary = tourData?.itinerary ? [...tourData.itinerary] : [];
+  
+  // If it's a flexible tour or has custom stops, we might want to show them
+  // For now, let's just use the tour's default itinerary if available,
+  // but if it's 'ubud-flexible', we build it from customStops.
+  let finalItinerary = displayItinerary;
+  
+  if (customStops.length > 0) {
+    const pickup = displayItinerary.find(i => i.type === 'pickup') || { type: 'pickup', duration: '08:30', activity: 'Recogida en hotel', activity_en: 'Hotel pickup', desc: en ? 'Picking you up at your accommodation.' : 'Comenzamos el día recogiéndote en tu alojamiento.' };
+    const dropoff = displayItinerary.find(i => i.type === 'dropoff') || { type: 'dropoff', duration: '17:00', activity: 'Regreso al hotel', activity_en: 'Return to hotel', desc: en ? 'End of the day.' : 'Fin de la jornada.' };
+    
+    const defaultStopsStr = displayItinerary.filter(i => i.type === 'visit').map(i => i.activity).join(', ');
+    const customStopsStr = customStops.join(', ');
+    
+    // For flexible or if admin manually changed stops, we show the custom sequence
+    if (booking.tour_id === 'ubud-flexible' || defaultStopsStr !== customStopsStr) {
+      finalItinerary = [
+        pickup,
+        ...customStops.map(s => {
+          // Try to find if this stop exists in the tour data to get more info (like desc)
+          const originalStop = displayItinerary.find(i => i.activity === s || i.activity_en === s);
+          return {
+            type: 'visit',
+            activity: s,
+            activity_en: s,
+            desc: originalStop?.desc || '',
+            desc_en: originalStop?.desc_en || '',
+            duration: originalStop?.duration || ''
+          };
+        }),
+        dropoff
+      ];
+    }
+  }
+
+  const getActivityIcon = (type) => {
+    switch (type) {
+      case 'pickup':  return <Plane size={14} className="rotate-90 text-primary" />;
+      case 'visit':   return <MapPin size={14} className="text-primary" />;
+      case 'food':    return <Coffee size={14} className="text-primary" />;
+      case 'photo':   return <Camera size={14} className="text-primary" />;
+      case 'beach':   return <Waves size={14} className="text-primary" />;
+      case 'dropoff': return <Plane size={14} className="-rotate-90 text-primary" />;
+      default:        return <Map size={14} className="text-primary" />;
+    }
+  };
 
   return (
     <div className={`min-h-screen ${bg} ${text} font-sans pb-24 overflow-x-hidden transition-colors duration-300`}>
@@ -300,73 +359,69 @@ export default function ItineraryPage() {
 
         </motion.div>
 
-        {/* ── STATUS + STEPS ──────────────────────────────── */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-          className={`rounded-[2rem] p-6 border ${card}`}>
-          <div className={`text-[8px] font-black uppercase tracking-[0.2em] mb-4 ${sub}`}>
-            {en ? 'STATUS UPDATE' : 'ESTADO ACTUAL'}
-          </div>
-
-          <div className="space-y-3">
-            {steps.map((s, i) => (
-              <div key={i} className="flex items-center gap-3">
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all
-                  ${s.done ? 'bg-primary border-primary' : dark ? 'border-white/10' : 'border-gray-200'}`}>
-                  {s.done
-                    ? <CheckCircle2 size={11} className="text-white" />
-                    : <span className="text-[7px] font-black text-gray-600">{i + 1}</span>}
-                </div>
-                <span className={`text-xs font-bold leading-relaxed ${s.done ? text : sub}`}>{s.text}</span>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── ITINERARY ───────────────────────────────────── */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-          className={`rounded-[2rem] p-8 border ${card}`}>
-          <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 mb-8 ${sub}`}>
-            <Star size={12} className="text-primary" />
-            {en ? 'YOUR ROUTE' : 'TU RUTA DEL DÍA'}
-          </div>
-
-          <div className="relative space-y-8">
-            <div className={`absolute left-[10px] top-4 bottom-4 w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'}`} />
-            {(() => {
-              let items = [];
-              try { items = JSON.parse(booking.itinerary || '[]'); }
-              catch { if (booking.itinerary) items = [{ time: 'Full Day', desc: booking.itinerary }]; }
-
-              if (items.length === 0) return (
-                <p className={`text-sm font-bold italic ${sub} py-4 text-center`}>
-                  {en ? 'Preparing your itinerary...' : 'Preparando tu itinerario...'}
+        {/* ── DETAILED ITINERARY ────────────────────────── */}
+        {finalItinerary.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ type: 'spring', stiffness: 100, delay: 0.1 }}
+            className={`rounded-[2.5rem] p-8 shadow-2xl ${card}`}
+          >
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-lg font-black tracking-tight uppercase">
+                  {en ? 'Detailed Itinerary' : 'Itinerario Detallado'}
+                </h3>
+                <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${sub}`}>
+                  {en ? 'Your planned route' : 'Tu ruta planificada'}
                 </p>
-              );
+              </div>
+              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${dark ? 'bg-white/5' : 'bg-primary/5'}`}>
+                <Map className="text-primary" size={20} />
+              </div>
+            </div>
 
-              return items.map((item, idx) => (
-                <div key={idx} className="flex gap-6 items-start relative z-10">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center shrink-0 mt-0.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+            <div className="space-y-8 relative">
+              {/* Connector line */}
+              <div className={`absolute top-4 bottom-4 left-[1.125rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+
+              {finalItinerary.map((item, idx) => (
+                <div key={idx} className="flex gap-6 relative">
+                  <div className={`w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
+                    {getActivityIcon(item.type)}
                   </div>
-                  <div>
-                    <div className="text-[10px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-md inline-block uppercase tracking-widest mb-1.5">
-                      {item.time || 'Schedule'}
+                  <div className="flex-1 pt-1.5">
+                    <div className="flex items-center justify-between gap-4 mb-1">
+                      <h4 className="text-xs font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
+                      {item.duration && (
+                        <div className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter ${sub}`}>
+                          <Clock size={10} />
+                          {en ? (item.duration_en || item.duration) : item.duration}
+                        </div>
+                      )}
                     </div>
-                    <p className={`text-sm font-bold ${text} leading-snug`}>{item.desc}</p>
+                    <p className={`text-[11px] leading-relaxed font-medium ${sub}`}>
+                      {en ? (item.desc_en || item.desc) : item.desc}
+                    </p>
                   </div>
                 </div>
-              ));
-            })()}
-          </div>
+              ))}
+            </div>
 
-          <div className={`mt-8 pt-6 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex items-start gap-3`}>
-            <ShieldCheck size={14} className="text-emerald-500 shrink-0 mt-0.5" />
-            <p className={`text-[9px] font-bold leading-relaxed ${sub}`}>
-              {en ? 'Flexible itinerary subject to local conditions. Your comfort is our priority.'
-                : 'Itinerario flexible sujeto a condiciones locales. Tu comodidad es nuestra prioridad.'}
-            </p>
-          </div>
-        </motion.div>
+            <div className={`mt-10 p-5 rounded-2xl border border-dashed ${dark ? 'border-white/10 bg-white/5' : 'border-primary/20 bg-primary/5'}`}>
+              <div className="flex gap-4">
+                <Info size={16} className="text-primary flex-shrink-0" />
+                <p className="text-[10px] font-bold leading-relaxed text-gray-500">
+                  {en 
+                    ? 'Our tours are private and flexible. You can adjust the order or duration of stops directly with your guide.' 
+                    : 'Nuestros tours son privados y flexibles. Puedes ajustar el orden o la duración de las paradas directamente con tu guía.'}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+
 
         {/* ── TRUST ───────────────────────────────────────── */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}

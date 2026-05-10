@@ -18,7 +18,7 @@
 
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    @apply bg-bg-light text-bg-dark antialiased;
+    @apply bg-bg-light text-bg-dark antialiased overflow-x-hidden;
   }
 
   .dark body {
