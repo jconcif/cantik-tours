@@ -335,6 +335,16 @@ export default function ItineraryPage() {
                   {en ? 'TOUR' : 'EXPERIENCIA'}
                 </div>
                 <div className={`font-black text-sm ${text} uppercase tracking-tight leading-snug`}>{booking.tour_title}</div>
+                {booking.drivers && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
+                      {en ? 'DRIVER:' : 'CHOFER:'}
+                    </span>
+                    <span className="text-[10px] font-black uppercase text-primary tracking-widest">
+                      {booking.drivers.name}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
