@@ -11,30 +11,34 @@ const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:
 const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup'];
 const TLABEL = {bookings:'Reservas',drivers:'Staff',reviews:'Reviews',coupons:'Cupones',calendar:'Calendario',stats:'Dashboard',followup:'Seguimiento'};
 const PAY_LABEL = {
-  pending: 'Pago Pendiente',
-  requested: 'Pago Pendiente',
-  'pago pendiente': 'Pago Pendiente',
-  reserved: 'Reservado (Seña)',
-  confirmed: 'Confirmado',
-  confirmado: 'Confirmado',
-  paid: 'Pago Completado',
-  on_tour: 'En Tour',
-  finished: 'Finalizado',
-  postponed: 'Pospuesto',
-  cancelled: 'Cancelado',
-  refunded: 'Reembolsado'
+  requested:          'Solicitud Recibida',
+  pending_payment:    'Pago Pendiente',
+  payment_sent:       'Pago Pendiente',
+  payment_confirmed:  'Pago Confirmado',
+  payment_received:   'Pago Confirmado',
+  verifying_payment:  'Pago Confirmado',
+  reserved:           'Ratificando Disponibilidad',
+  confirmed:          'Tour Confirmado',
+  in_progress:        'Tour en Curso',
+  completed:          'Tour Finalizado',
+  postponed:          'Pospuesto',
+  cancelled:          'Cancelado',
+  refunded:           'Reembolsado'
 };
 const PAY_COLOR = {
-  pending: '#f59e0b',
-  requested: '#f59e0b',
-  reserved: '#3b82f6',
-  confirmed: '#10b981',
-  paid: '#059669',
-  on_tour: '#8b5cf6',
-  finished: '#64748b',
-  postponed: '#6366f1',
-  cancelled: '#ef4444',
-  refunded: '#ec4899'
+  requested:          '#f59e0b',
+  pending_payment:    '#f97316',
+  payment_sent:       '#f97316',
+  payment_confirmed:  '#11BDDB',
+  payment_received:   '#11BDDB',
+  verifying_payment:  '#11BDDB',
+  reserved:           '#11BDDB',
+  confirmed:          '#10b981',
+  in_progress:        '#8b5cf6',
+  completed:          '#64748b',
+  postponed:          '#6366f1',
+  cancelled:          '#ef4444',
+  refunded:           '#ec4899'
 };
 
 const EXP_LABEL = {
@@ -49,10 +53,9 @@ const EXP_LABEL = {
 const generateVoucher = (b, drivers) => {
   const drv = drivers.find(d => d.id == b.driver_id);
   const refCode = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
-  const itineraryUrl = `https://cantiktours.com/itinerario?ref=${refCode}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(itineraryUrl)}`;
+  const bookingUrl = `https://cantiktours.com/booking?ref=${refCode}`;
   const w = window.open('', '_blank');
-  w.document.write(`<html><head><title>Voucher Cantik - ${b.client_name}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');body{font-family:'Inter',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#1a1a1a}.ticket{max-width:800px;margin:40px auto;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.1);display:flex;flex-direction:column}.header{background:#11BDDB;padding:40px;color:#fff;display:flex;justify-content:space-between;align-items:center}.logo{font-size:32px;font-weight:900}.status-badge{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:99px;font-size:12px;font-weight:900;text-transform:uppercase}.content{padding:40px;display:grid;grid-template-columns:2fr 1fr;gap:40px}.main-info{border-right:2px dashed #f0f2f5;padding-right:40px}.label{font-size:10px;font-weight:900;color:#11BDDB;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}.value{font-size:18px;font-weight:700;margin-bottom:24px}.tour-title{font-size:28px;font-weight:900;margin-bottom:32px;color:#11BDDB}.side-info{display:flex;flex-direction:column;align-items:center;text-align:center}.qr-box{background:#f9fafb;padding:20px;border-radius:24px;margin-bottom:16px;border:1px solid #eee}.qr-box img{width:120px;height:120px}.detail-link{display:inline-block;margin-top:12px;padding:8px 16px;background:#11BDDB;color:#fff;text-decoration:none;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:0.5px}.footer-strip{background:#1a1a1a;color:#fff;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}@media print{.no-print{display:none}.ticket{margin:0;border-radius:0;box-shadow:none}}</style></head><body><div class="ticket"><div class="header"><div class="logo">CantikTours</div><div class="status-badge">Voucher de Reserva</div></div><div class="content"><div class="main-info"><div class="label">Tour</div><div class="tour-title">${b.tour_title}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div><div class="label">Cliente</div><div class="value">${b.client_name}</div></div><div><div class="label">Fecha</div><div class="value">${new Date(b.booking_date).toLocaleDateString()}</div></div><div><div class="label">Hotel</div><div class="value">${b.hotel}</div></div><div><div class="label">Chofer</div><div class="value">${drv?drv.name:'Por confirmar'}</div></div></div></div><div class="side-info"><div class="qr-box"><img src="${qrUrl}"/></div><div class="label">Detalle de tu Reserva</div><div style="font-size:12px;color:#666">Pax: ${b.pax} · ${refCode}</div><a href="${itineraryUrl}" target="_blank" class="detail-link no-print">Ver Estado y Pagos →</a></div></div><div class="footer-strip"><div><div style="font-weight:700">¡Disfruta tu viaje!</div><div style="font-size:11px;color:#666">ES/EN: +34 642 51 77 87</div><div style="font-size:10px;color:#666">ID/EN: +62 856 9153 3356</div></div><div style="text-align:right"><div style="font-size:11px;color:#666">cantiktours.com</div></div></div></div><button onclick="window.print()" style="position:fixed;bottom:20px;right:20px;padding:16px 32px;background:#11BDDB;color:#fff;border:none;border-radius:16px;font-weight:900;cursor:pointer" class="no-print">IMPRIMIR</button></body></html>`);
+  w.document.write(`<html><head><title>Voucher Cantik - ${b.client_name}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');body{font-family:'Inter',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#1a1a1a}.ticket{max-width:800px;margin:40px auto;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.1)}.header{background:#11BDDB;padding:40px;color:#fff;display:flex;justify-content:space-between;align-items:center}.logo{font-size:32px;font-weight:900}.status-badge{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:99px;font-size:12px;font-weight:900;text-transform:uppercase}.content{padding:40px;display:grid;grid-template-columns:2fr 1fr;gap:40px}.main-info{border-right:2px dashed #f0f2f5;padding-right:40px}.label{font-size:10px;font-weight:900;color:#11BDDB;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}.value{font-size:18px;font-weight:700;margin-bottom:24px}.tour-title{font-size:28px;font-weight:900;margin-bottom:32px;color:#11BDDB}.side-info{display:flex;flex-direction:column;align-items:center;text-align:center}.qr-box{background:#f9fafb;padding:20px;border-radius:24px;margin-bottom:16px;border:1px solid #eee}.qr-box img{width:120px;height:120px}.detail-link{display:inline-block;margin-top:12px;padding:8px 16px;background:#11BDDB;color:#fff;text-decoration:none;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:0.5px}.footer-strip{background:#1a1a1a;color:#fff;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}@media print{.no-print{display:none}.ticket{margin:0;border-radius:0;box-shadow:none}}</style></head><body><div class="ticket"><div class="header"><div class="logo">CantikTours</div><div class="status-badge">Voucher de Reserva</div></div><div class="content"><div class="main-info"><div class="label">Tour</div><div class="tour-title">${b.tour_title}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div><div class="label">Cliente</div><div class="value">${b.client_name}</div></div><div><div class="label">Fecha</div><div class="value">${new Date(b.booking_date).toLocaleDateString()}</div></div><div><div class="label">Hotel</div><div class="value">${b.hotel}</div></div><div><div class="label">Chofer</div><div class="value">${drv?drv.name:'Por confirmar'}</div></div></div></div><div class="side-info"><div class="qr-box"><img src="${`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(bookingUrl)}`}"/></div><div class="label">Detalle de tu Reserva</div><div style="font-size:12px;color:#666">Pax: ${b.pax} · ${refCode}</div><a href="${bookingUrl}" target="_blank" class="detail-link no-print">Ver Estado y Pagos →</a></div></div><div class="footer-strip"><div><div style="font-weight:700">¡Disfruta tu viaje!</div><div style="font-size:11px;color:#666">ES/EN: +34 642 51 77 87</div><div style="font-size:10px;color:#666">ID/EN: +62 856 9153 3356</div></div><div style="text-align:right"><div style="font-size:11px;color:#666">cantiktours.com</div></div></div></div><button onclick="window.print()" style="position:fixed;bottom:20px;right:20px;padding:16px 32px;background:#11BDDB;color:#fff;border:none;border-radius:16px;font-weight:900;cursor:pointer" class="no-print">IMPRIMIR</button></body></html>`);
   w.document.close();
 };
 
@@ -88,6 +91,29 @@ export default function AdminPanel() {
 
   const toast = (t, ok = true) => { setMsg({ t, ok }); setTimeout(() => setMsg(null), 3000); };
 
+  // ── Auto-transition status by date ──────────────────────────
+  const autoUpdateStatuses = async (list) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const needsUpdate = list.filter(b => {
+      if (!b || !b.booking_date) return false;
+      const [y, m, d] = b.booking_date.split('T')[0].split('-').map(Number);
+      const tourDay = new Date(y, m - 1, d);
+      const isToday = tourDay.getTime() === today.getTime();
+      const isPast  = tourDay < today;
+      if (isToday && b.payment_status === 'confirmed') return true;
+      if (isPast  && ['confirmed', 'in_progress'].includes(b.payment_status)) return true;
+      return false;
+    });
+    if (needsUpdate.length === 0) return;
+    await Promise.allSettled(needsUpdate.map(b => {
+      const [y, m, d] = b.booking_date.split('T')[0].split('-').map(Number);
+      const tourDay = new Date(y, m - 1, d);
+      const newStatus = tourDay.getTime() === today.getTime() ? 'in_progress' : 'completed';
+      return api.updateBooking({ id: b.id, payment_status: newStatus });
+    }));
+  };
+
   const load = useCallback(async () => {
     if (!getToken()) return;
     setLoading(true);
@@ -96,12 +122,15 @@ export default function AdminPanel() {
         api.getBookings(), api.getDrivers(), api.getReviews(),
         api.getCoupons(), api.getStats(),
       ]);
-      setBookings(b.data || []);
+      const bList = b.data || [];
+      setBookings(bList);
       setDrivers(d.data || []);
       setReviews(r.data || []);
       setCoupons(c.data || []);
       setDetailedStats(s.data);
       setAuthed(true);
+      // Auto-transition by date — runs silently after auth
+      autoUpdateStatuses(bList);
     } catch (e) {
       setAuthed(false);
       clearToken();
@@ -129,6 +158,7 @@ export default function AdminPanel() {
   };
 
   useEffect(() => { if (authed) load(); }, [authed]);
+
 
   const save = async () => {
     if (!modal) return;
@@ -201,7 +231,7 @@ export default function AdminPanel() {
 
   const stats=useMemo(()=>{
     const list = bookings || [];
-    const isPaid = s => ['paid','on_tour','finished'].includes(s);
+    const isPaid = s => ['payment_confirmed','payment_received','verifying_payment','reserved','confirmed','in_progress','completed'].includes(s);
     const rev = list.filter(b => b && isPaid(b.payment_status)).reduce((a,b) => a + Number(b.total_price || 0), 0);
     const byTour = list.reduce((a,b) => {
       if (!b || !b.tour_title) return a;

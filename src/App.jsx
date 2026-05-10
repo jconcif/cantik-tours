@@ -43,9 +43,9 @@ function App() {
         trackPageView(location.pathname + location.search);
     }, [location]);
 
-    const isItinerary = location.pathname.startsWith('/itinerario');
+    const isBooking = location.pathname.startsWith('/booking') || location.pathname.startsWith('/itinerario');
     const isAdmin = location.pathname === '/admin' || location.pathname === '/cantik-admin';
-    const hideHeaderFooter = isItinerary || isAdmin;
+    const hideHeaderFooter = isBooking || isAdmin;
 
     return (
         <CurrencyProvider>
@@ -64,6 +64,7 @@ function App() {
                                 <Route path="/reviews" element={<ReviewsPage />} />
                                 <Route path="/politicas" element={<Policies />} />
                                 <Route path="/visados" element={<VisaPage />} />
+                                <Route path="/booking" element={<ItineraryPage />} />
                                 <Route path="/itinerario" element={<ItineraryPage />} />
                                 <Route path="/cantik-admin" element={<AdminReviews />} />
                                 <Route path="*" element={<NotFound />} />

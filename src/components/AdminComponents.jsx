@@ -27,16 +27,17 @@ export const BookingForm = ({data,drivers,onChange}) => (
     <Input label="Precio €" value={data.total_price} onChange={v=>onChange('total_price',v)} type="number" />
     <Input label="Depósito €" value={data.deposit_amount} onChange={v=>onChange('deposit_amount',v)} type="number" />
     <Input label="PAX" value={data.pax} onChange={v=>onChange('pax',v)} type="number" />
-    <Select label="Estado Pago" value={data.payment_status} onChange={v=>onChange('payment_status',v)} options={[
-      {value:'requested',label:'Pago Pendiente'},
-      {value:'reserved',label:'Reservado (Seña)'},
-      {value:'confirmed',label:'Confirmado'},
-      {value:'paid',label:'Pago Completado'},
-      {value:'on_tour',label:'En Tour'},
-      {value:'finished',label:'Finalizado'},
-      {value:'postponed',label:'Pospuesto'},
-      {value:'cancelled',label:'Cancelado'},
-      {value:'refunded',label:'Reembolsado'}
+    <Select label="Estado" value={data.payment_status} onChange={v=>onChange('payment_status',v)} options={[
+      {value:'requested',         label:'🟡 Solicitud Recibida'},
+      {value:'pending_payment',   label:'🟠 Pago Pendiente'},
+      {value:'payment_confirmed', label:'🔵 Pago Confirmado'},
+      {value:'reserved',          label:'🔵 Ratificando Disponibilidad'},
+      {value:'confirmed',         label:'🟢 Tour Confirmado'},
+      {value:'in_progress',       label:'🟣 Tour en Curso'},
+      {value:'completed',         label:'⚫ Tour Finalizado'},
+      {value:'postponed',         label:'🟤 Pospuesto'},
+      {value:'cancelled',         label:'🔴 Cancelado'},
+      {value:'refunded',          label:'🩷 Reembolsado'},
     ]} />
     <Select label="Chofer" value={data.driver_id} onChange={v=>onChange('driver_id',v)} options={[{value:'',label:'Sin asignar'},...drivers.map(d=>({value:d.id,label:d.name}))]} />
     <Select label="Experiencia" value={data.experience} onChange={v=>onChange('experience',v)} options={[{value:'driver_en',label:'Conductor privado (inglés)'},{value:'guide_en',label:'Guía Local (inglés)'},{value:'guide_es',label:'Guía Local Certificado (español)'}]} />
