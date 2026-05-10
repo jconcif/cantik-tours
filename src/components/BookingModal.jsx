@@ -958,19 +958,18 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                          </div>
                                                      )}
 
-                                                     {/* Terms for PayPal */}
                                                      <div className={`flex items-start gap-3 p-3 border rounded-xl transition-all ${!formData.acceptedTerms ? 'border-amber-500/50 bg-amber-500/5' : 'border-black/5 dark:border-white/5 bg-gray-50/50 dark:bg-white/5'}`}>
                                                          <input 
                                                              id="terms-check-paypal"
                                                              type="checkbox" 
                                                              checked={formData.acceptedTerms}
                                                              onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
-                                                             className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                                             className="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer flex-shrink-0"
                                                          />
-                                                         <label htmlFor="terms-check-paypal" className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug cursor-pointer">
+                                                         <label htmlFor="terms-check-paypal" className="text-[10px] font-medium text-gray-500 dark:text-gray-400 leading-relaxed cursor-pointer">
                                                              {i18n.language === 'en' 
-                                                                 ? <>I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms and Conditions</a> to enable payment.</>
-                                                                 : <>Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos y Condiciones</a> para habilitar el pago.</>
+                                                                 ? <>By clicking <strong className="text-gray-700 dark:text-gray-300">"PAY NOW"</strong> I agree to Cantik Tours' <a href="/politicas" target="_blank" className="text-primary underline hover:text-primary/80">Terms of Service</a> and <a href="/politicas" target="_blank" className="text-primary underline hover:text-primary/80">Privacy Policy</a>.</>
+                                                                 : <>Al hacer clic en <strong className="text-gray-700 dark:text-gray-300">"PAGAR AHORA"</strong> acepto los <a href="/politicas" target="_blank" className="text-primary underline hover:text-primary/80">Términos de Servicio</a> y la <a href="/politicas" target="_blank" className="text-primary underline hover:text-primary/80">Política de Privacidad</a> de Cantik Tours.</>
                                                              }
                                                          </label>
                                                      </div>
@@ -1012,18 +1011,18 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                      </div>
 
                                                      {/* Terms for Transfer */}
-                                                     <div className="flex items-start gap-3 p-2 border border-black/5 dark:border-white/5 rounded-xl bg-gray-50/50 dark:bg-white/5 mt-6 mb-2">
+                                                     <div className="flex items-start gap-3 p-3 border border-black/5 dark:border-white/5 rounded-xl bg-gray-50/50 dark:bg-white/5 mt-4 mb-2">
                                                          <input 
                                                              id="terms-check-transfer"
                                                              type="checkbox" 
                                                              checked={formData.acceptedTerms}
                                                              onChange={(e) => setFormData({ ...formData, acceptedTerms: e.target.checked })}
-                                                             className="mt-1 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                                                             className="mt-0.5 w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer flex-shrink-0"
                                                          />
-                                                         <label htmlFor="terms-check-transfer" className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug cursor-pointer">
+                                                         <label htmlFor="terms-check-transfer" className="text-[10px] font-medium text-gray-500 dark:text-gray-400 leading-relaxed cursor-pointer">
                                                              {i18n.language === 'en' 
-                                                                 ? <>I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms and Conditions</a>.</>
-                                                                 : <>Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos y Condiciones</a>.</>
+                                                                 ? <>By clicking <strong className="text-gray-700 dark:text-gray-300">"CONFIRM BOOKING"</strong> I agree to Cantik Tours' <a href="/politicas" target="_blank" className="text-primary underline hover:text-primary/80">Terms of Service</a> and <a href="/politicas" target="_blank" className="text-primary underline hover:text-primary/80">Privacy Policy</a>.</>
+                                                                 : <>Al hacer clic en <strong className="text-gray-700 dark:text-gray-300">"CONFIRMAR RESERVA"</strong> acepto los <a href="/politicas" target="_blank" className="text-primary underline hover:text-primary/80">Términos de Servicio</a> y la <a href="/politicas" target="_blank" className="text-primary underline hover:text-primary/80">Política de Privacidad</a> de Cantik Tours.</>
                                                              }
                                                          </label>
                                                      </div>
