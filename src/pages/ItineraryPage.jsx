@@ -30,6 +30,7 @@ export default function ItineraryPage() {
   const [error, setError] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [statusExpanded, setStatusExpanded] = useState(false);
 
   useEffect(() => {
     if (!ref) { setError('Referencia no válida'); setLoading(false); return; }
@@ -113,8 +114,6 @@ export default function ItineraryPage() {
   );
 
   const currentStep = status.step;
-
-  const [statusExpanded, setStatusExpanded] = useState(false);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(fichaUrl);
