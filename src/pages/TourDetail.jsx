@@ -798,7 +798,7 @@ const TourDetail = () => {
             />
             {/* Sticky Mobile CTA */}
             <AnimatePresence>
-                {showSticky && (
+                {showSticky && !isBookingModalOpen && !isTransferModalOpen && !isReviewsModalOpen && (
                     <motion.div
                         initial={{ y: 100 }}
                         animate={{ y: 0 }}
