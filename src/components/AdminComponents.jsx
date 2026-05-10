@@ -1,6 +1,7 @@
 import React from 'react';
 import * as api from '../services/api';
 import { useTranslation } from 'react-i18next';
+import { tours } from '../data/tours';
 
 const inputStyle = {padding:'10px 14px',borderRadius:'12px',border:'1px solid #333',fontSize:'14px',fontWeight:600,background:'#222',color:'#fff',width:'100%',boxSizing:'border-box',outline:'none'};
 const labelStyle = {fontSize:'10px',fontWeight:900,color:'#11BDDB',textTransform:'uppercase',letterSpacing:'0.05em'};
@@ -429,7 +430,19 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
         setItems([]);
       }
     } else {
-      setItems([]);
+      // Fallback to tour data or selected_stops to help admin start editing
+      const tour = tours.find(t => t.id === booking.tour_id) || tours.find(t => t.title === booking.tour_title);
+      
+      if (booking.selected_stops) {
+        setItems(booking.selected_stops.split(',').map(s => ({ time: '--:--', desc: s.trim() })));
+      } else if (tour && tour.itinerary) {
+        setItems(tour.itinerary.map(i => ({
+          time: i.duration || '--:--',
+          desc: isEn ? (i.activity_en || i.activity) : i.activity
+        })));
+      } else {
+        setItems([]);
+      }
     }
   }, [booking]);
 
