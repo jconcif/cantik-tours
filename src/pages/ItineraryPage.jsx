@@ -480,13 +480,15 @@ export default function ItineraryPage() {
              <div className={`h-px ${dark ? 'bg-white/5' : 'bg-gray-100'} w-full`} />
 
              <div>
-                <Heart size={16} className="text-primary mx-auto mb-4" />
-                <p className={`text-[10px] font-bold leading-relaxed ${sub} italic`}>
-                  {en ? 'Every booking directly funds our guides and their families — fair pay, no delays.'
-                    : 'Cada reserva financia directamente a nuestros guías y sus familias — pago justo, sin demoras.'}
-                </p>
-                <div className={`flex items-center justify-center gap-2 mt-4 ${sub}`}>
-                  <ShieldCheck size={11} className="text-emerald-500" />
+                <div className={`flex items-center justify-center gap-2 mb-3 ${sub}`}>
+                  <Heart size={11} className="text-primary flex-shrink-0" />
+                  <p className={`text-[10px] font-bold leading-relaxed italic`}>
+                    {en ? 'Every booking directly funds our guides and their families — fair pay, no delays.'
+                      : 'Cada reserva financia directamente a nuestros guías y sus familias — pago justo, sin demoras.'}
+                  </p>
+                </div>
+                <div className={`flex items-center justify-center gap-2 ${sub}`}>
+                  <ShieldCheck size={11} className="text-emerald-500 flex-shrink-0" />
                   <span className="text-[8px] font-black uppercase tracking-widest">
                     {en ? 'Free cancellation 48h before' : 'Cancelación gratuita 48h antes'}
                   </span>
