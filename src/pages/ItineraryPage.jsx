@@ -9,6 +9,7 @@ import {
 import { getItinerary } from '../services/api';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
+import { useCurrency } from '../context/CurrencyContext';
 
 const SUPPORT_PHONE_ES = '34642517787';
 
@@ -25,6 +26,7 @@ function parseLocalDate(str) {
 export default function ItineraryPage() {
   const [searchParams] = useSearchParams();
   const { i18n } = useTranslation();
+  const { currency, toggleCurrency, formatPrice } = useCurrency();
   const rawRef = searchParams.get('ref') || '';
   const ref = rawRef.replace(/^CT-/, '');
   const [booking, setBooking] = useState(null);
@@ -113,6 +115,9 @@ export default function ItineraryPage() {
     : expType === 'comfort' ? (en ? 'Local Guide' : 'Guía Local') : (en ? 'Elite Guide' : 'Guía Elite');
   const expColor = expType === 'economy' ? '#9ca3af' : expType === 'comfort' ? '#11BDDB' : '#D4AF37';
 
+  const priceData = formatPrice(parseFloat(booking.total_price || 0));
+  const priceVal = `${priceData.symbol}${priceData.amount}`;
+
   const fichaUrl = `https://cantiktours.com/booking?ref=CT-${ref}`;
   const supportMsg = encodeURIComponent(
     `Hola Cantik Tours! Necesito ayuda con mi solicitud CT-${ref}.\n\nFicha: ${fichaUrl}`
@@ -197,13 +202,13 @@ export default function ItineraryPage() {
       const manualItems = JSON.parse(booking.itinerary);
       if (Array.isArray(manualItems) && manualItems.length > 0) {
         finalItinerary = manualItems.map(item => ({
-          type: item.type || (item.desc?.toLowerCase().includes('recogida') || item.desc?.toLowerCase().includes('pickup') ? 'pickup' : 
-                item.desc?.toLowerCase().includes('regreso') || item.desc?.toLowerCase().includes('dropoff') ? 'dropoff' : 'visit'),
+          type: item.type || ((item.activity || item.desc || '').toLowerCase().includes('recogida') || (item.activity || item.desc || '').toLowerCase().includes('pickup') ? 'pickup' : 
+                (item.activity || item.desc || '').toLowerCase().includes('regreso') || (item.activity || item.desc || '').toLowerCase().includes('dropoff') ? 'dropoff' : 'visit'),
           duration: item.time,
-          activity: item.desc,
-          activity_en: item.desc,
-          desc: '',
-          desc_en: ''
+          activity: item.activity || item.desc || '', // backward compatibility
+          activity_en: item.activity || item.desc || '',
+          desc: item.subtitle || '',
+          desc_en: item.subtitle || ''
         }));
       }
     } catch(e) { /* ignore */ }
@@ -230,20 +235,39 @@ export default function ItineraryPage() {
           <span className="font-black text-primary text-sm tracking-widest uppercase">Cantik</span>
           <span className={`font-black text-sm tracking-widest uppercase ${sub}`}>Tours</span>
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Language Toggle */}
           <button
-            onClick={handleCopyLink}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/10 text-gray-400 hover:border-white/20' : 'border-gray-300 text-gray-500'}`}
+            onClick={() => i18n.changeLanguage(en ? 'es' : 'en')}
+            className={`flex items-center justify-center w-8 h-8 rounded-full border text-[9px] font-black tracking-widest transition-all ${dark ? 'border-white/10 text-gray-400 hover:border-white/20' : 'border-gray-300 text-gray-500'}`}
           >
-            {copied ? <CheckCircle2 size={12} className="text-emerald-400" /> : <Copy size={12} />}
-            {copied ? (en ? 'Copied!' : '¡Copiado!') : (en ? 'Share' : 'Copiar enlace')}
+            {en ? 'ES' : 'EN'}
           </button>
+
+          {/* Currency Toggle */}
+          <button
+            onClick={toggleCurrency}
+            className={`flex items-center justify-center w-8 h-8 rounded-full border text-[9px] font-black tracking-widest transition-all ${dark ? 'border-white/10 text-gray-400 hover:border-white/20' : 'border-gray-300 text-gray-500'}`}
+          >
+            {currency === 'EUR' ? '€' : '$'}
+          </button>
+
+          {/* Theme Toggle */}
           <button
             onClick={() => setDarkMode(!darkMode)}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/10 text-gray-400' : 'border-gray-300 text-gray-500'}`}
+            className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all ${dark ? 'border-white/10 text-gray-400' : 'border-gray-300 text-gray-500'}`}
           >
             {dark ? <Sun size={12} /> : <Moon size={12} />}
-            {dark ? 'Light' : 'Dark'}
+          </button>
+
+          <div className={`w-px h-4 mx-1 ${dark ? 'bg-white/10' : 'bg-gray-200'}`} />
+
+          <button
+            onClick={handleCopyLink}
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/10 text-gray-400 hover:border-white/20' : 'border-gray-300 text-gray-500'}`}
+          >
+            {copied ? <CheckCircle2 size={12} className="text-emerald-400" /> : <Copy size={12} />}
+            <span className="hidden sm:inline">{copied ? (en ? 'Copied!' : '¡Copiado!') : (en ? 'Share' : 'Copiar')}</span>
           </button>
         </div>
       </div>
@@ -297,7 +321,7 @@ export default function ItineraryPage() {
                   { label: en ? 'CLASS' : 'CLASE',      val: `${expLabel} · ${expName}`, style: { color: expColor } },
                   { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
                   { label: en ? 'BOARDING' : 'HORA',    val: booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
-                  { label: priceLabel, val: `${parseFloat(booking.total_price).toFixed(0)}€`, style: { color: '#11BDDB' } },
+                  { label: priceLabel, val: priceVal, style: { color: '#11BDDB' } },
                 ].map((f, i) => (
                   <div key={i}>
                     <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
@@ -433,17 +457,6 @@ export default function ItineraryPage() {
                   </div>
                 </div>
               ))}
-            </div>
-
-            <div className={`mt-10 p-5 rounded-2xl border border-dashed ${dark ? 'border-white/10 bg-white/5' : 'border-primary/20 bg-primary/5'}`}>
-              <div className="flex gap-4">
-                <Info size={16} className="text-primary flex-shrink-0" />
-                <p className="text-[10px] font-bold leading-relaxed text-gray-500">
-                  {en 
-                    ? 'Our tours are private and flexible. You can adjust the order or duration of stops directly with your guide.' 
-                    : 'Nuestros tours son privados y flexibles. Puedes ajustar el orden o la duración de las paradas directamente con tu guía.'}
-                </p>
-              </div>
             </div>
           </motion.div>
         )}

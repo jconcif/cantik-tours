@@ -434,11 +434,12 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
       const tour = tours.find(t => t.id === booking.tour_id) || tours.find(t => t.title === booking.tour_title);
       
       if (booking.selected_stops) {
-        setItems(booking.selected_stops.split(',').map(s => ({ time: '--:--', desc: s.trim() })));
+        setItems(booking.selected_stops.split(',').map(s => ({ time: '--:--', activity: s.trim(), subtitle: '' })));
       } else if (tour && tour.itinerary) {
         setItems(tour.itinerary.map(i => ({
           time: i.duration || '--:--',
-          desc: isEn ? (i.activity_en || i.activity) : i.activity
+          activity: isEn ? (i.activity_en || i.activity) : i.activity,
+          subtitle: isEn ? (i.desc_en || i.desc) : i.desc
         })));
       } else {
         setItems([]);
@@ -453,7 +454,13 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
     }
     setLoading(true);
     try {
-      await api.updateBooking({ id: booking.id, itinerary: JSON.stringify(items) });
+      // Ensure we save the correct structure
+      const dataToSave = items.map(it => ({
+        time: it.time,
+        activity: it.activity || it.desc || '', // backward compatibility
+        subtitle: it.subtitle || ''
+      }));
+      await api.updateBooking({ id: booking.id, itinerary: JSON.stringify(dataToSave) });
       if (onUpdate) onUpdate();
       alert(isEn ? 'Itinerary saved ✓' : 'Itinerario guardado ✓');
     } catch(e) {
@@ -463,7 +470,7 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
     }
   };
 
-  const addItem = () => setItems([...items, {time: '08:00', desc: 'Nueva parada'}]);
+  const addItem = () => setItems([...items, {time: '08:00', activity: 'Nueva parada', subtitle: ''}]);
   const removeItem = (idx) => setItems(items.filter((_, i) => i !== idx));
   const updateItem = (idx, k, v) => {
     const next = [...items];
@@ -479,14 +486,15 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
       
       <div style={{display:'flex', flexDirection:'column', gap:'10px', marginBottom:'24px'}}>
         {items.map((item, idx) => (
-          <div key={idx} style={{display:'flex', gap:'10px', alignItems:'center', background:'#222', padding:'10px', borderRadius:'16px', border:'1px solid #333'}}>
+          <div key={idx} style={{display:'flex', gap:'10px', alignItems:'flex-start', background:'#222', padding:'12px', borderRadius:'16px', border:'1px solid #333'}}>
             <div style={{width:'80px'}}>
               <input value={item.time} onChange={e=>updateItem(idx, 'time', e.target.value)} style={{...inputStyle, textAlign:'center', padding:'8px'}} placeholder="08:00" />
             </div>
-            <div style={{flex:1}}>
-              <input value={item.desc} onChange={e=>updateItem(idx, 'desc', e.target.value)} style={{...inputStyle, padding:'8px'}} placeholder={isEn ? 'Activity or stop...' : 'Actividad o parada...'} />
+            <div style={{flex:1, display:'flex', flexDirection:'column', gap:'6px'}}>
+              <input value={item.activity || item.desc} onChange={e=>updateItem(idx, 'activity', e.target.value)} style={{...inputStyle, padding:'8px'}} placeholder={isEn ? 'Activity...' : 'Actividad...'} />
+              <input value={item.subtitle} onChange={e=>updateItem(idx, 'subtitle', e.target.value)} style={{...inputStyle, padding:'8px', fontSize:'11px', opacity:0.7}} placeholder={isEn ? 'Subtitle / Details...' : 'Subtítulo / Detalles...'} />
             </div>
-            <button onClick={()=>removeItem(idx)} style={{background:'#ef444422', border:'none', color:'#ef4444', width:'32px', height:'32px', borderRadius:'10px', cursor:'pointer'}}>✕</button>
+            <button onClick={()=>removeItem(idx)} style={{background:'#ef444422', border:'none', color:'#ef4444', width:'32px', height:'32px', borderRadius:'10px', cursor:'pointer', marginTop:'4px'}}>✕</button>
           </div>
         ))}
         
