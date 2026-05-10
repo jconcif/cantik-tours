@@ -813,14 +813,86 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                     </div>
 
                                         {/* Payment Method Selector */}
-                                        <div className="space-y-4 pt-4 border-t border-black/5 dark:border-white/5">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">
-                                                {i18n.language === 'en' ? 'Select Payment Method' : 'Selecciona método de pago'}
-                                            </label>
-                                            <div className="flex gap-4">
-                                                 <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'transfer'})} className={`flex-1 p-3 rounded-xl border-2 text-[10px] font-black uppercase ${formData.paymentMethod === 'transfer' ? 'border-primary bg-primary/5' : 'border-black/5 dark:border-white/5'}`}>Transferencia</button>
-                                                 <button type="button" onClick={() => setFormData({...formData, paymentMethod: 'paypal'})} className={`flex-1 p-3 rounded-xl border-2 text-[10px] font-black uppercase ${formData.paymentMethod === 'paypal' ? 'border-primary bg-primary/5' : 'border-black/5 dark:border-white/5'}`}>PayPal</button>
-                                             </div>
+                                        <div className="space-y-3 pt-4 border-t border-black/5 dark:border-white/5">
+                                            <p className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em]">
+                                                {i18n.language === 'en' ? 'Select Payment Method' : 'Método de pago'}
+                                            </p>
+                                            <div className="flex flex-col gap-2">
+                                                {/* Transfer - Primary/Recommended */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData({...formData, paymentMethod: 'transfer'})}
+                                                    className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${
+                                                        formData.paymentMethod === 'transfer'
+                                                            ? 'border-primary bg-primary/5 shadow-sm'
+                                                            : 'border-black/10 dark:border-white/10 hover:border-primary/30'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-base ${
+                                                                formData.paymentMethod === 'transfer' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-white/10'
+                                                            }`}>🏦</div>
+                                                            <div>
+                                                                <div className="flex items-center gap-2">
+                                                                    <span className="text-[11px] font-black text-gray-900 dark:text-white uppercase tracking-wide">
+                                                                        {i18n.language === 'en' ? 'Bank Transfer' : 'Transferencia Bancaria'}
+                                                                    </span>
+                                                                    <span className="text-[8px] font-black bg-green-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wide">
+                                                                        {i18n.language === 'en' ? 'Recommended' : 'Recomendado'}
+                                                                    </span>
+                                                                </div>
+                                                                <p className="text-[9px] text-gray-500 font-medium mt-0.5">
+                                                                    {i18n.language === 'en' ? 'Wise · SEPA · SWIFT · 0% fees' : 'Wise · SEPA · SWIFT · Sin comisiones'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${
+                                                            formData.paymentMethod === 'transfer'
+                                                                ? 'border-primary bg-primary'
+                                                                : 'border-gray-300 dark:border-gray-600'
+                                                        }`}>
+                                                            {formData.paymentMethod === 'transfer' && (
+                                                                <div className="w-full h-full rounded-full bg-white scale-50" />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </button>
+
+                                                {/* PayPal - Secondary */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData({...formData, paymentMethod: 'paypal'})}
+                                                    className={`w-full p-4 rounded-2xl border-2 text-left transition-all ${
+                                                        formData.paymentMethod === 'paypal'
+                                                            ? 'border-[#003087] bg-[#003087]/5'
+                                                            : 'border-black/10 dark:border-white/10 hover:border-[#003087]/30'
+                                                    }`}
+                                                >
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-base ${
+                                                                formData.paymentMethod === 'paypal' ? 'bg-[#003087] text-white' : 'bg-gray-100 dark:bg-white/10'
+                                                            }`}>🅿️</div>
+                                                            <div>
+                                                                <span className="text-[11px] font-black text-gray-900 dark:text-white uppercase tracking-wide">PayPal</span>
+                                                                <p className="text-[9px] text-gray-500 font-medium mt-0.5">
+                                                                    {i18n.language === 'en' ? 'PayPal account required' : 'Requiere cuenta PayPal'}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 ${
+                                                            formData.paymentMethod === 'paypal'
+                                                                ? 'border-[#003087] bg-[#003087]'
+                                                                : 'border-gray-300 dark:border-gray-600'
+                                                        }`}>
+                                                            {formData.paymentMethod === 'paypal' && (
+                                                                <div className="w-full h-full rounded-full bg-white scale-50" />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </button>
+                                            </div>
                                         </div>
 
                                         {/* Action Sections */}
@@ -938,19 +1010,6 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *PARAD
                                                              </div>
                                                          )}
                                                      </div>
-                                                     {paypalDebugLog.length > 0 && (
-                                                         <div className="bg-gray-900 rounded-xl p-3 space-y-1 font-mono">
-                                                             <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">🔍 Debug PayPal</p>
-                                                             {paypalDebugLog.map((log, i) => (
-                                                                 <p key={i} className={`text-[9px] break-all ${
-                                                                     log.type === 'error' ? 'text-red-400' :
-                                                                     log.type === 'success' ? 'text-green-400' :
-                                                                     log.type === 'warn' ? 'text-yellow-400' :
-                                                                     'text-blue-300'
-                                                                 }`}>[{log.t}] {log.msg}</p>
-                                                             ))}
-                                                         </div>
-                                                     )}
                                                      {paypalError && (
                                                          <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2">
                                                              <span className="text-red-500 text-lg">⚠️</span>
