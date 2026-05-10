@@ -1193,41 +1193,5 @@ export const tours = [
         rating: 5.0,
         reviews: 0
     },
-    {
-        id: 'test-tour-paypal',
-        title: "⚙️ TOUR DE PRUEBAS (SOLO ADMIN)",
-        title_en: "⚙️ TEST TOUR (ADMIN ONLY)",
-        description: "Tour exclusivo para pruebas internas de la pasarela de pagos.",
-        description_en: "Exclusive tour for internal payment gateway testing.",
-        heroSubtitle: "Tour de 1 euro para probar el checkout.",
-        heroSubtitle_en: "1 euro tour to test checkout.",
-        fullDescription: "Este tour es una entidad falsa para validar el sistema de extremo a extremo sin mover grandes sumas de dinero.",
-        fullDescription_en: "This tour is a fake entity to validate the end-to-end system without moving large sums of money.",
-        price: 1,
-        duration: "1 min",
-        duration_en: "1 min",
-        image: "/images/tours/placeholder.webp",
-        images: ["/images/tours/placeholder.webp"],
-        badge: "Test",
-        badge_en: "Test",
-        category: ['test'],
-        itinerary: [
-            {
-                type: 'pickup',
-                duration: "09:00",
-                duration_en: "09:00",
-                activity: "Test Checkout",
-                activity_en: "Test Checkout",
-                desc: "Prueba de checkout exitosa.",
-                desc_en: "Checkout test successful."
-            }
-        ],
-        location: "Test",
-        included: ["Nada"],
-        included_en: ["Nothing"],
-        not_included: ["Todo"],
-        not_included_en: ["Everything"],
-        rating: 5.0,
-        reviews: 0
-    }
+
 ];

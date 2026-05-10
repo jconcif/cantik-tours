@@ -71,7 +71,7 @@ export default function ItineraryPage() {
   );
 
   // ── Date ────────────────────────────────────────────────────
-  const tourDate = parseLocalDate(booking.tour_date);
+  const tourDate = parseLocalDate(booking.booking_date);
   const isExpired = tourDate ? tourDate < new Date() : false;
   const en = i18n.language === 'en';
 
@@ -111,6 +111,10 @@ export default function ItineraryPage() {
   const supportMsg = encodeURIComponent(
     `Hola Cantik Tours! Necesito ayuda con mi solicitud CT-${ref}.\n\nFicha: ${fichaUrl}`
   );
+
+  const currentStep = status.step;
+
+  const [statusExpanded, setStatusExpanded] = useState(false);
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(fichaUrl);
@@ -182,7 +186,7 @@ export default function ItineraryPage() {
               {/* FROM → TO */}
               <div className="flex items-center justify-between relative z-10">
                 <div className="text-center">
-                  <div className="text-4xl font-black text-white tracking-tighter">BCN</div>
+                  <div className="text-4xl font-black text-white tracking-tighter">HOME</div>
                   <div className="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">{en ? 'Origin' : 'Origen'}</div>
                 </div>
                 <div className="flex-1 flex flex-col items-center px-4 gap-1">
@@ -190,7 +194,7 @@ export default function ItineraryPage() {
                   <div className="w-full h-px bg-white/20" />
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-black text-white tracking-tighter">UBD</div>
+                  <div className="text-4xl font-black text-white tracking-tighter">DPS</div>
                   <div className="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">UBUD · BALI</div>
                 </div>
               </div>
@@ -236,15 +240,14 @@ export default function ItineraryPage() {
                   {en ? 'BOOKING REF' : 'REFERENCIA'}
                 </div>
                 <div className="font-mono font-black text-xl tracking-widest text-primary">CT-{ref}</div>
-                <a href={fichaUrl} target="_blank" rel="noreferrer"
-                  className={`flex items-center gap-1 mt-2 text-[9px] font-black ${sub} hover:text-primary transition-colors`}>
-                  <ExternalLink size={10} /> {en ? 'View booking' : 'Ver ficha online'}
-                </a>
               </div>
 
               {/* Mini status progress */}
-              <div className="text-right space-y-2">
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${status.bg_} ${status.color}`}>
+              <div 
+                className="text-right space-y-2 cursor-pointer group"
+                onClick={() => setStatusExpanded(!statusExpanded)}
+              >
+                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${status.bg_} ${status.color} group-hover:opacity-80 transition-opacity`}>
                   <CheckCircle2 size={11} /> {status.label}
                 </div>
                 <div className="flex items-center justify-end gap-1.5 mt-2">
@@ -252,8 +255,48 @@ export default function ItineraryPage() {
                     <div key={s} className={`w-1.5 h-1.5 rounded-full transition-all ${status.step >= s ? 'bg-primary' : dark ? 'bg-white/10' : 'bg-gray-200'}`} />
                   ))}
                 </div>
+                <div className={`text-[8px] font-bold tracking-widest uppercase mt-1 ${sub}`}>
+                  {statusExpanded ? (en ? 'HIDE TIMELINE' : 'OCULTAR ESTADOS') : (en ? 'SHOW TIMELINE' : 'VER ESTADOS')}
+                </div>
               </div>
             </div>
+
+            {/* Expandable Status Timeline */}
+            {statusExpanded && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className={`mt-4 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'} p-6 rounded-[2rem] shadow-xl ${dark ? 'shadow-black/50' : 'shadow-gray-300/80'}`}
+              >
+                <div className={`text-[10px] font-black uppercase tracking-[0.2em] mb-6 ${sub}`}>
+                  {en ? 'Booking Timeline' : 'Línea de tiempo de la reserva'}
+                </div>
+                <div className="space-y-6 relative">
+                  <div className={`absolute top-2 bottom-2 left-2 w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
+                  {[
+                    statusMap.requested, 
+                    statusMap.pending_payment, 
+                    statusMap.payment_received, 
+                    statusMap.reserved, 
+                    statusMap.confirmed,
+                    statusMap.in_progress,
+                    statusMap.completed
+                  ].map((st, i) => {
+                    const isPast = st.step <= currentStep;
+                    const isCurrent = st.step === currentStep;
+                    return (
+                      <div key={i} className="flex gap-4 relative z-10">
+                        <div className={`w-4 h-4 rounded-full mt-0.5 flex-shrink-0 ${isCurrent ? 'bg-primary shadow-[0_0_10px_rgba(17,189,219,0.5)]' : (isPast ? 'bg-primary/50' : (dark ? 'bg-white/10' : 'bg-gray-200'))}`} />
+                        <div>
+                          <div className={`text-xs font-black uppercase tracking-widest ${isPast ? 'text-primary' : sub}`}>{st.label}</div>
+                          <div className={`text-[10px] mt-1 leading-relaxed ${isCurrent ? text : sub}`}>{st.desc}</div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </motion.div>
+            )}
           </div>
 
         </motion.div>
