@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   MessageCircle, Star, CheckCircle2, ShieldCheck, Info,
   Heart, Sun, Moon, Plane, Copy, ExternalLink,
-  Clock, MapPin, Coffee, Camera, Waves, Map
+  Clock, MapPin, Coffee, Camera, Waves, Map, Activity
 } from 'lucide-react';
 import { getItinerary } from '../services/api';
 import { useTranslation } from 'react-i18next';
