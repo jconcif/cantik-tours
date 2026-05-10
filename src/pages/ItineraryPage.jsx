@@ -118,6 +118,18 @@ export default function ItineraryPage() {
     `Hola Cantik Tours! Necesito ayuda con mi solicitud CT-${ref}.\n\nFicha: ${fichaUrl}`
   );
 
+  const getTourCode = (id) => {
+    const s = String(id || '').toLowerCase();
+    if (s.includes('ubud')) return 'UBD';
+    if (s.includes('lovina')) return 'LOV';
+    if (s.includes('nusa')) return 'PEN';
+    if (s.includes('east')) return 'EST';
+    if (s.includes('south')) return 'STH';
+    if (s.includes('bedugul')) return 'BDG';
+    return 'CTK';
+  };
+  const tourCode = getTourCode(booking.tour_id);
+
   const currentStep = status.step;
 
   const handleCopyLink = () => {
@@ -262,16 +274,16 @@ export default function ItineraryPage() {
               {/* FROM → TO */}
               <div className="flex items-center justify-between relative z-10">
                 <div className="text-center">
-                  <div className="text-4xl font-black text-white tracking-tighter">HOME</div>
-                  <div className="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">{en ? 'Origin' : 'Origen'}</div>
+                  <div className="text-4xl font-black text-white tracking-tighter">BALI</div>
+                  <div className="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">{en ? 'THE ISLAND' : 'LA ISLA'}</div>
                 </div>
                 <div className="flex-1 flex flex-col items-center px-4 gap-1">
                   <Plane size={18} className="text-white/70 rotate-90" />
                   <div className="w-full h-px bg-white/20" />
                 </div>
                 <div className="text-center">
-                  <div className="text-4xl font-black text-white tracking-tighter">DPS</div>
-                  <div className="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">UBUD · BALI</div>
+                  <div className="text-4xl font-black text-white tracking-tighter">{tourCode}</div>
+                  <div className="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">{en ? 'THE ADVENTURE' : 'LA AVENTURA'}</div>
                 </div>
               </div>
             </div>
@@ -438,19 +450,35 @@ export default function ItineraryPage() {
 
 
 
-        {/* ── TRUST ───────────────────────────────────────── */}
+        {/* ── FLEXIBILITY & IMPACT ───────────────────────── */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-          className={`rounded-[2rem] p-6 border ${cardAlt} text-center`}>
-          <Heart size={16} className="text-primary mx-auto mb-3" />
-          <p className={`text-[10px] font-bold leading-relaxed ${sub} italic`}>
-            {en ? 'Every booking funds local guides and their families — fair pay, no delays.'
-              : 'Cada reserva financia directamente a nuestros guías y sus familias — pago justo, sin demoras.'}
-          </p>
-          <div className={`flex items-center justify-center gap-2 mt-3 ${sub}`}>
-            <ShieldCheck size={11} className="text-emerald-500" />
-            <span className="text-[8px] font-black uppercase tracking-widest">
-              {en ? 'Free cancellation 48h before' : 'Cancelación gratuita 48h antes'}
-            </span>
+          className={`rounded-[2rem] p-8 border ${card} text-center`}>
+          <div className="space-y-6">
+             <div>
+                <div className={`text-[8px] font-black uppercase tracking-[0.3em] mb-3 text-primary`}>
+                   {en ? 'PRIVATE & FLEXIBLE' : 'PRIVADO Y FLEXIBLE'}
+                </div>
+                <p className={`text-[13px] font-bold leading-relaxed ${text}`}>
+                   {en ? 'Our tours are private and flexible. You can adjust the order or duration of stops until the day before your trip.'
+                      : 'Nuestros tours son privados y flexibles. Puedes ajustar el orden o la duración de las paradas hasta el dia antes de tu viaje.'}
+                </p>
+             </div>
+             
+             <div className={`h-px ${dark ? 'bg-white/5' : 'bg-gray-100'} w-full`} />
+
+             <div>
+                <Heart size={16} className="text-primary mx-auto mb-4" />
+                <p className={`text-[10px] font-bold leading-relaxed ${sub} italic`}>
+                  {en ? 'Every booking directly funds our guides and their families — fair pay, no delays.'
+                    : 'Cada reserva financia directamente a nuestros guías y sus familias — pago justo, sin demoras.'}
+                </p>
+                <div className={`flex items-center justify-center gap-2 mt-4 ${sub}`}>
+                  <ShieldCheck size={11} className="text-emerald-500" />
+                  <span className="text-[8px] font-black uppercase tracking-widest">
+                    {en ? 'Free cancellation 48h before' : 'Cancelación gratuita 48h antes'}
+                  </span>
+                </div>
+             </div>
           </div>
         </motion.div>
 
@@ -470,19 +498,19 @@ export default function ItineraryPage() {
 
         {/* ── SUPPORT / WHATSAPP ─────────────────────── */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-          className={`rounded-[2rem] p-6 border ${card} flex flex-col items-center text-center gap-4`}>
-          <div className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
-            {en ? 'NEED HELP OR CHANGES?' : '¿DUDAS O CAMBIOS?'}
+          className={`rounded-[2rem] p-8 border ${card} flex flex-col items-center text-center gap-5`}>
+          <div className={`text-[8px] font-black uppercase tracking-[0.3em] text-primary`}>
+            {en ? 'QUESTIONS OR CHANGES?' : '¿DUDAS O CAMBIOS?'}
           </div>
-          <p className={`text-xs font-bold leading-relaxed ${sub} max-w-xs`}>
+          <p className={`text-sm font-black leading-relaxed ${text} max-w-xs`}>
             {en
-              ? 'Chat directly with your Bali coordinator. We reply within minutes.'
-              : 'Habla directamente con tu coordinador en Bali. Respondemos en minutos.'}
+              ? 'Talk to us, we reply within minutes.'
+              : 'Habla con nosotros, te respondemos en minutos.'}
           </p>
           <a href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} target="_blank" rel="noreferrer"
-            className="w-full py-4 rounded-2xl bg-[#25D366] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#1fb355] transition-all shadow-lg shadow-[#25D366]/20">
-            <MessageCircle size={15} />
-            {en ? 'Chat on WhatsApp' : 'Soporte por WhatsApp'}
+            className="w-full py-5 rounded-2xl bg-[#25D366] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#1fb355] transition-all shadow-xl shadow-[#25D366]/20">
+            <MessageCircle size={18} />
+            {en ? 'WhatsApp Support' : 'Soporte por WhatsApp'}
           </a>
         </motion.div>
 
