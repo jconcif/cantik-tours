@@ -316,7 +316,7 @@ export default function ItineraryPage() {
             {relatedBookings.map((rb, i) => (
               <button
                 key={rb.id}
-                onClick={() => window.location.href = `/booking?ref=CT-${rb.reference}`}
+                onClick={() => window.location.href = `/booking?ref=CT-${rb.reference || rb.id}`}
                 className={`flex-shrink-0 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${rb.id === booking.id ? 'bg-primary text-white shadow-lg shadow-primary/20' : (dark ? 'bg-white/5 text-gray-400 hover:bg-white/10' : 'bg-gray-200 text-gray-500 hover:bg-gray-300')}`}
               >
                 {en ? 'DAY' : 'DÍA'} {i+1}: {rb.tour_title.split(' ')[0]}
