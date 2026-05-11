@@ -83,6 +83,7 @@ export const verifyToken = () => req('/api/auth/verify', { method: 'POST' });
 // ── Public endpoints (no auth required) ──────────────────────────────────────
 export const getAvailability   = () => get('/api/availability');
 export const getItinerary      = (ref) => get(`/api/itinerary?ref=${encodeURIComponent(ref)}`);
+export const submitCheckin     = (data) => post('/api/itinerary/checkin', data);
 
 export const getPublicReviews = async (tourId) => {
   try {

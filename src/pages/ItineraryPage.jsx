@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   MessageCircle, Star, CheckCircle2, ShieldCheck, Info,
   Heart, Sun, Moon, Plane, Copy, ExternalLink,
   Clock, MapPin, Coffee, Camera, Waves, Map, Activity
 } from 'lucide-react';
-import { getItinerary } from '../services/api';
+import { getItinerary, submitCheckin } from '../services/api';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
 import { useCurrency } from '../context/CurrencyContext';
@@ -29,24 +29,60 @@ export default function ItineraryPage() {
   const { currency, toggleCurrency, formatPrice } = useCurrency();
   const rawRef = searchParams.get('ref') || '';
   const ref = rawRef.replace(/^CT-/, '');
+  const navigate = useNavigate();
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [relatedBookings, setRelatedBookings] = useState([]);
+  const [showCheckin, setShowCheckin] = useState(false);
+  const [checkinData, setCheckinData] = useState([]);
+  const [submittingCheckin, setSubmittingCheckin] = useState(false);
 
   useEffect(() => {
     if (!ref) { setError('Referencia no válida'); setLoading(false); return; }
     const fetch_ = async () => {
       try {
         const data = await getItinerary(ref);
-        if (data && data.status === 'success') setBooking(data.data);
+        if (data && data.status === 'success') {
+          setBooking(data.data);
+          if (data.related) setRelatedBookings(data.related);
+          
+          let existingPax = [];
+          try {
+            const ext = typeof data.data.extras === 'string' ? JSON.parse(data.data.extras) : data.data.extras;
+            if (ext && ext.passengers) existingPax = ext.passengers;
+          } catch(e) {}
+          
+          const numPax = parseInt(data.data.pax) || 1;
+          const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', emergency: '' });
+          setCheckinData(initCheckin);
+        }
         else setError('Reserva no encontrada');
       } catch { setError('Error al cargar'); }
       finally { setLoading(false); }
     };
     fetch_();
   }, [ref]);
+
+  const handleCheckinSubmit = async () => {
+    setSubmittingCheckin(true);
+    try {
+      await submitCheckin({ ref: booking.reference, passengers: checkinData });
+      alert(i18n.language.startsWith('en') ? 'Check-in saved!' : 'Check-in guardado con éxito!');
+      setShowCheckin(false);
+      // reload booking to get updated extras
+      const data = await getItinerary(ref);
+      if (data && data.status === 'success') {
+        setBooking(data.data);
+      }
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setSubmittingCheckin(false);
+    }
+  };
 
   const dark = darkMode;
   const bg    = dark ? 'bg-[#0a0a0a]' : 'bg-gray-100';
@@ -274,6 +310,21 @@ export default function ItineraryPage() {
 
       <div className="max-w-2xl mx-auto px-4 pt-10 space-y-5">
 
+        {/* ── MULTI-DAY TABS ────────────────────────────── */}
+        {relatedBookings.length > 1 && (
+          <div className="flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
+            {relatedBookings.map((rb, i) => (
+              <button
+                key={rb.id}
+                onClick={() => window.location.href = `/booking?ref=CT-${rb.reference}`}
+                className={`flex-shrink-0 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${rb.id === booking.id ? 'bg-primary text-white shadow-lg shadow-primary/20' : (dark ? 'bg-white/5 text-gray-400 hover:bg-white/10' : 'bg-gray-200 text-gray-500 hover:bg-gray-300')}`}
+              >
+                {en ? 'DAY' : 'DÍA'} {i+1}: {rb.tour_title.split(' ')[0]}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* ── BOARDING PASS ─────────────────────────────── */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 100 }}>
 
@@ -286,7 +337,7 @@ export default function ItineraryPage() {
               <div className="relative z-10 flex items-start justify-between mb-6">
                 <div>
                   <div className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-1">
-                    {en ? 'BOARDING PASS' : 'TARJETA DE EMBARQUE'}
+                    {en ? 'BOOKING CARD' : 'TARJETA DE RESERVA'}
                   </div>
                   <div className="text-white font-black text-2xl tracking-tight uppercase">{booking.client_name}</div>
                 </div>
@@ -378,6 +429,28 @@ export default function ItineraryPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* ── CHECK-IN BANNER ───────────────────────────── */}
+        {checkinData.some(p => !p.name || !p.passport) && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+            className={`rounded-2xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-4 ${dark ? 'bg-[#f59e0b]/10 border-[#f59e0b]/20' : 'bg-[#f59e0b]/10 border-[#f59e0b]/30'}`}
+          >
+            <div>
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f59e0b] mb-1">
+                {en ? 'ACTION REQUIRED' : 'ACCIÓN REQUERIDA'}
+              </div>
+              <p className={`text-xs font-bold leading-relaxed ${text}`}>
+                {en ? 'Please complete passenger check-in' : 'Completa el registro de pasajeros antes de viajar.'}
+              </p>
+            </div>
+            <button
+              onClick={() => setShowCheckin(true)}
+              className="w-full sm:w-auto px-6 py-3 bg-[#f59e0b] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#d97706] transition-colors"
+            >
+              {en ? 'CHECK-IN' : 'HACER CHECK-IN'}
+            </button>
+          </motion.div>
+        )}
 
         {/* ── STATUS TIMELINE ───────────────────────────── */}
         <motion.div 
@@ -544,6 +617,98 @@ export default function ItineraryPage() {
           <Link to="/" className={`text-[8px] font-black uppercase tracking-[1em] ${text}`}>CANTIKTOURS.COM</Link>
         </div>
       </div>
+
+      {/* ── CHECK-IN MODAL ─────────────────────────────── */}
+      {showCheckin && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[2rem] p-8 border shadow-2xl ${dark ? 'bg-[#141414] border-white/10 shadow-black' : 'bg-white border-gray-200'}`}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className={`text-lg font-black uppercase tracking-widest ${text}`}>
+                {en ? 'Passenger Check-In' : 'Registro de Pasajeros'}
+              </h3>
+              <button onClick={() => setShowCheckin(false)} className={`w-8 h-8 flex items-center justify-center rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                ✕
+              </button>
+            </div>
+
+            <p className={`text-xs font-bold mb-6 ${sub}`}>
+              {en ? 'Please provide the details for all passengers.' : 'Por favor, proporciona los datos de todos los viajeros.'}
+            </p>
+
+            <div className="space-y-6">
+              {checkinData.map((pax, idx) => (
+                <div key={idx} className={`p-5 rounded-2xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                  <div className={`text-[10px] font-black uppercase tracking-widest mb-4 ${text}`}>
+                    {en ? `Passenger ${idx + 1}` : `Pasajero ${idx + 1}`}
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
+                        {en ? 'Full Name' : 'Nombre Completo'}
+                      </label>
+                      <input
+                        type="text"
+                        value={pax.name}
+                        onChange={(e) => {
+                          const nd = [...checkinData];
+                          nd[idx].name = e.target.value;
+                          setCheckinData(nd);
+                        }}
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
+                        placeholder={en ? 'John Doe' : 'Juan Pérez'}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
+                        {en ? 'Passport / ID' : 'Pasaporte / DNI'}
+                      </label>
+                      <input
+                        type="text"
+                        value={pax.passport}
+                        onChange={(e) => {
+                          const nd = [...checkinData];
+                          nd[idx].passport = e.target.value;
+                          setCheckinData(nd);
+                        }}
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
+                        placeholder="XYZ123456"
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
+                        {en ? 'Emergency Contact' : 'Contacto de Emergencia'}
+                      </label>
+                      <input
+                        type="text"
+                        value={pax.emergency}
+                        onChange={(e) => {
+                          const nd = [...checkinData];
+                          nd[idx].emergency = e.target.value;
+                          setCheckinData(nd);
+                        }}
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
+                        placeholder="+34 600 000 000"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={handleCheckinSubmit}
+              disabled={submittingCheckin}
+              className="w-full mt-6 py-4 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50"
+            >
+              {submittingCheckin ? (en ? 'SAVING...' : 'GUARDANDO...') : (en ? 'SAVE CHECK-IN' : 'GUARDAR CHECK-IN')}
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
