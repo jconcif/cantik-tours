@@ -411,20 +411,24 @@ export default function AdminPanel() {
           <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
             <div style={{display:'grid',gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit,minmax(200px,1fr))',gap: isMobile ? '10px' : '16px'}}>
               <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
-                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Ingresos</div>
-                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:C}}>{(detailedStats?.revenue || stats.rev).toFixed(0)}€</div>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Cobrado (Caja)</div>
+                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:C}}>{(detailedStats?.revenue || 0).toFixed(0)}€</div>
+                <div style={{fontSize:'10px',color:'#888',marginTop:'4px'}}>Total de la reserva: {(detailedStats?.expected_revenue || 0).toFixed(0)}€</div>
               </div>
-              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
-                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Gastos</div>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #f59e0b44'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#f59e0b', textTransform:'uppercase', marginBottom:'8px'}}>Pendiente Cobro</div>
+                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:'#f59e0b'}}>{(detailedStats?.pending_collection || 0).toFixed(0)}€</div>
+                <div style={{fontSize:'10px',color:'#888',marginTop:'4px'}}>Fuga de capital (A reclamar)</div>
+              </div>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ef444444'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#ef4444', textTransform:'uppercase', marginBottom:'8px'}}>Gastos (Operación)</div>
                 <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:'#ef4444'}}>{(detailedStats?.expenses || 0).toFixed(0)}€</div>
+                <div style={{fontSize:'10px',color:'#888',marginTop:'4px'}}>Choferes, Tickets, etc.</div>
               </div>
-              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
-                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Beneficio</div>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #10b98144'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#10b981', textTransform:'uppercase', marginBottom:'8px'}}>Beneficio Neto</div>
                 <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:'#10b981'}}>{(detailedStats?.profit || 0).toFixed(0)}€</div>
-              </div>
-              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
-                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Tour Top</div>
-                <div style={{fontSize: isMobile ? '12px' : '18px',fontWeight:900,color:C, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{stats.top}</div>
+                <div style={{fontSize:'10px',color:'#888',marginTop:'4px'}}>Rentabilidad global real</div>
               </div>
             </div>
           </div>

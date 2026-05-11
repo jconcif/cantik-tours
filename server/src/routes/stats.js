@@ -6,22 +6,25 @@ const router = Router();
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    // Revenue from paid bookings
+    // Revenue from active bookings (Expected Revenue)
     const { data: bookings } = await supabase
       .from('bookings')
       .select('id, total_price, payment_status');
 
-    const paidStatuses = ['paid', 'on_tour', 'finished'];
-    const paidBookings = (bookings || []).filter(b => paidStatuses.includes(b.payment_status));
-    const revenue = paidBookings.reduce((s, b) => s + Number(b.total_price), 0);
+    const activeStatuses = ['payment_confirmed', 'payment_received', 'verifying_payment', 'reserved', 'confirmed', 'in_progress', 'completed'];
+    const activeBookings = (bookings || []).filter(b => activeStatuses.includes(b.payment_status));
+    const expectedRevenue = activeBookings.reduce((s, b) => s + Number(b.total_price || 0), 0);
+
+    // Total payments actually received
+    const { data: payments } = await supabase.from('payments').select('amount');
+    const totalPayments = (payments || []).reduce((s, p) => s + Number(p.amount || 0), 0);
+
+    // Total pending collection (Fuga de capital)
+    const pendingCollection = expectedRevenue - totalPayments;
 
     // Total expenses
     const { data: expenses } = await supabase.from('expenses').select('amount');
-    const totalExpenses = (expenses || []).reduce((s, e) => s + Number(e.amount), 0);
-
-    // Total payments received
-    const { data: payments } = await supabase.from('payments').select('amount');
-    const totalPayments = (payments || []).reduce((s, p) => s + Number(p.amount), 0);
+    const totalExpenses = (expenses || []).reduce((s, e) => s + Number(e.amount || 0), 0);
 
     // Driver performance from reviews
     const { data: reviews } = await supabase
@@ -58,11 +61,13 @@ router.get('/', requireAuth, async (req, res) => {
     res.json({
       status: 'success',
       data: {
-        revenue,
+        revenue: totalPayments,
+        expected_revenue: expectedRevenue,
+        pending_collection: pendingCollection > 0 ? pendingCollection : 0,
         expenses: totalExpenses,
         profit: totalPayments - totalExpenses,
         total_bookings: (bookings || []).length,
-        paid_bookings: paidBookings.length,
+        paid_bookings: activeBookings.length,
         driver_performance: driverPerformance,
         service_quality: serviceQuality,
       },

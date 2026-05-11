@@ -188,11 +188,12 @@ export const FinancialManagement = ({booking, onUpdate}) => {
 
   // -- Add Forms --
   const PayForm = () => {
-    const [d, setD] = React.useState({amount:'', payment_date: new Date().toISOString().split('T')[0], payment_method:'Efectivo', notes:''});
+    const [d, setD] = React.useState({amount:'', payment_date: new Date().toISOString().split('T')[0], payment_method:'Transferencia', notes:'', status:'completado'});
     const save = async () => {
       if (!d.amount) return;
       setLoading(true);
-      try { await api.addPayment({...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
+      const finalNotes = d.status === 'verificando' ? `[VERIFICANDO] ${d.notes}`.trim() : d.notes;
+      try { await api.addPayment({amount:d.amount, payment_date:d.payment_date, payment_method:d.payment_method, notes:finalNotes, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
       catch(e) { alert(e.message); } finally { setLoading(false); }
     };
     return (
@@ -201,8 +202,10 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           <Input label="Importe €" type="number" value={d.amount} onChange={v=>setD({...d,amount:v})} />
           <Input label="Fecha" type="date" value={d.payment_date} onChange={v=>setD({...d,payment_date:v})} />
           <Select label="Método" value={d.payment_method} onChange={v=>setD({...d,payment_method:v})}
-            options={[{value:'Efectivo',label:'Efectivo'},{value:'Transferencia',label:'Transferencia'},{value:'PayPal',label:'PayPal'},{value:'Tarjeta',label:'Tarjeta'}]} />
-          <Input label="Notas" value={d.notes} onChange={v=>setD({...d,notes:v})} />
+            options={[{value:'Transferencia',label:'Transferencia'},{value:'Efectivo',label:'Efectivo'},{value:'PayPal',label:'PayPal'},{value:'Tarjeta',label:'Tarjeta'},{value:'Wise',label:'Wise'}]} />
+          <Select label="Estado" value={d.status} onChange={v=>setD({...d,status:v})}
+            options={[{value:'completado',label:'✅ Completado (Recibido)'},{value:'verificando',label:'⏳ Verificando (Justificante)'}]} />
+          <div style={{gridColumn:'1/-1'}}><Input label="Referencia / Notas" value={d.notes} onChange={v=>setD({...d,notes:v})} placeholder="ID Transacción o Banco..." /></div>
         </div>
         <div style={{display:'flex',gap:'8px'}}>
           <button onClick={save} style={{flex:2,padding:'12px',background:C,color:'#000',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✓ GUARDAR COBRO</button>
@@ -213,7 +216,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
   };
 
   const ExpForm = () => {
-    const [d, setD] = React.useState({concept:'', amount:'', expense_date: new Date().toISOString().split('T')[0], category:'Chofer'});
+    const [d, setD] = React.useState({concept:'', amount:'', expense_date: new Date().toISOString().split('T')[0], category:'Sueldo Chofer'});
     const save = async () => {
       if (!d.amount || !d.concept) return;
       setLoading(true);
@@ -223,11 +226,18 @@ export const FinancialManagement = ({booking, onUpdate}) => {
     return (
       <div style={{background:'#222', padding:'18px', borderRadius:'20px', marginBottom:'16px', border:'1px solid #ef444444'}}>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:'10px', marginBottom:'10px'}}>
-          <Input label="Concepto" value={d.concept} onChange={v=>setD({...d,concept:v})} />
+          <Select label="Categoría" value={d.category} onChange={v=>setD({...d,category:v})}
+            options={[
+              {value:'Sueldo Chofer',label:'🚗 Sueldo Chofer'},
+              {value:'Gasolina/Peajes',label:'⛽ Gasolina / Peajes'},
+              {value:'Tickets/Entradas',label:'🎟️ Tickets / Entradas'},
+              {value:'Dietas',label:'🍱 Comidas / Dietas'},
+              {value:'Comisiones',label:'🏦 Comisiones Bancarias'},
+              {value:'Otros',label:'📝 Otros Gastos'},
+            ]} />
+          <Input label="Concepto (Detalle)" value={d.concept} onChange={v=>setD({...d,concept:v})} />
           <Input label="Importe €" type="number" value={d.amount} onChange={v=>setD({...d,amount:v})} />
           <Input label="Fecha" type="date" value={d.expense_date} onChange={v=>setD({...d,expense_date:v})} />
-          <Select label="Categoría" value={d.category} onChange={v=>setD({...d,category:v})}
-            options={[{value:'Chofer',label:'Pago Chofer'},{value:'Combustible',label:'Combustible'},{value:'Entradas',label:'Entradas'},{value:'Comida',label:'Comida'},{value:'Otros',label:'Otros'}]} />
         </div>
         <div style={{display:'flex',gap:'8px'}}>
           <button onClick={save} style={{flex:2,padding:'12px',background:'#ef4444',color:'#fff',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✓ GUARDAR GASTO</button>
@@ -345,24 +355,31 @@ export const FinancialManagement = ({booking, onUpdate}) => {
             <div>Sin cobros registrados</div>
           </div>
         )}
-        {activeTab==='cobros' && payments.map(p => (
-          <div key={p.id} style={rowStyle(C)}>
-            <div style={{background:C+'22',color:C,width:'44px',height:'44px',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,flexShrink:0}}>▲</div>
+        {activeTab==='cobros' && payments.map(p => {
+          const isVerifying = (p.notes||'').includes('[VERIFICANDO]');
+          const cleanNotes = (p.notes||'').replace('[VERIFICANDO]', '').trim();
+          return (
+          <div key={p.id} style={rowStyle(isVerifying ? '#f59e0b' : C)}>
+            <div style={{background:isVerifying ? '#f59e0b22' : C+'22',color:isVerifying ? '#f59e0b' : C,width:'44px',height:'44px',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,flexShrink:0}}>
+              {isVerifying ? '⏳' : '▲'}
+            </div>
             <div style={{flex:1,minWidth:0}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
-                <div style={{fontSize:'16px',fontWeight:900,color:C}}>+{Number(p.amount).toFixed(2)}€</div>
-                <div style={{fontSize:'10px',color:C,background:C+'11',padding:'2px 8px',borderRadius:'6px',fontWeight:900}}>{(p.payment_method||'').toUpperCase()}</div>
+                <div style={{fontSize:'16px',fontWeight:900,color:isVerifying ? '#f59e0b' : C}}>+{Number(p.amount).toFixed(2)}€</div>
+                <div style={{display:'flex', gap:'4px'}}>
+                  {isVerifying && <div style={{fontSize:'9px',color:'#f59e0b',border:'1px solid #f59e0b',padding:'2px 6px',borderRadius:'6px',fontWeight:900}}>VERIFICANDO</div>}
+                  <div style={{fontSize:'10px',color:isVerifying ? '#f59e0b' : C,background:isVerifying ? '#f59e0b11' : C+'11',padding:'2px 8px',borderRadius:'6px',fontWeight:900}}>{(p.payment_method||'').toUpperCase()}</div>
+                </div>
               </div>
               <div style={{fontSize:'11px',color:'#555',marginTop:'2px'}}>
                 {new Date(p.payment_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
                 <span style={{marginLeft:'6px', opacity:0.5}}>{p.created_at ? new Date(p.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''} (Local)</span>
-                <span style={{marginLeft:'6px', opacity:0.3}}>· Bali: {p.created_at ? new Date(p.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
-                {p.notes && <span style={{marginLeft:'8px'}}>· {p.notes}</span>}
+                {cleanNotes && <span style={{marginLeft:'8px'}}>· {cleanNotes}</span>}
               </div>
             </div>
             <button onClick={()=>delPayment(p.id)} style={{width:'32px',height:'32px',borderRadius:'10px',background:'#ef444411',border:'none',color:'#ef4444',cursor:'pointer',flexShrink:0}}>✕</button>
           </div>
-        ))}
+        )})}
 
         {activeTab==='extras' && charges.length===0 && !adding && (
           <div style={{textAlign:'center',color:'#555',padding:'30px',border:'2px dashed #222',borderRadius:'20px'}}>
