@@ -55,7 +55,7 @@ export default function ItineraryPage() {
             if (ext && ext.passengers) existingPax = ext.passengers;
           } catch(e) {}
           
-          const numPax = parseInt(data.data.pax) || 1;
+          const numPax = Math.max(1, Math.abs(parseInt(data.data.pax) || 1));
           const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', emergency: '' });
           setCheckinData(initCheckin);
         }

@@ -10,8 +10,8 @@ const Field = ({label, children}) => (
   <div style={{display:'flex',flexDirection:'column',gap:'4px'}}><label style={labelStyle}>{label}</label>{children}</div>
 );
 
-const Input = ({label,value,onChange,type='text',...rest}) => (
-  <Field label={label}><input type={type} value={value||''} onChange={e=>onChange(e.target.value)} style={inputStyle} {...rest} /></Field>
+const Input = ({label,value,onChange,type='text',readOnly,...rest}) => (
+  <Field label={label}><input type={type} value={value||''} onChange={e=>!readOnly && onChange(e.target.value)} style={{...inputStyle, opacity: readOnly ? 0.6 : 1, cursor: readOnly ? 'not-allowed' : 'text'}} readOnly={readOnly} {...rest} /></Field>
 );
 
 const Select = ({label,value,onChange,options}) => (
@@ -20,15 +20,10 @@ const Select = ({label,value,onChange,options}) => (
 
 export const BookingForm = ({data,drivers,onChange}) => (
   <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(240px, 1fr))',gap:'12px'}}>
-    <Input label="Cliente" value={data.client_name} onChange={v=>onChange('client_name',v)} />
-    <Input label="WhatsApp" value={data.client_phone} onChange={v=>onChange('client_phone',v)} />
+    {/* Identity & Core Info */}
+    <Input label="Código Referencia (ID)" value={data.reference || `CT-${data.id}`} onChange={()=>{}} readOnly />
     <Input label="Fecha Tour" value={data.booking_date} onChange={v=>onChange('booking_date',v)} type="date" />
-    <Input label="Hotel" value={data.hotel} onChange={v=>onChange('hotel',v)} />
-    <div style={{gridColumn:'1/-1'}}><Input label="Tour" value={data.tour_title} onChange={v=>onChange('tour_title',v)} /></div>
-    <Input label="Precio €" value={data.total_price} onChange={v=>onChange('total_price',v)} type="number" />
-    <Input label="Depósito €" value={data.deposit_amount} onChange={v=>onChange('deposit_amount',v)} type="number" />
-    <Input label="PAX" value={data.pax} onChange={v=>onChange('pax',v)} type="number" />
-    <Select label="Estado" value={data.payment_status} onChange={v=>onChange('payment_status',v)} options={[
+    <Select label="Estado de Reserva" value={data.payment_status} onChange={v=>onChange('payment_status',v)} options={[
       {value:'requested',         label:'🟡 Solicitud Recibida'},
       {value:'pending_payment',   label:'🟠 Pago Pendiente'},
       {value:'payment_confirmed', label:'🔵 Pago Confirmado'},
@@ -40,9 +35,23 @@ export const BookingForm = ({data,drivers,onChange}) => (
       {value:'cancelled',         label:'🔴 Cancelado'},
       {value:'refunded',          label:'🩷 Reembolsado'},
     ]} />
-    <Select label="Chofer" value={data.driver_id} onChange={v=>onChange('driver_id',v)} options={[{value:'',label:'Sin asignar'},...drivers.map(d=>({value:d.id,label:d.name}))]} />
+
+    {/* Client Info */}
+    <Input label="Cliente" value={data.client_name} onChange={v=>onChange('client_name',v)} />
+    <Input label="WhatsApp" value={data.client_phone} onChange={v=>onChange('client_phone',v)} />
+    <Input label="Hotel / Recogida" value={data.hotel} onChange={v=>onChange('hotel',v)} />
+
+    {/* Tour Setup */}
+    <div style={{gridColumn:'1/-1'}}><Input label="Tour" value={data.tour_title} onChange={v=>onChange('tour_title',v)} /></div>
+    <Input label="PAX (Pasajeros)" value={data.pax} onChange={v=>onChange('pax',v)} type="number" />
     <Select label="Experiencia" value={data.experience} onChange={v=>onChange('experience',v)} options={[{value:'driver_en',label:'Conductor privado (inglés)'},{value:'guide_en',label:'Guía Local (inglés)'},{value:'guide_es',label:'Guía Local Certificado (español)'}]} />
-    <Input label="Código Referencia (ej: GP7D)" value={data.reference} onChange={v=>onChange('reference',v)} />
+    <Select label="Chofer Asignado" value={data.driver_id} onChange={v=>onChange('driver_id',v)} options={[{value:'',label:'Sin asignar'},...drivers.map(d=>({value:d.id,label:d.name}))]} />
+
+    {/* Finances */}
+    <Input label="Precio Total €" value={data.total_price} onChange={v=>onChange('total_price',v)} type="number" />
+    <Input label="Depósito Recibido €" value={data.deposit_amount} onChange={v=>onChange('deposit_amount',v)} type="number" />
+
+    {/* Notes */}
     <div style={{gridColumn:'1/-1'}}><Field label="Notas Internas (Seguimiento)"><textarea rows={3} value={data.notes||''} onChange={e=>onChange('notes',e.target.value)} style={{...inputStyle,resize:'vertical'}} /></Field></div>
   </div>
 );
