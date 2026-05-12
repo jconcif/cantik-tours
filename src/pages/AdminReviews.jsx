@@ -1,7 +1,14 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import * as api from '../services/api';
 import { login as apiLogin, getToken, clearToken } from '../services/api';
 import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor } from '../components/AdminComponents';
+import { 
+  MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
+  Globe, Sun, Moon, DollarSign, Euro, LogOut, LayoutDashboard,
+  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download
+} from 'lucide-react';
+import { useCurrency } from '../context/CurrencyContext';
+import { useDarkMode } from '../context/DarkModeContext';
 
 const C = '#11BDDB';
 const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en',reference:'',notes:''};
@@ -75,6 +82,8 @@ export default function AdminPanel() {
   const [detailedStats, setDetailedStats] = useState(null);
   const [calMonth, setCalMonth] = useState(new Date());
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const { currency, toggleCurrency } = useCurrency();
+  const { isDark, toggleDarkMode } = useDarkMode();
 
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace('_', ' ');
 
@@ -273,10 +282,49 @@ export default function AdminPanel() {
   );
 
   return(
-    <div style={{paddingTop: isMobile ? '80px' : '100px', paddingBottom:'40px',minHeight:'100vh',background:'#0f0f0f',color:'#fff', fontFamily:'"Inter", sans-serif'}}>
+    <div style={{paddingTop: isMobile ? '120px' : '140px', paddingBottom:'40px',minHeight:'100vh',background:'#0f0f0f',color:'#fff', fontFamily:'"Inter", sans-serif'}}>
+      
+      {/* MENU SUPERIOR / SETTINGS */}
+      <div style={{position:'fixed', top:0, left:0, right:0, zIndex:100, background:'#1a1a1a99', backdropFilter:'blur(20px)', borderBottom:'1px solid #ffffff05', padding:'12px 0'}}>
+        <div style={{maxWidth:'1100px', margin:'0 auto', padding:'0 16px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+          <div style={{display:'flex', alignItems:'center', gap:'12px'}}>
+            <div style={{width:'32px', height:'32px', background:C, borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', color:'#000', fontWeight:900}}>C</div>
+            <div style={{fontSize:'16px', fontWeight:900, letterSpacing:'-0.5px'}}>CANTIK <span style={{color:C}}>ADMIN</span></div>
+          </div>
+          
+          <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
+            <button 
+              onClick={toggleCurrency} 
+              style={{...s.btn('#ffffff05', '#fff'), width:'36px', height:'36px', padding:0, border:'1px solid #ffffff10'}}
+              title={`Cambiar a ${currency === 'EUR' ? 'USD' : 'EUR'}`}
+            >
+              {currency === 'EUR' ? <Euro size={16} /> : <DollarSign size={16} />}
+            </button>
+            
+            <button 
+              onClick={toggleDarkMode} 
+              style={{...s.btn('#ffffff05', '#fff'), width:'36px', height:'36px', padding:0, border:'1px solid #ffffff10'}}
+              title={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
+            >
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
+            
+            <div style={{width:'1px', height:'20px', background:'#ffffff10', margin:'0 4px'}}></div>
+
+            <button 
+              onClick={() => { clearToken(); setAuthed(false); window.location.reload(); }} 
+              style={{...s.btn('#ef444415', '#ef4444'), width:'36px', height:'36px', padding:0}}
+              title="Cerrar Sesión"
+            >
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div style={{maxWidth:'1100px',margin:'0 auto',padding:'0 16px'}}>
         <div style={{display:'flex',flexDirection: isMobile ? 'column' : 'row', justifyContent:'space-between',alignItems: isMobile ? 'flex-start' : 'center',marginBottom:'32px', gap:'20px'}}>
-          <h1 style={{margin:0,fontSize:'26px',fontWeight:900, letterSpacing:'-1px'}}>Cantik<span style={{color:C}}>Admin</span></h1>
+          <h1 style={{margin:0,fontSize:'24px',fontWeight:900, letterSpacing:'-1px', display: isMobile ? 'none' : 'block'}}>Cantik<span style={{color:C}}>Admin</span></h1>
           <div style={{display:'flex',gap:'4px',background:'#1a1a1a',padding:'6px',borderRadius:'20px', overflowX:'auto', maxWidth:'100%', scrollbarWidth:'none', msOverflowStyle:'none'}}>
             {TABS.map(t=><button key={t} style={s.tabBtn(tab===t)} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
             <button style={s.tabBtn(false)} onClick={() => { clearToken(); setAuthed(false); }}>✕</button>
@@ -288,9 +336,9 @@ export default function AdminPanel() {
         {['bookings','drivers','reviews','coupons'].includes(tab) && <>
           <div style={{display:'flex',gap:'8px',marginBottom:'16px', flexWrap:'nowrap', overflowX:'auto', paddingBottom:'8px', scrollbarWidth:'none'}}>
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'0 0 150px',padding:'12px',borderRadius:'14px',background:'#1a1a1a',border:'none',color:'#fff', fontSize:'13px'}}/>
-            <button style={{...s.btn(C), flexShrink:0}} onClick={reload}>↻</button>
-            <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])}>+ Nuevo</button>
-            {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV}>CSV</button>}
+            <button style={{...s.btn('#ffffff05', '#fff'), border:'1px solid #333', flexShrink:0}} onClick={reload} title="Refrescar"><RefreshCcw size={16} /></button>
+            <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])} title="Nuevo"><Plus size={16} /></button>
+            {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV} title="Exportar CSV"><Download size={16} /></button>}
           </div>
           {tab==='bookings'&&filter(bookings).map(b=>(
             <div key={b.id} style={{...s.card, cursor:'pointer', border: expandedId===b.id ? `1px solid ${C}` : '1px solid #ffffff05'}} onClick={()=>setExpandedId(expandedId===b.id?null:b.id)}>
@@ -333,16 +381,71 @@ export default function AdminPanel() {
                     </div>
                   </div>
 
-                  <div style={{display:'flex', gap:'8px', width:'100%', marginTop:'4px'}}>
-                    <a href={waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`)} target="_blank" rel="noreferrer" onClick={e=>e.stopPropagation()} style={{...s.btn('#25D366'), flex:2, height:'40px'}}>WHATSAPP</a>
-                    <button style={{...s.btn(C+'22',C), flex:1.2, height:'40px'}} onClick={e=>{e.stopPropagation(); generateVoucher(b,drivers)}}>VOUCHER</button>
-                    <div style={{display:'flex', gap: isMobile ? '4px' : '6px', overflowX: isMobile ? 'auto' : 'visible', scrollbarWidth:'none', paddingBottom:'2px', width:'100%'}}>
-                      <button style={{...s.btn('#f59e0b22','#f59e0b'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Copiar Link Review" onClick={e=>{e.stopPropagation(); copyReviewLink(b)}}>⭐</button>
-                      <button style={{...s.btn('#ffffff11','#fff'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} onClick={e=>{e.stopPropagation(); openEdit('booking',b)}}>✎</button>
-                      <button style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Editar Itinerario" onClick={e=>{e.stopPropagation(); setModal({type:'itinerary', action:'edit', data:b})}}>📍</button>
-                      <button style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} title="Finanzas del Tour" onClick={e=>{e.stopPropagation(); handleManagePayments(b)}}>💰</button>
-                      <button style={{...s.btn('#ef444411','#ef4444'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} onClick={e=>{e.stopPropagation(); del('booking',b.id)}}>✕</button>
-                    </div>
+                  <div style={{display:'flex', gap:'8px', width:'100%', marginTop:'4px', alignItems:'center'}}>
+                    <a 
+                      href={b.client_phone ? waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`) : '#'} 
+                      target={b.client_phone ? "_blank" : "_self"}
+                      rel="noreferrer" 
+                      onClick={e => {
+                        if (!b.client_phone) { e.preventDefault(); toast('Sin número registrado', false); }
+                        e.stopPropagation();
+                      }} 
+                      style={{
+                        ...s.btn(b.client_phone ? '#25D366' : '#333', b.client_phone ? '#fff' : '#666'), 
+                        flex:1, height:'40px', opacity: b.client_phone ? 1 : 0.5, cursor: b.client_phone ? 'pointer' : 'not-allowed'
+                      }}
+                      title="Enviar WhatsApp"
+                    >
+                      <MessageCircle size={18} />
+                    </a>
+
+                    <button 
+                      style={{...s.btn(C+'22',C), flex:1, height:'40px'}} 
+                      onClick={e=>{e.stopPropagation(); generateVoucher(b,drivers)}}
+                      title="Generar Voucher"
+                    >
+                      <Ticket size={18} />
+                    </button>
+
+                    <button 
+                      style={{...s.btn('#f59e0b22','#f59e0b'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
+                      title="Copiar Link Review" 
+                      onClick={e=>{e.stopPropagation(); copyReviewLink(b)}}
+                    >
+                      <Star size={18} />
+                    </button>
+
+                    <button 
+                      style={{...s.btn('#ffffff11','#fff'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
+                      title="Editar Reserva"
+                      onClick={e=>{e.stopPropagation(); openEdit('booking',b)}}
+                    >
+                      <Pencil size={18} />
+                    </button>
+
+                    <button 
+                      style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
+                      title="Editar Itinerario" 
+                      onClick={e=>{e.stopPropagation(); setModal({type:'itinerary', action:'edit', data:b})}}
+                    >
+                      <MapPin size={18} />
+                    </button>
+
+                    <button 
+                      style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
+                      title="Finanzas del Tour" 
+                      onClick={e=>{e.stopPropagation(); handleManagePayments(b)}}
+                    >
+                      <Wallet size={18} />
+                    </button>
+
+                    <button 
+                      style={{...s.btn('#ef444411','#ef4444'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
+                      title="Eliminar"
+                      onClick={e=>{e.stopPropagation(); del('booking',b.id)}}
+                    >
+                      <Trash2 size={18} />
+                    </button>
                   </div>
                 </div>
               )}
@@ -352,8 +455,8 @@ export default function AdminPanel() {
             <div key={d.id} style={s.card}>
               <div><div style={{fontWeight:900}}>{d.name}</div><div style={{color:'#666',fontSize:'12px'}}>{d.car_model}</div></div>
               <div style={{display:'flex',gap:'6px'}}>
-                <button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('driver',d)}>✎</button>
-                <button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('driver',d.id)}>✕</button>
+                <button style={{...s.btn('#ffffff15','#fff'), width:'36px', height:'36px', padding:0}} title="Editar" onClick={()=>openEdit('driver',d)}><Pencil size={16} /></button>
+                <button style={{...s.btn('#ef444422','#ef4444'), width:'36px', height:'36px', padding:0}} title="Eliminar" onClick={()=>del('driver',d.id)}><Trash2 size={16} /></button>
               </div>
             </div>
           ))}
@@ -375,13 +478,19 @@ export default function AdminPanel() {
                 </div>
                 <div style={{fontSize:'12px',color:'#888'}}>"{r.comentario}"</div>
               </div>
-              <div style={{display:'flex',gap:'6px'}}><button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('review',r)}>✎</button><button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('review',r.id)}>✕</button></div>
+              <div style={{display:'flex',gap:'6px'}}>
+                <button style={{...s.btn('#ffffff15','#fff'), width:'36px', height:'36px', padding:0}} title="Editar" onClick={()=>openEdit('review',r)}><Pencil size={16} /></button>
+                <button style={{...s.btn('#ef444422','#ef4444'), width:'36px', height:'36px', padding:0}} title="Eliminar" onClick={()=>del('review',r.id)}><Trash2 size={16} /></button>
+              </div>
             </div>
           ))}
           {tab==='coupons'&&filter(coupons).map(c=>(
             <div key={c.id} style={s.card}>
               <div><div style={{fontWeight:900}}>{c.code}</div><div style={{fontSize:'12px',color:'#666'}}>{c.discount_value}${c.discount_type==='percent'?'%':'€'}</div></div>
-              <div style={{display:'flex',gap:'6px'}}><button style={s.btn('#ffffff15','#fff')} onClick={()=>openEdit('coupon',c)}>✎</button><button style={s.btn('#ef444422','#ef4444')} onClick={()=>del('coupon',c.id)}>✕</button></div>
+              <div style={{display:'flex',gap:'6px'}}>
+                <button style={{...s.btn('#ffffff15','#fff'), width:'36px', height:'36px', padding:0}} title="Editar" onClick={()=>openEdit('coupon',c)}><Pencil size={16} /></button>
+                <button style={{...s.btn('#ef444422','#ef4444'), width:'36px', height:'36px', padding:0}} title="Eliminar" onClick={()=>del('coupon',c.id)}><Trash2 size={16} /></button>
+              </div>
             </div>
           ))}
         </>}
@@ -448,7 +557,7 @@ export default function AdminPanel() {
         )}
 
         {modal&&(
-          <Modal title={`${modal.action==='create'?'Nuevo':modal.action==='delete'?'Confirmar Eliminación':'Editar'} ${modal.type === 'finance' ? 'Finanzas del Tour' : modal.type}`} onClose={()=>setModal(null)} onSave={save} loading={loading} hideFooter={modal.type === 'finance' || modal.action === 'delete'}>
+          <Modal title={`${modal.action==='create'?'Nuevo':modal.action==='delete'?'Confirmar Eliminación':'Editar'} ${modal.type === 'finance' ? 'Finanzas del Tour' : modal.type}`} onClose={()=>setModal(null)} onSave={save} loading={loading} hideFooter={modal.type === 'finance' || modal.type === 'itinerary' || modal.action === 'delete'}>
             {modal.action === 'delete' ? (
                <div style={{textAlign:'center', padding:'20px 0'}}>
                   <div style={{fontSize:'48px', marginBottom:'16px'}}>⚠️</div>
