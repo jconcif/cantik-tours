@@ -5,7 +5,7 @@ import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManage
 import { 
   MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
   Globe, Sun, Moon, DollarSign, Euro, LogOut, LayoutDashboard,
-  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download
+  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download, ExternalLink
 } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -99,6 +99,40 @@ export default function AdminPanel() {
   }, []);
 
   const toast = (t, ok = true) => { setMsg({ t, ok }); setTimeout(() => setMsg(null), 3000); };
+
+  const theme = {
+    bg: isDark ? '#0a0a0a' : '#f8fafc',
+    card: isDark ? '#1a1a1a' : '#ffffff',
+    text: isDark ? '#fff' : '#1e293b',
+    textMuted: isDark ? '#666' : '#94a3b8',
+    border: isDark ? '#ffffff05' : '#e2e8f0',
+    tabBg: isDark ? '#1a1a1a' : '#f1f5f9',
+    btnGhost: isDark ? '#ffffff05' : '#e2e8f0',
+    header: isDark ? '#1a1a1a99' : '#ffffffcc',
+    shadow: isDark ? '0 10px 30px rgba(0,0,0,0.5)' : '0 10px 30px rgba(0,0,0,0.05)',
+  };
+
+  const getProbableLocation = (phone) => {
+    if (!phone) return null;
+    const p = phone.replace(/\D/g, '');
+    if (p.startsWith('34')) return { name: 'España', flag: '🇪🇸' };
+    if (p.startsWith('52')) return { name: 'México', flag: '🇲🇽' };
+    if (p.startsWith('54')) return { name: 'Argentina', flag: '🇦🇷' };
+    if (p.startsWith('56')) return { name: 'Chile', flag: '🇨🇱' };
+    if (p.startsWith('57')) return { name: 'Colombia', flag: '🇨🇴' };
+    if (p.startsWith('51')) return { name: 'Perú', flag: '🇵🇪' };
+    if (p.startsWith('58')) return { name: 'Venezuela', flag: '🇻🇪' };
+    if (p.startsWith('593')) return { name: 'Ecuador', flag: '🇪🇨' };
+    if (p.startsWith('591')) return { name: 'Bolivia', flag: '🇧🇴' };
+    if (p.startsWith('598')) return { name: 'Uruguay', flag: '🇺🇾' };
+    if (p.startsWith('595')) return { name: 'Paraguay', flag: '🇵🇾' };
+    if (p.startsWith('506')) return { name: 'Costa Rica', flag: '🇨🇷' };
+    if (p.startsWith('507')) return { name: 'Panamá', flag: '🇵🇦' };
+    if (p.startsWith('502')) return { name: 'Guatemala', flag: '🇬🇹' };
+    if (p.startsWith('1')) return { name: 'USA/Canadá', flag: '🇺🇸' };
+    if (p.startsWith('44')) return { name: 'UK', flag: '🇬🇧' };
+    return null;
+  };
 
   // ── Auto-transition status by date ──────────────────────────
   const autoUpdateStatuses = async (list) => {
@@ -254,15 +288,15 @@ export default function AdminPanel() {
 
   const s={
     btn:(bg,c='#fff')=>({background:bg,color:c,border:'none',padding:'8px 16px',borderRadius:'12px',fontWeight:900,cursor:'pointer',fontSize:'12px',transition:'all 0.2s', display:'flex', alignItems:'center', justifyContent:'center', gap:'6px'}),
-    card:{background:'#1a1a1a',borderRadius:'16px',padding:'16px',marginBottom:'12px',display:'flex',flexDirection:'column',gap:'16px',border:'1px solid #ffffff05', position:'relative', boxShadow:'0 10px 20px rgba(0,0,0,0.2)'},
+    card:{background:theme.card,borderRadius:'16px',padding:'16px',marginBottom:'12px',display:'flex',flexDirection:'column',gap:'16px',border:`1px solid ${theme.border}`, position:'relative', boxShadow: theme.shadow},
     tag:(c)=>({background:c+'22',color:c,padding:'2px 8px',borderRadius:'8px',fontSize:'10px',fontWeight:900,textTransform:'uppercase'}),
-    tabBtn:(a)=>({background:a?C+'22':'transparent',color:a?C:'#fff',border:'none',padding:'10px 20px',borderRadius:'14px',fontWeight:900,cursor:'pointer', whiteSpace:'nowrap', fontSize:'13px', transition:'all 0.3s'})
+    tabBtn:(a)=>({background:a?C+'22':'transparent',color:a?C:theme.text,border:'none',padding:'10px 20px',borderRadius:'14px',fontWeight:900,cursor:'pointer', whiteSpace:'nowrap', fontSize:'13px', transition:'all 0.3s'})
   };
 
   if (!authed) return (
-    <div style={{minHeight:'100vh',background:'#0f0f0f',display:'flex',alignItems:'center',justifyContent:'center', padding:'20px'}}>
-      <div style={{background:'#1a1a1a',padding:'40px',borderRadius:'32px',width:'100%',maxWidth:'380px',borderTop:`8px solid ${C}`, boxShadow:'0 30px 60px rgba(0,0,0,0.5)'}}>
-        <h2 style={{color:'#fff',textAlign:'center',marginBottom:'30px', fontSize:'28px', fontWeight:900}}>Cantik <span style={{color:C}}>Admin</span></h2>
+    <div style={{minHeight:'100vh',background:theme.bg,display:'flex',alignItems:'center',justifyContent:'center', padding:'20px'}}>
+      <div style={{background:theme.card,padding:'40px',borderRadius:'32px',width:'100%',maxWidth:'380px',borderTop:`8px solid ${C}`, boxShadow: theme.shadow}}>
+        <h2 style={{color:theme.text,textAlign:'center',marginBottom:'30px', fontSize:'28px', fontWeight:900}}>Cantik <span style={{color:C}}>Admin</span></h2>
         <form onSubmit={async e => {
           e.preventDefault();
           setLoading(true);
@@ -273,7 +307,7 @@ export default function AdminPanel() {
             toast(err.message || 'Contraseña incorrecta', false);
           } finally { setLoading(false); }
         }}>
-          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Introduce el PIN" style={{width:'100%',padding:'16px',borderRadius:'16px',border:'1px solid #333',background:'#0f0f0f',color:'#fff',marginBottom:'16px',boxSizing:'border-box', textAlign:'center', fontSize:'18px', fontWeight:900}}/>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Introduce el PIN" style={{width:'100%',padding:'16px',borderRadius:'16px',border:`1px solid ${theme.border}`,background:theme.bg,color:theme.text,marginBottom:'16px',boxSizing:'border-box', textAlign:'center', fontSize:'18px', fontWeight:900}}/>
           {msg && <div style={{padding:'12px',borderRadius:'12px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'16px',fontWeight:900,fontSize:'14px'}}>{msg.t}</div>}
           <button type="submit" style={{...s.btn(C),width:'100%',padding:'16px', fontSize:'16px'}}>{loading?'Autenticando...':'Entrar'}</button>
         </form>
@@ -282,34 +316,26 @@ export default function AdminPanel() {
   );
 
   return(
-    <div style={{paddingTop: isMobile ? '120px' : '140px', paddingBottom:'40px',minHeight:'100vh',background:'#0f0f0f',color:'#fff', fontFamily:'"Inter", sans-serif'}}>
+    <div style={{paddingTop: isMobile ? '120px' : '140px', paddingBottom:'40px',minHeight:'100vh',background:theme.bg,color:theme.text, fontFamily:'"Inter", sans-serif'}}>
       
       {/* MENU SUPERIOR / SETTINGS */}
-      <div style={{position:'fixed', top:0, left:0, right:0, zIndex:100, background:'#1a1a1a99', backdropFilter:'blur(20px)', borderBottom:'1px solid #ffffff05', padding:'12px 0'}}>
+      <div style={{position:'fixed', top:0, left:0, right:0, zIndex:100, background:theme.header, backdropFilter:'blur(20px)', borderBottom:`1px solid ${theme.border}`, padding:'12px 0'}}>
         <div style={{maxWidth:'1100px', margin:'0 auto', padding:'0 16px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
           <div style={{display:'flex', alignItems:'center', gap:'12px'}}>
             <div style={{width:'32px', height:'32px', background:C, borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', color:'#000', fontWeight:900}}>C</div>
-            <div style={{fontSize:'16px', fontWeight:900, letterSpacing:'-0.5px'}}>CANTIK <span style={{color:C}}>ADMIN</span></div>
+            <div style={{fontSize:'16px', fontWeight:900, letterSpacing:'-0.5px', color: theme.text}}>CANTIK <span style={{color:C}}>ADMIN</span></div>
           </div>
           
           <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
             <button 
-              onClick={toggleCurrency} 
-              style={{...s.btn('#ffffff05', '#fff'), width:'36px', height:'36px', padding:0, border:'1px solid #ffffff10'}}
-              title={`Cambiar a ${currency === 'EUR' ? 'USD' : 'EUR'}`}
-            >
-              {currency === 'EUR' ? <Euro size={16} /> : <DollarSign size={16} />}
-            </button>
-            
-            <button 
               onClick={toggleDarkMode} 
-              style={{...s.btn('#ffffff05', '#fff'), width:'36px', height:'36px', padding:0, border:'1px solid #ffffff10'}}
+              style={{...s.btn(theme.btnGhost, theme.text), width:'36px', height:'36px', padding:0, border:`1px solid ${theme.border}`}}
               title={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
             >
               {isDark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
             
-            <div style={{width:'1px', height:'20px', background:'#ffffff10', margin:'0 4px'}}></div>
+            <div style={{width:'1px', height:'20px', background:theme.border, margin:'0 4px'}}></div>
 
             <button 
               onClick={() => { clearToken(); setAuthed(false); window.location.reload(); }} 
@@ -325,9 +351,8 @@ export default function AdminPanel() {
       <div style={{maxWidth:'1100px',margin:'0 auto',padding:'0 16px'}}>
         <div style={{display:'flex',flexDirection: isMobile ? 'column' : 'row', justifyContent:'space-between',alignItems: isMobile ? 'flex-start' : 'center',marginBottom:'32px', gap:'20px'}}>
           <h1 style={{margin:0,fontSize:'24px',fontWeight:900, letterSpacing:'-1px', display: isMobile ? 'none' : 'block'}}>Cantik<span style={{color:C}}>Admin</span></h1>
-          <div style={{display:'flex',gap:'4px',background:'#1a1a1a',padding:'6px',borderRadius:'20px', overflowX:'auto', maxWidth:'100%', scrollbarWidth:'none', msOverflowStyle:'none'}}>
+          <div style={{display:'flex',gap:'4px',background:theme.tabBg,padding:'6px',borderRadius:'20px', overflowX:'auto', maxWidth:'100%', scrollbarWidth:'none', msOverflowStyle:'none'}}>
             {TABS.map(t=><button key={t} style={s.tabBtn(tab===t)} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
-            <button style={s.tabBtn(false)} onClick={() => { clearToken(); setAuthed(false); }}>✕</button>
           </div>
         </div>
 
@@ -335,8 +360,8 @@ export default function AdminPanel() {
 
         {['bookings','drivers','reviews','coupons'].includes(tab) && <>
           <div style={{display:'flex',gap:'8px',marginBottom:'16px', flexWrap:'nowrap', overflowX:'auto', paddingBottom:'8px', scrollbarWidth:'none'}}>
-            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'0 0 150px',padding:'12px',borderRadius:'14px',background:'#1a1a1a',border:'none',color:'#fff', fontSize:'13px'}}/>
-            <button style={{...s.btn('#ffffff05', '#fff'), border:'1px solid #333', flexShrink:0}} onClick={reload} title="Refrescar"><RefreshCcw size={16} /></button>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'0 0 150px',padding:'12px',borderRadius:'14px',background:theme.card,border:`1px solid ${theme.border}`,color:theme.text, fontSize:'13px'}}/>
+            <button style={{...s.btn(theme.btnGhost, theme.text), border:`1px solid ${theme.border}`, flexShrink:0}} onClick={reload} title="Refrescar"><RefreshCcw size={16} /></button>
             <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])} title="Nuevo"><Plus size={16} /></button>
             {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV} title="Exportar CSV"><Download size={16} /></button>}
           </div>
@@ -368,9 +393,14 @@ export default function AdminPanel() {
                   <div style={{fontSize:'12px', color:'#fff', background:'#ffffff05', padding:'12px', borderRadius:'12px'}}>
                     <div style={{marginBottom:'8px'}}><span style={{color:'#666', fontWeight:900}}>HOTEL:</span> {b.hotel}</div>
                     {b.notes && <div style={{marginBottom:'8px'}}><span style={{color:'#666', fontWeight:900}}>NOTAS:</span> {b.notes}</div>}
-                    <div style={{display:'flex', gap:'12px', fontSize:'10px'}}>
-                      <span style={{color:C}}>🕒 Creado: {new Date(b.created_at).toLocaleString('es-ES', {hour:'2-digit', minute:'2-digit'})}</span>
+                    <div style={{display:'flex', gap:'12px', fontSize:'10px', alignItems:'center'}}>
+                      <span style={{color:C, fontWeight:700}}>🕒 {new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})}</span>
                       <span style={{opacity:0.6}}>🌴 Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
+                      {getProbableLocation(b.client_phone) && (
+                        <span style={{opacity:0.8, background:theme.btnGhost, padding:'2px 8px', borderRadius:'6px'}}>
+                          {getProbableLocation(b.client_phone).flag} {getProbableLocation(b.client_phone).name}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -421,6 +451,18 @@ export default function AdminPanel() {
                       onClick={e=>{e.stopPropagation(); openEdit('booking',b)}}
                     >
                       <Pencil size={18} />
+                    </button>
+
+                    <button 
+                      style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
+                      title="Ver Itinerario Público" 
+                      onClick={e=>{
+                        e.stopPropagation(); 
+                        const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
+                        window.open(`https://cantiktours.com/booking?ref=${ref}`, '_blank');
+                      }}
+                    >
+                      <ExternalLink size={18} />
                     </button>
 
                     <button 
