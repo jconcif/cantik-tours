@@ -429,32 +429,33 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                         </div>
 
                                         <div className="space-y-4">
-                                            <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-5 rounded-[2rem] bg-[#25D366] text-white flex flex-col items-center justify-center gap-1 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355] relative overflow-hidden group">
+                                            <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-5 rounded-[2rem] bg-[#25D366] text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355] relative overflow-hidden group">
                                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
-                                                <div className="flex items-center gap-3">
-                                                    <MessageCircle size={24} /> 
-                                                    <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
-                                                </div>
-                                                <span className="text-[12px] font-bold text-white/90">
-                                                    {i18n.language === 'en' ? 'We will verify the availability of your trip via WhatsApp' : 'Verificaremos la disponibilidad de tu viaje por WhatsApp'}
-                                                </span>
+                                                <MessageCircle size={24} /> 
+                                                <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
                                             </button>
                                             <div className="text-center px-4">
-                                                <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-xl p-3.5 border border-primary/10 space-y-1">
+                                                <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-2xl p-4 border border-primary/10 space-y-2">
+                                                    <p className="text-gray-700 dark:text-gray-200 text-[11px] font-black leading-normal">
+                                                        {i18n.language === 'en' 
+                                                            ? 'We will verify the availability of your trip, request the booking and let\'s talk via WhatsApp' 
+                                                            : 'Verificaremos la disponibilidad de tu viaje, solicita la reserva y hablemos por WhatsApp'
+                                                        }
+                                                    </p>
                                                     <p>
                                                         {i18n.language === 'en' 
                                                             ? 'You will pay your booking once we verify the details of your trip.' 
                                                             : 'Abonarás tu reserva una vez que verifiquemos los detalles de tu viaje.'
                                                         }
                                                     </p>
-                                                    <p className="text-primary text-[12px] font-black tracking-wide">
+                                                    <p className="text-primary text-[12px] font-black tracking-wide pt-1">
                                                         {i18n.language === 'en' ? 'See you in Bali!' : '¡Nos vemos en Bali!'}
                                                     </p>
                                                 </div>
                                                 <p className="text-[9px] font-bold text-gray-400 dark:text-gray-500 leading-relaxed uppercase tracking-widest mt-4">
                                                     {i18n.language === 'en' 
-                                                        ? <>By clicking I Accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms of Service</a>.</> 
-                                                        : <>Al hacer clic Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos de Servicio</a>.</>
+                                                        ? <>By requesting the booking I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms of Service</a>.</> 
+                                                        : <>Al solicitar la reserva Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos de Servicio</a>.</>
                                                     }
                                                 </p>
                                             </div>
