@@ -284,6 +284,16 @@ export default function AdminPanel() {
     }
   };
 
+  const handleQuickStatusChange = async (b, newStatus) => {
+    try {
+      const res = await api.updateBooking({ ...b, payment_status: newStatus });
+      toast(res.status === 'success' ? 'Estado actualizado' : 'Error al actualizar', res.status === 'success');
+      load();
+    } catch (e) {
+      toast('Error de red al actualizar estado', false);
+    }
+  };
+
   const calDays=useMemo(()=>{
     const d=new Date(calMonth.getFullYear(),calMonth.getMonth(),1);
     const days=[];for(let i=0;i<d.getDay();i++)days.push(null);
@@ -398,7 +408,31 @@ export default function AdminPanel() {
                     {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
                   </div>
                   <div style={{fontSize:'11px',color:C, fontWeight:900}}>{b.tour_title}</div>
-                  <div style={{fontSize:'10px', color:'#555', fontWeight:900, marginTop:'2px'}}>{PAY_LABEL[b.payment_status]}</div>
+                  <div style={{marginTop:'4px'}} onClick={e=>e.stopPropagation()}>
+                    <select 
+                      value={b.payment_status} 
+                      onChange={e => handleQuickStatusChange(b, e.target.value)}
+                      style={{
+                        background: PAY_COLOR[b.payment_status] + '22',
+                        color: PAY_COLOR[b.payment_status],
+                        border: `1px solid ${PAY_COLOR[b.payment_status]}55`,
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        fontSize: '10px',
+                        fontWeight: 900,
+                        cursor: 'pointer',
+                        outline: 'none',
+                        WebkitAppearance: 'none',
+                        MozAppearance: 'none',
+                        appearance: 'none',
+                        paddingRight: '16px' // space for custom arrow if needed
+                      }}
+                    >
+                      {Object.keys(PAY_LABEL).map(k => (
+                        <option key={k} value={k} style={{background:'#1a1a1a', color:'#fff'}}>{PAY_LABEL[k]}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div style={{textAlign:'right', flexShrink:0}}>
                    <div style={{fontSize:'16px', fontWeight:900, color:C}}>{b.total_price}€</div>
