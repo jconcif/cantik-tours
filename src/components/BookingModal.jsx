@@ -177,49 +177,63 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     };
 
     const handleConfirmWhatsApp = () => {
+        // Safe string cleaner that filters out emojis and any non-standard unicode symbols
+        const cleanTextForWhatsApp = (text) => {
+            if (!text) return '';
+            return text
+                .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\/\-,\s\(\)]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        };
+
         const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
         const paxValue = String(formData.pax).replace(' o más', '');
         const paxLabel = t(`detail.booking_pax_${paxValue}`);
         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
-        // Safely remove only the leading emoji and space at the beginning of the title
-        const cleanTourTitle = tourTitle.replace(/^[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s]+\s*/, '').trim();
+        const cleanTourTitle = cleanTextForWhatsApp(tourTitle);
+        const cleanClientName = cleanTextForWhatsApp(formData.name);
+        const cleanHotel = cleanTextForWhatsApp(formData.hotel);
+        const cleanExpName = cleanTextForWhatsApp(expName);
+        const cleanStops = tourId === 'ubud-flexible' && formData.selectedStops.length > 0 
+            ? cleanTextForWhatsApp(formData.selectedStops.join(', '))
+            : '';
 
         const isEn = i18n.language === 'en';
         let message = '';
         
         if (isEn) {
-            message = `🌴 *HELLO CANTIK TOURS!* 🌴
+            message = `*HELLO CANTIK TOURS!*
 I would love to request a booking for my trip to Bali. Could you please confirm availability and the next steps for payment? Thank you so much!
 
-📌 *BOOKING REQUEST DETAILS (#CT-${instantId})*
+*BOOKING REQUEST DETAILS (#CT-${instantId})*
 ------------------------------------------
-👤 *Client:* ${formData.name.toUpperCase()}
-🌎 *Tour:* ${cleanTourTitle.toUpperCase()}
-📅 *Date:* ${dateStr}
-👥 *Travelers:* ${paxLabel}
-🏨 *Hotel:* ${formData.hotel.toUpperCase()}
-✨ *Service:* ${expName}
-${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *Stops:* ${formData.selectedStops.join(', ')}\n` : ''}💰 *Estimated Price:* ${finalTotalPriceWithFees} EUR
+- *Client:* ${cleanClientName.toUpperCase()}
+- *Tour:* ${cleanTourTitle.toUpperCase()}
+- *Date:* ${dateStr}
+- *Travelers:* ${paxLabel.toUpperCase()}
+- *Hotel:* ${cleanHotel.toUpperCase()}
+- *Service:* ${cleanExpName.toUpperCase()}
+${tourId === 'ubud-flexible' && cleanStops ? `- *Stops:* ${cleanStops.toUpperCase()}\n` : ''}- *Estimated Price:* ${finalTotalPriceWithFees} EUR
 ------------------------------------------
 
-🔗 *View Live Details:* https://cantiktours.com/booking?ref=CT-${instantId}`;
+*View Live Details:* https://cantiktours.com/booking?ref=CT-${instantId}`;
         } else {
-            message = `🌴 *¡HOLA CANTIK TOURS!* 🌴
+            message = `*¡HOLA CANTIK TOURS!*
 Me encantaría solicitar la reserva para mi viaje a Bali. ¿Me podéis confirmar disponibilidad y los siguientes pasos para el pago? ¡Muchas gracias!
 
-📌 *DETALLES DE LA RESERVA (#CT-${instantId})*
+*DETALLES DE LA RESERVA (#CT-${instantId})*
 ------------------------------------------
-👤 *Cliente:* ${formData.name.toUpperCase()}
-🌎 *Tour:* ${cleanTourTitle.toUpperCase()}
-📅 *Fecha:* ${dateStr}
-👥 *Pasajeros:* ${paxLabel}
-🏨 *Hotel:* ${formData.hotel.toUpperCase()}
-✨ *Servicio:* ${expName}
-${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *Paradas:* ${formData.selectedStops.join(', ')}\n` : ''}💰 *Precio Estimado:* ${finalTotalPriceWithFees} EUR
+- *Cliente:* ${cleanClientName.toUpperCase()}
+- *Tour:* ${cleanTourTitle.toUpperCase()}
+- *Fecha:* ${dateStr}
+- *Pasajeros:* ${paxLabel.toUpperCase()}
+- *Hotel:* ${cleanHotel.toUpperCase()}
+- *Servicio:* ${cleanExpName.toUpperCase()}
+${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperCase()}\n` : ''}- *Precio Estimado:* ${finalTotalPriceWithFees} EUR
 ------------------------------------------
 
-🔗 *Ver Ficha en Vivo:* https://cantiktours.com/booking?ref=CT-${instantId}`;
+*Ver Ficha en Vivo:* https://cantiktours.com/booking?ref=CT-${instantId}`;
         }
 
         const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(message)}`;
