@@ -131,17 +131,17 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     let expSub = '';
     switch (formData.experience) {
         case 'economy':
-            expName = 'S - CONDUCTOR LOCAL (IDIOMA INGLES)';
+            expName = 'S - CONDUCTOR LOCAL (INGLES)';
             expSub = t('detail.exp_economy_sub');
             extraPrice = 0;
             break;
         case 'comfort':
-            expName = 'M - GUIA PROFESIONAL (IDIOMA INGLES)';
+            expName = 'M - GUIA PROFESIONAL (INGLÉS)';
             expSub = t('detail.exp_comfort_sub');
             extraPrice = 10;
             break;
         case 'elite':
-            expName = 'L - GUIA PROFESIONAL (IDIOMA ESPANOL)';
+            expName = 'L - GUIA PROFESIONAL (ESPAÑOL)';
             expSub = t('detail.exp_elite_sub');
             extraPrice = 25;
             break;
@@ -203,10 +203,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         let message = '';
         
         if (isEn) {
-            message = `*HELLO CANTIK TOURS!*
-I would love to request a booking for my trip to Bali. Could you please confirm availability and the next steps for payment? Thank you so much!
-
-*BOOKING REQUEST DETAILS (#CT-${instantId})*
+            message = `*BOOKING REQUEST DETAILS (#CT-${instantId})*
 ------------------------------------------
 - *Client:* ${cleanClientName.toUpperCase()}
 - *Tour:* ${cleanTourTitle.toUpperCase()}
@@ -217,12 +214,12 @@ I would love to request a booking for my trip to Bali. Could you please confirm 
 ${tourId === 'ubud-flexible' && cleanStops ? `- *Stops:* ${cleanStops.toUpperCase()}\n` : ''}- *Estimated Price:* ${finalTotalPriceWithFees} EUR
 ------------------------------------------
 
-*View Live Details:* https://cantiktours.com/booking?ref=CT-${instantId}`;
-        } else {
-            message = `*¡HOLA CANTIK TOURS!*
-Me encantaría solicitar la reserva para mi viaje a Bali. ¿Me podéis confirmar disponibilidad y los siguientes pasos para el pago? ¡Muchas gracias!
+*View Live Details:* https://cantiktours.com/booking?ref=CT-${instantId}
 
-*DETALLES DE LA RESERVA (#CT-${instantId})*
+------------------------------------------
+*FINAL STEP:* Hello Cantik Tours! I would like to request this booking. Could you please confirm availability and send me the payment details? Thank you!`;
+        } else {
+            message = `*DETALLES DE LA RESERVA (#CT-${instantId})*
 ------------------------------------------
 - *Cliente:* ${cleanClientName.toUpperCase()}
 - *Tour:* ${cleanTourTitle.toUpperCase()}
@@ -233,7 +230,10 @@ Me encantaría solicitar la reserva para mi viaje a Bali. ¿Me podéis confirmar
 ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperCase()}\n` : ''}- *Precio Estimado:* ${finalTotalPriceWithFees} EUR
 ------------------------------------------
 
-*Ver Ficha en Vivo:* https://cantiktours.com/booking?ref=CT-${instantId}`;
+*Ver Ficha en Vivo:* https://cantiktours.com/booking?ref=CT-${instantId}
+
+------------------------------------------
+*PASO FINAL:* ¡Hola Cantik Tours! Me gustaría solicitar esta reserva. ¿Me podéis confirmar disponibilidad y enviarme los datos para el pago? ¡Gracias!`;
         }
 
         const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(message)}`;
@@ -331,69 +331,26 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                     }
                                                     return (
                                                         <motion.label key={tier} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className={`relative flex items-start p-5 rounded-2xl border-2 transition-all cursor-pointer ${tierStyles}`}>
+                                                            {isSelected && tier === 'economy' && (
+                                                                <div className="absolute -top-2.5 right-4 bg-gray-400 text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">{i18n.language === 'en' ? 'Budget' : 'Económico'}</div>
+                                                            )}
                                                             {isSelected && tier === 'comfort' && (
                                                                 <div className="absolute -top-2.5 right-4 bg-primary text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">{i18n.language === 'en' ? 'Recommended' : 'Recomendado'}</div>
                                                             )}
                                                             {isSelected && tier === 'elite' && (
-                                                                <div className="absolute -top-2.5 right-4 bg-[#D4AF37] text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">{i18n.language === 'en' ? 'VIP Choice' : 'Opción VIP'}</div>
+                                                                <div className="absolute -top-2.5 right-4 bg-[#D4AF37] text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">{i18n.language === 'en' ? 'Top Choice' : 'Experiencia Top'}</div>
                                                             )}
                                                             <input type="radio" name="experience" value={tier} checked={isSelected} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} className="sr-only" />
                                                             <div className="flex-1">
                                                                 <div className="flex items-center justify-between mb-1">
                                                                     <div className="flex flex-col">
                                                                         <span className={`text-xs font-black uppercase tracking-wider ${titleStyles}`}>
-                                                                            {tier === 'economy' ? 'S - CONDUCTOR LOCAL (IDIOMA INGLES)' : tier === 'comfort' ? 'M - GUIA PROFESIONAL (IDIOMA INGLES)' : 'L - GUIA PROFESIONAL (IDIOMA ESPANOL)'}
+                                                                            {tier === 'economy' ? 'S - CONDUCTOR LOCAL (INGLES)' : tier === 'comfort' ? 'M - GUIA PROFESIONAL (INGLÉS)' : 'L - GUIA PROFESIONAL (ESPAÑOL)'}
                                                                         </span>
                                                                     </div>
                                                                     <span className={`text-xl font-black ${priceStyles}`}>{formatPrice(price).symbol}{formatPrice(price).amount}</span>
                                                                 </div>
                                                                 
-                                                                {/* Quick Feature Pills */}
-                                                                <div className="flex flex-wrap gap-1.5 my-2">
-                                                                    {tier === 'economy' && (
-                                                                        <>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
-                                                                                {i18n.language === 'en' ? '🚗 Private Car' : '🚗 Coche Privado'}
-                                                                            </span>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
-                                                                                {i18n.language === 'en' ? '🇬🇧 English-Speaking Driver' : '🇬🇧 Conductor en Inglés'}
-                                                                            </span>
-                                                                        </>
-                                                                    )}
-                                                                    {tier === 'comfort' && (
-                                                                        <>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
-                                                                                {i18n.language === 'en' ? '🚗 Superior Car' : '🚗 Coche Superior'}
-                                                                            </span>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
-                                                                                {i18n.language === 'en' ? '🇬🇧 English-Speaking Guide' : '🇬🇧 Guía en Inglés'}
-                                                                            </span>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
-                                                                                {i18n.language === 'en' ? '📸 Photo Assistant' : '📸 Asistente para Fotos'}
-                                                                            </span>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
-                                                                                {i18n.language === 'en' ? '⛩️ Cultural Immersion' : '⛩️ Inmersión Cultural'}
-                                                                            </span>
-                                                                        </>
-                                                                    )}
-                                                                    {tier === 'elite' && (
-                                                                        <>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                                                                                {i18n.language === 'en' ? '🚗 Superior Car' : '🚗 Coche Superior'}
-                                                                            </span>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                                                                                {i18n.language === 'en' ? '🇪🇸 Spanish-Speaking Guide' : '🇪🇸 Guía en Español'}
-                                                                            </span>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                                                                                {i18n.language === 'en' ? '📸 Photo Assistant' : '📸 Asistente para Fotos'}
-                                                                            </span>
-                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                                                                                {i18n.language === 'en' ? '💎 VIP Experience' : '💎 Experiencia VIP'}
-                                                                            </span>
-                                                                        </>
-                                                                    )}
-                                                                </div>
-
                                                                 <span className="text-[11px] text-gray-500 dark:text-gray-400 font-bold block leading-relaxed pr-4 mt-1">{t(`detail.exp_${tier}_desc`)}</span>
                                                             </div>
                                                         </motion.label>
@@ -470,14 +427,14 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                 <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-2xl p-4 border border-primary/10 space-y-2">
                                                     <p className="text-gray-700 dark:text-gray-200 text-[11px] font-black leading-normal">
                                                         {i18n.language === 'en' 
-                                                            ? 'Final step! Request your booking and we will open a WhatsApp chat to confirm availability.' 
-                                                            : '¡Paso final! Solicita tu reserva y abriremos un chat de WhatsApp para confirmar la disponibilidad.'
+                                                            ? 'Last step! By clicking REQUEST BOOKING, you will open a WhatsApp chat to confirm the availability of your trip.' 
+                                                            : '¡Último paso! Al hacer clic en SOLICITAR RESERVA, abrirás un chat en WhatsApp para confirmar la disponibilidad de tu viaje.'
                                                         }
                                                     </p>
                                                     <p>
                                                         {i18n.language === 'en' 
-                                                            ? 'You will only pay for your trip once we have validated all the details together via WhatsApp.' 
-                                                            : 'Solo abonarás el importe de tu viaje una vez que validemos juntos todos los detalles por WhatsApp.'
+                                                            ? 'No upfront payment: You will only pay once we have validated all the details of your trip together via chat.' 
+                                                            : 'Sin pagos por adelantado: Solo abonarás el importe una vez hayamos validado juntos todos los detalles por chat.'
                                                         }
                                                     </p>
                                                     <p className="text-primary text-[12px] font-black tracking-wide pt-1">

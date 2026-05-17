@@ -149,10 +149,10 @@ export default function ItineraryPage() {
       : booking.tour_title?.toLowerCase().includes('comfort') ? 'comfort' : 'economy');
   const expLabel = expType === 'economy' ? 'S' : expType === 'comfort' ? 'M' : 'L';
   const expName = expType === 'economy' 
-    ? 'S - CONDUCTOR LOCAL (IDIOMA INGLES)' 
+    ? 'S - CONDUCTOR LOCAL (INGLES)' 
     : expType === 'comfort' 
-      ? 'M - GUIA PROFESIONAL (IDIOMA INGLES)' 
-      : 'L - GUIA PROFESIONAL (IDIOMA ESPANOL)';
+      ? 'M - GUIA PROFESIONAL (INGLÉS)' 
+      : 'L - GUIA PROFESIONAL (ESPAÑOL)';
   const expColor = expType === 'economy' ? '#9ca3af' : expType === 'comfort' ? '#11BDDB' : '#D4AF37';
 
   const priceData = formatPrice(parseFloat(booking.total_price || 0));
