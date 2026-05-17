@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, Star, ShieldCheck, ChevronDown } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
@@ -91,6 +91,17 @@ const Hero = () => {
                     </motion.button>
                 </motion.div>
             </div>
+
+            {/* Scroll Indicator */}
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0.3, 0.8, 0.3], y: [0, 6, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                onClick={() => scrollTo('tours')}
+                className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 cursor-pointer text-white/40 hover:text-white/80 transition-colors"
+            >
+                <ChevronDown size={28} strokeWidth={1.5} />
+            </motion.div>
         </div>
     );
 };

@@ -274,27 +274,95 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                                     const price = tier === 'economy' ? tourPrice : tier === 'comfort' ? tourPrice + 10 : tourPrice + 25;
                                                     const isSelected = formData.experience === tier;
                                                     const sizePrefix = tier === 'economy' ? 'S - ' : tier === 'comfort' ? 'M - ' : 'L - ';
-                                                    let tierStyles = '';
-                                                    let textStyles = 'text-gray-900 dark:text-white';
+                                                    let tierStyles = 'border-black/5 dark:border-white/5';
+                                                    let titleStyles = 'text-gray-900 dark:text-white';
+                                                    let priceStyles = 'text-gray-900 dark:text-white';
+                                                    
                                                     if (isSelected) {
-                                                        if (tier === 'economy') { tierStyles = 'border-gray-400'; textStyles = 'text-gray-200'; }
-                                                        if (tier === 'comfort') { tierStyles = 'border-primary'; textStyles = 'text-primary'; }
-                                                        if (tier === 'elite') { tierStyles = 'border-[#D4AF37]'; textStyles = 'text-[#D4AF37]'; }
+                                                        if (tier === 'economy') { 
+                                                            tierStyles = 'border-gray-400 dark:border-gray-500 bg-gray-50/50 dark:bg-white/5'; 
+                                                            titleStyles = 'text-gray-900 dark:text-white font-extrabold';
+                                                            priceStyles = 'text-gray-900 dark:text-white';
+                                                        }
+                                                        if (tier === 'comfort') { 
+                                                            tierStyles = 'border-primary bg-primary/5'; 
+                                                            titleStyles = 'text-primary font-extrabold';
+                                                            priceStyles = 'text-primary';
+                                                        }
+                                                        if (tier === 'elite') { 
+                                                            tierStyles = 'border-[#D4AF37] bg-[#D4AF37]/5'; 
+                                                            titleStyles = 'text-[#D4AF37] font-extrabold';
+                                                            priceStyles = 'text-[#D4AF37]';
+                                                        }
                                                     } else {
-                                                        tierStyles = 'border-black/5 dark:border-white/5 opacity-80';
+                                                        tierStyles += ' opacity-70 hover:opacity-100 hover:border-black/10 dark:hover:border-white/10';
                                                     }
                                                     return (
                                                         <motion.label key={tier} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className={`relative flex items-start p-5 rounded-2xl border-2 transition-all cursor-pointer ${tierStyles}`}>
                                                             {isSelected && tier === 'comfort' && (
                                                                 <div className="absolute -top-2.5 right-4 bg-primary text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">{i18n.language === 'en' ? 'Recommended' : 'Recomendado'}</div>
                                                             )}
+                                                            {isSelected && tier === 'elite' && (
+                                                                <div className="absolute -top-2.5 right-4 bg-[#D4AF37] text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">{i18n.language === 'en' ? 'VIP Choice' : 'Opción VIP'}</div>
+                                                            )}
                                                             <input type="radio" name="experience" value={tier} checked={isSelected} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} className="sr-only" />
                                                             <div className="flex-1">
-                                                                <div className="flex items-center justify-between mb-1.5">
-                                                                    <div className="flex flex-col"><span className={`text-sm font-black uppercase tracking-tight ${textStyles}`}>{sizePrefix}{t(`detail.exp_${tier}_title`)}</span></div>
-                                                                    <span className={`text-xl font-black ${textStyles}`}>{formatPrice(price).symbol}{formatPrice(price).amount}</span>
+                                                                <div className="flex items-center justify-between mb-1">
+                                                                    <div className="flex flex-col">
+                                                                        <span className={`text-xs font-black uppercase tracking-wider ${titleStyles}`}>
+                                                                            {sizePrefix}{t(`detail.exp_${tier}_title`)}
+                                                                        </span>
+                                                                    </div>
+                                                                    <span className={`text-xl font-black ${priceStyles}`}>{formatPrice(price).symbol}{formatPrice(price).amount}</span>
                                                                 </div>
-                                                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-bold block leading-relaxed pr-4">{t(`detail.exp_${tier}_desc`)}</span>
+                                                                
+                                                                {/* Quick Feature Pills */}
+                                                                <div className="flex flex-wrap gap-1.5 my-2">
+                                                                    {tier === 'economy' && (
+                                                                        <>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
+                                                                                {i18n.language === 'en' ? '🚗 Private A/C Car' : '🚗 Coche Privado con A/C'}
+                                                                            </span>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
+                                                                                {i18n.language === 'en' ? '🗣️ English-Speaking Driver' : '🗣️ Conductor en Inglés'}
+                                                                            </span>
+                                                                        </>
+                                                                    )}
+                                                                    {tier === 'comfort' && (
+                                                                        <>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                                                                                {i18n.language === 'en' ? '🚗 Superior Car' : '🚗 Coche Superior'}
+                                                                            </span>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                                                                                {i18n.language === 'en' ? '🗣️ Certified Guide (EN)' : '🗣️ Guía Certificado (EN)'}
+                                                                            </span>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                                                                                {i18n.language === 'en' ? '📸 Photo Assistant' : '📸 Asistente para Fotos'}
+                                                                            </span>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
+                                                                                {i18n.language === 'en' ? '⛩️ Cultural Immersion' : '⛩️ Inmersión Cultural'}
+                                                                            </span>
+                                                                        </>
+                                                                    )}
+                                                                    {tier === 'elite' && (
+                                                                        <>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                                                                {i18n.language === 'en' ? '🚗 Superior Car' : '🚗 Coche Superior'}
+                                                                            </span>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                                                                {i18n.language === 'en' ? '🇪🇸 Certified Spanish Guide' : '🇪🇸 Guía Nativo en Español'}
+                                                                            </span>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                                                                {i18n.language === 'en' ? '📸 Photo Assistant' : '📸 Asistente para Fotos'}
+                                                                            </span>
+                                                                            <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                                                                {i18n.language === 'en' ? '💎 VIP Experience' : '💎 Experiencia VIP'}
+                                                                            </span>
+                                                                        </>
+                                                                    )}
+                                                                </div>
+
+                                                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-bold block leading-relaxed pr-4 mt-1">{t(`detail.exp_${tier}_desc`)}</span>
                                                             </div>
                                                         </motion.label>
                                                     );
@@ -365,19 +433,24 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
                                                 <div className="flex items-center gap-3">
                                                     <MessageCircle size={24} /> 
-                                                    <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'SEND VIA WHATSAPP' : 'ENVIAR POR WHATSAPP'}</span>
+                                                    <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
                                                 </div>
                                                 <span className="text-[12px] font-bold text-white/90">
-                                                    {i18n.language === 'en' ? 'We will verify availability instantly' : 'Verificaremos disponibilidad al instante'}
+                                                    {i18n.language === 'en' ? 'We will verify the availability of your trip via WhatsApp' : 'Verificaremos la disponibilidad de tu viaje por WhatsApp'}
                                                 </span>
                                             </button>
                                             <div className="text-center px-4">
-                                                <p className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-xl p-3 border border-primary/10">
-                                                    {i18n.language === 'en' 
-                                                        ? 'No credit card required. You only pay after we verify the details of your trip.' 
-                                                        : 'No solicitamos tarjeta ahora. Abonarás tu reserva una vez que verifiquemos los detalles de tu viaje.'
-                                                    }
-                                                </p>
+                                                <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-xl p-3.5 border border-primary/10 space-y-1">
+                                                    <p>
+                                                        {i18n.language === 'en' 
+                                                            ? 'You will pay your booking once we verify the details of your trip.' 
+                                                            : 'Abonarás tu reserva una vez que verifiquemos los detalles de tu viaje.'
+                                                        }
+                                                    </p>
+                                                    <p className="text-primary text-[12px] font-black tracking-wide">
+                                                        {i18n.language === 'en' ? 'See you in Bali!' : '¡Nos vemos en Bali!'}
+                                                    </p>
+                                                </div>
                                                 <p className="text-[9px] font-bold text-gray-400 dark:text-gray-500 leading-relaxed uppercase tracking-widest mt-4">
                                                     {i18n.language === 'en' 
                                                         ? <>By clicking I Accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms of Service</a>.</> 
