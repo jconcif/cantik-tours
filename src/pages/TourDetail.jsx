@@ -740,8 +740,8 @@ const TourDetail = () => {
                         </button>
 
                         <div className="space-y-2 mt-4">
-                            <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60">
-                                {i18n.language.startsWith('es') ? 'Hablemos por WhatsApp' : 'Let\'s talk on WhatsApp'}
+                            <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest opacity-60 mt-3">
+                                {i18n.language.startsWith('es') ? 'Sin pago previo' : 'No initial payment'}
                             </p>
                         </div>
 

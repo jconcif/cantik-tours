@@ -155,15 +155,21 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const finalTotalPrice = totalPrice + extraPaxFee;
     const finalTotalPriceWithFees = finalTotalPrice; // No extra fees for request flow
 
+    const isUbudStops = tourId === 'ubud-flexible' && (!initialSelectedStops || (initialSelectedStops?.length || 0) === 0);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         if (step === 1) {
-            setStep((tourId === 'ubud-flexible' && (!initialSelectedStops || (initialSelectedStops?.length || 0) === 0)) ? 2 : 3);
-        } else if (step === 2) {
-            if ((formData.selectedStops?.length || 0) === 0) {
-                alert(i18n.language.startsWith('es') ? "Por favor selecciona al menos una parada." : "Please select at least one stop.");
-                return;
+            if (isUbudStops) {
+                if ((formData.selectedStops?.length || 0) === 0) {
+                    alert(i18n.language.startsWith('es') ? "Por favor selecciona al menos una parada." : "Please select at least one stop.");
+                    return;
+                }
+                setStep(2);
+            } else {
+                setStep(3);
             }
+        } else if (step === 2) {
             setStep(3);
         } else if (step === 3) {
             setStep(4);
@@ -217,45 +223,20 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                     <motion.div layout initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl overflow-hidden z-10" onClick={(e) => e.stopPropagation()}>
                         <div className="bg-primary/10 p-6 flex flex-col gap-2 border-b border-primary/5">
                             <div className="flex justify-between items-center">
-                                <h3 className="text-xl font-black text-primary uppercase tracking-tight">{step === 1 ? (i18n.language === 'en' ? 'Build your Route' : 'Arma tu Ruta') : t('detail.booking_title')}</h3>
+                                <h3 className="text-xl font-black text-primary uppercase tracking-tight">{step === 1 && isUbudStops ? (i18n.language === 'en' ? 'Build your Route' : 'Arma tu Ruta') : t('detail.booking_title')}</h3>
                                 <button onClick={resetModal} className="w-8 h-8 rounded-full bg-white/50 dark:bg-white/10 hover:bg-white flex items-center justify-center transition-colors"><X size={20} className="text-gray-600 dark:text-gray-400" /></button>
                             </div>
                             <div className="flex items-center gap-2 mt-1">
                                 {[1, 2, 3, 4].map((s) => (
-                                    <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${step >= s ? 'bg-primary' : 'bg-primary/20 dark:bg-white/10'} ${(tourId !== 'ubud-flexible' || (initialSelectedStops && initialSelectedStops.length > 0)) && s === 2 ? 'hidden' : ''}`} />
+                                    <div key={s} className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${step >= s ? 'bg-primary' : 'bg-primary/20 dark:bg-white/10'} ${(!isUbudStops) && s === 2 ? 'hidden' : ''}`} />
                                 ))}
                             </div>
                         </div>
 
                         <form onSubmit={handleSubmit} className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar overflow-x-hidden">
                             <AnimatePresence mode="wait">
-                                {step === 1 && (
-                                    <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><User size={14} className="text-primary" />{t('reviews_page.form.name')}</label>
-                                            <input type="text" required placeholder={i18n.language === 'en' ? 'Your full name' : 'Tu nombre completo'} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputClasses} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Calendar size={14} className="text-primary" />{t('detail.booking_date')}</label>
-                                            <DatePicker selected={formData.date} onChange={(date) => setFormData({ ...formData, date })} minDate={new Date()} filterDate={(date) => !isDateFullyBooked(date)} dayClassName={(date) => { const status = getDynamicStatus(date); return status === 'yellow' ? 'custom-day-yellow' : (status === 'red' ? 'custom-day-red' : 'custom-day-green'); }} dateFormat="dd/MM/yyyy" required className={inputClasses} wrapperClassName="w-full" />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Users size={14} className="text-primary" />{t('detail.booking_pax')}</label>
-                                            <select value={formData.pax} onChange={(e) => setFormData({ ...formData, pax: e.target.value })} className={inputClasses}>
-                                                {[1,2,3,4,5,6,7,8,9,10,11,12].map(n => <option key={n} value={n}>{t(`detail.booking_pax_${n}`)}</option>)}
-                                                <option value="13 o más">{t('detail.booking_pax_more')}</option>
-                                            </select>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><MapPin size={14} className="text-primary" />{t('detail.booking_hotel')}</label>
-                                            <input type="text" required placeholder={t('detail.booking_hotel_placeholder')} value={formData.hotel} onChange={(e) => setFormData({ ...formData, hotel: e.target.value })} className={inputClasses} />
-                                        </div>
-                                        <button type="submit" className="w-full btn-primary py-4 rounded-2xl text-lg font-black shadow-xl flex items-center justify-center gap-3">Siguiente <ArrowRight size={20} /></button>
-                                    </motion.div>
-                                )}
-
-                                {step === 2 && tourId === 'ubud-flexible' && (
-                                    <motion.div key="step2" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
+                                {step === 1 && isUbudStops && (
+                                    <motion.div key="step1-stops" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">
                                         <div className="flex items-center justify-between bg-primary/5 p-4 rounded-2xl border border-primary/10">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white font-black">{formData.selectedStops.length}</div>
@@ -279,72 +260,41 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                             })}
                                         </div>
                                         <div className="flex gap-3">
-                                            <button type="button" onClick={() => setStep(1)} className="w-16 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center transition-colors"><ArrowLeft size={20} /></button>
-                                            <button type="submit" disabled={formData.selectedStops.length < 5} className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all ${formData.selectedStops.length === 5 ? 'bg-secondary text-white shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>SIGUIENTE <ArrowRight size={20} className="inline ml-2" /></button>
+                                            <button type="submit" disabled={formData.selectedStops.length === 0} className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all ${formData.selectedStops.length > 0 ? 'bg-secondary text-white shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>SIGUIENTE <ArrowRight size={20} className="inline ml-2" /></button>
                                         </div>
                                     </motion.div>
                                 )}
 
-                                {step === 3 && (
-                                    <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
+                                {((isUbudStops && step === 2) || (!isUbudStops && step === 1)) && (
+                                    <motion.div key="step-product" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
                                         <div className="space-y-4">
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Star size={14} className="text-primary" />{t('detail.booking_experience')}</label>
                                             <div className="grid gap-3">
                                                 {['economy', 'comfort', 'elite'].map((tier) => {
                                                     const price = tier === 'economy' ? tourPrice : tier === 'comfort' ? tourPrice + 10 : tourPrice + 25;
                                                     const isSelected = formData.experience === tier;
-                                                    
-                                                    // S, M, L Labels
                                                     const sizePrefix = tier === 'economy' ? 'S - ' : tier === 'comfort' ? 'M - ' : 'L - ';
-                                                    
-                                                    // Define colors based on tier
                                                     let tierStyles = '';
                                                     let textStyles = 'text-gray-900 dark:text-white';
-                                                    
                                                     if (isSelected) {
-                                                        if (tier === 'economy') {
-                                                            tierStyles = 'border-gray-400';
-                                                            textStyles = 'text-gray-200';
-                                                        }
-                                                        if (tier === 'comfort') {
-                                                            tierStyles = 'border-primary';
-                                                            textStyles = 'text-primary';
-                                                        }
-                                                        if (tier === 'elite') {
-                                                            tierStyles = 'border-[#D4AF37]';
-                                                            textStyles = 'text-[#D4AF37]';
-                                                        }
+                                                        if (tier === 'economy') { tierStyles = 'border-gray-400'; textStyles = 'text-gray-200'; }
+                                                        if (tier === 'comfort') { tierStyles = 'border-primary'; textStyles = 'text-primary'; }
+                                                        if (tier === 'elite') { tierStyles = 'border-[#D4AF37]'; textStyles = 'text-[#D4AF37]'; }
                                                     } else {
                                                         tierStyles = 'border-black/5 dark:border-white/5 opacity-80';
                                                     }
-                                                    
                                                     return (
-                                                        <motion.label 
-                                                            key={tier} 
-                                                            whileHover={{ scale: 1.01 }}
-                                                            whileTap={{ scale: 0.99 }}
-                                                            className={`relative flex items-start p-5 rounded-2xl border-2 transition-all cursor-pointer ${tierStyles}`}
-                                                        >
+                                                        <motion.label key={tier} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className={`relative flex items-start p-5 rounded-2xl border-2 transition-all cursor-pointer ${tierStyles}`}>
                                                             {isSelected && tier === 'comfort' && (
-                                                                <div className="absolute -top-2.5 right-4 bg-primary text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">
-                                                                    {i18n.language === 'en' ? 'Recommended' : 'Recomendado'}
-                                                                </div>
+                                                                <div className="absolute -top-2.5 right-4 bg-primary text-white text-[8px] font-black tracking-widest uppercase px-2 py-0.5 rounded-full shadow-sm">{i18n.language === 'en' ? 'Recommended' : 'Recomendado'}</div>
                                                             )}
                                                             <input type="radio" name="experience" value={tier} checked={isSelected} onChange={(e) => setFormData({ ...formData, experience: e.target.value })} className="sr-only" />
                                                             <div className="flex-1">
                                                                 <div className="flex items-center justify-between mb-1.5">
-                                                                    <div className="flex flex-col">
-                                                                        <span className={`text-sm font-black uppercase tracking-tight ${textStyles}`}>
-                                                                            {sizePrefix}{t(`detail.exp_${tier}_title`)}
-                                                                        </span>
-                                                                    </div>
-                                                                    <span className={`text-xl font-black ${textStyles}`}>
-                                                                        {formatPrice(price).symbol}{formatPrice(price).amount}
-                                                                    </span>
+                                                                    <div className="flex flex-col"><span className={`text-sm font-black uppercase tracking-tight ${textStyles}`}>{sizePrefix}{t(`detail.exp_${tier}_title`)}</span></div>
+                                                                    <span className={`text-xl font-black ${textStyles}`}>{formatPrice(price).symbol}{formatPrice(price).amount}</span>
                                                                 </div>
-                                                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-bold block leading-relaxed pr-4">
-                                                                    {t(`detail.exp_${tier}_desc`)}
-                                                                </span>
+                                                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-bold block leading-relaxed pr-4">{t(`detail.exp_${tier}_desc`)}</span>
                                                             </div>
                                                         </motion.label>
                                                     );
@@ -352,14 +302,42 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                             </div>
                                         </div>
                                         <div className="flex gap-3">
-                                            <button type="button" onClick={() => setStep(tourId === 'ubud-flexible' ? 2 : 1)} className="w-16 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center transition-colors"><ArrowLeft size={20} /></button>
+                                            {isUbudStops && <button type="button" onClick={() => setStep(1)} className="w-16 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center transition-colors"><ArrowLeft size={20} /></button>}
+                                            <button type="submit" className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl">Siguiente <ArrowRight size={20} className="inline ml-2" /></button>
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {step === 3 && (
+                                    <motion.div key="step-personal" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Calendar size={14} className="text-primary" />{t('detail.booking_date')}</label>
+                                            <DatePicker selected={formData.date} onChange={(date) => setFormData({ ...formData, date })} minDate={new Date()} filterDate={(date) => !isDateFullyBooked(date)} dayClassName={(date) => { const status = getDynamicStatus(date); return status === 'yellow' ? 'custom-day-yellow' : (status === 'red' ? 'custom-day-red' : 'custom-day-green'); }} dateFormat="dd/MM/yyyy" required className={inputClasses} wrapperClassName="w-full" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Users size={14} className="text-primary" />{t('detail.booking_pax')}</label>
+                                            <select value={formData.pax} onChange={(e) => setFormData({ ...formData, pax: e.target.value })} className={inputClasses}>
+                                                {[1,2,3,4,5,6,7,8,9,10,11,12].map(n => <option key={n} value={n}>{t(`detail.booking_pax_${n}`)}</option>)}
+                                                <option value="13 o más">{t('detail.booking_pax_more')}</option>
+                                            </select>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><User size={14} className="text-primary" />{t('reviews_page.form.name')}</label>
+                                            <input type="text" required placeholder={i18n.language === 'en' ? 'Your full name' : 'Tu nombre completo'} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputClasses} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><MapPin size={14} className="text-primary" />{t('detail.booking_hotel')}</label>
+                                            <input type="text" required placeholder={t('detail.booking_hotel_placeholder')} value={formData.hotel} onChange={(e) => setFormData({ ...formData, hotel: e.target.value })} className={inputClasses} />
+                                        </div>
+                                        <div className="flex gap-3">
+                                            <button type="button" onClick={() => setStep(isUbudStops ? 2 : 1)} className="w-16 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center transition-colors"><ArrowLeft size={20} /></button>
                                             <button type="submit" className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl">Siguiente <ArrowRight size={20} className="inline ml-2" /></button>
                                         </div>
                                     </motion.div>
                                 )}
 
                                 {step === 4 && (
-                                    <motion.div key="step4" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="space-y-6">
+                                    <motion.div key="step-confirm" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="space-y-6">
                                         <div className="bg-white dark:bg-white/5 rounded-3xl border border-black/5 dark:border-white/10 overflow-hidden shadow-xl">
                                             <div className="bg-primary/10 p-4 flex items-center justify-between"><h3 className="text-[10px] font-black text-primary uppercase tracking-widest">{i18n.language === 'en' ? 'RESERVATION SUMMARY' : 'RESUMEN DE RESERVA'}</h3></div>
                                             <div className="p-5 space-y-4">
@@ -383,12 +361,24 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                         </div>
 
                                         <div className="space-y-4">
-                                            <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-6 rounded-[2rem] bg-[#25D366] text-white text-sm font-black flex items-center justify-center gap-3 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355]">
-                                                <MessageCircle size={24} /> 
-                                                <span>{i18n.language === 'en' ? 'CONFIRM AND REQUEST VIA WHATSAPP' : 'CONFIRMAR Y SOLICITAR POR WHATSAPP'}</span>
+                                            <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-5 rounded-[2rem] bg-[#25D366] text-white flex flex-col items-center justify-center gap-1 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355] relative overflow-hidden group">
+                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
+                                                <div className="flex items-center gap-3">
+                                                    <MessageCircle size={24} /> 
+                                                    <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'SEND VIA WHATSAPP' : 'ENVIAR POR WHATSAPP'}</span>
+                                                </div>
+                                                <span className="text-[12px] font-bold text-white/90">
+                                                    {i18n.language === 'en' ? 'We will verify availability instantly' : 'Verificaremos disponibilidad al instante'}
+                                                </span>
                                             </button>
                                             <div className="text-center px-4">
-                                                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed uppercase tracking-widest">
+                                                <p className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-xl p-3 border border-primary/10">
+                                                    {i18n.language === 'en' 
+                                                        ? 'No credit card required. You only pay after we verify the details of your trip.' 
+                                                        : 'No solicitamos tarjeta ahora. Abonarás tu reserva una vez que verifiquemos los detalles de tu viaje.'
+                                                    }
+                                                </p>
+                                                <p className="text-[9px] font-bold text-gray-400 dark:text-gray-500 leading-relaxed uppercase tracking-widest mt-4">
                                                     {i18n.language === 'en' 
                                                         ? <>By clicking I Accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms of Service</a>.</> 
                                                         : <>Al hacer clic Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos de Servicio</a>.</>
