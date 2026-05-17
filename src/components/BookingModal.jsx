@@ -321,10 +321,10 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                                                     {tier === 'economy' && (
                                                                         <>
                                                                             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
-                                                                                {i18n.language === 'en' ? '🚗 Private A/C Car' : '🚗 Coche Privado con A/C'}
+                                                                                {i18n.language === 'en' ? '🚗 Private Car' : '🚗 Coche Privado'}
                                                                             </span>
                                                                             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-600 dark:text-gray-300">
-                                                                                {i18n.language === 'en' ? '🗣️ English-Speaking Driver' : '🗣️ Conductor en Inglés'}
+                                                                                {i18n.language === 'en' ? '🇬🇧 English-Speaking Driver' : '🇬🇧 Conductor en Inglés'}
                                                                             </span>
                                                                         </>
                                                                     )}
@@ -334,7 +334,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                                                                 {i18n.language === 'en' ? '🚗 Superior Car' : '🚗 Coche Superior'}
                                                                             </span>
                                                                             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
-                                                                                {i18n.language === 'en' ? '🗣️ Certified Guide (EN)' : '🗣️ Guía Certificado (EN)'}
+                                                                                {i18n.language === 'en' ? '🇬🇧 English-Speaking Guide' : '🇬🇧 Guía en Inglés'}
                                                                             </span>
                                                                             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-primary/10 text-primary">
                                                                                 {i18n.language === 'en' ? '📸 Photo Assistant' : '📸 Asistente para Fotos'}
@@ -350,7 +350,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `• *PARADA
                                                                                 {i18n.language === 'en' ? '🚗 Superior Car' : '🚗 Coche Superior'}
                                                                             </span>
                                                                             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
-                                                                                {i18n.language === 'en' ? '🇪🇸 Certified Spanish Guide' : '🇪🇸 Guía Nativo en Español'}
+                                                                                {i18n.language === 'en' ? '🇪🇸 Spanish-Speaking Guide' : '🇪🇸 Guía en Español'}
                                                                             </span>
                                                                             <span className="text-[9px] font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">
                                                                                 {i18n.language === 'en' ? '📸 Photo Assistant' : '📸 Asistente para Fotos'}
