@@ -131,17 +131,17 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     let expSub = '';
     switch (formData.experience) {
         case 'economy':
-            expName = t('detail.exp_economy_title');
+            expName = 'S - CONDUCTOR LOCAL (IDIOMA INGLES)';
             expSub = t('detail.exp_economy_sub');
             extraPrice = 0;
             break;
         case 'comfort':
-            expName = t('detail.exp_comfort_title');
+            expName = 'M - GUIA PROFESIONAL (IDIOMA INGLES)';
             expSub = t('detail.exp_comfort_sub');
             extraPrice = 10;
             break;
         case 'elite':
-            expName = t('detail.exp_elite_title');
+            expName = 'L - GUIA PROFESIONAL (IDIOMA ESPANOL)';
             expSub = t('detail.exp_elite_sub');
             extraPrice = 25;
             break;
@@ -342,7 +342,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                                 <div className="flex items-center justify-between mb-1">
                                                                     <div className="flex flex-col">
                                                                         <span className={`text-xs font-black uppercase tracking-wider ${titleStyles}`}>
-                                                                            {sizePrefix}{t(`detail.exp_${tier}_title`)}
+                                                                            {tier === 'economy' ? 'S - CONDUCTOR LOCAL (IDIOMA INGLES)' : tier === 'comfort' ? 'M - GUIA PROFESIONAL (IDIOMA INGLES)' : 'L - GUIA PROFESIONAL (IDIOMA ESPANOL)'}
                                                                         </span>
                                                                     </div>
                                                                     <span className={`text-xl font-black ${priceStyles}`}>{formatPrice(price).symbol}{formatPrice(price).amount}</span>
@@ -470,14 +470,14 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                 <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-2xl p-4 border border-primary/10 space-y-2">
                                                     <p className="text-gray-700 dark:text-gray-200 text-[11px] font-black leading-normal">
                                                         {i18n.language === 'en' 
-                                                            ? 'We will verify the availability of your trip, request the booking and let\'s talk via WhatsApp' 
-                                                            : 'Verificaremos la disponibilidad de tu viaje, solicita la reserva y hablemos por WhatsApp'
+                                                            ? 'Final step! Request your booking and we will open a WhatsApp chat to confirm availability.' 
+                                                            : '¡Paso final! Solicita tu reserva y abriremos un chat de WhatsApp para confirmar la disponibilidad.'
                                                         }
                                                     </p>
                                                     <p>
                                                         {i18n.language === 'en' 
-                                                            ? 'You will pay your booking once we verify the details of your trip.' 
-                                                            : 'Abonarás tu reserva una vez que verifiquemos los detalles de tu viaje.'
+                                                            ? 'You will only pay for your trip once we have validated all the details together via WhatsApp.' 
+                                                            : 'Solo abonarás el importe de tu viaje una vez que validemos juntos todos los detalles por WhatsApp.'
                                                         }
                                                     </p>
                                                     <p className="text-primary text-[12px] font-black tracking-wide pt-1">
