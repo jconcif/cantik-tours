@@ -373,7 +373,7 @@ export default function ItineraryPage() {
                 {[
                   { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
                   { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
-                  { label: en ? 'CLASS' : 'CLASE',      val: `${expLabel} · ${expName}`, style: { color: expColor } },
+                  { label: en ? 'CLASS' : 'CLASE',      val: expName, style: { color: expColor } },
                   { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
                   { label: en ? 'BOARDING' : 'HORA',    val: booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
                   { label: priceLabel, val: priceVal, style: { color: '#11BDDB' } },
