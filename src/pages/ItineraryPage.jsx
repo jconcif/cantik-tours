@@ -143,12 +143,16 @@ export default function ItineraryPage() {
   const status = statusMap[booking.payment_status] || statusMap.requested;
 
   // ── Experience ────────────────────────────────────────────────
-  const expType = booking.experience_tier
+  const expType = booking.experience
+    || booking.experience_tier
     || (booking.tour_title?.toLowerCase().includes('elite') ? 'elite'
       : booking.tour_title?.toLowerCase().includes('comfort') ? 'comfort' : 'economy');
   const expLabel = expType === 'economy' ? 'S' : expType === 'comfort' ? 'M' : 'L';
-  const expName  = expType === 'economy' ? (en ? 'Local Driver' : 'Conductor Local')
-    : expType === 'comfort' ? (en ? 'Local Guide' : 'Guía Local') : (en ? 'Elite Guide' : 'Guía Elite');
+  const expName = expType === 'economy' 
+    ? 'S - CONDUCTOR LOCAL (IDIOMA INGLES)' 
+    : expType === 'comfort' 
+      ? 'M - GUIA PROFESIONAL (IDIOMA INGLES)' 
+      : 'L - GUIA PROFESIONAL (IDIOMA ESPANOL)';
   const expColor = expType === 'economy' ? '#9ca3af' : expType === 'comfort' ? '#11BDDB' : '#D4AF37';
 
   const priceData = formatPrice(parseFloat(booking.total_price || 0));
