@@ -182,8 +182,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         const paxLabel = t(`detail.booking_pax_${paxValue}`);
         const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
-        // Sanitize tour title to remove emojis that might cause 
-        const cleanTourTitle = tourTitle.replace(/[\u\d][\u\d][\u\d][\u\d][\u\d]|[\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF]/g, '').trim();
+        // Safely remove only the leading emoji and space at the beginning of the title
+        const cleanTourTitle = tourTitle.replace(/^[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s]+\s*/, '').trim();
 
         const isEn = i18n.language === 'en';
         let message = '';
@@ -195,7 +195,7 @@ I would love to request a booking for my trip to Bali. Could you please confirm 
 📌 *BOOKING REQUEST DETAILS (#CT-${instantId})*
 ------------------------------------------
 👤 *Client:* ${formData.name.toUpperCase()}
-🗺️ *Tour:* ${cleanTourTitle.toUpperCase()}
+🌎 *Tour:* ${cleanTourTitle.toUpperCase()}
 📅 *Date:* ${dateStr}
 👥 *Travelers:* ${paxLabel}
 🏨 *Hotel:* ${formData.hotel.toUpperCase()}
@@ -211,7 +211,7 @@ Me encantaría solicitar la reserva para mi viaje a Bali. ¿Me podéis confirmar
 📌 *DETALLES DE LA RESERVA (#CT-${instantId})*
 ------------------------------------------
 👤 *Cliente:* ${formData.name.toUpperCase()}
-🗺️ *Tour:* ${cleanTourTitle.toUpperCase()}
+🌎 *Tour:* ${cleanTourTitle.toUpperCase()}
 📅 *Fecha:* ${dateStr}
 👥 *Pasajeros:* ${paxLabel}
 🏨 *Hotel:* ${formData.hotel.toUpperCase()}
@@ -452,7 +452,7 @@ ${tourId === 'ubud-flexible' && formData.selectedStops.length > 0 ? `📍 *Parad
                                                 <MessageCircle size={24} /> 
                                                 <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
                                             </button>
-                                            <div className="text-center px-4">
+                                            <div className="text-center w-full">
                                                 <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-2xl p-4 border border-primary/10 space-y-2">
                                                     <p className="text-gray-700 dark:text-gray-200 text-[11px] font-black leading-normal">
                                                         {i18n.language === 'en' 
