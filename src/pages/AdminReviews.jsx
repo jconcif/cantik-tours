@@ -5,7 +5,7 @@ import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManage
 import { 
   MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
   Globe, Sun, Moon, DollarSign, Euro, LogOut, LayoutDashboard,
-  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download, ExternalLink
+  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download, ExternalLink, Lock, Unlock
 } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -263,6 +263,18 @@ export default function AdminPanel() {
     const link = `https://cantiktours.com/reviews?ref=${ref}`;
     navigator.clipboard.writeText(link);
     toast('Link de review copiado');
+  };
+
+  const handleToggleBlock = async (d) => {
+    if(!d) return;
+    const dateStr = `${calMonth.getFullYear()}-${String(calMonth.getMonth() + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    try {
+      const res = await api.toggleAvailability(dateStr);
+      toast(res.message, res.status === 'success');
+      load();
+    } catch (e) {
+      toast('Error al cambiar bloqueo', false);
+    }
   };
 
   const calDays=useMemo(()=>{
@@ -546,14 +558,28 @@ export default function AdminPanel() {
             </div>
             <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:'4px'}}>
               {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d=><div key={d} style={{textAlign:'center',fontSize:'10px',fontWeight:900,color:'#444'}}>{d}</div>)}
-              {calDays.map((d,i)=>(
-                <div key={i} style={{minHeight:'60px',background:d?'#222':'transparent',borderRadius:'12px',padding:'8px'}}>
-                  {d&&<div style={{fontSize:'12px',fontWeight:900}}>{d}</div>}
-                  {bookings.filter(b=>new Date(b.booking_date).getDate()===d&&new Date(b.booking_date).getMonth()===calMonth.getMonth()).map(b=>(
-                    <div key={b.id} style={{fontSize:'8px',background:PAY_COLOR[b.payment_status],padding:'2px',borderRadius:'4px',marginTop:'2px',overflow:'hidden'}}>{b.client_name.split(' ')[0]}</div>
-                  ))}
+              {calDays.map((d,i)=>{
+                if (!d) return <div key={i} style={{minHeight:'60px',background:'transparent',padding:'8px'}} />;
+                
+                const dayBookings = bookings.filter(b=>new Date(b.booking_date).getDate()===d&&new Date(b.booking_date).getMonth()===calMonth.getMonth());
+                const isBlocked = dayBookings.some(b => b.payment_status === 'blocked');
+                const validBookings = dayBookings.filter(b => b.payment_status !== 'blocked');
+
+                return (
+                <div key={i} onClick={()=>handleToggleBlock(d)} style={{minHeight:'60px',background:'#222',borderRadius:'12px',padding:'8px', cursor:'pointer', position:'relative', opacity: isBlocked ? 0.6 : 1, border: isBlocked ? '1px solid #ef4444' : '1px solid transparent', transition:'all 0.2s'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                    <div style={{fontSize:'12px',fontWeight:900, color: isBlocked ? '#ef4444' : '#fff'}}>{d}</div>
+                    {isBlocked && <Lock size={10} color="#ef4444" />}
+                  </div>
+                  {isBlocked ? (
+                    <div style={{fontSize:'8px',background:'#ef444444',color:'#ef4444',padding:'2px',borderRadius:'4px',marginTop:'4px',textAlign:'center',fontWeight:900}}>BLOQUEADO</div>
+                  ) : (
+                    validBookings.map(b=>(
+                      <div key={b.id} style={{fontSize:'8px',background:PAY_COLOR[b.payment_status]||'#555',padding:'2px',borderRadius:'4px',marginTop:'2px',overflow:'hidden', whiteSpace:'nowrap'}}>{b.client_name.split(' ')[0]}</div>
+                    ))
+                  )}
                 </div>
-              ))}
+              )})}
             </div>
           </div>
         )}
