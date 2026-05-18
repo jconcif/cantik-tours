@@ -91,6 +91,7 @@ export default function AdminPanel() {
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { currency, toggleCurrency } = useCurrency();
   const { isDark, toggleDarkMode } = useDarkMode();
+  const [annotationTexts, setAnnotationTexts] = useState({});
 
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace('_', ' ');
 
@@ -215,8 +216,45 @@ export default function AdminPanel() {
     const { type, action, data } = modal;
     setLoading(true);
     try {
+      let finalData = { ...data };
+      if (type === 'booking' && action === 'update') {
+        const original = bookings.find(x => x.id === data.id);
+        if (original) {
+          let ext = {};
+          try {
+            ext = typeof finalData.extras === 'string' ? JSON.parse(finalData.extras) : (finalData.extras || {});
+          } catch(e) {}
+          if (!ext.logs) ext.logs = [];
+          
+          let changes = [];
+          if (original.payment_status !== finalData.payment_status) {
+            const oldLbl = PAY_LABEL[original.payment_status] || original.payment_status;
+            const newLbl = PAY_LABEL[finalData.payment_status] || finalData.payment_status;
+            changes.push(`Estado cambiado de "${oldLbl}" a "${newLbl}"`);
+          }
+          if (original.notes !== finalData.notes) {
+            changes.push(`Notas internas actualizadas: "${finalData.notes || '(vacio)'}"`);
+          }
+          if (original.driver_id !== finalData.driver_id) {
+            const oldDrv = drivers.find(d => d.id == original.driver_id)?.name || 'Sin asignar';
+            const newDrv = drivers.find(d => d.id == finalData.driver_id)?.name || 'Sin asignar';
+            changes.push(`Chofer cambiado de "${oldDrv}" a "${newDrv}"`);
+          }
+          
+          if (changes.length > 0) {
+            changes.forEach(cMsg => {
+              ext.logs.push({
+                timestamp: new Date().toISOString(),
+                text: cMsg
+              });
+            });
+            finalData.extras = JSON.stringify(ext);
+          }
+        }
+      }
+
       const fn = api[`${action}${type[0].toUpperCase() + type.slice(1)}`];
-      await fn(data);
+      await fn(finalData);
       setModal(null);
       await reload();
       toast('Guardado ✓');
@@ -285,13 +323,139 @@ export default function AdminPanel() {
   };
 
   const handleQuickStatusChange = async (b, newStatus) => {
+    if (b.payment_status === newStatus) return;
+    
+    let ext = {};
     try {
-      const res = await api.updateBooking({ ...b, payment_status: newStatus });
+      ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+    } catch(e) {}
+    if (!ext.logs) ext.logs = [];
+    
+    const oldStatusLabel = PAY_LABEL[b.payment_status] || b.payment_status;
+    const newStatusLabel = PAY_LABEL[newStatus] || newStatus;
+    
+    ext.logs.push({
+      timestamp: new Date().toISOString(),
+      text: `Estado cambiado de "${oldStatusLabel}" a "${newStatusLabel}" (Rápido)`
+    });
+
+    try {
+      const res = await api.updateBooking({ ...b, payment_status: newStatus, extras: JSON.stringify(ext) });
       toast(res.status === 'success' ? 'Estado actualizado' : 'Error al actualizar', res.status === 'success');
       load();
     } catch (e) {
       toast('Error de red al actualizar estado', false);
     }
+  };
+
+  const handleAddLog = async (b) => {
+    const text = annotationTexts[b.id];
+    if (!text || !text.trim()) return;
+    
+    let ext = {};
+    try {
+      ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+    } catch(e) {}
+    if (!ext.logs) ext.logs = [];
+    ext.logs.push({
+      timestamp: new Date().toISOString(),
+      text: `Anotación: ${text.trim()}`
+    });
+    
+    try {
+      const res = await api.updateBooking({ ...b, extras: JSON.stringify(ext) });
+      if (res.status === 'success') {
+        toast('Anotación registrada');
+        setAnnotationTexts(prev => ({ ...prev, [b.id]: '' }));
+        load();
+      }
+    } catch(e) {
+      toast('Error al guardar anotación', false);
+    }
+  };
+
+  const renderBookingLogs = (b) => {
+    let ext = {};
+    try {
+      ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+    } catch(e) {}
+    const logs = ext.logs || [];
+    
+    return (
+      <div style={{marginTop:'12px', background:'#00000022', padding:'16px', borderRadius:'16px', border:'1px solid #ffffff05'}}>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px'}}>
+          <div style={{fontSize:'10px', fontWeight:900, color:C, letterSpacing:'1px', textTransform:'uppercase'}}>📋 Bitácora / Seguimiento del Viaje</div>
+          <span style={{fontSize:'9px', color:'#555', fontWeight:700}}>Estandarizado en UTC</span>
+        </div>
+        
+        <div style={{display:'flex', flexDirection:'column', gap:'10px', maxHeight:'200px', overflowY:'auto', marginBottom:'12px', paddingRight:'4px', scrollbarWidth:'thin'}}>
+          {logs.length === 0 ? (
+            <div style={{fontSize:'11px', color:'#555', fontStyle:'italic', padding:'8px 0'}}>Sin anotaciones registradas. Cambia el estado o añade una nota abajo.</div>
+          ) : (
+            [...logs].reverse().map((log, idx) => {
+              const dateObj = new Date(log.timestamp);
+              const isValidDate = !isNaN(dateObj.getTime());
+              const spainTime = isValidDate ? dateObj.toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '--';
+              const baliTime = isValidDate ? dateObj.toLocaleString('es-ES', { timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit' }) : '--';
+              
+              return (
+                <div key={idx} style={{display:'flex', gap:'8px', alignItems:'flex-start', fontSize:'11px', borderLeft:`2px solid ${C}33`, paddingLeft:'8px', marginLeft:'4px'}}>
+                  <div style={{flex:1, color:'#ddd', lineHeight:'1.4'}}>
+                    {log.text}
+                    <div style={{fontSize:'9px', color:'#666', marginTop:'2px', display:'flex', gap:'8px'}}>
+                      <span>🇪🇸 {spainTime}</span>
+                      <span>🌴 Bali: {baliTime}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        <div style={{display:'flex', gap:'8px'}}>
+          <input 
+            type="text" 
+            value={annotationTexts[b.id] || ''} 
+            onChange={e => setAnnotationTexts({ ...annotationTexts, [b.id]: e.target.value })}
+            placeholder="Añadir nota de seguimiento..." 
+            style={{
+              flex:1, 
+              padding:'8px 12px', 
+              borderRadius:'10px', 
+              border:'1px solid #333', 
+              background:'#111', 
+              color:'#fff', 
+              fontSize:'12px',
+              fontWeight:600,
+              outline:'none'
+            }}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddLog(b);
+              }
+            }}
+            onClick={e => e.stopPropagation()}
+          />
+          <button 
+            onClick={e => { e.stopPropagation(); handleAddLog(b); }}
+            style={{
+              background:C, 
+              color:'#000', 
+              border:'none', 
+              padding:'8px 16px', 
+              borderRadius:'10px', 
+              fontWeight:900, 
+              cursor:'pointer', 
+              fontSize:'11px'
+            }}
+          >
+            AÑADIR
+          </button>
+        </div>
+      </div>
+    );
   };
 
   const calDays=useMemo(()=>{
@@ -456,6 +620,8 @@ export default function AdminPanel() {
                       )}
                     </div>
                   </div>
+
+                  {renderBookingLogs(b)}
 
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%', background:'#00000033', padding:'8px 12px', borderRadius:'12px'}}>
                     <div style={{display:'flex', gap:'12px'}}>
