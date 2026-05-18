@@ -83,6 +83,7 @@ export default function AdminPanel() {
   const [reviews, setReviews] = useState([]);
   const [coupons, setCoupons] = useState([]);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
   const [expandedId, setExpandedId] = useState(null);
   const [modal, setModal] = useState(null);
   const [msg, setMsg] = useState(null);
@@ -94,6 +95,45 @@ export default function AdminPanel() {
   const [annotationTexts, setAnnotationTexts] = useState({});
 
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace('_', ' ');
+
+  const statsCharts = useMemo(() => {
+    // 1. Month-over-Month trend (last 6 months including current)
+    const monthlyMap = {};
+    const today = new Date();
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const label = d.toLocaleString('es-ES', { month: 'short' }).toUpperCase() + ' ' + String(d.getFullYear()).slice(-2);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      monthlyMap[key] = { label, revenue: 0, count: 0 };
+    }
+
+    bookings.forEach(b => {
+      if (b.payment_status === 'cancelled') return;
+      const dObj = parseLocalDate(b.booking_date);
+      const key = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}`;
+      if (monthlyMap[key]) {
+        monthlyMap[key].revenue += Number(b.total_price || 0);
+        monthlyMap[key].count += 1;
+      }
+    });
+
+    const monthlyData = Object.values(monthlyMap);
+
+    // 2. Popular tours (top 5)
+    const tourCounts = {};
+    bookings.forEach(b => {
+      if (b.payment_status === 'cancelled') return;
+      const t = b.tour_title || 'Otros';
+      tourCounts[t] = (tourCounts[t] || 0) + 1;
+    });
+
+    const popularTours = Object.entries(tourCounts)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    return { monthlyData, popularTours };
+  }, [bookings]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -285,7 +325,11 @@ export default function AdminPanel() {
 
   const filter = (l) => {
     if (!l || !Array.isArray(l)) return [];
-    return l.filter(x => {
+    let result = l;
+    if (tab === 'bookings' && statusFilter !== 'ALL') {
+      result = result.filter(x => String(x.payment_status).toUpperCase() === statusFilter);
+    }
+    return result.filter(x => {
       if (!x) return false;
       try {
         return Object.values(x).some(v => 
@@ -575,6 +619,40 @@ export default function AdminPanel() {
             <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])} title="Nuevo"><Plus size={16} /></button>
             {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV} title="Exportar CSV"><Download size={16} /></button>}
           </div>
+
+          {tab==='bookings' && (
+            <div style={{display:'flex', gap:'6px', marginBottom:'16px', flexWrap:'nowrap', overflowX:'auto', scrollbarWidth:'none', paddingBottom:'4px'}}>
+              {[
+                { k: 'ALL', l: 'Todas 📋' },
+                { k: 'PENDING_PAYMENT', l: 'Pago Pendiente ⌛' },
+                { k: 'CONFIRMED', l: 'Confirmadas ✅' },
+                { k: 'COMPLETED', l: 'Completadas 🏁' },
+                { k: 'CANCELLED', l: 'Canceladas ❌' }
+              ].map(p => {
+                const isActive = statusFilter === p.k;
+                return (
+                  <button
+                    key={p.k}
+                    onClick={() => setStatusFilter(p.k)}
+                    style={{
+                      background: isActive ? C : '#ffffff05',
+                      color: isActive ? '#000' : '#888',
+                      border: isActive ? `1px solid ${C}` : '1px solid #ffffff05',
+                      borderRadius: '12px',
+                      padding: '8px 12px',
+                      fontSize: '11px',
+                      fontWeight: 900,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {p.l}
+                  </button>
+                );
+              })}
+            </div>
+          )}
           {tab==='bookings'&&filter(bookings).map(b=>(
             <div key={b.id} style={{...s.card, cursor:'pointer', border: expandedId===b.id ? `1px solid ${C}` : '1px solid #ffffff05'}} onClick={()=>setExpandedId(expandedId===b.id?null:b.id)}>
               {/* BLOQUE SUPERIOR: Siempre visible */}
@@ -589,6 +667,21 @@ export default function AdminPanel() {
                     {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
                   </div>
                   <div style={{fontSize:'11px',color:C, fontWeight:900}}>{b.tour_title}</div>
+                  {(() => {
+                    const paid = Number(b.total_paid || 0);
+                    const total = Number(b.total_price || 0);
+                    const pct = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 0;
+                    return (
+                      <div style={{display:'flex', alignItems:'center', gap:'8px', marginTop:'6px'}}>
+                        <div style={{width:'80px', height:'4px', background:'#ffffff0c', borderRadius:'2px', overflow:'hidden'}}>
+                          <div style={{width:`${pct}%`, height:'100%', background: pct >= 100 ? '#10b981' : pct > 0 ? '#f59e0b' : '#444'}} />
+                        </div>
+                        <span style={{fontSize:'9px', color: pct >= 100 ? '#10b981' : pct > 0 ? '#f59e0b' : '#888', fontWeight: 900}}>
+                          {pct}% cobrado ({paid}€)
+                        </span>
+                      </div>
+                    );
+                  })()}
                   <div style={{marginTop:'4px'}} onClick={e=>e.stopPropagation()}>
                     <select 
                       value={b.payment_status} 
@@ -841,6 +934,53 @@ export default function AdminPanel() {
                 <div style={{fontSize:'10px',color:'#888',marginTop:'4px'}}>Rentabilidad global real</div>
               </div>
             </div>
+
+            {/* GRÁFICOS VISUALES */}
+            <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'20px', marginTop:'12px'}}>
+              {/* Tendencia de Ingresos */}
+              <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                <h3 style={{margin:'0 0 16px 0', fontSize:'14px', fontWeight:900, color:C, letterSpacing:'0.5px', textTransform:'uppercase'}}>Ingresos Mensuales (€)</h3>
+                <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-end', height:'180px', padding:'10px 0', borderBottom:'1px solid #ffffff11'}}>
+                  {statsCharts.monthlyData.map((d, i) => {
+                    const maxRev = Math.max(...statsCharts.monthlyData.map(x => x.revenue), 100);
+                    const pct = (d.revenue / maxRev) * 100;
+                    return (
+                      <div key={i} style={{flex: 1, display:'flex', flexDirection:'column', alignItems:'center', gap:'8px'}}>
+                        <div style={{fontSize:'9px', fontWeight:900, color:C}}>{d.revenue.toFixed(0)}€</div>
+                        <div style={{width:'24px', height:`${Math.max(10, pct * 1.2)}px`, background:`linear-gradient(to top, ${C}33, ${C})`, borderRadius:'6px', transition:'all 0.5s'}}></div>
+                        <div style={{fontSize:'8px', color:'#666', fontWeight:900}}>{d.label}</div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Tours Populares */}
+              <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                <h3 style={{margin:'0 0 16px 0', fontSize:'14px', fontWeight:900, color:C, letterSpacing:'0.5px', textTransform:'uppercase'}}>Tours Más Vendidos (Popularidad)</h3>
+                <div style={{display:'flex', flexDirection:'column', gap:'12px', padding:'10px 0'}}>
+                  {statsCharts.popularTours.length === 0 ? (
+                    <div style={{fontSize:'12px', color:'#666', fontStyle:'italic', textAlign:'center', padding:'20px 0'}}>Sin datos suficientes.</div>
+                  ) : (
+                    statsCharts.popularTours.map((t, i) => {
+                      const maxCount = Math.max(...statsCharts.popularTours.map(x => x.count), 1);
+                      const pct = (t.count / maxCount) * 100;
+                      return (
+                        <div key={i} style={{display:'flex', flexDirection:'column', gap:'4px'}}>
+                          <div style={{display:'flex', justifyContent:'space-between', fontSize:'11px', fontWeight:700}}>
+                            <span style={{whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis', maxWidth:'80%', color:'#fff'}}>{t.name}</span>
+                            <span style={{color:C, fontWeight:900}}>{t.count} Reservas</span>
+                          </div>
+                          <div style={{width:'100%', height:'8px', background:'#222', borderRadius:'4px', overflow:'hidden'}}>
+                            <div style={{width:`${pct}%`, height:'100%', background:`linear-gradient(to right, ${C}66, ${C})`, borderRadius:'4px', transition:'width 0.5s'}}></div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -891,7 +1031,7 @@ export default function AdminPanel() {
                </div>
             ) : (
               <>
-                {modal.type==='booking'&&<BookingForm data={modal.data} drivers={drivers} onChange={setField}/>}
+                {modal.type==='booking'&&<BookingForm data={modal.data} drivers={drivers} onChange={setField} bookings={bookings}/>}
                 {modal.type==='finance' && (
                   <FinancialManagement 
                     booking={modal.data} 
