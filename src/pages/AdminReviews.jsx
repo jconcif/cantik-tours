@@ -292,8 +292,11 @@ export default function AdminPanel() {
                 text: cMsg
               });
             });
-            finalData.extras = JSON.stringify(ext);
           }
+          if (finalData.pickup_time !== undefined) {
+            ext.pickup_time = finalData.pickup_time;
+          }
+          finalData.extras = JSON.stringify(ext);
         }
       }
 
@@ -321,7 +324,16 @@ export default function AdminPanel() {
 
   const setField=(k,v)=>setModal(m=>({...m,data:{...m.data,[k]:v}}));
   const openNew=(type)=>setModal({type,action:'create',data:{...{booking:emptyBooking,driver:emptyDriver,review:emptyReview,coupon:emptyCoupon}[type]}});
-  const openEdit=(type,row)=>setModal({type,action:'update',data:{...row}});
+  const openEdit=(type,row)=>{
+    let dataToEdit = {...row};
+    if (type === 'booking') {
+      try {
+        const ext = typeof row.extras === 'string' ? JSON.parse(row.extras) : (row.extras || {});
+        dataToEdit.pickup_time = ext.pickup_time || row.pickup_time || '';
+      } catch(e) {}
+    }
+    setModal({type,action:'update',data:dataToEdit});
+  };
 
   const handleManagePayments = (b) => {
     setModal({type:'finance', action:'view', data:b});
@@ -414,14 +426,12 @@ export default function AdminPanel() {
     });
     
     try {
-      const res = await api.updateBooking({ ...b, extras: JSON.stringify(ext) });
-      if (res.status === 'success') {
-        toast('Anotación registrada');
-        setAnnotationTexts(prev => ({ ...prev, [b.id]: '' }));
-        const updatedBooking = { ...b, extras: JSON.stringify(ext) };
-        setModal(prev => prev ? { ...prev, data: updatedBooking } : null);
-        load();
-      }
+      await api.updateBooking({ ...b, extras: JSON.stringify(ext) });
+      toast('Anotación registrada');
+      setAnnotationTexts(prev => ({ ...prev, [b.id]: '' }));
+      const updatedBooking = { ...b, extras: JSON.stringify(ext) };
+      setModal(prev => prev ? { ...prev, data: updatedBooking } : null);
+      load();
     } catch(e) {
       toast('Error al guardar anotación', false);
     }
@@ -786,8 +796,8 @@ export default function AdminPanel() {
                       <Ticket size={16} /><span style={{fontSize:'11px'}}>Voucher</span>
                     </button>
 
-                    <button style={{...s.btn('#ffffff05','#fff'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{ e.stopPropagation(); const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`; window.open(`https://cantiktours.com/booking?ref=${ref}`, '_blank'); }} title="Ver Itinerario Público">
-                      <ExternalLink size={16} /><span style={{fontSize:'11px'}}>Link Público</span>
+                    <button style={{...s.btn('#ffffff05','#fff'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{ e.stopPropagation(); const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`; navigator.clipboard.writeText(`https://cantiktours.com/booking?ref=${ref}`); toast('Link público copiado ✓', true); }} title="Copiar Link Público">
+                      <ExternalLink size={16} /><span style={{fontSize:'11px'}}>Copiar Link</span>
                     </button>
 
                     <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); copyReviewLink(b)}} title="Copiar Link Review">
