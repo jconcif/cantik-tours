@@ -803,7 +803,11 @@ const TourDetail = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed bottom-0 left-0 right-0 z-[100] pt-3 px-4 pb-[calc(0.8rem+env(safe-area-inset-bottom))] lg:hidden bg-white dark:bg-bg-dark border-t border-black/5 dark:border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.15)]"
+                        className="fixed left-0 right-0 z-[100] pt-3 px-4 lg:hidden bg-white dark:bg-bg-dark border-t border-black/5 dark:border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.15)]"
+                        style={{
+                            bottom: '-50px',
+                            paddingBottom: 'calc(50px + 0.8rem + env(safe-area-inset-bottom))'
+                        }}
                     >
                         <div className="flex items-center justify-center max-w-lg mx-auto">
                             <button
@@ -813,8 +817,6 @@ const TourDetail = () => {
                                 <span>{t('detail.book_now')}</span>
                             </button>
                         </div>
-                        {/* Safe area bleed overlay to cover WebKit fixed dynamic bottom gaps on scroll */}
-                        <div className="absolute top-full left-0 right-0 h-32 bg-white dark:bg-bg-dark pointer-events-none" />
                     </motion.div>
                 )}
             </AnimatePresence>
