@@ -5,7 +5,7 @@ import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManage
 import { 
   MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
   Globe, Sun, Moon, DollarSign, Euro, LogOut, LayoutDashboard,
-  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download, ExternalLink, Lock, Unlock
+  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download, ExternalLink, Lock, Unlock, Clipboard
 } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -367,6 +367,8 @@ export default function AdminPanel() {
       if (res.status === 'success') {
         toast('Anotación registrada');
         setAnnotationTexts(prev => ({ ...prev, [b.id]: '' }));
+        const updatedBooking = { ...b, extras: JSON.stringify(ext) };
+        setModal(prev => prev ? { ...prev, data: updatedBooking } : null);
         load();
       }
     } catch(e) {
@@ -511,44 +513,57 @@ export default function AdminPanel() {
   );
 
   return(
-    <div style={{paddingTop: isMobile ? '120px' : '140px', paddingBottom:'40px',minHeight:'100vh',background:theme.bg,color:theme.text, fontFamily:'"Inter", sans-serif'}}>
+    <div style={{paddingTop: isMobile ? '135px' : '90px', paddingBottom:'40px',minHeight:'100vh',background:theme.bg,color:theme.text, fontFamily:'"Inter", sans-serif'}}>
       
-      {/* MENU SUPERIOR / SETTINGS */}
-      <div style={{position:'fixed', top:0, left:0, right:0, zIndex:100, background:theme.header, backdropFilter:'blur(20px)', borderBottom:`1px solid ${theme.border}`, padding:'12px 0'}}>
-        <div style={{maxWidth:'1100px', margin:'0 auto', padding:'0 16px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-          <div style={{display:'flex', alignItems:'center', gap:'12px'}}>
-            <div style={{width:'32px', height:'32px', background:C, borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', color:'#000', fontWeight:900}}>C</div>
-            <div style={{fontSize:'16px', fontWeight:900, letterSpacing:'-0.5px', color: theme.text}}>CANTIK <span style={{color:C}}>ADMIN</span></div>
-          </div>
-          
-          <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
-            <button 
-              onClick={toggleDarkMode} 
-              style={{...s.btn(theme.btnGhost, theme.text), width:'36px', height:'36px', padding:0, border:`1px solid ${theme.border}`}}
-              title={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
-            >
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
+      {/* MENU SUPERIOR / SETTINGS & NAVIGATION */}
+      <div style={{position:'fixed', top:0, left:0, right:0, zIndex:100, background:theme.header, backdropFilter:'blur(20px)', borderBottom:`1px solid ${theme.border}`, padding: isMobile ? '12px 0 6px 0' : '14px 0'}}>
+        <div style={{maxWidth:'1100px', margin:'0 auto', padding:'0 16px', display:'flex', flexDirection: 'column', gap: isMobile ? '10px' : '0px'}}>
+          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+            <div style={{display:'flex', alignItems:'center', gap:'12px'}}>
+              <div style={{width:'32px', height:'32px', background:C, borderRadius:'10px', display:'flex', alignItems:'center', justifyContent:'center', color:'#000', fontWeight:900}}>C</div>
+              <div style={{fontSize:'16px', fontWeight:900, letterSpacing:'-0.5px', color: theme.text}}>CANTIK <span style={{color:C}}>ADMIN</span></div>
+            </div>
             
-            <div style={{width:'1px', height:'20px', background:theme.border, margin:'0 4px'}}></div>
+            {/* Desktop Tabs integrated in Header */}
+            {!isMobile && (
+              <div style={{display:'flex', gap:'4px', background:theme.tabBg, padding:'4px', borderRadius:'14px'}}>
+                {TABS.map(t=><button key={t} style={{...s.tabBtn(tab===t), fontSize:'12px', padding:'6px 12px', borderRadius:'10px'}} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
+              </div>
+            )}
 
-            <button 
-              onClick={() => { clearToken(); setAuthed(false); window.location.reload(); }} 
-              style={{...s.btn('#ef444415', '#ef4444'), width:'36px', height:'36px', padding:0}}
-              title="Cerrar Sesión"
-            >
-              <LogOut size={16} />
-            </button>
+            <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
+              <button 
+                onClick={toggleDarkMode} 
+                style={{...s.btn(theme.btnGhost, theme.text), width:'36px', height:'36px', padding:0, border:`1px solid ${theme.border}`}}
+                title={`Cambiar a modo ${isDark ? 'claro' : 'oscuro'}`}
+              >
+                {isDark ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+              
+              <div style={{width:'1px', height:'20px', background:theme.border, margin:'0 4px'}}></div>
+
+              <button 
+                onClick={() => { clearToken(); setAuthed(false); window.location.reload(); }} 
+                style={{...s.btn('#ef444415', '#ef4444'), width:'36px', height:'36px', padding:0}}
+                title="Cerrar Sesión"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Tabs sub-header */}
+          {isMobile && (
+            <div style={{display:'flex', gap:'4px', background:theme.tabBg, padding:'4px', borderRadius:'14px', overflowX:'auto', scrollbarWidth:'none', msOverflowStyle:'none', marginTop:'4px'}}>
+              {TABS.map(t=><button key={t} style={{...s.tabBtn(tab===t), fontSize:'11px', padding:'6px 10px', borderRadius:'8px', whiteSpace:'nowrap'}} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
+            </div>
+          )}
         </div>
       </div>
 
       <div style={{maxWidth:'1100px',margin:'0 auto',padding:'0 16px'}}>
-        <div style={{display:'flex',flexDirection: isMobile ? 'column' : 'row', justifyContent:'space-between',alignItems: isMobile ? 'flex-start' : 'center',marginBottom:'32px', gap:'20px'}}>
-          <h1 style={{margin:0,fontSize:'24px',fontWeight:900, letterSpacing:'-1px', display: isMobile ? 'none' : 'block'}}>Cantik<span style={{color:C}}>Admin</span></h1>
-          <div style={{display:'flex',gap:'4px',background:theme.tabBg,padding:'6px',borderRadius:'20px', overflowX:'auto', maxWidth:'100%', scrollbarWidth:'none', msOverflowStyle:'none'}}>
-            {TABS.map(t=><button key={t} style={s.tabBtn(tab===t)} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
-          </div>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'24px'}}>
+          <h2 style={{margin:0, fontSize:'22px', fontWeight:900, color:'#fff', letterSpacing:'-0.5px'}}>{TLABEL[tab]}</h2>
         </div>
 
         {msg&&<div style={{padding:'12px',borderRadius:'12px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'12px',fontWeight:900}}>{msg.t}</div>}
@@ -623,8 +638,6 @@ export default function AdminPanel() {
                     </div>
                   </div>
 
-                  {renderBookingLogs(b)}
-
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%', background:'#00000033', padding:'8px 12px', borderRadius:'12px'}}>
                     <div style={{display:'flex', gap:'12px'}}>
                       <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>PAGADO:</span> <span style={{color:'#10b981'}}>{Number(b.total_paid||0).toFixed(0)}€</span></div>
@@ -692,6 +705,14 @@ export default function AdminPanel() {
                       onClick={e=>{e.stopPropagation(); setModal({type:'itinerary', action:'edit', data:b})}}
                     >
                       <MapPin size={18} />
+                    </button>
+
+                    <button 
+                      style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
+                      title="Bitácora / Anotaciones" 
+                      onClick={e=>{e.stopPropagation(); setModal({type:'logs', action:'view', data:b})}}
+                    >
+                      <Clipboard size={18} />
                     </button>
 
                     <button 
@@ -837,7 +858,23 @@ export default function AdminPanel() {
         )}
 
         {modal&&(
-          <Modal title={`${modal.action==='create'?'Nuevo':modal.action==='delete'?'Confirmar Eliminación':'Editar'} ${modal.type === 'finance' ? 'Finanzas del Tour' : modal.type}`} onClose={()=>setModal(null)} onSave={save} loading={loading} hideFooter={modal.type === 'finance' || modal.type === 'itinerary' || modal.action === 'delete'}>
+          <Modal 
+            title={
+              modal.action === 'delete' 
+                ? 'Confirmar Eliminación' 
+                : modal.type === 'finance' 
+                  ? 'Finanzas del Tour' 
+                  : modal.type === 'itinerary' 
+                    ? 'Editar Itinerario' 
+                    : modal.type === 'logs' 
+                      ? 'Bitácora y Historial' 
+                      : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
+            } 
+            onClose={()=>setModal(null)} 
+            onSave={save} 
+            loading={loading} 
+            hideFooter={['finance', 'itinerary', 'logs'].includes(modal.type) || modal.action === 'delete'}
+          >
             {modal.action === 'delete' ? (
                <div style={{textAlign:'center', padding:'20px 0'}}>
                   <div style={{fontSize:'48px', marginBottom:'16px'}}>⚠️</div>
@@ -866,6 +903,9 @@ export default function AdminPanel() {
                     booking={modal.data} 
                     onUpdate={reload} 
                   />
+                )}
+                {modal.type==='logs' && (
+                  renderBookingLogs(modal.data)
                 )}
                 {modal.type==='driver'&&<DriverForm data={modal.data} onChange={setField}/>}
                 {modal.type==='review'&&<ReviewForm data={modal.data} onChange={setField}/>}
