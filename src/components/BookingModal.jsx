@@ -427,14 +427,14 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                 <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-2xl p-4 border border-primary/10 space-y-2">
                                                     <p className="text-gray-700 dark:text-gray-200 text-[11px] font-black leading-normal">
                                                         {i18n.language === 'en' 
-                                                            ? 'Last step! By clicking REQUEST BOOKING, you will open a WhatsApp chat to confirm the availability of your trip.' 
-                                                            : '¡Último paso! Al hacer clic en SOLICITAR RESERVA, abrirás un chat en WhatsApp para confirmar la disponibilidad de tu viaje.'
+                                                            ? 'Last step! By clicking REQUEST BOOKING, you will open a WhatsApp chat, please wait for our reply to confirm the availability of your trip.' 
+                                                            : '¡Último paso! Al hacer clic en SOLICITAR RESERVA, abrirás un chat en WhatsApp, espera nuestra respuesta para confirmar la disponibilidad de tu viaje.'
                                                         }
                                                     </p>
                                                     <p>
                                                         {i18n.language === 'en' 
-                                                            ? 'No upfront payment: You will only pay once we have validated all the details of your trip together via chat.' 
-                                                            : 'Sin pagos por adelantado: Solo abonarás el importe una vez hayamos validado juntos todos los detalles por chat.'
+                                                            ? 'No upfront payment: You will only pay the amount once we have validated all the details of your trip together.' 
+                                                            : 'Sin pagos por adelantado: Solo abonarás el importe una vez hayamos validado juntos todos los detalles de tu viaje.'
                                                         }
                                                     </p>
                                                     <p className="text-primary text-[12px] font-black tracking-wide pt-1">
