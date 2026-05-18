@@ -428,79 +428,77 @@ export default function AdminPanel() {
     const logs = Array.isArray(ext.logs) ? ext.logs : [];
     
     return (
-      <div style={{marginTop:'12px', background:'#00000022', padding:'16px', borderRadius:'16px', border:'1px solid #ffffff05'}}>
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px'}}>
-          <div style={{fontSize:'10px', fontWeight:900, color:C, letterSpacing:'1px', textTransform:'uppercase'}}>📋 Bitácora / Seguimiento del Viaje</div>
-          <span style={{fontSize:'9px', color:'#555', fontWeight:700}}>Estandarizado en UTC</span>
-        </div>
-        
-        <div style={{display:'flex', flexDirection:'column', gap:'10px', maxHeight:'200px', overflowY:'auto', marginBottom:'12px', paddingRight:'4px', scrollbarWidth:'thin'}}>
-          {logs.length === 0 ? (
-            <div style={{fontSize:'11px', color:'#555', fontStyle:'italic', padding:'8px 0'}}>Sin anotaciones registradas. Cambia el estado o añade una nota abajo.</div>
-          ) : (
-            [...logs].reverse().map((log, idx) => {
-              const logText = typeof log === 'object' && log !== null ? log.text : String(log);
-              const logTime = typeof log === 'object' && log !== null ? log.timestamp : null;
-              const dateObj = new Date(logTime);
-              const isValidDate = logTime && !isNaN(dateObj.getTime());
-              const spainTime = isValidDate ? dateObj.toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '--';
-              const baliTime = isValidDate ? dateObj.toLocaleString('es-ES', { timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit' }) : '--';
-              
-              return (
-                <div key={idx} style={{display:'flex', gap:'8px', alignItems:'flex-start', fontSize:'11px', borderLeft:`2px solid ${C}33`, paddingLeft:'8px', marginLeft:'4px'}}>
-                  <div style={{flex:1, color:'#ddd', lineHeight:'1.4'}}>
-                    {logText}
-                    <div style={{fontSize:'9px', color:'#666', marginTop:'2px', display:'flex', gap:'8px'}}>
-                      <span>🇪🇸 {spainTime}</span>
-                      <span>🌴 Bali: {baliTime}</span>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          )}
+      <div style={{display:'flex', flexDirection:'column', gap:'16px'}}>
+        {/* Contexto del Cliente / Viaje */}
+        <div style={{background:'#1a1a1a', padding:'16px', borderRadius:'16px', border:`1px solid ${C}33`}}>
+          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', fontSize:'12px'}}>
+            <div><span style={{color:'#666', fontWeight:900}}>CLIENTE:</span> <span style={{color:'#fff'}}>{b.client_name}</span></div>
+            <div><span style={{color:'#666', fontWeight:900}}>WHATSAPP:</span> <span style={{color:'#fff'}}>{b.client_phone || 'N/A'}</span></div>
+            <div style={{gridColumn:'1/-1'}}><span style={{color:'#666', fontWeight:900}}>HOTEL / RECOGIDA:</span> <span style={{color:'#fff'}}>{b.hotel || 'No especificado'}</span></div>
+            {b.notes && <div style={{gridColumn:'1/-1'}}><span style={{color:'#666', fontWeight:900}}>NOTAS INTERNAS FIJAS:</span> <span style={{color:'#fff'}}>{b.notes}</span></div>}
+          </div>
+          <div style={{marginTop:'12px', fontSize:'10px', display:'flex', gap:'12px', alignItems:'center', padding:'8px', background:'#ffffff05', borderRadius:'8px'}}>
+            <span style={{color:C, fontWeight:700}}>Creación: {new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})} (🇪🇸)</span>
+            <span style={{opacity:0.6}}>🌴 Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
+          </div>
         </div>
 
-        <div style={{display:'flex', gap:'8px'}}>
-          <input 
-            type="text" 
-            value={annotationTexts[b.id] || ''} 
-            onChange={e => setAnnotationTexts({ ...annotationTexts, [b.id]: e.target.value })}
-            placeholder="Añadir nota de seguimiento..." 
-            style={{
-              flex:1, 
-              padding:'8px 12px', 
-              borderRadius:'10px', 
-              border:'1px solid #333', 
-              background:'#111', 
-              color:'#fff', 
-              fontSize:'12px',
-              fontWeight:600,
-              outline:'none'
-            }}
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                handleAddLog(b);
-              }
-            }}
-            onClick={e => e.stopPropagation()}
-          />
-          <button 
-            onClick={e => { e.stopPropagation(); handleAddLog(b); }}
-            style={{
-              background:C, 
-              color:'#000', 
-              border:'none', 
-              padding:'8px 16px', 
-              borderRadius:'10px', 
-              fontWeight:900, 
-              cursor:'pointer', 
-              fontSize:'11px'
-            }}
-          >
-            AÑADIR
-          </button>
+        {/* Timeline */}
+        <div style={{background:'#00000022', padding:'16px', borderRadius:'16px', border:'1px solid #ffffff05', flex:1, display:'flex', flexDirection:'column'}}>
+          <div style={{fontSize:'10px', fontWeight:900, color:C, letterSpacing:'1px', textTransform:'uppercase', marginBottom:'12px'}}>📋 Historial y Bitácora</div>
+          
+          <div style={{display:'flex', flexDirection:'column', gap:'10px', maxHeight:'300px', overflowY:'auto', marginBottom:'16px', paddingRight:'4px', scrollbarWidth:'thin'}}>
+            {logs.length === 0 ? (
+              <div style={{fontSize:'11px', color:'#555', fontStyle:'italic', padding:'8px 0'}}>Sin anotaciones registradas en el historial.</div>
+            ) : (
+              [...logs].reverse().map((log, idx) => {
+                const logText = typeof log === 'object' && log !== null ? log.text : String(log);
+                const logTime = typeof log === 'object' && log !== null ? log.timestamp : null;
+                const dateObj = new Date(logTime);
+                const isValidDate = logTime && !isNaN(dateObj.getTime());
+                const spainTime = isValidDate ? dateObj.toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '--';
+                const baliTime = isValidDate ? dateObj.toLocaleString('es-ES', { timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit' }) : '--';
+                
+                return (
+                  <div key={idx} style={{display:'flex', gap:'8px', alignItems:'flex-start', fontSize:'11px', borderLeft:`2px solid ${C}33`, paddingLeft:'8px', marginLeft:'4px'}}>
+                    <div style={{flex:1, color:'#ddd', lineHeight:'1.4'}}>
+                      {logText}
+                      <div style={{fontSize:'9px', color:'#666', marginTop:'2px', display:'flex', gap:'8px'}}>
+                        <span>🇪🇸 {spainTime}</span>
+                        <span>🌴 Bali: {baliTime}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Input para nueva nota */}
+          <div style={{display:'flex', gap:'8px', marginTop:'auto'}}>
+            <input 
+              placeholder="Escribe una nueva nota o actualización..."
+              value={annotationTexts[b.id] || ''}
+              onChange={e => setAnnotationTexts(prev => ({ ...prev, [b.id]: e.target.value }))}
+              style={{
+                flex:1, padding:'12px 16px', borderRadius:'12px', border:'1px solid #333', background:'#111', color:'#fff', fontSize:'13px', outline:'none'
+              }}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  handleAddLog(b);
+                }
+              }}
+            />
+            <button 
+              onClick={() => handleAddLog(b)}
+              style={{
+                background:C, color:'#000', border:'none', padding:'0 20px', borderRadius:'12px', fontWeight:900, cursor:'pointer', fontSize:'13px'
+              }}
+            >
+              Añadir
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -717,112 +715,49 @@ export default function AdminPanel() {
               {/* DETALLES OCULTOS: Se expanden al hacer clic */}
               {expandedId === b.id && (
                 <div style={{marginTop:'16px', paddingTop:'16px', borderTop:'1px solid #ffffff05', width:'100%', display:'flex', flexDirection:'column', gap:'12px'}}>
-                  <div style={{fontSize:'12px', color:'#fff', background:'#ffffff05', padding:'12px', borderRadius:'12px'}}>
-                    <div style={{marginBottom:'8px'}}><span style={{color:'#666', fontWeight:900}}>HOTEL:</span> {b.hotel}</div>
-                    {b.notes && <div style={{marginBottom:'8px'}}><span style={{color:'#666', fontWeight:900}}>NOTAS:</span> {b.notes}</div>}
-                    <div style={{display:'flex', gap:'12px', fontSize:'10px', alignItems:'center'}}>
-                      <span style={{color:C, fontWeight:700}}>🕒 {new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})}</span>
-                      <span style={{opacity:0.6}}>🌴 Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
-                      {getProbableLocation(b.client_phone) && (
-                        <span style={{opacity:0.8, background:theme.btnGhost, padding:'2px 8px', borderRadius:'6px'}}>
-                          {getProbableLocation(b.client_phone).flag} {getProbableLocation(b.client_phone).name}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+                  
+                  {/* Grid de Centro de Control */}
+                  <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:'8px', width:'100%'}}>
+                    
+                    {/* -- GESTIÓN PRINCIPAL -- */}
+                    <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); openEdit('booking',b)}} title="Editar Reserva">
+                      <Pencil size={16} /><span style={{fontSize:'11px'}}>Editar Datos</span>
+                    </button>
+                    
+                    <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); setModal({type:'itinerary', action:'edit', data:b})}} title="Editar Itinerario">
+                      <MapPin size={16} /><span style={{fontSize:'11px'}}>Itinerario</span>
+                    </button>
 
-                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%', background:'#00000033', padding:'8px 12px', borderRadius:'12px'}}>
-                    <div style={{display:'flex', gap:'12px'}}>
-                      <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>PAGADO:</span> <span style={{color:'#10b981'}}>{Number(b.total_paid||0).toFixed(0)}€</span></div>
-                      {(b.total_price - (b.total_paid||0)) > 0 && <div style={{fontSize:'10px', fontWeight:900}}><span style={{color:'#666'}}>FALTA:</span> <span style={{color:'#ef4444'}}>{(b.total_price - (b.total_paid||0)).toFixed(0)}€</span></div>}
-                    </div>
-                  </div>
+                    <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); setModal({type:'logs', action:'view', data:b})}} title="Bitácora y Contexto">
+                      <Clipboard size={16} /><span style={{fontSize:'11px'}}>Bitácora</span>
+                    </button>
 
-                  <div style={{display:'flex', gap:'8px', width:'100%', marginTop:'4px', alignItems:'center'}}>
-                    <a 
-                      href={b.client_phone ? waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`) : '#'} 
-                      target={b.client_phone ? "_blank" : "_self"}
-                      rel="noreferrer" 
-                      onClick={e => {
-                        if (!b.client_phone) { e.preventDefault(); toast('Sin número registrado', false); }
-                        e.stopPropagation();
-                      }} 
-                      style={{
-                        ...s.btn(b.client_phone ? '#25D366' : '#333', b.client_phone ? '#fff' : '#666'), 
-                        flex:1, height:'40px', opacity: b.client_phone ? 1 : 0.5, cursor: b.client_phone ? 'pointer' : 'not-allowed'
-                      }}
-                      title="Enviar WhatsApp"
-                    >
-                      <MessageCircle size={18} />
+                    <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); handleManagePayments(b)}} title="Finanzas">
+                      <Wallet size={16} /><span style={{fontSize:'11px'}}>Finanzas</span>
+                    </button>
+
+                    {/* -- COMUNICACIÓN -- */}
+                    <a href={b.client_phone ? waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`) : '#'} target={b.client_phone ? "_blank" : "_self"} rel="noreferrer" onClick={e => { if (!b.client_phone) { e.preventDefault(); toast('Sin número', false); } e.stopPropagation(); }} style={{...s.btn(b.client_phone ? '#25D36611' : '#ffffff05', b.client_phone ? '#25D366' : '#666'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px', opacity: b.client_phone ? 1 : 0.5, pointerEvents: b.client_phone ? 'auto' : 'none'}}>
+                      <MessageCircle size={16} /><span style={{fontSize:'11px'}}>WhatsApp</span>
                     </a>
 
-                    <button 
-                      style={{...s.btn(C+'22',C), flex:1, height:'40px'}} 
-                      onClick={e=>{e.stopPropagation(); generateVoucher(b,drivers)}}
-                      title="Generar Voucher"
-                    >
-                      <Ticket size={18} />
+                    <button style={{...s.btn('#ffffff05','#fff'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); generateVoucher(b,drivers)}} title="Generar Voucher">
+                      <Ticket size={16} /><span style={{fontSize:'11px'}}>Voucher</span>
                     </button>
 
-                    <button 
-                      style={{...s.btn('#f59e0b22','#f59e0b'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
-                      title="Copiar Link Review" 
-                      onClick={e=>{e.stopPropagation(); copyReviewLink(b)}}
-                    >
-                      <Star size={18} />
+                    <button style={{...s.btn('#ffffff05','#fff'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{ e.stopPropagation(); const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`; window.open(`https://cantiktours.com/booking?ref=${ref}`, '_blank'); }} title="Ver Itinerario Público">
+                      <ExternalLink size={16} /><span style={{fontSize:'11px'}}>Link Público</span>
                     </button>
 
-                    <button 
-                      style={{...s.btn('#ffffff11','#fff'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
-                      title="Editar Reserva"
-                      onClick={e=>{e.stopPropagation(); openEdit('booking',b)}}
-                    >
-                      <Pencil size={18} />
+                    <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); copyReviewLink(b)}} title="Copiar Link Review">
+                      <Star size={16} /><span style={{fontSize:'11px'}}>Pedir Review</span>
                     </button>
 
-                    <button 
-                      style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
-                      title="Ver Itinerario Público" 
-                      onClick={e=>{
-                        e.stopPropagation(); 
-                        const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
-                        window.open(`https://cantiktours.com/booking?ref=${ref}`, '_blank');
-                      }}
-                    >
-                      <ExternalLink size={18} />
+                    {/* -- ZONA DE PELIGRO -- */}
+                    <button style={{...s.btn('#ef444411','#ef4444'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); del('booking',b.id)}}>
+                      <Trash2 size={16} /><span style={{fontSize:'11px'}}>Eliminar</span>
                     </button>
 
-                    <button 
-                      style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
-                      title="Editar Itinerario" 
-                      onClick={e=>{e.stopPropagation(); setModal({type:'itinerary', action:'edit', data:b})}}
-                    >
-                      <MapPin size={18} />
-                    </button>
-
-                    <button 
-                      style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
-                      title="Bitácora / Anotaciones" 
-                      onClick={e=>{e.stopPropagation(); setModal({type:'logs', action:'view', data:b})}}
-                    >
-                      <Clipboard size={18} />
-                    </button>
-
-                    <button 
-                      style={{...s.btn(C+'11',C), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
-                      title="Finanzas del Tour" 
-                      onClick={e=>{e.stopPropagation(); handleManagePayments(b)}}
-                    >
-                      <Wallet size={18} />
-                    </button>
-
-                    <button 
-                      style={{...s.btn('#ef444411','#ef4444'), minWidth:'42px', height:'42px', padding:0, flexShrink:0}} 
-                      title="Eliminar"
-                      onClick={e=>{e.stopPropagation(); del('booking',b.id)}}
-                    >
-                      <Trash2 size={18} />
-                    </button>
                   </div>
                 </div>
               )}
