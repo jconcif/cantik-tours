@@ -25,7 +25,7 @@ i18n
                         visa_assistance: "Asistencia de Visado"
                     },
                     hero: {
-                        badge: "Experiencias Premium en Indonesia.",
+                        badge: "Experiencias Premium en Indonesia",
                         /* 
                         title_1: "Bali a tu ritmo,",
                         title_2: "habla tu idioma.",
@@ -697,7 +697,7 @@ i18n
                         visa_assistance: "Visa Assistance"
                     },
                     hero: {
-                        badge: "Premium Experiences in Indonesia.",
+                        badge: "Premium Experiences in Indonesia",
                         /*
                         title_1: "Bali at your pace,",
                         title_2: "in your language.",

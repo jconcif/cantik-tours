@@ -803,7 +803,12 @@ const TourDetail = () => {
                         initial={{ y: 100 }}
                         animate={{ y: 0 }}
                         exit={{ y: 100 }}
-                        className="fixed bottom-0 left-0 right-0 z-[100] p-4 lg:hidden bg-white/95 dark:bg-bg-dark/95 backdrop-blur-xl border-t border-black/5 dark:border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
+                        className="fixed bottom-0 left-0 right-0 z-[100] pt-4 px-4 pb-[calc(1rem+env(safe-area-inset-bottom))] lg:hidden bg-white/95 dark:bg-bg-dark/95 backdrop-blur-xl border-t border-black/5 dark:border-white/10 shadow-[0_-10px_40px_rgba(0,0,0,0.1)]"
+                        style={{
+                            transform: 'translate3d(0, 0, 0)',
+                            backfaceVisibility: 'hidden',
+                            willChange: 'transform'
+                        }}
                     >
                         <div className="flex items-center justify-center max-w-lg mx-auto">
                             <button
