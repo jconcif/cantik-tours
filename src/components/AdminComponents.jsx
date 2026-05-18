@@ -23,7 +23,10 @@ export const BookingForm = ({data,onChange}) => {
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(240px, 1fr))',gap:'12px'}}>
       {/* Identity & Core Info */}
       <Input label="Código Referencia (ID)" value={data.reference || `CT-${data.id}`} onChange={()=>{}} readOnly />
-      <Input label="Fecha Tour" value={data.booking_date} onChange={v=>onChange('booking_date',v)} type="date" />
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+        <Input label="Fecha Tour" value={data.booking_date} onChange={v=>onChange('booking_date',v)} type="date" />
+        <Input label="Hora Recogida" value={data.pickup_time} onChange={v=>onChange('pickup_time',v)} type="time" />
+      </div>
 
       {/* Client Info */}
       <Input label="Cliente" value={data.client_name} onChange={v=>onChange('client_name',v)} />
