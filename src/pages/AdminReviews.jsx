@@ -257,7 +257,11 @@ export default function AdminPanel() {
     setLoading(true);
     try {
       let finalData = { ...data };
-      if (type === 'booking' && action === 'update') {
+      
+      let actualType = type;
+      if (type === 'assign_driver') actualType = 'booking';
+
+      if (actualType === 'booking' && action === 'update') {
         const original = bookings.find(x => x.id === data.id);
         if (original) {
           let ext = {};
@@ -293,7 +297,7 @@ export default function AdminPanel() {
         }
       }
 
-      const fn = api[`${action}${type[0].toUpperCase() + type.slice(1)}`];
+      const fn = api[`${action}${actualType[0].toUpperCase() + actualType.slice(1)}`];
       await fn(finalData);
       setModal(null);
       await reload();
@@ -766,7 +770,7 @@ export default function AdminPanel() {
                       <Wallet size={16} /><span style={{fontSize:'11px'}}>Finanzas</span>
                     </button>
 
-                    <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); setModal({type:'assign_driver', action:'edit', data:b})}} title="Asignar Chofer">
+                    <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); setModal({type:'assign_driver', action:'update', data:b})}} title="Asignar Chofer">
                       <Car size={16} /><span style={{fontSize:'11px'}}>Chofer</span>
                     </button>
 
