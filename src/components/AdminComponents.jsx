@@ -530,6 +530,12 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
     next[idx][k] = v;
     setItems(next);
   };
+  const moveItem = (idx, dir) => {
+    if (idx + dir < 0 || idx + dir >= items.length) return;
+    const next = [...items];
+    [next[idx], next[idx + dir]] = [next[idx + dir], next[idx]];
+    setItems(next);
+  };
 
   return (
     <div style={{color:'#fff'}}>
@@ -547,7 +553,11 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
               <input value={item.activity || item.desc} onChange={e=>updateItem(idx, 'activity', e.target.value)} style={{...inputStyle, padding:'8px'}} placeholder={isEn ? 'Activity...' : 'Actividad...'} />
               <input value={item.subtitle} onChange={e=>updateItem(idx, 'subtitle', e.target.value)} style={{...inputStyle, padding:'8px', fontSize:'11px', opacity:0.7}} placeholder={isEn ? 'Subtitle / Details...' : 'Subtítulo / Detalles...'} />
             </div>
-            <button onClick={()=>removeItem(idx)} style={{background:'#ef444422', border:'none', color:'#ef4444', width:'32px', height:'32px', borderRadius:'10px', cursor:'pointer', marginTop:'4px'}}>✕</button>
+            <div style={{display:'flex', flexDirection:'column', gap:'4px', marginTop:'4px'}}>
+              <button onClick={()=>moveItem(idx, -1)} disabled={idx === 0} style={{background:'transparent', border:`1px solid ${idx===0?'#222':'#444'}`, color:idx === 0 ? '#333' : '#aaa', width:'28px', height:'24px', borderRadius:'6px', cursor:idx === 0 ? 'default' : 'pointer', fontSize:'10px', padding:0}}>▲</button>
+              <button onClick={()=>moveItem(idx, 1)} disabled={idx === items.length - 1} style={{background:'transparent', border:`1px solid ${idx===items.length-1?'#222':'#444'}`, color:idx === items.length - 1 ? '#333' : '#aaa', width:'28px', height:'24px', borderRadius:'6px', cursor:idx === items.length - 1 ? 'default' : 'pointer', fontSize:'10px', padding:0}}>▼</button>
+            </div>
+            <button onClick={()=>removeItem(idx)} style={{background:'#ef444415', border:'none', color:'#ef4444', width:'32px', height:'52px', borderRadius:'10px', cursor:'pointer', marginTop:'4px'}}>✕</button>
           </div>
         ))}
         
