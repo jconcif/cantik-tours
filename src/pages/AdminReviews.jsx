@@ -330,8 +330,11 @@ export default function AdminPanel() {
   const filter = (l) => {
     if (!l || !Array.isArray(l)) return [];
     let result = l;
-    if (tab === 'bookings' && statusFilter !== 'ALL') {
-      result = result.filter(x => String(x.payment_status).toUpperCase() === statusFilter);
+    if (tab === 'bookings') {
+      result = result.filter(x => x.payment_status !== 'blocked');
+      if (statusFilter !== 'ALL') {
+        result = result.filter(x => String(x.payment_status).toUpperCase() === statusFilter);
+      }
     }
     return result.filter(x => {
       if (!x) return false;
@@ -870,13 +873,12 @@ export default function AdminPanel() {
                     <div style={{fontSize:'12px',fontWeight:900, color: isBlocked ? '#ef4444' : '#fff'}}>{d}</div>
                     {isBlocked && <Lock size={10} color="#ef4444" />}
                   </div>
-                  {isBlocked ? (
-                    <div style={{fontSize:'8px',background:'#ef444444',color:'#ef4444',padding:'2px',borderRadius:'4px',marginTop:'4px',textAlign:'center',fontWeight:900}}>BLOQUEADO</div>
-                  ) : (
-                    validBookings.map(b=>(
-                      <div key={b.id} style={{fontSize:'8px',background:PAY_COLOR[b.payment_status]||'#555',padding:'2px',borderRadius:'4px',marginTop:'2px',overflow:'hidden', whiteSpace:'nowrap'}}>{b.client_name.split(' ')[0]}</div>
-                    ))
+                  {isBlocked && (
+                    <div style={{fontSize:'8px',background:'#ef444444',color:'#ef4444',padding:'2px',borderRadius:'4px',marginTop:'4px',marginBottom:'4px',textAlign:'center',fontWeight:900}}>BLOQUEADO</div>
                   )}
+                  {validBookings.map(b=>(
+                    <div key={b.id} style={{fontSize:'8px',background:PAY_COLOR[b.payment_status]||'#555',padding:'2px',borderRadius:'4px',marginTop:'2px',overflow:'hidden', whiteSpace:'nowrap', color:'#fff'}}>{b.client_name.split(' ')[0]}</div>
+                  ))}
                 </div>
               )})}
             </div>
