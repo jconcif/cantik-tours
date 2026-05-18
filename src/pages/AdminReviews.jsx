@@ -108,7 +108,7 @@ export default function AdminPanel() {
     }
 
     bookings.forEach(b => {
-      if (b.payment_status === 'cancelled') return;
+      if (b.payment_status === 'cancelled' || b.payment_status === 'blocked') return;
       const dObj = parseLocalDate(b.booking_date);
       const key = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}`;
       if (monthlyMap[key]) {
@@ -122,7 +122,7 @@ export default function AdminPanel() {
     // 2. Popular tours (top 5)
     const tourCounts = {};
     bookings.forEach(b => {
-      if (b.payment_status === 'cancelled') return;
+      if (b.payment_status === 'cancelled' || b.payment_status === 'blocked') return;
       const t = b.tour_title || 'Otros';
       tourCounts[t] = (tourCounts[t] || 0) + 1;
     });
@@ -519,7 +519,7 @@ export default function AdminPanel() {
   },[calMonth]);
 
   const stats=useMemo(()=>{
-    const list = bookings || [];
+    const list = (bookings || []).filter(b => b && b.payment_status !== 'blocked');
     const isPaid = s => ['payment_confirmed','payment_received','verifying_payment','reserved','confirmed','in_progress','completed'].includes(s);
     const rev = list.filter(b => b && isPaid(b.payment_status)).reduce((a,b) => a + Number(b.total_price || 0), 0);
     const byTour = list.reduce((a,b) => {
