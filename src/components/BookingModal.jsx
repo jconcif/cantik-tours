@@ -22,7 +22,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const [formData, setFormData] = useState({
         name: '',
         date: null,
-        pax: '2',
+        pax: '',
         hotel: '',
         coupon: '',
         experience: 'comfort',
@@ -95,7 +95,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             setFormData({
                 name: '',
                 date: null,
-                pax: '2',
+                pax: '',
                 hotel: '',
                 coupon: '',
                 experience: 'comfort',
@@ -373,7 +373,13 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                         </div>
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Users size={14} className="text-primary" />{t('detail.booking_pax')}</label>
-                                            <select value={formData.pax} onChange={(e) => setFormData({ ...formData, pax: e.target.value })} className={inputClasses}>
+                                            <select 
+                                                value={formData.pax} 
+                                                onChange={(e) => setFormData({ ...formData, pax: e.target.value })} 
+                                                className={inputClasses}
+                                                required
+                                            >
+                                                <option value="" disabled>{i18n.language === 'en' ? 'Select number of people...' : 'Selecciona cantidad...'}</option>
                                                 {[1,2,3,4,5,6,7,8,9,10,11,12].map(n => <option key={n} value={n}>{t(`detail.booking_pax_${n}`)}</option>)}
                                                 <option value="13 o más">{t('detail.booking_pax_more')}</option>
                                             </select>
