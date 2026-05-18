@@ -69,7 +69,7 @@ export default function ItineraryPage() {
   const handleCheckinSubmit = async () => {
     setSubmittingCheckin(true);
     try {
-      await submitCheckin({ ref: booking.reference, passengers: checkinData });
+      await submitCheckin({ ref: booking.reference || ref, passengers: checkinData });
       alert(i18n.language.startsWith('en') ? 'Check-in saved!' : 'Check-in guardado con éxito!');
       setShowCheckin(false);
       // reload booking to get updated extras
@@ -659,7 +659,7 @@ export default function ItineraryPage() {
                         value={pax.name}
                         onChange={(e) => {
                           const nd = [...checkinData];
-                          nd[idx].name = e.target.value;
+                          nd[idx] = { ...nd[idx], name: e.target.value };
                           setCheckinData(nd);
                         }}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
@@ -675,7 +675,7 @@ export default function ItineraryPage() {
                         value={pax.passport}
                         onChange={(e) => {
                           const nd = [...checkinData];
-                          nd[idx].passport = e.target.value;
+                          nd[idx] = { ...nd[idx], passport: e.target.value };
                           setCheckinData(nd);
                         }}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
@@ -691,7 +691,7 @@ export default function ItineraryPage() {
                         value={pax.emergency}
                         onChange={(e) => {
                           const nd = [...checkinData];
-                          nd[idx].emergency = e.target.value;
+                          nd[idx] = { ...nd[idx], emergency: e.target.value };
                           setCheckinData(nd);
                         }}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
