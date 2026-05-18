@@ -18,25 +18,12 @@ const Select = ({label,value,onChange,options}) => (
   <Field label={label}><select value={value||''} onChange={e=>onChange(e.target.value)} style={inputStyle}>{options.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}</select></Field>
 );
 
-export const BookingForm = ({data,drivers,onChange,bookings=[]}) => {
-  const conflict = React.useMemo(() => {
-    if (!data.driver_id || !data.booking_date) return null;
-    const sameDateBookings = bookings.filter(b => {
-      if (b.id === data.id) return false;
-      if (b.payment_status === 'cancelled') return false;
-      return String(b.booking_date).split('T')[0] === String(data.booking_date).split('T')[0] && String(b.driver_id) === String(data.driver_id);
-    });
-    return sameDateBookings.length > 0 ? sameDateBookings[0] : null;
-  }, [data.driver_id, data.booking_date, bookings, data.id]);
-
-  const selectedDriverName = drivers.find(d => String(d.id) === String(data.driver_id))?.name || 'Este chofer';
-
+export const BookingForm = ({data,onChange}) => {
   return (
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(240px, 1fr))',gap:'12px'}}>
       {/* Identity & Core Info */}
       <Input label="Código Referencia (ID)" value={data.reference || `CT-${data.id}`} onChange={()=>{}} readOnly />
       <Input label="Fecha Tour" value={data.booking_date} onChange={v=>onChange('booking_date',v)} type="date" />
-
 
       {/* Client Info */}
       <Input label="Cliente" value={data.client_name} onChange={v=>onChange('client_name',v)} />
@@ -46,26 +33,52 @@ export const BookingForm = ({data,drivers,onChange,bookings=[]}) => {
       {/* Tour Setup */}
       <div style={{gridColumn:'1/-1'}}><Input label="Tour" value={data.tour_title} onChange={v=>onChange('tour_title',v)} /></div>
       <Input label="PAX (Pasajeros)" value={data.pax} onChange={v=>onChange('pax',v)} type="number" />
-      <Select label="Experiencia" value={data.experience} onChange={v=>onChange('experience',v)} options={[{value:'driver_en',label:'Conductor privado (inglés)'},{value:'guide_en',label:'Guía Local (inglés)'},{value:'guide_es',label:'Guía Local Certificado (español)'}]} />
-      <div style={{display:'flex', flexDirection:'column', gap:'4px'}}>
-        <Select label="Chofer Asignado" value={data.driver_id} onChange={v=>onChange('driver_id',v)} options={[{value:'',label:'Sin asignar'},...drivers.map(d=>({value:d.id,label:d.name}))]} />
+      <Select label="Experiencia" value={data.experience} onChange={v=>onChange('experience',v)} options={[
+        {value:'driver_en', label:'S - Conductor privado (inglés)'},
+        {value:'guide_en',  label:'M - Guía Local (inglés)'},
+        {value:'guide_es',  label:'L - Guía Local Certificado (español)'}
+      ]} />
+    </div>
+  );
+};
+
+export const DriverAssignModal = ({data,drivers,onChange,bookings=[]}) => {
+  const conflict = React.useMemo(() => {
+    if (!data.driver_id || !data.booking_date) return null;
+    const sameDateBookings = bookings.filter(b => {
+      if (b.id === data.id) return false;
+      if (b.payment_status === 'cancelled') return false;
+      if (!b.driver_id || !b.booking_date) return false;
+      return String(b.driver_id) === String(data.driver_id) && b.booking_date.split('T')[0] === data.booking_date.split('T')[0];
+    });
+    return sameDateBookings.length > 0 ? sameDateBookings[0] : null;
+  }, [data.driver_id, data.booking_date, bookings, data.id]);
+
+  const selectedDriverName = drivers.find(d => String(d.id) === String(data.driver_id))?.name || 'Este chofer';
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
+      <div style={{background:'#1a1a1a', padding:'16px', borderRadius:'16px', border:'1px solid #333'}}>
+        <div style={{fontSize:'12px', color:'#aaa', marginBottom:'8px'}}>Asignar chofer para el tour de:</div>
+        <div style={{fontSize:'14px', fontWeight:900, color:'#fff'}}>{data.client_name} - {data.tour_title}</div>
+        <div style={{fontSize:'12px', color:'#11BDDB', marginTop:'4px'}}>📅 Fecha: {data.booking_date}</div>
       </div>
 
-      {/* Finances */}
-      <Input label="Precio Total €" value={data.total_price} onChange={v=>onChange('total_price',v)} type="number" />
-      <Input label="Depósito Recibido €" value={data.deposit_amount} onChange={v=>onChange('deposit_amount',v)} type="number" />
+      <Select 
+        label="Seleccionar Chofer" 
+        value={data.driver_id} 
+        onChange={v=>onChange('driver_id',v)} 
+        options={[{value:'',label:'-- Sin Asignar --'},...drivers.map(d=>({value:d.id,label:d.name}))]} 
+      />
 
       {conflict && (
-        <div style={{gridColumn:'1/-1', background:'#ef444415', color:'#ef4444', border:'1px solid #ef444444', padding:'16px', borderRadius:'16px', fontSize:'12px', fontWeight:900, display:'flex', gap:'10px', alignItems:'center', marginTop:'4px'}}>
+        <div style={{background:'#ef444415', color:'#ef4444', border:'1px solid #ef444444', padding:'16px', borderRadius:'16px', fontSize:'12px', fontWeight:900, display:'flex', gap:'10px', alignItems:'center'}}>
           <span style={{fontSize:'16px'}}>⚠️</span>
           <span>
             ¡Alerta de Chofer Duplicado! {selectedDriverName} ya está asignado(a) a la reserva de <strong>{conflict.client_name}</strong> ({conflict.tour_title}) para la misma fecha ({conflict.booking_date.split('T')[0]}).
           </span>
         </div>
       )}
-
-      {/* Notes */}
-      <div style={{gridColumn:'1/-1'}}><Field label="Notas Internas (Seguimiento)"><textarea rows={3} value={data.notes||''} onChange={e=>onChange('notes',e.target.value)} style={{...inputStyle,resize:'vertical'}} /></Field></div>
     </div>
   );
 };

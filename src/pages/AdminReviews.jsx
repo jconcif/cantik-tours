@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import * as api from '../services/api';
 import { login as apiLogin, getToken, clearToken } from '../services/api';
-import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor } from '../components/AdminComponents';
+import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor, DriverAssignModal } from '../components/AdminComponents';
 import { 
   MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
   Globe, Sun, Moon, DollarSign, Euro, LogOut, LayoutDashboard,
-  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download, ExternalLink, Lock, Unlock, Clipboard
+  Calendar, Users, Award, Tag, Bell, Settings, RefreshCcw, Plus, Download, ExternalLink, Lock, Unlock, Clipboard, Car
 } from 'lucide-react';
 import { useCurrency } from '../context/CurrencyContext';
 import { useDarkMode } from '../context/DarkModeContext';
@@ -547,7 +547,6 @@ export default function AdminPanel() {
           } finally { setLoading(false); }
         }}>
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Introduce el PIN" style={{width:'100%',padding:'16px',borderRadius:'16px',border:`1px solid ${theme.border}`,background:theme.bg,color:theme.text,marginBottom:'16px',boxSizing:'border-box', textAlign:'center', fontSize:'18px', fontWeight:900}}/>
-          {msg && <div style={{padding:'12px',borderRadius:'12px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'16px',fontWeight:900,fontSize:'14px'}}>{msg.t}</div>}
           <button type="submit" style={{...s.btn(C),width:'100%',padding:'16px', fontSize:'16px'}}>{loading?'Autenticando...':'Entrar'}</button>
         </form>
       </div>
@@ -608,7 +607,27 @@ export default function AdminPanel() {
           <h2 style={{margin:0, fontSize:'22px', fontWeight:900, color:'#fff', letterSpacing:'-0.5px'}}>{TLABEL[tab]}</h2>
         </div>
 
-        {msg&&<div style={{padding:'12px',borderRadius:'12px',background:msg.ok?C+'22':'#ef444422',color:msg.ok?C:'#ef4444',textAlign:'center',marginBottom:'12px',fontWeight:900}}>{msg.t}</div>}
+        {msg&&(
+          <div style={{
+            position: 'fixed', 
+            bottom: '24px', 
+            right: '24px', 
+            zIndex: 9999,
+            padding: '16px 24px',
+            borderRadius: '16px',
+            background: msg.ok ? '#10b981' : '#ef4444',
+            color: '#fff',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+            fontWeight: 900,
+            fontSize: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <span style={{fontSize:'20px'}}>{msg.ok ? '✅' : '⚠️'}</span>
+            <span>{msg.t}</span>
+          </div>
+        )}
 
         {['bookings','drivers','reviews','coupons'].includes(tab) && <>
           <div style={{display:'flex',gap:'8px',marginBottom:'16px', flexWrap:'nowrap', overflowX:'auto', paddingBottom:'8px', scrollbarWidth:'none'}}>
@@ -700,8 +719,19 @@ export default function AdminPanel() {
                         paddingRight: '16px' // space for custom arrow if needed
                       }}
                     >
-                      {Object.keys(PAY_LABEL).map(k => (
-                        <option key={k} value={k} style={{background:'#1a1a1a', color:'#fff'}}>{PAY_LABEL[k]}</option>
+                      {[
+                        {k:'requested', l:'Solicitud Recibida'},
+                        {k:'pending_payment', l:'Pago Pendiente'},
+                        {k:'payment_confirmed', l:'Pago Confirmado'},
+                        {k:'reserved', l:'Ratificando Disp.'},
+                        {k:'confirmed', l:'Tour Confirmado'},
+                        {k:'in_progress', l:'Tour en Curso'},
+                        {k:'completed', l:'Tour Finalizado'},
+                        {k:'postponed', l:'Pospuesto'},
+                        {k:'cancelled', l:'Cancelado'},
+                        {k:'refunded', l:'Reembolsado'}
+                      ].map(opt => (
+                        <option key={opt.k} value={opt.k} style={{background:'#1a1a1a', color:'#fff'}}>{opt.l}</option>
                       ))}
                     </select>
                   </div>
@@ -734,6 +764,10 @@ export default function AdminPanel() {
 
                     <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); handleManagePayments(b)}} title="Finanzas">
                       <Wallet size={16} /><span style={{fontSize:'11px'}}>Finanzas</span>
+                    </button>
+
+                    <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); setModal({type:'assign_driver', action:'edit', data:b})}} title="Asignar Chofer">
+                      <Car size={16} /><span style={{fontSize:'11px'}}>Chofer</span>
                     </button>
 
                     {/* -- COMUNICACIÓN -- */}
@@ -982,6 +1016,7 @@ export default function AdminPanel() {
                 {modal.type==='logs' && (
                   renderBookingLogs(modal.data)
                 )}
+                {modal.type==='assign_driver' && <DriverAssignModal data={modal.data} drivers={drivers} onChange={setField} bookings={bookings} />}
                 {modal.type==='driver'&&<DriverForm data={modal.data} onChange={setField}/>}
                 {modal.type==='review'&&<ReviewForm data={modal.data} onChange={setField}/>}
                 {modal.type==='coupon'&&<CouponForm data={modal.data} onChange={setField}/>}
