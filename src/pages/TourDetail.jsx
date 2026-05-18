@@ -813,6 +813,8 @@ const TourDetail = () => {
                                 <span>{t('detail.book_now')}</span>
                             </button>
                         </div>
+                        {/* Safe area bleed overlay to cover WebKit fixed dynamic bottom gaps on scroll */}
+                        <div className="absolute top-full left-0 right-0 h-32 bg-white dark:bg-bg-dark pointer-events-none" />
                     </motion.div>
                 )}
             </AnimatePresence>
