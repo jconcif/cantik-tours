@@ -36,18 +36,7 @@ export const BookingForm = ({data,drivers,onChange,bookings=[]}) => {
       {/* Identity & Core Info */}
       <Input label="Código Referencia (ID)" value={data.reference || `CT-${data.id}`} onChange={()=>{}} readOnly />
       <Input label="Fecha Tour" value={data.booking_date} onChange={v=>onChange('booking_date',v)} type="date" />
-      <Select label="Estado de Reserva" value={data.payment_status} onChange={v=>onChange('payment_status',v)} options={[
-        {value:'requested',         label:'🟡 Solicitud Recibida'},
-        {value:'pending_payment',   label:'🟠 Pago Pendiente'},
-        {value:'payment_confirmed', label:'🔵 Pago Confirmado'},
-        {value:'reserved',          label:'🔵 Ratificando Disponibilidad'},
-        {value:'confirmed',         label:'🟢 Tour Confirmado'},
-        {value:'in_progress',       label:'🟣 Tour en Curso'},
-        {value:'completed',         label:'⚫ Tour Finalizado'},
-        {value:'postponed',         label:'🟤 Pospuesto'},
-        {value:'cancelled',         label:'🔴 Cancelado'},
-        {value:'refunded',          label:'🩷 Reembolsado'},
-      ]} />
+
 
       {/* Client Info */}
       <Input label="Cliente" value={data.client_name} onChange={v=>onChange('client_name',v)} />
