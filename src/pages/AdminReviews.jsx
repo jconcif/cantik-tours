@@ -84,6 +84,8 @@ export default function AdminPanel() {
   const [coupons, setCoupons] = useState([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [sortBy, setSortBy] = useState('tour_date_desc');
+  const [driverFilter, setDriverFilter] = useState('ALL');
   const [expandedId, setExpandedId] = useState(null);
   const [modal, setModal] = useState(null);
   const [msg, setMsg] = useState(null);
@@ -328,7 +330,12 @@ export default function AdminPanel() {
     let dataToEdit = {...row};
     if (type === 'booking') {
       try {
-        const ext = typeof row.extras === 'string' ? JSON.parse(row.extras) : (row.extras || {});
+        let ext = {};
+        if (typeof row.extras === 'string' && row.extras !== '[object Object]') {
+          ext = JSON.parse(row.extras);
+        } else if (typeof row.extras === 'object' && row.extras !== null) {
+          ext = row.extras;
+        }
         dataToEdit.pickup_time = ext.pickup_time || row.pickup_time || '';
       } catch(e) {}
     }
@@ -347,8 +354,17 @@ export default function AdminPanel() {
       if (statusFilter !== 'ALL') {
         result = result.filter(x => String(x.payment_status).toUpperCase() === statusFilter);
       }
+      if (driverFilter !== 'ALL') {
+        if (driverFilter === 'null') {
+          result = result.filter(x => !x.driver_id);
+        } else {
+          result = result.filter(x => String(x.driver_id) === driverFilter);
+        }
+      }
     }
-    return result.filter(x => {
+    
+    // Búsqueda textual
+    result = result.filter(x => {
       if (!x) return false;
       try {
         return Object.values(x).some(v => 
@@ -356,6 +372,24 @@ export default function AdminPanel() {
         );
       } catch (e) { return false; }
     });
+
+    // Ordenamiento por fecha del tour o creación
+    if (tab === 'bookings') {
+      result = [...result].sort((a, b) => {
+        if (sortBy === 'tour_date_desc') {
+          return new Date(b.booking_date || 0) - new Date(a.booking_date || 0);
+        } else if (sortBy === 'tour_date_asc') {
+          return new Date(a.booking_date || 0) - new Date(b.booking_date || 0);
+        } else if (sortBy === 'created_at_desc') {
+          return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+        } else if (sortBy === 'created_at_asc') {
+          return new Date(a.created_at || 0) - new Date(b.created_at || 0);
+        }
+        return 0;
+      });
+    }
+    
+    return result;
   };
   const waLink=(p,m)=>`https://wa.me/${(p||'').replace(/\D/g,'')}?text=${encodeURIComponent(m)}`;
   const exportCSV=()=>{
@@ -417,7 +451,11 @@ export default function AdminPanel() {
     
     let ext = {};
     try {
-      ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+      if (typeof b.extras === 'string' && b.extras !== '[object Object]') {
+        ext = JSON.parse(b.extras);
+      } else if (typeof b.extras === 'object' && b.extras !== null) {
+        ext = b.extras;
+      }
     } catch(e) {}
     if (!ext.logs) ext.logs = [];
     ext.logs.push({
@@ -440,29 +478,24 @@ export default function AdminPanel() {
   const renderBookingLogs = (b) => {
     let ext = {};
     try {
-      ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+      if (typeof b.extras === 'string' && b.extras !== '[object Object]') {
+        ext = JSON.parse(b.extras);
+      } else if (typeof b.extras === 'object' && b.extras !== null) {
+        ext = b.extras;
+      }
     } catch(e) {}
     const logs = Array.isArray(ext.logs) ? ext.logs : [];
      return (
       <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
-        {/* Contexto del Cliente / Viaje */}
-        <div style={{background:'#1a1a1a', padding:'20px', borderRadius:'24px', border:`1px solid ${C}22`, display:'flex', flexDirection:'column', gap:'12px'}}>
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px', fontSize:'13px'}}>
-            <div><div style={{color:'#666', fontWeight:900, fontSize:'10px', textTransform:'uppercase'}}>Cliente</div> <div style={{color:'#fff', fontWeight:700}}>{b.client_name}</div></div>
-            <div><div style={{color:'#666', fontWeight:900, fontSize:'10px', textTransform:'uppercase'}}>WhatsApp</div> <div style={{color:'#fff', fontWeight:700}}>{b.client_phone || 'N/A'}</div></div>
-            <div style={{gridColumn:'1/-1'}}><div style={{color:'#666', fontWeight:900, fontSize:'10px', textTransform:'uppercase'}}>Hotel / Recogida</div> <div style={{color:'#fff', fontWeight:700}}>{b.hotel || 'No especificado'}</div></div>
-            {b.notes && <div style={{gridColumn:'1/-1'}}><div style={{color:'#666', fontWeight:900, fontSize:'10px', textTransform:'uppercase'}}>Notas Fijas</div> <div style={{color:'#f59e0b', fontWeight:700}}>{b.notes}</div></div>}
-          </div>
-          <div style={{marginTop:'4px', fontSize:'10px', display:'flex', gap:'12px', alignItems:'center', padding:'10px 14px', background:'#ffffff05', borderRadius:'12px'}}>
-            <span style={{color:C, fontWeight:900}}>Creado: {new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})} (🇪🇸)</span>
-            <span style={{opacity:0.5, fontWeight:700}}>Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
-          </div>
-        </div>
-
         {/* Timeline */}
         <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff0a', flex:1, display:'flex', flexDirection:'column'}}>
-          <div style={{fontSize:'12px', fontWeight:900, color:'#fff', letterSpacing:'1px', textTransform:'uppercase', marginBottom:'20px', display:'flex', alignItems:'center', gap:'8px'}}>
+          <div style={{fontSize:'12px', fontWeight:900, color:'#fff', letterSpacing:'1px', textTransform:'uppercase', marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px'}}>
             <div style={{width:'8px', height:'8px', background:C, borderRadius:'50%'}} /> Historial de Operaciones
+          </div>
+
+          <div style={{marginBottom:'20px', fontSize:'10px', display:'flex', gap:'12px', alignItems:'center', padding:'10px 14px', background:'#ffffff05', borderRadius:'12px', width:'fit-content'}}>
+            <span style={{color:C, fontWeight:900}}>Creado: {new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})} (🇪🇸)</span>
+            <span style={{opacity:0.5, fontWeight:700}}>Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
           </div>
           
           <div style={{display:'flex', flexDirection:'column', gap:'16px', maxHeight:'350px', overflowY:'auto', marginBottom:'20px', paddingRight:'8px', scrollbarWidth:'thin'}}>
@@ -648,11 +681,43 @@ export default function AdminPanel() {
         )}
 
         {['bookings','drivers','reviews','coupons'].includes(tab) && <>
-          <div style={{display:'flex',gap:'8px',marginBottom:'16px', flexWrap:'nowrap', overflowX:'auto', paddingBottom:'8px', scrollbarWidth:'none'}}>
-            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'0 0 150px',padding:'12px',borderRadius:'14px',background:theme.card,border:`1px solid ${theme.border}`,color:theme.text, fontSize:'13px'}}/>
-            <button style={{...s.btn(theme.btnGhost, theme.text), border:`1px solid ${theme.border}`, flexShrink:0}} onClick={reload} title="Refrescar"><RefreshCcw size={16} /></button>
-            <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])} title="Nuevo"><Plus size={16} /></button>
-            {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV} title="Exportar CSV"><Download size={16} /></button>}
+          <div style={{display:'flex', gap:'12px', marginBottom:'16px', flexWrap:'wrap', alignItems:'center'}}>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'1 1 200px', padding:'12px', borderRadius:'14px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', minWidth:'150px'}}/>
+            
+            {tab==='bookings' && (
+              <>
+                {/* Selector de Orden */}
+                <select 
+                  value={sortBy} 
+                  onChange={e=>setSortBy(e.target.value)} 
+                  style={{padding:'12px', borderRadius:'14px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', outline:'none', cursor:'pointer'}}
+                >
+                  <option value="tour_date_desc">📅 Fecha Tour (Recientes primero)</option>
+                  <option value="tour_date_asc">📅 Fecha Tour (Antiguos primero)</option>
+                  <option value="created_at_desc">➕ Fecha Creación (Recientes primero)</option>
+                  <option value="created_at_asc">➕ Fecha Creación (Antiguos primero)</option>
+                </select>
+
+                {/* Filtro por Chofer */}
+                <select 
+                  value={driverFilter} 
+                  onChange={e=>setDriverFilter(e.target.value)} 
+                  style={{padding:'12px', borderRadius:'14px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', outline:'none', cursor:'pointer'}}
+                >
+                  <option value="ALL">👤 Todos los Choferes</option>
+                  <option value="null">👤 Sin Chofer Asignado</option>
+                  {drivers.map(d => (
+                    <option key={d.id} value={d.id}>👤 {d.name}</option>
+                  ))}
+                </select>
+              </>
+            )}
+
+            <div style={{display:'flex', gap:'8px', marginLeft:'auto'}}>
+              <button style={{...s.btn(theme.btnGhost, theme.text), border:`1px solid ${theme.border}`, flexShrink:0}} onClick={reload} title="Refrescar"><RefreshCcw size={16} /></button>
+              <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])} title="Nuevo"><Plus size={16} /></button>
+              {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV} title="Exportar CSV"><Download size={16} /></button>}
+            </div>
           </div>
 
           {tab==='bookings' && (
@@ -704,7 +769,13 @@ export default function AdminPanel() {
                   <div style={{fontSize:'11px',color:C, fontWeight:900}}>{b.tour_title}</div>
                   {(() => {
                     let ext = {};
-                    try { ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {}); } catch(e){}
+                    try {
+                      if (typeof b.extras === 'string' && b.extras !== '[object Object]') {
+                        ext = JSON.parse(b.extras);
+                      } else if (typeof b.extras === 'object' && b.extras !== null) {
+                        ext = b.extras;
+                      }
+                    } catch(e){}
                     const extraCharges = Number(ext.total_charges || 0);
                     const paid = Number(b.total_paid || 0);
                     const total = Number(b.total_price || 0) + extraCharges;

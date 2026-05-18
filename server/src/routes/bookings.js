@@ -105,6 +105,10 @@ router.put('/:id', requireAuth, async (req, res) => {
         updateData[col] = req.body[col];
       }
     });
+
+    if (updateData.extras !== undefined && typeof updateData.extras === 'object' && updateData.extras !== null) {
+      updateData.extras = JSON.stringify(updateData.extras);
+    }
     
     const { data, error } = await supabase
       .from('bookings')

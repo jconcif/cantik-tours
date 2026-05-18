@@ -375,7 +375,7 @@ export default function ItineraryPage() {
                   { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
                   { label: en ? 'CLASS' : 'CLASE',      val: expName, style: { color: expColor } },
                   { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
-                  { label: en ? 'BOARDING' : 'HORA',    val: (function(){try{return JSON.parse(booking.extras||'{}').pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
+                  { label: en ? 'BOARDING' : 'HORA',    val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
                   { label: priceLabel, val: priceVal, style: { color: '#11BDDB' } },
                 ].map((f, i) => (
                   <div key={i}>
