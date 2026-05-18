@@ -379,7 +379,7 @@ export default function AdminPanel() {
     try {
       ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
     } catch(e) {}
-    const logs = ext.logs || [];
+    const logs = Array.isArray(ext.logs) ? ext.logs : [];
     
     return (
       <div style={{marginTop:'12px', background:'#00000022', padding:'16px', borderRadius:'16px', border:'1px solid #ffffff05'}}>
@@ -393,15 +393,17 @@ export default function AdminPanel() {
             <div style={{fontSize:'11px', color:'#555', fontStyle:'italic', padding:'8px 0'}}>Sin anotaciones registradas. Cambia el estado o añade una nota abajo.</div>
           ) : (
             [...logs].reverse().map((log, idx) => {
-              const dateObj = new Date(log.timestamp);
-              const isValidDate = !isNaN(dateObj.getTime());
+              const logText = typeof log === 'object' && log !== null ? log.text : String(log);
+              const logTime = typeof log === 'object' && log !== null ? log.timestamp : null;
+              const dateObj = new Date(logTime);
+              const isValidDate = logTime && !isNaN(dateObj.getTime());
               const spainTime = isValidDate ? dateObj.toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '--';
               const baliTime = isValidDate ? dateObj.toLocaleString('es-ES', { timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit' }) : '--';
               
               return (
                 <div key={idx} style={{display:'flex', gap:'8px', alignItems:'flex-start', fontSize:'11px', borderLeft:`2px solid ${C}33`, paddingLeft:'8px', marginLeft:'4px'}}>
                   <div style={{flex:1, color:'#ddd', lineHeight:'1.4'}}>
-                    {log.text}
+                    {logText}
                     <div style={{fontSize:'9px', color:'#666', marginTop:'2px', display:'flex', gap:'8px'}}>
                       <span>🇪🇸 {spainTime}</span>
                       <span>🌴 Bali: {baliTime}</span>
@@ -725,10 +727,10 @@ export default function AdminPanel() {
             <div key={r.id} style={s.card}>
               <div style={{flex:1}}>
                 <div style={{display:'flex', gap:'8px', alignItems:'center', marginBottom:'4px', flexWrap:'wrap'}}>
-                  <div style={{fontWeight:900}}>{r.nombre} {'★'.repeat(r.puntuacion || 5)}</div>
-                  {r.tour_id && r.tour_id.includes('[CT-') && (
+                  <div style={{fontWeight:900}}>{r.nombre} {'★'.repeat(Math.max(1, Math.min(5, Math.round(Number(r.puntuacion)) || 5)))}</div>
+                  {r.tour_id && String(r.tour_id).includes('[CT-') && (
                     <button style={s.tag(C)} onClick={() => {
-                        const id = r.tour_id && r.tour_id.match(/\[CT-(\d+)\]/)?.[1];
+                        const id = r.tour_id && String(r.tour_id).match(/\[CT-(\d+)\]/)?.[1];
                         if(id) {
                            const b = bookings.find(x => x.id == id);
                            if(b) openEdit('booking', b);
