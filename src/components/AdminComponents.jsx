@@ -190,6 +190,15 @@ export const FinancialManagement = ({booking, onUpdate}) => {
 
   React.useEffect(() => { load(); }, [load]);
 
+  const updateBookingExtrasTotal = async (newCharges) => {
+    try {
+      const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {});
+      const chargesTotal = newCharges.reduce((sum, c) => sum + Number(c.amount), 0);
+      ext.total_charges = chargesTotal;
+      await api.updateBooking({ ...booking, extras: JSON.stringify(ext) });
+    } catch(e) { console.error('Error updating total_charges', e); }
+  };
+
   // -- Calculations --
   const totalPaid    = payments.reduce((s, p) => s + Number(p.amount), 0);
   const totalExp     = expenses.reduce((s, e) => s + Number(e.amount), 0);
@@ -202,7 +211,17 @@ export const FinancialManagement = ({booking, onUpdate}) => {
   // -- Helpers --
   const delPayment = async (id) => { if (!window.confirm('¿Eliminar cobro?')) return; try { await api.deletePayment(id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
   const delExpense = async (id) => { if (!window.confirm('¿Eliminar gasto?')) return; try { await api.deleteExpense(id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
-  const delCharge  = async (id) => { if (!window.confirm('¿Eliminar cargo extra?')) return; try { await api.deleteCharge(id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
+  const delCharge  = async (id) => { 
+    if (!window.confirm('¿Eliminar cargo extra?')) return; 
+    try { 
+      await api.deleteCharge(id); 
+      const newCharges = charges.filter(c => c.id !== id);
+      setCharges(newCharges);
+      await updateBookingExtrasTotal(newCharges);
+      await load(); 
+      if (onUpdate) onUpdate(); 
+    } catch(e) { alert(e.message); } 
+  };
 
   const tabStyle = (t) => ({
     flex: 1, padding: '10px 4px', background: activeTab === t ? C : '#222',
@@ -283,7 +302,16 @@ export const FinancialManagement = ({booking, onUpdate}) => {
     const save = async () => {
       if (!d.amount || !d.concept) return;
       setLoading(true);
-      try { await api.addCharge({...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
+      try { 
+        await api.addCharge({...d, booking_id: bookingId}); 
+        const res = await api.getCharges(bookingId);
+        const newCharges = res.data || [];
+        setCharges(newCharges);
+        await updateBookingExtrasTotal(newCharges);
+        await load(); 
+        setAdding(false); 
+        if(onUpdate) onUpdate(); 
+      }
       catch(e) { alert(e.message); } finally { setLoading(false); }
     };
     return (

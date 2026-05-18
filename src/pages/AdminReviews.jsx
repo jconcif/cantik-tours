@@ -443,30 +443,31 @@ export default function AdminPanel() {
       ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
     } catch(e) {}
     const logs = Array.isArray(ext.logs) ? ext.logs : [];
-    
-    return (
-      <div style={{display:'flex', flexDirection:'column', gap:'16px'}}>
+     return (
+      <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
         {/* Contexto del Cliente / Viaje */}
-        <div style={{background:'#1a1a1a', padding:'16px', borderRadius:'16px', border:`1px solid ${C}33`}}>
-          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px', fontSize:'12px'}}>
-            <div><span style={{color:'#666', fontWeight:900}}>CLIENTE:</span> <span style={{color:'#fff'}}>{b.client_name}</span></div>
-            <div><span style={{color:'#666', fontWeight:900}}>WHATSAPP:</span> <span style={{color:'#fff'}}>{b.client_phone || 'N/A'}</span></div>
-            <div style={{gridColumn:'1/-1'}}><span style={{color:'#666', fontWeight:900}}>HOTEL / RECOGIDA:</span> <span style={{color:'#fff'}}>{b.hotel || 'No especificado'}</span></div>
-            {b.notes && <div style={{gridColumn:'1/-1'}}><span style={{color:'#666', fontWeight:900}}>NOTAS INTERNAS FIJAS:</span> <span style={{color:'#fff'}}>{b.notes}</span></div>}
+        <div style={{background:'#1a1a1a', padding:'20px', borderRadius:'24px', border:`1px solid ${C}22`, display:'flex', flexDirection:'column', gap:'12px'}}>
+          <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px', fontSize:'13px'}}>
+            <div><div style={{color:'#666', fontWeight:900, fontSize:'10px', textTransform:'uppercase'}}>Cliente</div> <div style={{color:'#fff', fontWeight:700}}>{b.client_name}</div></div>
+            <div><div style={{color:'#666', fontWeight:900, fontSize:'10px', textTransform:'uppercase'}}>WhatsApp</div> <div style={{color:'#fff', fontWeight:700}}>{b.client_phone || 'N/A'}</div></div>
+            <div style={{gridColumn:'1/-1'}}><div style={{color:'#666', fontWeight:900, fontSize:'10px', textTransform:'uppercase'}}>Hotel / Recogida</div> <div style={{color:'#fff', fontWeight:700}}>{b.hotel || 'No especificado'}</div></div>
+            {b.notes && <div style={{gridColumn:'1/-1'}}><div style={{color:'#666', fontWeight:900, fontSize:'10px', textTransform:'uppercase'}}>Notas Fijas</div> <div style={{color:'#f59e0b', fontWeight:700}}>{b.notes}</div></div>}
           </div>
-          <div style={{marginTop:'12px', fontSize:'10px', display:'flex', gap:'12px', alignItems:'center', padding:'8px', background:'#ffffff05', borderRadius:'8px'}}>
-            <span style={{color:C, fontWeight:700}}>Creación: {new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})} (🇪🇸)</span>
-            <span style={{opacity:0.6}}>🌴 Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
+          <div style={{marginTop:'4px', fontSize:'10px', display:'flex', gap:'12px', alignItems:'center', padding:'10px 14px', background:'#ffffff05', borderRadius:'12px'}}>
+            <span style={{color:C, fontWeight:900}}>Creado: {new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})} (🇪🇸)</span>
+            <span style={{opacity:0.5, fontWeight:700}}>Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
           </div>
         </div>
 
         {/* Timeline */}
-        <div style={{background:'#00000022', padding:'16px', borderRadius:'16px', border:'1px solid #ffffff05', flex:1, display:'flex', flexDirection:'column'}}>
-          <div style={{fontSize:'10px', fontWeight:900, color:C, letterSpacing:'1px', textTransform:'uppercase', marginBottom:'12px'}}>📋 Historial y Bitácora</div>
+        <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff0a', flex:1, display:'flex', flexDirection:'column'}}>
+          <div style={{fontSize:'12px', fontWeight:900, color:'#fff', letterSpacing:'1px', textTransform:'uppercase', marginBottom:'20px', display:'flex', alignItems:'center', gap:'8px'}}>
+            <div style={{width:'8px', height:'8px', background:C, borderRadius:'50%'}} /> Historial de Operaciones
+          </div>
           
-          <div style={{display:'flex', flexDirection:'column', gap:'10px', maxHeight:'300px', overflowY:'auto', marginBottom:'16px', paddingRight:'4px', scrollbarWidth:'thin'}}>
+          <div style={{display:'flex', flexDirection:'column', gap:'16px', maxHeight:'350px', overflowY:'auto', marginBottom:'20px', paddingRight:'8px', scrollbarWidth:'thin'}}>
             {logs.length === 0 ? (
-              <div style={{fontSize:'11px', color:'#555', fontStyle:'italic', padding:'8px 0'}}>Sin anotaciones registradas en el historial.</div>
+              <div style={{fontSize:'12px', color:'#555', fontStyle:'italic', padding:'20px', textAlign:'center', background:'#111', borderRadius:'16px'}}>Sin anotaciones registradas en el historial.</div>
             ) : (
               [...logs].reverse().map((log, idx) => {
                 const logText = typeof log === 'object' && log !== null ? log.text : String(log);
@@ -475,14 +476,22 @@ export default function AdminPanel() {
                 const isValidDate = logTime && !isNaN(dateObj.getTime());
                 const spainTime = isValidDate ? dateObj.toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '--';
                 const baliTime = isValidDate ? dateObj.toLocaleString('es-ES', { timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit' }) : '--';
+                const isAuto = !logText.startsWith('Anotación:');
                 
                 return (
-                  <div key={idx} style={{display:'flex', gap:'8px', alignItems:'flex-start', fontSize:'11px', borderLeft:`2px solid ${C}33`, paddingLeft:'8px', marginLeft:'4px'}}>
-                    <div style={{flex:1, color:'#ddd', lineHeight:'1.4'}}>
-                      {logText}
-                      <div style={{fontSize:'9px', color:'#666', marginTop:'2px', display:'flex', gap:'8px'}}>
+                  <div key={idx} style={{display:'flex', gap:'16px', alignItems:'flex-start'}}>
+                    <div style={{display:'flex', flexDirection:'column', alignItems:'center', marginTop:'4px'}}>
+                      <div style={{width:'10px', height:'10px', borderRadius:'50%', background: isAuto ? '#555' : C, border:`2px solid #1a1a1a`, zIndex:2}} />
+                      {idx !== logs.length - 1 && <div style={{width:'2px', height:'100%', background:'#333', marginTop:'-2px', marginBottom:'-14px', zIndex:1}} />}
+                    </div>
+                    <div style={{flex:1, background: isAuto ? '#111' : '#11BDDB11', padding:'12px 16px', borderRadius:'16px', border: isAuto ? '1px solid #333' : `1px solid ${C}33`}}>
+                      <div style={{fontSize:'12px', color: isAuto ? '#ccc' : '#fff', lineHeight:'1.5', fontWeight: isAuto ? 500 : 700}}>
+                        {logText.replace('Anotación: ', '')}
+                      </div>
+                      <div style={{fontSize:'9px', color:'#666', marginTop:'6px', display:'flex', gap:'12px', fontWeight:900, textTransform:'uppercase'}}>
                         <span>🇪🇸 {spainTime}</span>
-                        <span>🌴 Bali: {baliTime}</span>
+                        <span>🌴 {baliTime}</span>
+                        {isAuto && <span style={{color:'#888'}}>[SISTEMA]</span>}
                       </div>
                     </div>
                   </div>
@@ -491,30 +500,22 @@ export default function AdminPanel() {
             )}
           </div>
 
-          {/* Input para nueva nota */}
           <div style={{display:'flex', gap:'8px', marginTop:'auto'}}>
             <input 
-              placeholder="Escribe una nueva nota o actualización..."
-              value={annotationTexts[b.id] || ''}
-              onChange={e => setAnnotationTexts(prev => ({ ...prev, [b.id]: e.target.value }))}
-              style={{
-                flex:1, padding:'12px 16px', borderRadius:'12px', border:'1px solid #333', background:'#111', color:'#fff', fontSize:'13px', outline:'none'
-              }}
-              onKeyDown={e => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();
-                  handleAddLog(b);
-                }
-              }}
+              value={annotationTexts[b.id] || ''} 
+              onChange={e=>setAnnotationTexts({...annotationTexts, [b.id]: e.target.value})} 
+              placeholder="Escribe una nota interna..." 
+              style={{flex:1, padding:'14px 16px', borderRadius:'16px', border:'1px solid #333', background:'#111', color:'#fff', outline:'none', fontSize:'13px', transition:'border 0.2s'}}
+              onFocus={e=>e.target.style.border=`1px solid ${C}`}
+              onBlur={e=>e.target.style.border=`1px solid #333`}
+              onKeyDown={e => e.key === 'Enter' && handleAddLog(b)}
             />
             <button 
-              onClick={() => handleAddLog(b)}
-              style={{
-                background:C, color:'#000', border:'none', padding:'0 20px', borderRadius:'12px', fontWeight:900, cursor:'pointer', fontSize:'13px'
-              }}
-            >
-              Añadir
-            </button>
+              onClick={()=>handleAddLog(b)} 
+              style={{background:C, color:'#000', border:'none', padding:'0 24px', borderRadius:'16px', fontWeight:900, cursor:'pointer', transition:'opacity 0.2s'}}
+              onMouseOver={e=>e.target.style.opacity=0.8}
+              onMouseOut={e=>e.target.style.opacity=1}
+            >Guardar</button>
           </div>
         </div>
       </div>
@@ -702,8 +703,11 @@ export default function AdminPanel() {
                   </div>
                   <div style={{fontSize:'11px',color:C, fontWeight:900}}>{b.tour_title}</div>
                   {(() => {
+                    let ext = {};
+                    try { ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {}); } catch(e){}
+                    const extraCharges = Number(ext.total_charges || 0);
                     const paid = Number(b.total_paid || 0);
-                    const total = Number(b.total_price || 0);
+                    const total = Number(b.total_price || 0) + extraCharges;
                     const pct = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 0;
                     return (
                       <div style={{display:'flex', alignItems:'center', gap:'8px', marginTop:'6px'}}>
@@ -754,7 +758,13 @@ export default function AdminPanel() {
                   </div>
                 </div>
                 <div style={{textAlign:'right', flexShrink:0}}>
-                   <div style={{fontSize:'16px', fontWeight:900, color:C}}>{b.total_price}€</div>
+                   <div style={{fontSize:'16px', fontWeight:900, color:C}}>
+                     {(() => {
+                       let ext = {};
+                       try { ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {}); } catch(e){}
+                       return Number(b.total_price || 0) + Number(ext.total_charges || 0);
+                     })()}€
+                   </div>
                    <div style={{fontSize:'9px', fontWeight:700, color:'#555'}}>{b.pax} PAX</div>
                 </div>
               </div>
