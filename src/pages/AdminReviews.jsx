@@ -534,80 +534,6 @@ export default function AdminPanel() {
 
     return (
       <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
-        {/* Pasajeros del Check-In */}
-        {hasCheckin ? (
-          <div style={{
-            background: 'rgba(17, 189, 219, 0.05)',
-            border: '1px solid rgba(17, 189, 219, 0.2)',
-            borderRadius: '24px',
-            padding: '24px',
-            flexShrink: 0
-          }}>
-            <div style={{fontSize:'12px', fontWeight:900, color:'#11BDDB', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px'}}>
-              <span>👥</span> Pasajeros Registrados (Check-In)
-            </div>
-            <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
-              {passengers.map((p, idx) => (
-                <div key={idx} style={{
-                  background: 'rgba(255,255,255,0.02)',
-                  padding: '12px 16px',
-                  borderRadius: '16px',
-                  border: '1px solid rgba(255,255,255,0.05)',
-                  fontSize: '12px',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
-                  gap: '12px'
-                }}>
-                  <div><span style={{color:'#666', fontWeight:700}}>Nombre:</span> <strong style={{color:'#fff'}}>{p.name || '---'}</strong></div>
-                  <div><span style={{color:'#666', fontWeight:700}}>Pasaporte:</span> <strong style={{color:'#fff'}}>{p.passport || '---'}</strong></div>
-                  <div><span style={{color:'#666', fontWeight:700}}>Contacto:</span> <strong style={{color:'#fff'}}>{p.emergency || '---'}</strong></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div style={{
-            background: 'rgba(245, 158, 11, 0.05)',
-            border: '1px solid rgba(245, 158, 11, 0.2)',
-            borderRadius: '24px',
-            padding: '16px 24px',
-            fontSize: '12px',
-            color: '#f59e0b',
-            fontWeight: 700,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            flexShrink: 0,
-            boxSizing: 'border-box',
-            width: '100%'
-          }}>
-            <span>⚠️</span> Registro de pasajeros (Check-In) pendiente de completar en el link público.
-            {b.client_phone && (
-              <a 
-                href={waLink(b.client_phone, `¡Hola ${b.client_name}! ✨ Para la coordinación de tu tour de Cantik Tours y el seguro obligatorio de viaje, te recordamos completar el check-in de pasajeros en el siguiente enlace: https://cantiktours.com/itinerario?ref=CT-${b.id}`)}
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{
-                  marginLeft: 'auto',
-                  background: '#25D366',
-                  color: '#000',
-                  padding: '6px 12px',
-                  borderRadius: '12px',
-                  textDecoration: 'none',
-                  fontSize: '11px',
-                  fontWeight: 900,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-                onClick={e => e.stopPropagation()}
-              >
-                💬 Recordar por WhatsApp
-              </a>
-            )}
-          </div>
-        )}
-
         {/* Timeline */}
         <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff0a', flex:1, display:'flex', flexDirection:'column'}}>
           <div style={{fontSize:'12px', fontWeight:900, color:'#fff', letterSpacing:'1px', textTransform:'uppercase', marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px'}}>
@@ -919,6 +845,38 @@ export default function AdminPanel() {
                   <div style={{display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap', marginBottom:'2px'}}>
                     <div style={{fontWeight:900, fontSize: isMobile ? '14px' : '16px', color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{b.client_name}</div>
                     {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
+                    {(() => {
+                      let ext = {};
+                      try {
+                        if (typeof b.extras === 'string' && b.extras !== '[object Object]') {
+                          ext = JSON.parse(b.extras);
+                        } else if (typeof b.extras === 'object' && b.extras !== null) {
+                          ext = b.extras;
+                        }
+                      } catch(e){}
+                      const passengers = Array.isArray(ext.passengers) ? ext.passengers : [];
+                      const hasCheckin = passengers.length > 0 && passengers.some(p => p.name || p.passport);
+                      if (!hasCheckin) return (
+                        <span 
+                          title="Check-In de pasajeros pendiente" 
+                          style={{
+                            fontSize:'9px',
+                            background:'rgba(245, 158, 11, 0.15)',
+                            color:'#f59e0b',
+                            border:'1px solid rgba(245, 158, 11, 0.25)',
+                            padding:'1px 6px',
+                            borderRadius:'4px',
+                            fontWeight:900,
+                            display:'inline-flex',
+                            alignItems:'center',
+                            gap:'2px'
+                          }}
+                        >
+                          ⚠️ Pax
+                        </span>
+                      );
+                      return null;
+                    })()}
                   </div>
                   <div style={{fontSize:'11px',color:C, fontWeight:900}}>{b.tour_title}</div>
                   {(() => {

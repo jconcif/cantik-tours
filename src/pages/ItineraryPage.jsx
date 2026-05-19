@@ -369,14 +369,13 @@ export default function ItineraryPage() {
 
             {/* Fields */}
             <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6`}>
-              <div className="grid grid-cols-3 gap-x-4 gap-y-5">
+              <div className="grid className='grid-cols-3 gap-x-4 gap-y-5'" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1.25rem 1rem' }}>
                 {[
                   { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
                   { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
-                  { label: en ? 'CLASS' : 'CLASE',      val: expName, style: { color: expColor } },
+                  { label: priceLabel,                  val: priceVal, style: { color: '#11BDDB' } },
                   { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
                   { label: en ? 'BOARDING' : 'HORA',    val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
-                  { label: priceLabel, val: priceVal, style: { color: '#11BDDB' } },
                 ].map((f, i) => (
                   <div key={i}>
                     <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
@@ -385,13 +384,25 @@ export default function ItineraryPage() {
                 ))}
               </div>
 
-              <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'}`}>
-                <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
-                  {en ? 'TOUR' : 'EXPERIENCIA'}
+              <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex flex-col gap-2`}>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
+                    {en ? 'TOUR:' : 'EXPERIENCIA:'}
+                  </span>
+                  <span className={`font-black text-sm ${text} uppercase tracking-tight`}>{booking.tour_title}</span>
                 </div>
-                <div className={`font-black text-sm ${text} uppercase tracking-tight leading-snug`}>{booking.tour_title}</div>
+
+                <div className="flex items-center gap-2">
+                  <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
+                    {en ? 'CLASS:' : 'CLASE:'}
+                  </span>
+                  <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: expColor }}>
+                    {expName}
+                  </span>
+                </div>
+
                 {booking.drivers && (
-                  <div className="flex items-center gap-2 mt-2">
+                  <div className="flex items-center gap-2">
                     <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
                       {en ? 'DRIVER:' : 'CHOFER:'}
                     </span>
