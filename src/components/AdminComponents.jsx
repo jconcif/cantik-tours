@@ -630,3 +630,205 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
     </div>
   );
 };
+
+export const PassengerManagement = ({booking, onUpdate, onClose}) => {
+  const C = '#11BDDB';
+  const [passengers, setPassengers] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    let ext = {};
+    try {
+      if (typeof booking.extras === 'string' && booking.extras !== '[object Object]') {
+        ext = JSON.parse(booking.extras);
+      } else if (typeof booking.extras === 'object' && booking.extras !== null) {
+        ext = booking.extras;
+      }
+    } catch(e) {}
+    setPassengers(Array.isArray(ext.passengers) ? ext.passengers : []);
+  }, [booking]);
+
+  const updateField = (idx, key, val) => {
+    const list = [...passengers];
+    list[idx] = { ...list[idx], [key]: val };
+    setPassengers(list);
+  };
+
+  const addRow = () => {
+    setPassengers([...passengers, { name: '', passport: '', emergency: '' }]);
+  };
+
+  const removeRow = (idx) => {
+    const list = passengers.filter((_, i) => i !== idx);
+    setPassengers(list);
+  };
+
+  const save = async () => {
+    setLoading(true);
+    try {
+      let ext = {};
+      try {
+        if (typeof booking.extras === 'string' && booking.extras !== '[object Object]') {
+          ext = JSON.parse(booking.extras);
+        } else if (typeof booking.extras === 'object' && booking.extras !== null) {
+          ext = booking.extras;
+        }
+      } catch(e) {}
+
+      // Clean empty rows if any
+      const cleanedPassengers = passengers.filter(p => p.name.trim() || p.passport.trim() || p.emergency.trim());
+      
+      ext.passengers = cleanedPassengers;
+
+      // Add log
+      if (!ext.logs) ext.logs = [];
+      ext.logs.push({
+        timestamp: new Date().toISOString(),
+        text: `Datos de pasajeros (Check-In) actualizados desde el Panel Admin (${cleanedPassengers.length} pasajeros registrados).`
+      });
+
+      await api.updateBooking({
+        ...booking,
+        extras: JSON.stringify(ext)
+      });
+
+      if (onUpdate) await onUpdate();
+      if (onClose) onClose();
+    } catch (e) {
+      alert('Error guardando pasajeros: ' + e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{display:'flex', flexDirection:'column', gap:'16px'}}>
+      <p style={{fontSize:'12px', color:'#666', marginBottom:'10px'}}>
+        Gestiona y edita los datos oficiales de los pasajeros registrados para el Check-In. Estos datos se utilizan para el seguro del viaje y la coordinación del tour.
+      </p>
+
+      <div style={{display:'flex', flexDirection:'column', gap:'12px', maxHeight:'400px', overflowY:'auto', paddingRight:'6px', scrollbarWidth:'thin'}}>
+        {passengers.length === 0 ? (
+          <div style={{
+            fontSize: '12px',
+            color: '#888',
+            fontStyle: 'italic',
+            padding: '30px',
+            textAlign: 'center',
+            background: 'rgba(255,255,255,0.02)',
+            borderRadius: '16px',
+            border: '1px dashed #333'
+          }}>
+            Sin pasajeros registrados en este tour. Haz clic en el botón de abajo para registrar el primero.
+          </div>
+        ) : (
+          passengers.map((p, idx) => (
+            <div key={idx} style={{
+              background: '#222',
+              padding: '16px',
+              borderRadius: '16px',
+              border: '1px solid #333',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              position: 'relative'
+            }}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                <span style={{fontSize:'11px', fontWeight:900, color:C, textTransform:'uppercase', letterSpacing:'0.05em'}}>
+                  Pasajero #{idx + 1}
+                </span>
+                <button 
+                  onClick={() => removeRow(idx)}
+                  style={{
+                    background: '#ef444415',
+                    border: 'none',
+                    color: '#ef4444',
+                    padding: '4px 8px',
+                    borderRadius: '8px',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    cursor: 'pointer'
+                  }}
+                >
+                  ✕ Eliminar
+                </button>
+              </div>
+
+              <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px'}}>
+                <Field label="Nombre Completo">
+                  <input 
+                    id={`pax_name_${idx}`}
+                    name={`pax_name_${idx}`}
+                    value={p.name || ''} 
+                    onChange={e => updateField(idx, 'name', e.target.value)} 
+                    style={inputStyle}
+                    placeholder="Ej. Juan Pérez"
+                  />
+                </Field>
+                <Field label="Pasaporte / DNI">
+                  <input 
+                    id={`pax_pass_${idx}`}
+                    name={`pax_pass_${idx}`}
+                    value={p.passport || ''} 
+                    onChange={e => updateField(idx, 'passport', e.target.value)} 
+                    style={inputStyle}
+                    placeholder="Ej. X12345678"
+                  />
+                </Field>
+                <Field label="Contacto Emergencia">
+                  <input 
+                    id={`pax_emg_${idx}`}
+                    name={`pax_emg_${idx}`}
+                    value={p.emergency || ''} 
+                    onChange={e => updateField(idx, 'emergency', e.target.value)} 
+                    style={inputStyle}
+                    placeholder="Ej. +34 600 000 000 (Mamá)"
+                  />
+                </Field>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      <button 
+        onClick={addRow} 
+        style={{
+          padding: '12px',
+          background: 'rgba(255, 255, 255, 0.03)',
+          border: '1px dashed #444',
+          color: '#fff',
+          borderRadius: '16px',
+          cursor: 'pointer',
+          fontWeight: 900,
+          fontSize: '11px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '6px'
+        }}
+      >
+        ➕ Añadir Pasajero
+      </button>
+
+      <button 
+        onClick={save} 
+        disabled={loading} 
+        style={{
+          width: '100%',
+          padding: '16px',
+          background: C,
+          color: '#000',
+          border: 'none',
+          borderRadius: '16px',
+          fontWeight: 900,
+          cursor: 'pointer',
+          opacity: loading ? 0.5 : 1,
+          marginTop: '10px'
+        }}
+      >
+        {loading ? 'GUARDANDO CAMBIOS...' : 'GUARDAR DATOS DE CHECK-IN ✓'}
+      </button>
+    </div>
+  );
+};

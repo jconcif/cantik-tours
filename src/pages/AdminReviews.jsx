@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import * as api from '../services/api';
 import { login as apiLogin, getToken, clearToken } from '../services/api';
-import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor, DriverAssignModal } from '../components/AdminComponents';
+import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor, DriverAssignModal, PassengerManagement } from '../components/AdminComponents';
 import { 
   MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
   Globe, Sun, Moon, DollarSign, Euro, LogOut, LayoutDashboard,
@@ -1061,6 +1061,10 @@ export default function AdminPanel() {
                       <Clipboard size={16} /><span style={{fontSize:'11px'}}>Bitácora</span>
                     </button>
 
+                    <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); setModal({type:'passengers', action:'edit', data:b})}} title="Gestionar Pasajeros (Check-In)">
+                      <Users size={16} /><span style={{fontSize:'11px'}}>Check-In Pax</span>
+                    </button>
+
                     <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); handleManagePayments(b)}} title="Finanzas">
                       <Wallet size={16} /><span style={{fontSize:'11px'}}>Finanzas</span>
                     </button>
@@ -1275,12 +1279,14 @@ export default function AdminPanel() {
                     ? 'Editar Itinerario' 
                     : modal.type === 'logs' 
                       ? 'Bitácora y Historial' 
-                      : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
+                      : modal.type === 'passengers'
+                        ? 'Gestionar Check-In Pasajeros'
+                        : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
             } 
             onClose={()=>setModal(null)} 
             onSave={save} 
             loading={loading} 
-            hideFooter={['finance', 'itinerary', 'logs'].includes(modal.type) || modal.action === 'delete'}
+            hideFooter={['finance', 'itinerary', 'logs', 'passengers'].includes(modal.type) || modal.action === 'delete'}
           >
             {modal.action === 'delete' ? (
                <div style={{textAlign:'center', padding:'20px 0'}}>
@@ -1313,6 +1319,13 @@ export default function AdminPanel() {
                 )}
                 {modal.type==='logs' && (
                   renderBookingLogs(modal.data)
+                )}
+                {modal.type==='passengers' && (
+                  <PassengerManagement 
+                    booking={modal.data} 
+                    onUpdate={reload} 
+                    onClose={() => setModal(null)}
+                  />
                 )}
                 {modal.type==='assign_driver' && <DriverAssignModal data={modal.data} drivers={drivers} onChange={setField} bookings={bookings} />}
                 {modal.type==='driver'&&<DriverForm data={modal.data} onChange={setField}/>}
