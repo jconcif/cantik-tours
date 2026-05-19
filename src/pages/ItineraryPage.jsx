@@ -39,6 +39,8 @@ export default function ItineraryPage() {
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState([]);
   const [submittingCheckin, setSubmittingCheckin] = useState(false);
+  const [showStatusDetail, setShowStatusDetail] = useState(false);
+  const [showItinerary, setShowItinerary] = useState(true);
 
   useEffect(() => {
     if (!ref) { setError('Referencia no válida'); setLoading(false); return; }
@@ -139,7 +141,7 @@ export default function ItineraryPage() {
     refunded:         { step: 0, label: en ? 'REFUNDED'                   : 'REEMBOLSADO',                   desc: en ? 'Your payment has been refunded.' : 'Tu pago ha sido reembolsado.', color: 'text-pink-400',   bg_: 'bg-pink-400/10' },
   };
 
-  const priceLabel = booking.payment_status === 'confirmed' ? (en ? 'Total Paid' : 'Total Pagado') : (en ? 'Estimated Total' : 'Total Estimado');
+  const priceLabel = booking.payment_status === 'confirmed' ? (en ? 'Total Paid' : 'Total Pagado') : (en ? 'Total' : 'Total');
   const status = statusMap[booking.payment_status] || statusMap.requested;
 
   // ── Experience ────────────────────────────────────────────────
@@ -376,6 +378,7 @@ export default function ItineraryPage() {
                   { label: priceLabel,                  val: priceVal, style: { color: '#11BDDB' } },
                   { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
                   { label: en ? 'BOARDING' : 'HORA',    val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
+                  { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
                 ].map((f, i) => (
                   <div key={i}>
                     <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
@@ -394,23 +397,12 @@ export default function ItineraryPage() {
 
                 <div className="flex items-center gap-2">
                   <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
-                    {en ? 'CLASS:' : 'CLASE:'}
+                    {en ? 'SERVICE:' : 'SERVICIO:'}
                   </span>
                   <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: expColor }}>
                     {expName}
                   </span>
                 </div>
-
-                {booking.drivers && (
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
-                      {en ? 'DRIVER:' : 'CHOFER:'}
-                    </span>
-                    <span className="text-[10px] font-black uppercase text-primary tracking-widest">
-                      {booking.drivers.name}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
 
@@ -472,40 +464,59 @@ export default function ItineraryPage() {
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
           transition={{ delay: 0.1 }}
-          className={`rounded-[2rem] p-8 border ${card}`}
+          className={`rounded-[2rem] p-8 border ${card} transition-all duration-300`}
         >
-          <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 mb-8 ${sub}`}>
-            <Activity size={12} className="text-primary" />
-            {en ? 'BOOKING PROGRESS' : 'ESTADO DE TU RESERVA'}
-          </div>
+          <button 
+            onClick={() => setShowStatusDetail(!showStatusDetail)}
+            className="w-full flex items-center justify-between text-left focus:outline-none"
+          >
+            <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
+              <Activity size={12} className="text-primary animate-pulse" />
+              {en ? 'BOOKING STATUS' : 'ESTADO DE TU RESERVA'}
+            </div>
+            <div className="flex items-center gap-2">
+              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${status.bg_} ${status.color}`}>
+                {status.label}
+              </span>
+              <span className={`text-[9px] ${sub} transition-transform duration-300 ${showStatusDetail ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                ▼
+              </span>
+            </div>
+          </button>
           
-          <div className="space-y-6 relative">
-            <div className={`absolute top-2 bottom-2 left-[7px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
-            {[
-              statusMap.requested, 
-              statusMap.pending_payment, 
-              statusMap.payment_received, 
-              statusMap.reserved, 
-              statusMap.confirmed,
-              statusMap.in_progress,
-              statusMap.completed
-            ].map((st, i) => {
-              const isPast = st.step <= currentStep;
-              const isCurrent = st.step === currentStep;
-              return (
-                <div key={i} className="flex gap-6 relative z-10">
-                  <div className={`w-4 h-4 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_15px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
-                    {isPast && !isCurrent && <CheckCircle2 size={8} className="text-white" />}
-                    {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
+          {showStatusDetail && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              className="mt-8 space-y-6 relative pt-6 border-t border-dashed border-white/5"
+            >
+              <div className={`absolute top-6 bottom-2 left-[7px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
+              {[
+                statusMap.requested, 
+                statusMap.pending_payment, 
+                statusMap.payment_received, 
+                statusMap.reserved, 
+                statusMap.confirmed,
+                statusMap.in_progress,
+                statusMap.completed
+              ].map((st, i) => {
+                const isPast = st.step <= currentStep;
+                const isCurrent = st.step === currentStep;
+                return (
+                  <div key={i} className="flex gap-6 relative z-10">
+                    <div className={`w-4 h-4 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_15px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
+                      {isPast && !isCurrent && <CheckCircle2 size={8} className="text-white" />}
+                      {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
+                    </div>
+                    <div className="flex-1">
+                      <div className={`text-[10px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
+                      {isCurrent && <div className={`text-[11px] mt-1 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <div className={`text-[10px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
-                    {isCurrent && <div className={`text-[11px] mt-1 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
+                )
+              })}
+            </motion.div>
+          )}
         </motion.div>
 
         {/* ── DETAILED ITINERARY ────────────────────────── */}
@@ -516,7 +527,10 @@ export default function ItineraryPage() {
             transition={{ type: 'spring', stiffness: 100, delay: 0.1 }}
             className={`rounded-[2.5rem] p-8 shadow-2xl ${card}`}
           >
-            <div className="flex items-center justify-between mb-8">
+            <button
+              onClick={() => setShowItinerary(!showItinerary)}
+              className="w-full flex items-center justify-between text-left focus:outline-none"
+            >
               <div>
                 <h3 className="text-lg font-black tracking-tight uppercase">
                   {en ? 'Detailed Itinerary' : 'Itinerario Detallado'}
@@ -525,37 +539,48 @@ export default function ItineraryPage() {
                   {en ? 'Your planned route' : 'Tu ruta planificada'}
                 </p>
               </div>
-              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${dark ? 'bg-white/5' : 'bg-primary/5'}`}>
-                <Map className="text-primary" size={20} />
-              </div>
-            </div>
-
-            <div className="space-y-8 relative">
-              {/* Connector line */}
-              <div className={`absolute top-4 bottom-4 left-[1.125rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
-
-              {finalItinerary.map((item, idx) => (
-                <div key={idx} className="flex gap-6 relative">
-                  <div className={`w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
-                    {getActivityIcon(item.type)}
-                  </div>
-                  <div className="flex-1 pt-1.5">
-                    <div className="flex items-center justify-between gap-4 mb-1">
-                      <h4 className="text-xs font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
-                      {item.duration && (
-                        <div className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter ${sub}`}>
-                          <Clock size={10} />
-                          {en ? (item.duration_en || item.duration) : item.duration}
-                        </div>
-                      )}
-                    </div>
-                    <p className={`text-[11px] leading-relaxed font-medium ${sub}`}>
-                      {en ? (item.desc_en || item.desc) : item.desc}
-                    </p>
-                  </div>
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${dark ? 'bg-white/5' : 'bg-primary/5'}`}>
+                  <Map className="text-primary" size={20} />
                 </div>
-              ))}
-            </div>
+                <span className={`text-[9px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                  ▼
+                </span>
+              </div>
+            </button>
+
+            {showItinerary && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mt-8 space-y-8 relative pt-6 border-t border-dashed border-white/5"
+              >
+                {/* Connector line */}
+                <div className={`absolute top-8 bottom-4 left-[1.125rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+
+                {finalItinerary.map((item, idx) => (
+                  <div key={idx} className="flex gap-6 relative">
+                    <div className={`w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
+                      {getActivityIcon(item.type)}
+                    </div>
+                    <div className="flex-1 pt-1.5">
+                      <div className="flex items-center justify-between gap-4 mb-1">
+                        <h4 className="text-xs font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
+                        {item.duration && (
+                          <div className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter ${sub}`}>
+                            <Clock size={10} />
+                            {en ? (item.duration_en || item.duration) : item.duration}
+                          </div>
+                        )}
+                      </div>
+                      <p className={`text-[11px] leading-relaxed font-medium ${sub}`}>
+                        {en ? (item.desc_en || item.desc) : item.desc}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            )}
           </motion.div>
         )}
 
