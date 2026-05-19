@@ -86,6 +86,7 @@ export default function AdminPanel() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [sortBy, setSortBy] = useState('tour_date_desc');
   const [driverFilter, setDriverFilter] = useState('ALL');
+  const [showFilters, setShowFilters] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [modal, setModal] = useState(null);
   const [msg, setMsg] = useState(null);
@@ -263,43 +264,61 @@ export default function AdminPanel() {
       let actualType = type;
       if (type === 'assign_driver') actualType = 'booking';
 
-      if (actualType === 'booking' && action === 'update') {
-        const original = bookings.find(x => x.id === data.id);
-        if (original) {
-          let ext = {};
-          try {
-            ext = typeof finalData.extras === 'string' ? JSON.parse(finalData.extras) : (finalData.extras || {});
-          } catch(e) {}
-          if (!ext.logs) ext.logs = [];
-          
-          let changes = [];
-          if (original.payment_status !== finalData.payment_status) {
-            const oldLbl = PAY_LABEL[original.payment_status] || original.payment_status;
-            const newLbl = PAY_LABEL[finalData.payment_status] || finalData.payment_status;
-            changes.push(`Estado cambiado de "${oldLbl}" a "${newLbl}"`);
+      if (actualType === 'booking') {
+        let ext = {};
+        if (action === 'update') {
+          const original = bookings.find(x => String(x.id) === String(data.id));
+          if (original) {
+            try {
+              if (typeof finalData.extras === 'string' && finalData.extras !== '[object Object]') {
+                ext = JSON.parse(finalData.extras);
+              } else if (typeof finalData.extras === 'object' && finalData.extras !== null) {
+                ext = finalData.extras;
+              }
+            } catch(e) {}
           }
-          if (original.notes !== finalData.notes) {
-            changes.push(`Notas internas actualizadas: "${finalData.notes || '(vacio)'}"`);
-          }
-          if (original.driver_id !== finalData.driver_id) {
-            const oldDrv = drivers.find(d => d.id == original.driver_id)?.name || 'Sin asignar';
-            const newDrv = drivers.find(d => d.id == finalData.driver_id)?.name || 'Sin asignar';
-            changes.push(`Chofer cambiado de "${oldDrv}" a "${newDrv}"`);
-          }
-          
-          if (changes.length > 0) {
-            changes.forEach(cMsg => {
-              ext.logs.push({
-                timestamp: new Date().toISOString(),
-                text: cMsg
-              });
-            });
-          }
-          if (finalData.pickup_time !== undefined) {
-            ext.pickup_time = finalData.pickup_time;
-          }
-          finalData.extras = JSON.stringify(ext);
         }
+        
+        if (!ext.logs) ext.logs = [];
+        
+        if (action === 'update') {
+          const original = bookings.find(x => String(x.id) === String(data.id));
+          if (original) {
+            let changes = [];
+            if (original.payment_status !== finalData.payment_status) {
+              const oldLbl = PAY_LABEL[original.payment_status] || original.payment_status;
+              const newLbl = PAY_LABEL[finalData.payment_status] || finalData.payment_status;
+              changes.push(`Estado cambiado de "${oldLbl}" a "${newLbl}"`);
+            }
+            if (original.notes !== finalData.notes) {
+              changes.push(`Notas internas actualizadas: "${finalData.notes || '(vacio)'}"`);
+            }
+            if (original.driver_id !== finalData.driver_id) {
+              const oldDrv = drivers.find(d => String(d.id) === String(original.driver_id))?.name || 'Sin asignar';
+              const newDrv = drivers.find(d => String(d.id) === String(finalData.driver_id))?.name || 'Sin asignar';
+              changes.push(`Chofer cambiado de "${oldDrv}" a "${newDrv}"`);
+            }
+            
+            if (changes.length > 0) {
+              changes.forEach(cMsg => {
+                ext.logs.push({
+                  timestamp: new Date().toISOString(),
+                  text: cMsg
+                });
+              });
+            }
+          }
+        } else {
+          ext.logs.push({
+            timestamp: new Date().toISOString(),
+            text: 'Reserva creada en el sistema.'
+          });
+        }
+        
+        if (finalData.pickup_time !== undefined) {
+          ext.pickup_time = finalData.pickup_time;
+        }
+        finalData.extras = JSON.stringify(ext);
       }
 
       const fn = api[`${action}${actualType[0].toUpperCase() + actualType.slice(1)}`];
@@ -685,32 +704,19 @@ export default function AdminPanel() {
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'1 1 200px', padding:'12px', borderRadius:'14px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', minWidth:'150px'}}/>
             
             {tab==='bookings' && (
-              <>
-                {/* Selector de Orden */}
-                <select 
-                  value={sortBy} 
-                  onChange={e=>setSortBy(e.target.value)} 
-                  style={{padding:'12px', borderRadius:'14px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', outline:'none', cursor:'pointer'}}
-                >
-                  <option value="tour_date_desc">📅 Fecha Tour (Recientes primero)</option>
-                  <option value="tour_date_asc">📅 Fecha Tour (Antiguos primero)</option>
-                  <option value="created_at_desc">➕ Fecha Creación (Recientes primero)</option>
-                  <option value="created_at_asc">➕ Fecha Creación (Antiguos primero)</option>
-                </select>
-
-                {/* Filtro por Chofer */}
-                <select 
-                  value={driverFilter} 
-                  onChange={e=>setDriverFilter(e.target.value)} 
-                  style={{padding:'12px', borderRadius:'14px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', outline:'none', cursor:'pointer'}}
-                >
-                  <option value="ALL">👤 Todos los Choferes</option>
-                  <option value="null">👤 Sin Chofer Asignado</option>
-                  {drivers.map(d => (
-                    <option key={d.id} value={d.id}>👤 {d.name}</option>
-                  ))}
-                </select>
-              </>
+              <button 
+                onClick={() => setShowFilters(!showFilters)} 
+                style={{
+                  ...s.btn(showFilters ? C : theme.btnGhost, showFilters ? '#000' : theme.text), 
+                  border: showFilters ? `1px solid ${C}` : `1px solid ${theme.border}`, 
+                  fontSize: '13px',
+                  padding: '12px 16px',
+                  borderRadius: '14px',
+                  fontWeight: 900
+                }}
+              >
+                Filtros ⚙️
+              </button>
             )}
 
             <div style={{display:'flex', gap:'8px', marginLeft:'auto'}}>
@@ -719,6 +725,50 @@ export default function AdminPanel() {
               {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV} title="Exportar CSV"><Download size={16} /></button>}
             </div>
           </div>
+
+          {tab==='bookings' && showFilters && (
+            <div style={{
+              display:'flex', 
+              gap:'12px', 
+              marginBottom:'16px', 
+              flexWrap:'wrap', 
+              padding:'16px', 
+              background:'#ffffff03', 
+              borderRadius:'18px', 
+              border:`1px solid ${theme.border}`
+            }}>
+              {/* Selector de Orden */}
+              <div style={{display:'flex', flexDirection:'column', gap:'6px', flex:'1 1 200px'}}>
+                <label style={{fontSize:'10px', fontWeight:900, color:'#888', textTransform:'uppercase'}}>Ordenar por</label>
+                <select 
+                  value={sortBy} 
+                  onChange={e=>setSortBy(e.target.value)} 
+                  style={{padding:'12px', borderRadius:'12px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', outline:'none', cursor:'pointer', width:'100%'}}
+                >
+                  <option value="tour_date_desc">📅 Fecha Tour (Recientes primero)</option>
+                  <option value="tour_date_asc">📅 Fecha Tour (Antiguos primero)</option>
+                  <option value="created_at_desc">➕ Fecha Creación (Recientes primero)</option>
+                  <option value="created_at_asc">➕ Fecha Creación (Antiguos primero)</option>
+                </select>
+              </div>
+
+              {/* Filtro por Chofer */}
+              <div style={{display:'flex', flexDirection:'column', gap:'6px', flex:'1 1 200px'}}>
+                <label style={{fontSize:'10px', fontWeight:900, color:'#888', textTransform:'uppercase'}}>Filtrar por Chofer</label>
+                <select 
+                  value={driverFilter} 
+                  onChange={e=>setDriverFilter(e.target.value)} 
+                  style={{padding:'12px', borderRadius:'12px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', outline:'none', cursor:'pointer', width:'100%'}}
+                >
+                  <option value="ALL">👤 Todos los Choferes</option>
+                  <option value="null">👤 Sin Chofer Asignado</option>
+                  {drivers.map(d => (
+                    <option key={d.id} value={d.id}>👤 {d.name}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
 
           {tab==='bookings' && (
             <div style={{display:'flex', gap:'6px', marginBottom:'16px', flexWrap:'nowrap', overflowX:'auto', scrollbarWidth:'none', paddingBottom:'4px'}}>

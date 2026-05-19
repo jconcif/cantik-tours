@@ -6,17 +6,44 @@ import { tours } from '../data/tours';
 const inputStyle = {padding:'10px 14px',borderRadius:'12px',border:'1px solid #333',fontSize:'14px',fontWeight:600,background:'#222',color:'#fff',width:'100%',boxSizing:'border-box',outline:'none'};
 const labelStyle = {fontSize:'10px',fontWeight:900,color:'#11BDDB',textTransform:'uppercase',letterSpacing:'0.05em'};
 
-const Field = ({label, children}) => (
-  <div style={{display:'flex',flexDirection:'column',gap:'4px'}}><label style={labelStyle}>{label}</label>{children}</div>
+const Field = ({label, htmlFor, children}) => (
+  <div style={{display:'flex',flexDirection:'column',gap:'4px'}}><label htmlFor={htmlFor} style={labelStyle}>{label}</label>{children}</div>
 );
 
-const Input = ({label,value,onChange,type='text',readOnly,...rest}) => (
-  <Field label={label}><input type={type} value={value||''} onChange={e=>!readOnly && onChange(e.target.value)} style={{...inputStyle, opacity: readOnly ? 0.6 : 1, cursor: readOnly ? 'not-allowed' : 'text'}} readOnly={readOnly} {...rest} /></Field>
-);
+const Input = ({label,value,onChange,type='text',readOnly,...rest}) => {
+  const safeName = (label || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+  return (
+    <Field label={label} htmlFor={safeName}>
+      <input 
+        id={safeName}
+        name={safeName}
+        type={type} 
+        value={value||''} 
+        onChange={e=>!readOnly && onChange(e.target.value)} 
+        style={{...inputStyle, opacity: readOnly ? 0.6 : 1, cursor: readOnly ? 'not-allowed' : 'text'}} 
+        readOnly={readOnly} 
+        {...rest} 
+      />
+    </Field>
+  );
+};
 
-const Select = ({label,value,onChange,options}) => (
-  <Field label={label}><select value={value||''} onChange={e=>onChange(e.target.value)} style={inputStyle}>{options.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}</select></Field>
-);
+const Select = ({label,value,onChange,options}) => {
+  const safeName = (label || '').toLowerCase().replace(/[^a-z0-9]/g, '_');
+  return (
+    <Field label={label} htmlFor={safeName}>
+      <select 
+        id={safeName}
+        name={safeName}
+        value={value||''} 
+        onChange={e=>onChange(e.target.value)} 
+        style={inputStyle}
+      >
+        {options.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </Field>
+  );
+};
 
 export const BookingForm = ({data,onChange}) => {
   return (
@@ -124,7 +151,7 @@ export const ReviewForm = ({data,onChange}) => (
     <Field label="Comment (English)"><textarea rows={3} value={data.comentario_en||''} onChange={e=>onChange('comentario_en',e.target.value)} style={{...inputStyle,resize:'vertical'}} /></Field>
     
     <label style={{display:'flex',alignItems:'center',gap:'10px',fontWeight:700,fontSize:'14px',color:'#fff'}}>
-      <input type="checkbox" checked={data.aprobado==1} onChange={e=>onChange('aprobado',e.target.checked?1:0)} style={{width:'18px',height:'18px',accentColor:'#11BDDB'}} /> Publicar en web
+      <input id="aprobado" name="aprobado" type="checkbox" checked={data.aprobado==1} onChange={e=>onChange('aprobado',e.target.checked?1:0)} style={{width:'18px',height:'18px',accentColor:'#11BDDB'}} /> Publicar en web
     </label>
   </div>
 );
@@ -136,7 +163,7 @@ export const CouponForm = ({data,onChange}) => (
     <Input label="Valor" value={data.discount_value} onChange={v=>onChange('discount_value',v)} type="number" />
     <Input label="Usos máximos (0=ilimitado)" value={data.max_uses} onChange={v=>onChange('max_uses',v)} type="number" />
     <label style={{display:'flex',alignItems:'center',gap:'10px',fontWeight:700,fontSize:'14px',color:'#fff',gridColumn:'1/-1'}}>
-      <input type="checkbox" checked={data.active==1} onChange={e=>onChange('active',e.target.checked?1:0)} style={{width:'18px',height:'18px',accentColor:'#11BDDB'}} /> Cupón activo
+      <input id="active" name="active" type="checkbox" checked={data.active==1} onChange={e=>onChange('active',e.target.checked?1:0)} style={{width:'18px',height:'18px',accentColor:'#11BDDB'}} /> Cupón activo
     </label>
   </div>
 );
@@ -578,11 +605,11 @@ export const ItineraryEditor = ({booking, onUpdate}) => {
         {items.map((item, idx) => (
           <div key={idx} style={{display:'flex', gap:'10px', alignItems:'flex-start', background:'#222', padding:'12px', borderRadius:'16px', border:'1px solid #333'}}>
             <div style={{width:'80px'}}>
-              <input value={item.time} onChange={e=>updateItem(idx, 'time', e.target.value)} style={{...inputStyle, textAlign:'center', padding:'8px'}} placeholder="08:00" />
+              <input id={`time_${idx}`} name={`time_${idx}`} value={item.time} onChange={e=>updateItem(idx, 'time', e.target.value)} style={{...inputStyle, textAlign:'center', padding:'8px'}} placeholder="08:00" />
             </div>
             <div style={{flex:1, display:'flex', flexDirection:'column', gap:'6px'}}>
-              <input value={item.activity || item.desc} onChange={e=>updateItem(idx, 'activity', e.target.value)} style={{...inputStyle, padding:'8px'}} placeholder={isEn ? 'Activity...' : 'Actividad...'} />
-              <input value={item.subtitle} onChange={e=>updateItem(idx, 'subtitle', e.target.value)} style={{...inputStyle, padding:'8px', fontSize:'11px', opacity:0.7}} placeholder={isEn ? 'Subtitle / Details...' : 'Subtítulo / Detalles...'} />
+              <input id={`activity_${idx}`} name={`activity_${idx}`} value={item.activity || item.desc} onChange={e=>updateItem(idx, 'activity', e.target.value)} style={{...inputStyle, padding:'8px'}} placeholder={isEn ? 'Activity...' : 'Actividad...'} />
+              <input id={`subtitle_${idx}`} name={`subtitle_${idx}`} value={item.subtitle} onChange={e=>updateItem(idx, 'subtitle', e.target.value)} style={{...inputStyle, padding:'8px', fontSize:'11px', opacity:0.7}} placeholder={isEn ? 'Subtitle / Details...' : 'Subtítulo / Detalles...'} />
             </div>
             <div style={{display:'flex', flexDirection:'column', gap:'4px', marginTop:'4px'}}>
               <button onClick={()=>moveItem(idx, -1)} disabled={idx === 0} style={{background:'transparent', border:`1px solid ${idx===0?'#222':'#444'}`, color:idx === 0 ? '#333' : '#aaa', width:'28px', height:'24px', borderRadius:'6px', cursor:idx === 0 ? 'default' : 'pointer', fontSize:'10px', padding:0}}>▲</button>
