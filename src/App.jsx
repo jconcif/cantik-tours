@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { initGA, trackPageView } from './utils/analytics';
+import { getAvailability } from './services/api';
 
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -37,6 +38,10 @@ function App() {
 
     useEffect(() => {
         initGA();
+        // Silent warm-up ping to wake up the backend and database (useful if hosted on Render/Supabase free tiers)
+        try {
+            getAvailability().catch(() => {});
+        } catch (e) {}
     }, []);
 
     useEffect(() => {
