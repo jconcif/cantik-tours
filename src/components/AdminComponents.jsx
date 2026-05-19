@@ -215,6 +215,20 @@ export const FinancialManagement = ({booking, onUpdate}) => {
     finally { setLoading(false); }
   }, [bookingId]);
 
+  const addSystemLog = async (logText) => {
+    try {
+      const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {});
+      if (!ext.logs) ext.logs = [];
+      ext.logs.push({
+        timestamp: new Date().toISOString(),
+        text: logText
+      });
+      await api.updateBooking({ ...booking, extras: JSON.stringify(ext) });
+    } catch (e) {
+      console.error('Error adding system log', e);
+    }
+  };
+
   React.useEffect(() => { load(); }, [load]);
 
   const updateBookingExtrasTotal = async (newCharges) => {
@@ -236,15 +250,40 @@ export const FinancialManagement = ({booking, onUpdate}) => {
   const paidPct      = Math.min(100, (totalPaid / Math.max(totalOwed, 1)) * 100);
 
   // -- Helpers --
-  const delPayment = async (id) => { if (!window.confirm('¿Eliminar cobro?')) return; try { await api.deletePayment(id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
-  const delExpense = async (id) => { if (!window.confirm('¿Eliminar gasto?')) return; try { await api.deleteExpense(id); await load(); if (onUpdate) onUpdate(); } catch(e) { alert(e.message); } };
+  const delPayment = async (id) => { 
+    if (!window.confirm('¿Eliminar cobro?')) return; 
+    try { 
+      const item = payments.find(p => p.id === id);
+      const amountStr = item ? `${item.amount}€` : '';
+      await api.deletePayment(id); 
+      await addSystemLog(`Cobro eliminado: ${amountStr}.`);
+      await load(); 
+      if (onUpdate) onUpdate(); 
+    } catch(e) { alert(e.message); } 
+  };
+
+  const delExpense = async (id) => { 
+    if (!window.confirm('¿Eliminar gasto?')) return; 
+    try { 
+      const item = expenses.find(e => e.id === id);
+      const detailStr = item ? `${item.amount}€ (${item.concept})` : '';
+      await api.deleteExpense(id); 
+      await addSystemLog(`Gasto eliminado: ${detailStr}.`);
+      await load(); 
+      if (onUpdate) onUpdate(); 
+    } catch(e) { alert(e.message); } 
+  };
+
   const delCharge  = async (id) => { 
     if (!window.confirm('¿Eliminar cargo extra?')) return; 
     try { 
+      const item = charges.find(c => c.id === id);
+      const detailStr = item ? `${item.amount}€ (${item.concept})` : '';
       await api.deleteCharge(id); 
       const newCharges = charges.filter(c => c.id !== id);
       setCharges(newCharges);
       await updateBookingExtrasTotal(newCharges);
+      await addSystemLog(`Cargo extra eliminado: ${detailStr}.`);
       await load(); 
       if (onUpdate) onUpdate(); 
     } catch(e) { alert(e.message); } 
@@ -258,8 +297,9 @@ export const FinancialManagement = ({booking, onUpdate}) => {
 
   const rowStyle = (color) => ({
     display:'flex', gap:'12px', alignItems:'center',
-    background:'#1a1a1a', padding:'14px 16px', borderRadius:'16px',
-    border:`1px solid ${color}22`
+    padding:'12px 16px', background:color || '#222',
+    borderRadius:'16px', border:'1px solid #ffffff05',
+    marginBottom:'8px', justifyContent:'space-between'
   });
 
   // -- Add Forms --
@@ -269,7 +309,13 @@ export const FinancialManagement = ({booking, onUpdate}) => {
       if (!d.amount) return;
       setLoading(true);
       const finalNotes = d.status === 'verificando' ? `[VERIFICANDO] ${d.notes}`.trim() : d.notes;
-      try { await api.addPayment({amount:d.amount, payment_date:d.payment_date, payment_method:d.payment_method, notes:finalNotes, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
+      try { 
+        await api.addPayment({amount:d.amount, payment_date:d.payment_date, payment_method:d.payment_method, notes:finalNotes, booking_id: bookingId}); 
+        await addSystemLog(`Cobro registrado: ${d.amount}€ vía ${d.payment_method} (${d.status === 'verificando' ? 'Pendiente Verificación' : 'Completado'}).`);
+        await load(); 
+        setAdding(false); 
+        if(onUpdate) onUpdate(); 
+      }
       catch(e) { alert(e.message); } finally { setLoading(false); }
     };
     return (
@@ -296,22 +342,21 @@ export const FinancialManagement = ({booking, onUpdate}) => {
     const save = async () => {
       if (!d.amount || !d.concept) return;
       setLoading(true);
-      try { await api.addExpense({...d, booking_id: bookingId}); await load(); setAdding(false); if(onUpdate) onUpdate(); }
+      try { 
+        await api.addExpense({...d, booking_id: bookingId}); 
+        await addSystemLog(`Gasto registrado: ${d.amount}€ en concepto de "${d.concept}" (${d.category}).`);
+        await load(); 
+        setAdding(false); 
+        if(onUpdate) onUpdate(); 
+      }
       catch(e) { alert(e.message); } finally { setLoading(false); }
     };
     return (
       <div style={{background:'#222', padding:'18px', borderRadius:'20px', marginBottom:'16px', border:'1px solid #ef444444'}}>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:'10px', marginBottom:'10px'}}>
           <Select label="Categoría" value={d.category} onChange={v=>setD({...d,category:v})}
-            options={[
-              {value:'Sueldo Chofer',label:'🚗 Sueldo Chofer'},
-              {value:'Gasolina/Peajes',label:'⛽ Gasolina / Peajes'},
-              {value:'Tickets/Entradas',label:'🎟️ Tickets / Entradas'},
-              {value:'Dietas',label:'🍱 Comidas / Dietas'},
-              {value:'Comisiones',label:'🏦 Comisiones Bancarias'},
-              {value:'Otros',label:'📝 Otros Gastos'},
-            ]} />
-          <Input label="Concepto (Detalle)" value={d.concept} onChange={v=>setD({...d,concept:v})} />
+            options={[{value:'Sueldo Chofer',label:'🚘 Sueldo Chofer'},{value:'Gasolina',label:'⛽ Gasolina'},{value:'Peajes / Parkings',label:'🎫 Peajes/Parkings'},{value:'Entradas Actividades',label:'🎟️ Entradas/Actividades'},{value:'Comida Chofer',label:'🍲 Comida Chofer'},{value:'Otros',label:'⚙️ Otros Expenses'}]} />
+          <Input label="Concepto / Detalle" value={d.concept} onChange={v=>setD({...d,concept:v})} placeholder="Ej: Pago de gasolina ruta norte..." />
           <Input label="Importe €" type="number" value={d.amount} onChange={v=>setD({...d,amount:v})} />
           <Input label="Fecha" type="date" value={d.expense_date} onChange={v=>setD({...d,expense_date:v})} />
         </div>
@@ -335,6 +380,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         const newCharges = res.data || [];
         setCharges(newCharges);
         await updateBookingExtrasTotal(newCharges);
+        await addSystemLog(`Cargo extra registrado: ${d.amount}€ en concepto de "${d.concept}".`);
         await load(); 
         setAdding(false); 
         if(onUpdate) onUpdate(); 

@@ -21,6 +21,14 @@ router.post(
       // Server-side price validation would go here
       // For now, we accept the price but flag it for admin review
 
+      const initialExtras = {
+        logs: [{
+          timestamp: new Date().toISOString(),
+          text: `Reserva creada e ingresada por el cliente desde la web pública. Estado inicial: ${is_paid ? 'reserved' : 'requested'}.`
+        }],
+        passengers: []
+      };
+
       const { data, error } = await supabase
         .from('bookings')
         .insert({
@@ -38,7 +46,8 @@ router.post(
           coupon: coupon || '',
           itinerary: itinerary || '',
           payment_status: is_paid ? 'reserved' : 'requested',
-          reference: reference || null
+          reference: reference || null,
+          extras: JSON.stringify(initialExtras)
         })
         .select('id')
         .single();

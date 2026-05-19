@@ -552,9 +552,34 @@ export default function AdminPanel() {
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            flexShrink: 0
+            flexShrink: 0,
+            boxSizing: 'border-box',
+            width: '100%'
           }}>
             <span>⚠️</span> Registro de pasajeros (Check-In) pendiente de completar en el link público.
+            {b.client_phone && (
+              <a 
+                href={waLink(b.client_phone, `¡Hola ${b.client_name}! ✨ Para la coordinación de tu tour de Cantik Tours y el seguro obligatorio de viaje, te recordamos completar el check-in de pasajeros en el siguiente enlace: https://cantiktours.com/itinerario?ref=CT-${b.id}`)}
+                target="_blank" 
+                rel="noopener noreferrer"
+                style={{
+                  marginLeft: 'auto',
+                  background: '#25D366',
+                  color: '#000',
+                  padding: '6px 12px',
+                  borderRadius: '12px',
+                  textDecoration: 'none',
+                  fontSize: '11px',
+                  fontWeight: 900,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                💬 Recordar por WhatsApp
+              </a>
+            )}
           </div>
         )}
 
@@ -1006,9 +1031,34 @@ export default function AdminPanel() {
                         fontWeight: 700,
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '8px'
+                        gap: '8px',
+                        boxSizing: 'border-box',
+                        width: '100%'
                       }}>
                         <span>⚠️</span> Registro de pasajeros (Check-In) pendiente de completar por el cliente.
+                        {b.client_phone && (
+                          <a 
+                            href={waLink(b.client_phone, `¡Hola ${b.client_name}! ✨ Para la coordinación de tu tour de Cantik Tours y el seguro obligatorio de viaje, te recordamos completar el check-in de pasajeros en el siguiente enlace: https://cantiktours.com/itinerario?ref=CT-${b.id}`)}
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            style={{
+                              marginLeft: 'auto',
+                              background: '#25D366',
+                              color: '#000',
+                              padding: '5px 10px',
+                              borderRadius: '8px',
+                              textDecoration: 'none',
+                              fontSize: '10px',
+                              fontWeight: 900,
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '4px'
+                            }}
+                            onClick={e => e.stopPropagation()}
+                          >
+                            💬 Recordar por WhatsApp
+                          </a>
+                        )}
                       </div>
                     );
                     return (
