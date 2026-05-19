@@ -504,8 +504,60 @@ export default function AdminPanel() {
       }
     } catch(e) {}
     const logs = Array.isArray(ext.logs) ? ext.logs : [];
-     return (
+    const passengers = Array.isArray(ext.passengers) ? ext.passengers : [];
+    const hasCheckin = passengers.length > 0 && passengers.some(p => p.name || p.passport);
+
+    return (
       <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
+        {/* Pasajeros del Check-In */}
+        {hasCheckin ? (
+          <div style={{
+            background: 'rgba(17, 189, 219, 0.05)',
+            border: '1px solid rgba(17, 189, 219, 0.2)',
+            borderRadius: '24px',
+            padding: '24px',
+            flexShrink: 0
+          }}>
+            <div style={{fontSize:'12px', fontWeight:900, color:'#11BDDB', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px'}}>
+              <span>👥</span> Pasajeros Registrados (Check-In)
+            </div>
+            <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
+              {passengers.map((p, idx) => (
+                <div key={idx} style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  padding: '12px 16px',
+                  borderRadius: '16px',
+                  border: '1px solid rgba(255,255,255,0.05)',
+                  fontSize: '12px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                  gap: '12px'
+                }}>
+                  <div><span style={{color:'#666', fontWeight:700}}>Nombre:</span> <strong style={{color:'#fff'}}>{p.name || '---'}</strong></div>
+                  <div><span style={{color:'#666', fontWeight:700}}>Pasaporte:</span> <strong style={{color:'#fff'}}>{p.passport || '---'}</strong></div>
+                  <div><span style={{color:'#666', fontWeight:700}}>Contacto:</span> <strong style={{color:'#fff'}}>{p.emergency || '---'}</strong></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div style={{
+            background: 'rgba(245, 158, 11, 0.05)',
+            border: '1px solid rgba(245, 158, 11, 0.2)',
+            borderRadius: '24px',
+            padding: '16px 24px',
+            fontSize: '12px',
+            color: '#f59e0b',
+            fontWeight: 700,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            flexShrink: 0
+          }}>
+            <span>⚠️</span> Registro de pasajeros (Check-In) pendiente de completar en el link público.
+          </div>
+        )}
+
         {/* Timeline */}
         <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff0a', flex:1, display:'flex', flexDirection:'column'}}>
           <div style={{fontSize:'12px', fontWeight:900, color:'#fff', letterSpacing:'1px', textTransform:'uppercase', marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px'}}>
@@ -767,40 +819,42 @@ export default function AdminPanel() {
                   ))}
                 </select>
               </div>
-            </div>
-          )}
 
-          {tab==='bookings' && (
-            <div style={{display:'flex', gap:'6px', marginBottom:'16px', flexWrap:'nowrap', overflowX:'auto', scrollbarWidth:'none', paddingBottom:'4px'}}>
-              {[
-                { k: 'ALL', l: 'Todas 📋' },
-                { k: 'PENDING_PAYMENT', l: 'Pago Pendiente ⌛' },
-                { k: 'CONFIRMED', l: 'Confirmadas ✅' },
-                { k: 'COMPLETED', l: 'Completadas 🏁' },
-                { k: 'CANCELLED', l: 'Canceladas ❌' }
-              ].map(p => {
-                const isActive = statusFilter === p.k;
-                return (
-                  <button
-                    key={p.k}
-                    onClick={() => setStatusFilter(p.k)}
-                    style={{
-                      background: isActive ? C : '#ffffff05',
-                      color: isActive ? '#000' : '#888',
-                      border: isActive ? `1px solid ${C}` : '1px solid #ffffff05',
-                      borderRadius: '12px',
-                      padding: '8px 12px',
-                      fontSize: '11px',
-                      fontWeight: 900,
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      whiteSpace: 'nowrap'
-                    }}
-                  >
-                    {p.l}
-                  </button>
-                );
-              })}
+              {/* Filtro por Estado */}
+              <div style={{display:'flex', flexDirection:'column', gap:'6px', flex:'1 1 100%'}}>
+                <label style={{fontSize:'10px', fontWeight:900, color:'#888', textTransform:'uppercase'}}>Filtrar por Estado</label>
+                <div style={{display:'flex', gap:'6px', flexWrap:'wrap'}}>
+                  {[
+                    { k: 'ALL', l: 'Todas 📋' },
+                    { k: 'PENDING_PAYMENT', l: 'Pago Pendiente ⌛' },
+                    { k: 'CONFIRMED', l: 'Confirmadas ✅' },
+                    { k: 'COMPLETED', l: 'Completadas 🏁' },
+                    { k: 'CANCELLED', l: 'Canceladas ❌' }
+                  ].map(p => {
+                    const isActive = statusFilter === p.k;
+                    return (
+                      <button
+                        key={p.k}
+                        onClick={() => setStatusFilter(p.k)}
+                        style={{
+                          background: isActive ? C : '#ffffff05',
+                          color: isActive ? '#000' : '#888',
+                          border: isActive ? `1px solid ${C}` : '1px solid #ffffff05',
+                          borderRadius: '12px',
+                          padding: '8px 12px',
+                          fontSize: '11px',
+                          fontWeight: 900,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        {p.l}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             </div>
           )}
           {tab==='bookings'&&filter(bookings).map(b=>(
@@ -886,8 +940,113 @@ export default function AdminPanel() {
               {expandedId === b.id && (
                 <div style={{marginTop:'16px', paddingTop:'16px', borderTop:'1px solid #ffffff05', width:'100%', display:'flex', flexDirection:'column', gap:'12px'}}>
                   
+                  {/* Ficha Resumen de Información */}
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+                    gap: '12px',
+                    background: '#ffffff02',
+                    padding: '16px',
+                    borderRadius: '16px',
+                    border: '1px solid #ffffff05',
+                    fontSize: '12px',
+                    width: '100%',
+                    boxSizing: 'border-box'
+                  }}>
+                    <div>
+                      <span style={{color:'#666', fontWeight:700, display:'block', fontSize:'9px', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'2px'}}>WhatsApp</span>
+                      <strong style={{color:'#fff'}}>{b.client_phone || '---'}</strong>
+                    </div>
+                    <div>
+                      <span style={{color:'#666', fontWeight:700, display:'block', fontSize:'9px', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'2px'}}>Hotel / Recogida</span>
+                      <strong style={{color:'#fff'}}>{b.hotel || '---'}</strong>
+                    </div>
+                    <div>
+                      <span style={{color:'#666', fontWeight:700, display:'block', fontSize:'9px', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'2px'}}>Hora Recogida</span>
+                      <strong style={{color:'#fff'}}>
+                        {(() => {
+                          let ext = {};
+                          try { ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {}); } catch(e){}
+                          return ext.pickup_time || b.pickup_time || 'Por confirmar';
+                        })()}
+                      </strong>
+                    </div>
+                    <div>
+                      <span style={{color:'#666', fontWeight:700, display:'block', fontSize:'9px', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'2px'}}>Cupón Usado</span>
+                      <strong style={{color: b.coupon ? '#10b981' : '#fff'}}>{b.coupon ? b.coupon.toUpperCase() : 'Ninguno'}</strong>
+                    </div>
+                    {b.notes && (
+                      <div style={{gridColumn: '1/-1'}}>
+                        <span style={{color:'#666', fontWeight:700, display:'block', fontSize:'9px', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'2px'}}>Notas Internas</span>
+                        <p style={{margin:0, color:'#aaa', fontStyle:'italic'}}>{b.notes}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Pasajeros del Check-In */}
+                  {(() => {
+                    let ext = {};
+                    try {
+                      if (typeof b.extras === 'string' && b.extras !== '[object Object]') {
+                        ext = JSON.parse(b.extras);
+                      } else if (typeof b.extras === 'object' && b.extras !== null) {
+                        ext = b.extras;
+                      }
+                    } catch(e){}
+                    const passengers = Array.isArray(ext.passengers) ? ext.passengers : [];
+                    const hasCheckin = passengers.length > 0 && passengers.some(p => p.name || p.passport);
+                    if (!hasCheckin) return (
+                      <div style={{
+                        background: 'rgba(245, 158, 11, 0.03)',
+                        border: '1px solid rgba(245, 158, 11, 0.15)',
+                        borderRadius: '16px',
+                        padding: '12px 16px',
+                        fontSize: '11px',
+                        color: '#f59e0b',
+                        fontWeight: 700,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        <span>⚠️</span> Registro de pasajeros (Check-In) pendiente de completar por el cliente.
+                      </div>
+                    );
+                    return (
+                      <div style={{
+                        background: 'rgba(17, 189, 219, 0.05)',
+                        border: '1px solid rgba(17, 189, 219, 0.2)',
+                        borderRadius: '16px',
+                        padding: '16px',
+                        width: '100%',
+                        boxSizing: 'border-box'
+                      }}>
+                        <div style={{fontSize:'10px', fontWeight:900, color:'#11BDDB', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'10px', display:'flex', alignItems:'center', gap:'6px'}}>
+                          <span>👤</span> Pasajeros Registrados (Check-In)
+                        </div>
+                        <div style={{display:'flex', flexDirection:'column', gap:'8px'}}>
+                          {passengers.map((p, idx) => (
+                            <div key={idx} style={{
+                              background: 'rgba(255,255,255,0.02)',
+                              padding: '10px 12px',
+                              borderRadius: '12px',
+                              border: '1px solid rgba(255,255,255,0.05)',
+                              fontSize: '11px',
+                              display: 'grid',
+                              gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+                              gap: '8px'
+                            }}>
+                              <div><span style={{color:'#666', fontWeight:700}}>Nombre:</span> <strong style={{color:'#fff'}}>{p.name || '---'}</strong></div>
+                              <div><span style={{color:'#666', fontWeight:700}}>Pasaporte:</span> <strong style={{color:'#fff'}}>{p.passport || '---'}</strong></div>
+                              <div><span style={{color:'#666', fontWeight:700}}>Contacto:</span> <strong style={{color:'#fff'}}>{p.emergency || '---'}</strong></div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                  
                   {/* Grid de Centro de Control */}
-                  <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:'8px', width:'100%'}}>
+                  <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(140px, 1fr))', gap:'8px', width:'100%', marginTop:'8px'}}>
                     
                     {/* -- GESTIÓN PRINCIPAL -- */}
                     <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); openEdit('booking',b)}} title="Editar Reserva">
