@@ -412,11 +412,36 @@ export default function AdminPanel() {
   };
   const waLink=(p,m)=>`https://wa.me/${(p||'').replace(/\D/g,'')}?text=${encodeURIComponent(m)}`;
   const exportCSV=()=>{
-    const h=['ID','Cliente','Fecha','Tour','Pax','Total','Estado'];
-    const r=bookings.map(b=>[b.id,b.client_name,b.booking_date,b.tour_title,b.pax,b.total_price,b.payment_status]);
+    const h=['ID','Cliente','Teléfono','Fecha','Tour','Pax','Hotel','Ingreso Base (€)','Total Extras (€)','Estado Pago'];
+    const r=filteredList().map(b=>{
+      let totalCharges = 0;
+      try {
+        const ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+        totalCharges = ext.total_charges || 0;
+      } catch(e) {}
+      
+      const cleanString = (str) => `"${(str || '').toString().replace(/"/g, '""')}"`;
+      
+      return [
+        b.id,
+        cleanString(b.client_name),
+        cleanString(b.client_phone),
+        b.booking_date,
+        cleanString(b.tour_title),
+        b.pax,
+        cleanString(b.hotel),
+        b.total_price,
+        totalCharges,
+        PAY_LABEL[b.payment_status] || b.payment_status
+      ];
+    });
     const c=[h,...r].map(e=>e.join(',')).join('\n');
-    const b=new Blob([c],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');
-    a.href=u;a.download='reservas.csv';a.click();
+    const blob=new Blob(['\ufeff'+c],{type:'text/csv;charset=utf-8;'});
+    const u=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=u;
+    a.download=`Export_Contabilidad_CantikTours_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
   };
 
   const copyReviewLink = (b) => {
@@ -1233,6 +1258,38 @@ export default function AdminPanel() {
 
         {tab==='stats'&&(
           <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
+            
+            {/* Visual Objective Progress */}
+            {(() => {
+              const TARGET_MONTHLY = 5000;
+              const currentRev = detailedStats?.revenue || 0;
+              const pct = Math.min(100, (currentRev / TARGET_MONTHLY) * 100);
+              return (
+                <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff05', position:'relative', overflow:'hidden', boxShadow:'0 10px 30px rgba(0,0,0,0.2)'}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:'16px', position:'relative', zIndex:2}}>
+                    <div>
+                      <div style={{fontSize:'12px', fontWeight:900, color:'#888', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'4px'}}>Progreso de Ingresos del Mes (Objetivo: {TARGET_MONTHLY}€)</div>
+                      <div style={{fontSize:'32px', fontWeight:900, color:'#fff'}}>{currentRev.toFixed(0)}€ <span style={{fontSize:'16px', color:'#666', fontWeight:700}}>/ {TARGET_MONTHLY}€</span></div>
+                    </div>
+                    <div style={{fontSize:'24px', fontWeight:900, color: pct >= 100 ? '#10b981' : C}}>{pct.toFixed(1)}%</div>
+                  </div>
+                  <div style={{width:'100%', height:'16px', background:'#ffffff0a', borderRadius:'99px', overflow:'hidden', position:'relative', zIndex:2}}>
+                    <div style={{
+                      width: `${pct}%`, height:'100%', borderRadius:'99px',
+                      background: `linear-gradient(90deg, #11BDDB, #10b981)`,
+                      boxShadow: '0 0 10px rgba(17,189,219,0.5)',
+                      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }} />
+                  </div>
+                  <div style={{
+                    position:'absolute', top:0, right:0, bottom:0, width:'200px',
+                    background:`radial-gradient(circle at right, ${C}15 0%, transparent 70%)`,
+                    zIndex:1
+                  }} />
+                </div>
+              );
+            })()}
+
             <div style={{display:'grid',gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(auto-fit,minmax(200px,1fr))',gap: isMobile ? '10px' : '16px'}}>
               <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
                 <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Cobrado (Caja)</div>
