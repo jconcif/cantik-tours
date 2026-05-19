@@ -387,21 +387,23 @@ export default function ItineraryPage() {
                 ))}
               </div>
 
-              <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex flex-col gap-2`}>
-                <div className="flex items-center gap-2">
-                  <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
-                    {en ? 'TOUR:' : 'EXPERIENCIA:'}
-                  </span>
-                  <span className={`font-black text-sm ${text} uppercase tracking-tight`}>{booking.tour_title}</span>
+              <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex flex-col gap-4`}>
+                <div>
+                  <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
+                    {en ? 'TOUR' : 'EXPERIENCIA'}
+                  </div>
+                  <div className={`font-black text-sm ${text} uppercase tracking-tight`}>
+                    {booking.tour_title}
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
-                    {en ? 'SERVICE:' : 'SERVICIO:'}
-                  </span>
-                  <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: expColor }}>
+                <div>
+                  <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
+                    {en ? 'SERVICE' : 'SERVICIO'}
+                  </div>
+                  <div className="font-black text-[10px] uppercase tracking-widest" style={{ color: expColor }}>
                     {expName}
-                  </span>
+                  </div>
                 </div>
               </div>
             </div>
