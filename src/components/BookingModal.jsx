@@ -40,6 +40,31 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         fetchAvailability();
     }, []);
 
+    const getBaliTomorrow = () => {
+        try {
+            const formatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: 'Asia/Makassar',
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric'
+            });
+            const parts = formatter.formatToParts(new Date());
+            const val = (name) => parts.find(p => p.type === name).value;
+            const year = parseInt(val('year'));
+            const month = parseInt(val('month')) - 1;
+            const day = parseInt(val('day'));
+            const baliToday = new Date(year, month, day);
+            const baliTomorrow = new Date(baliToday);
+            baliTomorrow.setDate(baliTomorrow.getDate() + 1);
+            return baliTomorrow;
+        } catch (e) {
+            const localTomorrow = new Date();
+            localTomorrow.setDate(localTomorrow.getDate() + 1);
+            localTomorrow.setHours(0, 0, 0, 0);
+            return localTomorrow;
+        }
+    };
+
     const getLocalISO = (date) => {
         if (!date) return '';
         const offset = date.getTimezoneOffset();
@@ -369,7 +394,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                     <motion.div key="step-personal" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Calendar size={14} className="text-primary" />{t('detail.booking_date')}</label>
-                                            <DatePicker selected={formData.date} onChange={(date) => setFormData({ ...formData, date })} minDate={new Date()} filterDate={(date) => !isDateFullyBooked(date)} dayClassName={(date) => { const status = getDynamicStatus(date); return status === 'yellow' ? 'custom-day-yellow' : (status === 'red' ? 'custom-day-red' : 'custom-day-green'); }} dateFormat="dd/MM/yyyy" required className={inputClasses} wrapperClassName="w-full" />
+                                            <DatePicker selected={formData.date} onChange={(date) => setFormData({ ...formData, date })} minDate={getBaliTomorrow()} filterDate={(date) => !isDateFullyBooked(date)} dayClassName={(date) => { const status = getDynamicStatus(date); return status === 'yellow' ? 'custom-day-yellow' : (status === 'red' ? 'custom-day-red' : 'custom-day-green'); }} dateFormat="dd/MM/yyyy" required className={inputClasses} wrapperClassName="w-full" />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Users size={14} className="text-primary" />{t('detail.booking_pax')}</label>

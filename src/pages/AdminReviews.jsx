@@ -818,15 +818,7 @@ export default function AdminPanel() {
                   </div>
                   <div style={{fontSize:'11px',color:C, fontWeight:900}}>{b.tour_title}</div>
                   {(() => {
-                    let ext = {};
-                    try {
-                      if (typeof b.extras === 'string' && b.extras !== '[object Object]') {
-                        ext = JSON.parse(b.extras);
-                      } else if (typeof b.extras === 'object' && b.extras !== null) {
-                        ext = b.extras;
-                      }
-                    } catch(e){}
-                    const extraCharges = Number(ext.total_charges || 0);
+                    const extraCharges = Number(b.total_charges || 0);
                     const paid = Number(b.total_paid || 0);
                     const total = Number(b.total_price || 0) + extraCharges;
                     const pct = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 0;

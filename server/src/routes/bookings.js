@@ -58,7 +58,7 @@ router.get('/', requireAuth, async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('bookings')
-      .select('*, total_paid:payments(amount), total_expenses:expenses(amount)')
+      .select('*, total_paid:payments(amount), total_expenses:expenses(amount), total_charges:charges(amount)')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -68,6 +68,7 @@ router.get('/', requireAuth, async (req, res) => {
       ...b,
       total_paid: (b.total_paid || []).reduce((s, p) => s + Number(p.amount), 0),
       total_expenses: (b.total_expenses || []).reduce((s, e) => s + Number(e.amount), 0),
+      total_charges: (b.total_charges || []).reduce((s, c) => s + Number(c.amount), 0),
     }));
 
     res.json({ status: 'success', data: bookings });
