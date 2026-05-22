@@ -1,3 +1,4 @@
+import LocalLink from '../components/LocalLink';
 import SEO from "../components/SEO";
 
 import React, { useEffect } from 'react';
@@ -426,13 +427,13 @@ const BaliGuide = () => {
                                 {c.ctaDesc}
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                                <Link
+                                <LocalLink
                                     to="/tours"
                                     className="group w-full sm:w-auto px-10 py-5 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl shadow-primary/40 flex items-center justify-center gap-3"
                                 >
                                     {c.ctaBtn1}
                                     <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                                </Link>
+                                </LocalLink>
                                 <a
                                     href={whatsappLink}
                                     target="_blank"

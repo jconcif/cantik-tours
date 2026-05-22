@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useContext } from 'react';
 import * as api from '../services/api';
-import { login as apiLogin, getToken, clearToken } from '../services/api';
+import { login as apiLogin, logout, verifyToken } from '../services/api';
 import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor, DriverAssignModal, PassengerManagement } from '../components/AdminComponents';
 import { 
   MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
@@ -75,7 +75,7 @@ const generateVoucher = (b, drivers) => {
 
 export default function AdminPanel() {
   const [password, setPassword] = useState('');
-  const [authed, setAuthed] = useState(!!getToken());
+  const [authed, setAuthed] = useState(false);
   const [tab, setTab] = useState('bookings');
   const [loading, setLoading] = useState(false);
   const [bookings, setBookings] = useState([]);
@@ -96,6 +96,7 @@ export default function AdminPanel() {
   const { currency, toggleCurrency } = useCurrency();
   const { isDark, toggleDarkMode } = useDarkMode();
   const [annotationTexts, setAnnotationTexts] = useState({});
+  const [reloading, setReloading] = useState(false);
 
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace('_', ' ');
 
@@ -209,7 +210,15 @@ export default function AdminPanel() {
   };
 
   const load = useCallback(async () => {
-    if (!getToken()) return;
+    // If not authed, attempt to verify token on the backend silently
+    if (!authed) {
+      try {
+        const verify = await api.verifyToken();
+        if (!verify.valid) return;
+      } catch (e) {
+        return; // No valid cookie
+      }
+    }
     setLoading(true);
     try {
       const [b, d, r, c, s] = await Promise.all([
@@ -227,7 +236,6 @@ export default function AdminPanel() {
       autoUpdateStatuses(bList);
     } catch (e) {
       setAuthed(false);
-      clearToken();
       toast(e.message, false);
     } finally {
       setLoading(false);
@@ -235,6 +243,7 @@ export default function AdminPanel() {
   }, []);
 
   const reload = async () => {
+    setReloading(true);
     try {
       const [b, d, r, c, s] = await Promise.all([
         api.getBookings().catch(() => ({ data: bookings })),
@@ -249,9 +258,10 @@ export default function AdminPanel() {
       setCoupons([...(c.data || [])]);
       setDetailedStats(s.data);
     } catch (e) { toast(e.message, false); }
+    finally { setReloading(false); }
   };
 
-  useEffect(() => { if (authed) load(); }, [authed]);
+  useEffect(() => { load(); }, [load]);
 
 
   const save = async () => {
@@ -444,11 +454,21 @@ export default function AdminPanel() {
     a.click();
   };
 
-  const copyReviewLink = (b) => {
+  const copyReviewLink = (b, lang = 'es') => {
     const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
     const link = `https://cantiktours.com/reviews?ref=${ref}`;
     navigator.clipboard.writeText(link);
-    toast('Link de review copiado');
+    toast(`Link de review (${lang.toUpperCase()}) copiado`);
+
+    if (b.client_phone) {
+      const message = lang === 'en'
+        ? `Hello ${b.client_name}! ✨ We hope you had an amazing trip with Cantik Tours. 🌴 It would help us a lot if you could share your experience with us and other travelers by leaving a quick review in this link (it will take you less than a minute): ${link} Thank you so much for your time! 🙏`
+        : `¡Hola ${b.client_name}! ✨ Esperamos que hayas tenido un viaje increíble con Cantik Tours. 🌴 Nos ayudaría muchísimo que compartas tu experiencia con nosotros y otros viajeros dejando una breve reseña en este link (te tomará menos de un minuto): ${link} ¡Muchísimas gracias por tu tiempo! 🙏`;
+      const url = waLink(b.client_phone, message);
+      window.open(url, '_blank', 'noopener,noreferrer');
+    } else {
+      toast('Cliente sin teléfono registrado', false);
+    }
   };
 
   const handleToggleBlock = async (d) => {
@@ -541,8 +561,7 @@ export default function AdminPanel() {
           </div>
 
           <div style={{marginBottom:'20px', fontSize:'10px', display:'flex', gap:'12px', alignItems:'center', padding:'10px 14px', background:'#ffffff05', borderRadius:'12px', width:'fit-content'}}>
-            <span style={{color:C, fontWeight:900}}>Creado: {new Date(b.created_at).toLocaleString('es-ES', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})} (🇪🇸)</span>
-            <span style={{opacity:0.5, fontWeight:700}}>Bali: {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit'})}</span>
+            <span style={{color:C, fontWeight:900}}>Creado (Hora Bali): {new Date(b.created_at).toLocaleString('es-ES', {timeZone: 'Asia/Makassar', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'})} 🌴</span>
           </div>
           
           <div style={{display:'flex', flexDirection:'column', gap:'16px', maxHeight:'350px', overflowY:'auto', marginBottom:'20px', paddingRight:'8px', scrollbarWidth:'thin'}}>
@@ -554,8 +573,7 @@ export default function AdminPanel() {
                 const logTime = typeof log === 'object' && log !== null ? log.timestamp : null;
                 const dateObj = new Date(logTime);
                 const isValidDate = logTime && !isNaN(dateObj.getTime());
-                const spainTime = isValidDate ? dateObj.toLocaleString('es-ES', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '--';
-                const baliTime = isValidDate ? dateObj.toLocaleString('es-ES', { timeZone: 'Asia/Makassar', hour:'2-digit', minute:'2-digit' }) : '--';
+                const baliTime = isValidDate ? dateObj.toLocaleString('es-ES', { timeZone: 'Asia/Makassar', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '--';
                 const isAuto = !logText.startsWith('Anotación:');
                 
                 return (
@@ -569,8 +587,7 @@ export default function AdminPanel() {
                         {logText.replace('Anotación: ', '')}
                       </div>
                       <div style={{fontSize:'9px', color:'#666', marginTop:'6px', display:'flex', gap:'12px', fontWeight:900, textTransform:'uppercase'}}>
-                        <span>🇪🇸 {spainTime}</span>
-                        <span>🌴 {baliTime}</span>
+                        <span>🌴 Hora Bali: {baliTime}</span>
                         {isAuto && <span style={{color:'#888'}}>[SISTEMA]</span>}
                       </div>
                     </div>
@@ -682,7 +699,7 @@ export default function AdminPanel() {
               <div style={{width:'1px', height:'20px', background:theme.border, margin:'0 4px'}}></div>
 
               <button 
-                onClick={() => { clearToken(); setAuthed(false); window.location.reload(); }} 
+                onClick={async () => { await logout().catch(()=>{}); setAuthed(false); window.location.reload(); }} 
                 style={{...s.btn('#ef444415', '#ef4444'), width:'36px', height:'36px', padding:0}}
                 title="Cerrar Sesión"
               >
@@ -748,7 +765,14 @@ export default function AdminPanel() {
             )}
 
             <div style={{display:'flex', gap:'8px', marginLeft:'auto'}}>
-              <button style={{...s.btn(theme.btnGhost, theme.text), border:`1px solid ${theme.border}`, flexShrink:0}} onClick={reload} title="Refrescar"><RefreshCcw size={16} /></button>
+              <button 
+                style={{...s.btn(theme.btnGhost, theme.text), border:`1px solid ${theme.border}`, flexShrink:0, opacity: reloading ? 0.6 : 1}} 
+                onClick={reload} 
+                disabled={reloading}
+                title="Refrescar"
+              >
+                <RefreshCcw size={16} className={reloading ? "animate-spin" : ""} />
+              </button>
               <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])} title="Nuevo"><Plus size={16} /></button>
               {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV} title="Exportar CSV"><Download size={16} /></button>}
             </div>
@@ -855,7 +879,9 @@ export default function AdminPanel() {
                         }
                       } catch(e){}
                       const passengers = Array.isArray(ext.passengers) ? ext.passengers : [];
-                      const hasCheckin = passengers.length > 0 && passengers.some(p => p.name || p.passport);
+                      const completedPassengers = passengers.filter(p => p.name && p.name.trim() !== '').length;
+                      const expectedPax = Number(b.pax || 1);
+                      const hasCheckin = completedPassengers >= expectedPax;
                       if (!hasCheckin) return (
                         <span 
                           title="Check-In de pasajeros pendiente" 
@@ -986,11 +1012,15 @@ export default function AdminPanel() {
                     </button>
 
                     <button style={{...s.btn('#ffffff05','#fff'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{ e.stopPropagation(); const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`; navigator.clipboard.writeText(`https://cantiktours.com/booking?ref=${ref}`); toast('Link público copiado ✓', true); }} title="Copiar Link Público">
-                      <ExternalLink size={16} /><span style={{fontSize:'11px'}}>Copiar Link</span>
+                      <ExternalLink size={16} /><span style={{fontSize:'11px'}}>Booking</span>
                     </button>
 
-                    <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); copyReviewLink(b)}} title="Copiar Link Review">
-                      <Star size={16} /><span style={{fontSize:'11px'}}>Pedir Review</span>
+                    <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); copyReviewLink(b, 'es')}} title="Copiar Link y Enviar WhatsApp (Español)">
+                      <Star size={16} /><span style={{fontSize:'11px'}}>Review ES</span>
+                    </button>
+
+                    <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); copyReviewLink(b, 'en')}} title="Copiar Link y Enviar WhatsApp (Inglés)">
+                      <Star size={16} /><span style={{fontSize:'11px'}}>Review EN</span>
                     </button>
 
                     {/* -- ZONA DE PELIGRO -- */}
@@ -1028,7 +1058,19 @@ export default function AdminPanel() {
                     }}>VER RESERVA</button>
                   )}
                 </div>
-                <div style={{fontSize:'12px',color:'#888'}}>"{r.comentario}"</div>
+                <div style={{fontSize:'12px',color:'#888',display:'flex',flexDirection:'column',gap:'6px',marginTop:'8px'}}>
+                  <div><strong style={{color:'#aaa',fontSize:'10px',textTransform:'uppercase',marginRight:'4px'}}>ES:</strong> "{r.comentario}"</div>
+                  <div style={{display:'flex',alignItems:'flex-start',gap:'4px'}}>
+                    <strong style={{color:'#aaa',fontSize:'10px',textTransform:'uppercase',marginRight:'4px',marginTop:'2px'}}>EN:</strong>
+                    {r.comentario_en ? (
+                      <span>"{r.comentario_en}"</span>
+                    ) : (
+                      <span style={{color:'#f59e0b',fontStyle:'italic',fontWeight:500,background:'#f59e0b15',padding:'2px 6px',borderRadius:'6px',fontSize:'11px'}}>
+                        Pendiente de traducción
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
               <div style={{display:'flex',gap:'6px'}}>
                 <button style={{...s.btn('#ffffff15','#fff'), width:'36px', height:'36px', padding:0}} title="Editar" onClick={()=>openEdit('review',r)}><Pencil size={16} /></button>
@@ -1194,12 +1236,19 @@ export default function AdminPanel() {
           <div>
             <h3>Seguimiento Post-Venta</h3>
             {recent.length===0&&<p style={{textAlign:'center',color:'#666'}}>No hay tours recientes.</p>}
-            {recent.map(b=>(
-              <div key={b.id} style={s.card}>
-                <div><div style={{fontWeight:900}}>{b.client_name}</div><div style={{fontSize:'12px',color:'#666'}}>{b.tour_title}</div></div>
-                <a href={waLink(b.client_phone,`¡Hola ${b.client_name}! ✨ ¿Qué te pareció tu tour con Cantik? Nos ayudaría mucho tu reseña: https://cantiktours.com/reviews?ref=CT-${b.id}`)} target="_blank" rel="noopener" style={s.btn('#10b981')}>Pedir Reseña</a>
-              </div>
-            ))}
+            {recent.map(b=>{
+              const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
+              const link = `https://cantiktours.com/reviews?ref=${ref}`;
+              return (
+                <div key={b.id} style={{...s.card, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                  <div><div style={{fontWeight:900}}>{b.client_name}</div><div style={{fontSize:'12px',color:'#666'}}>{b.tour_title}</div></div>
+                  <div style={{display:'flex', gap:'8px'}}>
+                    <button onClick={() => copyReviewLink(b, 'es')} style={s.btn('#10b981')}>Review ES</button>
+                    <button onClick={() => copyReviewLink(b, 'en')} style={s.btn('#10b981')}>Review EN</button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -1216,7 +1265,9 @@ export default function AdminPanel() {
                       ? 'Bitácora y Historial' 
                       : modal.type === 'passengers'
                         ? 'Gestionar Check-In Pasajeros'
-                        : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
+                        : modal.type === 'assign_driver'
+                          ? 'Asignar Chofer'
+                          : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
             } 
             onClose={()=>setModal(null)} 
             onSave={save} 

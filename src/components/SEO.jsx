@@ -9,13 +9,25 @@ const SEO = ({ title, description, keywords, image, url, schema }) => {
     const defaultDescription = t('hero.subtitle');
     const metaDescription = description || defaultDescription;
 
-    // Use absolute URL for image
     const baseUrl = "https://www.cantiktours.com";
     const metaImage = image
         ? (image.startsWith('http') ? image : `${baseUrl}${image}`)
         : `${baseUrl}/images/hero-og.webp`;
 
-    const metaUrl = url || window.location.href;
+    // Calculate clean path without language prefix
+    let cleanPath = window.location.pathname;
+    if (cleanPath.startsWith('/es/') || cleanPath === '/es') {
+        cleanPath = cleanPath.replace(/^\/es/, '');
+    } else if (cleanPath.startsWith('/en/') || cleanPath === '/en') {
+        cleanPath = cleanPath.replace(/^\/en/, '');
+    }
+    if (!cleanPath.startsWith('/')) cleanPath = '/' + cleanPath;
+
+    const urlEs = `${baseUrl}/es${cleanPath === '/' ? '' : cleanPath}`;
+    const urlEn = `${baseUrl}/en${cleanPath === '/' ? '' : cleanPath}`;
+    
+    // The canonical URL is the active language URL
+    const metaUrl = url || (i18n.language === 'en' ? urlEn : urlEs);
 
     return (
         <Helmet htmlAttributes={{ lang: i18n.language }}>
@@ -28,14 +40,9 @@ const SEO = ({ title, description, keywords, image, url, schema }) => {
             <link rel="canonical" href={metaUrl} />
 
             {/* Hreflang Tags for SEO Internationalization */}
-            {/* 
-               Ideally we should have different URLs for different languages (e.g. /es/nosotros, /en/about).
-               Since we are serving the same content on the same URL and changing language client-side,
-               we are using x-default to point to the current page.
-            */}
-            <link rel="alternate" hreflang="x-default" href={metaUrl} />
-            <link rel="alternate" hreflang="es" href={metaUrl} />
-            <link rel="alternate" hreflang="en" href={metaUrl} />
+            <link rel="alternate" hreflang="x-default" href={urlEs} />
+            <link rel="alternate" hreflang="es" href={urlEs} />
+            <link rel="alternate" hreflang="en" href={urlEn} />
 
             {/* Open Graph / Facebook */}
             <meta property="og:type" content="website" />

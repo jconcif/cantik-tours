@@ -1,3 +1,4 @@
+import LocalLink from './LocalLink';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -70,12 +71,12 @@ const AboutUs = () => {
                 </motion.div>
 
                 <motion.div variants={{ hidden: { opacity: 0, scale: 0.95 }, visible: { opacity: 1, scale: 1 } }}>
-                    <Link
+                    <LocalLink
                         to="/nosotros"
                         className="btn-primary inline-flex items-center gap-3 text-lg group"
                     >
                         {t('hero.btn_story')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </LocalLink>
                 </motion.div>
             </motion.div>
         </section>

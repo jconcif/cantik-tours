@@ -290,17 +290,21 @@ export const FinancialManagement = ({booking, onUpdate}) => {
   };
 
   const tabStyle = (t) => ({
-    flex: 1, padding: '10px 4px', background: activeTab === t ? C : '#222',
-    color: activeTab === t ? '#000' : '#666', border: 'none', borderRadius: '12px',
+    flex: 1, padding: '10px 4px', background: activeTab === t ? C : '#1a1a1a',
+    color: activeTab === t ? '#000' : '#aaa', border: 'none', borderRadius: '12px',
     fontWeight: 900, cursor: 'pointer', fontSize: '11px', transition: 'all 0.2s'
   });
 
-  const rowStyle = (color) => ({
-    display:'flex', gap:'12px', alignItems:'center',
-    padding:'12px 16px', background:color || '#222',
-    borderRadius:'16px', border:'1px solid #ffffff05',
-    marginBottom:'8px', justifyContent:'space-between'
-  });
+  const rowStyle = (color) => {
+    const bg = color ? `${color}15` : '#222';
+    const border = color ? `1px solid ${color}33` : '1px solid #ffffff05';
+    return {
+      display:'flex', gap:'12px', alignItems:'center',
+      padding:'12px 16px', background:bg,
+      borderRadius:'16px', border:border,
+      marginBottom:'8px', justifyContent:'space-between'
+    };
+  };
 
   // -- Add Forms --
   const PayForm = () => {
@@ -331,7 +335,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         </div>
         <div style={{display:'flex',gap:'8px'}}>
           <button onClick={save} style={{flex:2,padding:'12px',background:C,color:'#000',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✓ GUARDAR COBRO</button>
-          <button onClick={()=>setAdding(false)} style={{flex:1,padding:'12px',background:'#333',color:'#666',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✕</button>
+          <button onClick={()=>setAdding(false)} style={{flex:1,padding:'12px',background:'#333',color:'#ccc',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✕</button>
         </div>
       </div>
     );
@@ -362,7 +366,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         </div>
         <div style={{display:'flex',gap:'8px'}}>
           <button onClick={save} style={{flex:2,padding:'12px',background:'#ef4444',color:'#fff',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✓ GUARDAR GASTO</button>
-          <button onClick={()=>setAdding(false)} style={{flex:1,padding:'12px',background:'#333',color:'#666',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✕</button>
+          <button onClick={()=>setAdding(false)} style={{flex:1,padding:'12px',background:'#333',color:'#ccc',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✕</button>
         </div>
       </div>
     );
@@ -394,7 +398,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           <div style={{display:'flex',flexWrap:'wrap',gap:'6px',marginTop:'6px'}}>
             {PRESETS.map(p => (
               <button key={p} onClick={()=>setD({...d,concept:p})}
-                style={{padding:'5px 10px',background: d.concept===p ? '#f59e0b22' : '#333',color: d.concept===p ? '#f59e0b' : '#666',border: d.concept===p ? '1px solid #f59e0b44' : '1px solid #444',borderRadius:'8px',fontSize:'11px',fontWeight:700,cursor:'pointer'}}>
+                style={{padding:'5px 10px',background: d.concept===p ? '#f59e0b22' : '#333',color: d.concept===p ? '#f59e0b' : '#aaa',border: d.concept===p ? '1px solid #f59e0b44' : '1px solid #444',borderRadius:'8px',fontSize:'11px',fontWeight:700,cursor:'pointer'}}>
                 {p}
               </button>
             ))}
@@ -407,7 +411,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         </div>
         <div style={{display:'flex',gap:'8px'}}>
           <button onClick={save} style={{flex:2,padding:'12px',background:'#f59e0b',color:'#000',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✓ GUARDAR CARGO EXTRA</button>
-          <button onClick={()=>setAdding(false)} style={{flex:1,padding:'12px',background:'#333',color:'#666',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✕</button>
+          <button onClick={()=>setAdding(false)} style={{flex:1,padding:'12px',background:'#333',color:'#ccc',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✕</button>
         </div>
       </div>
     );
@@ -445,7 +449,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         </div>
         {/* Barra de progreso cobro */}
         <div>
-          <div style={{display:'flex',justifyContent:'space-between',marginBottom:'4px',fontSize:'10px',color:'#666'}}>
+          <div style={{display:'flex',justifyContent:'space-between',marginBottom:'4px',fontSize:'10px',color:'#aaa'}}>
             <span>Cobrado {paidPct.toFixed(0)}%</span>
             <span>Total a cobrar: {totalOwed.toFixed(2)}€</span>
           </div>
@@ -481,7 +485,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
       {/* === LISTA DE MOVIMIENTOS === */}
       <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
         {activeTab==='cobros' && payments.length===0 && !adding && (
-          <div style={{textAlign:'center',color:'#555',padding:'30px',border:'2px dashed #222',borderRadius:'20px'}}>
+          <div style={{textAlign:'center',color:'#aaa',padding:'30px',border:'2px dashed #333',borderRadius:'20px'}}>
             <div style={{fontSize:'22px',marginBottom:'8px'}}>💰</div>
             <div>Sin cobros registrados</div>
           </div>
@@ -502,9 +506,9 @@ export const FinancialManagement = ({booking, onUpdate}) => {
                   <div style={{fontSize:'10px',color:isVerifying ? '#f59e0b' : C,background:isVerifying ? '#f59e0b11' : C+'11',padding:'2px 8px',borderRadius:'6px',fontWeight:900}}>{(p.payment_method||'').toUpperCase()}</div>
                 </div>
               </div>
-              <div style={{fontSize:'11px',color:'#555',marginTop:'2px'}}>
+              <div style={{fontSize:'11px',color:'#aaa',marginTop:'2px'}}>
                 {new Date(p.payment_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
-                <span style={{marginLeft:'6px', opacity:0.5}}>{p.created_at ? new Date(p.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''} (Local)</span>
+                <span style={{marginLeft:'6px', opacity:0.5}}>{p.created_at ? '🌴 ' + new Date(p.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
                 {cleanNotes && <span style={{marginLeft:'8px'}}>· {cleanNotes}</span>}
               </div>
             </div>
@@ -513,10 +517,10 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         )})}
 
         {activeTab==='extras' && charges.length===0 && !adding && (
-          <div style={{textAlign:'center',color:'#555',padding:'30px',border:'2px dashed #222',borderRadius:'20px'}}>
+          <div style={{textAlign:'center',color:'#aaa',padding:'30px',border:'2px dashed #333',borderRadius:'20px'}}>
             <div style={{fontSize:'22px',marginBottom:'8px'}}>⚡</div>
             <div>Sin cargos extra</div>
-            <div style={{fontSize:'12px',color:'#444',marginTop:'4px'}}>Pasajeros extra, tiempo adicional, actividades...</div>
+            <div style={{fontSize:'12px',color:'#777',marginTop:'4px'}}>Pasajeros extra, tiempo adicional, actividades...</div>
           </div>
         )}
         {activeTab==='extras' && charges.map(c => (
@@ -527,10 +531,9 @@ export const FinancialManagement = ({booking, onUpdate}) => {
                 <div style={{fontSize:'14px',fontWeight:900}}>{c.concept}</div>
                 <div style={{fontSize:'16px',fontWeight:900,color:'#f59e0b'}}>+{Number(c.amount).toFixed(2)}€</div>
               </div>
-              <div style={{fontSize:'11px',color:'#555',marginTop:'2px'}}>
+              <div style={{fontSize:'11px',color:'#aaa',marginTop:'2px'}}>
                 {new Date(c.charge_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
-                <span style={{marginLeft:'6px', opacity:0.5}}>{c.created_at ? new Date(c.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''} (L)</span>
-                <span style={{marginLeft:'4px', opacity:0.3}}>B: {c.created_at ? new Date(c.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                <span style={{marginLeft:'6px', opacity:0.5}}>{c.created_at ? '🌴 ' + new Date(c.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
                 <span style={{marginLeft:'8px',fontSize:'10px',color:'#f59e0b',background:'#f59e0b11',padding:'2px 6px',borderRadius:'4px'}}>CARGO AL CLIENTE</span>
               </div>
             </div>
@@ -539,7 +542,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         ))}
 
         {activeTab==='gastos' && expenses.length===0 && !adding && (
-          <div style={{textAlign:'center',color:'#555',padding:'30px',border:'2px dashed #222',borderRadius:'20px'}}>
+          <div style={{textAlign:'center',color:'#aaa',padding:'30px',border:'2px dashed #333',borderRadius:'20px'}}>
             <div style={{fontSize:'22px',marginBottom:'8px'}}>📉</div>
             <div>Sin gastos registrados</div>
           </div>
@@ -552,10 +555,9 @@ export const FinancialManagement = ({booking, onUpdate}) => {
                 <div style={{fontSize:'14px',fontWeight:900}}>{e.concept}</div>
                 <div style={{fontSize:'16px',fontWeight:900,color:'#ef4444'}}>-{Number(e.amount).toFixed(2)}€</div>
               </div>
-              <div style={{fontSize:'11px',color:'#555',marginTop:'2px'}}>
+              <div style={{fontSize:'11px',color:'#aaa',marginTop:'2px'}}>
                 {new Date(e.expense_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
-                <span style={{marginLeft:'6px', opacity:0.5}}>{e.created_at ? new Date(e.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}) : ''} (L)</span>
-                <span style={{marginLeft:'4px', opacity:0.3}}>B: {e.created_at ? new Date(e.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                <span style={{marginLeft:'6px', opacity:0.5}}>{e.created_at ? '🌴 ' + new Date(e.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
                 <span style={{marginLeft:'8px',fontSize:'10px',color:'#ef4444',background:'#ef444411',padding:'2px 6px',borderRadius:'4px'}}>{(e.category||'').toUpperCase()}</span>
               </div>
             </div>

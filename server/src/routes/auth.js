@@ -41,7 +41,14 @@ router.post('/login', async (req, res) => {
     { expiresIn: '7d' }
   );
 
-  res.json({ status: 'success', token });
+  res.cookie('ctk_jwt', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  });
+
+  res.json({ status: 'success' });
 });
 
 /**
@@ -49,17 +56,22 @@ router.post('/login', async (req, res) => {
  * Verifies if a token is still valid.
  */
 router.post('/verify', (req, res) => {
-  const header = req.headers.authorization;
-  if (!header?.startsWith('Bearer ')) {
+  const token = req.cookies?.ctk_jwt;
+  if (!token) {
     return res.status(401).json({ status: 'error', valid: false });
   }
 
   try {
-    jwt.verify(header.split(' ')[1], process.env.JWT_SECRET);
+    jwt.verify(token, process.env.JWT_SECRET);
     res.json({ status: 'success', valid: true });
   } catch {
     res.status(401).json({ status: 'error', valid: false });
   }
+});
+
+router.post('/logout', (req, res) => {
+  res.clearCookie('ctk_jwt');
+  res.json({ status: 'success' });
 });
 
 export default router;

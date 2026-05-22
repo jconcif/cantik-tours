@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 // Routes
 import authRoutes from './routes/auth.js';
@@ -38,6 +39,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use(express.json({ limit: '1mb' }));
+app.use(cookieParser());
 
 // ── Rate limiting (basic) ──
 const rateLimit = new Map();

@@ -19,20 +19,17 @@ import { supabase } from './supabaseClient';
 
 export const BASE = USE_LEGACY_PHP ? PHP_API_URL : NODE_API_URL;
 
-// ── Token management (JWT only — never in URL) ───────────────────────────────
-const TOKEN_KEY = 'ctk_jwt';
-
-export const getToken = () => localStorage.getItem(TOKEN_KEY);
-export const setToken = (t) => localStorage.setItem(TOKEN_KEY, t);
-export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
-
 // ── Core request helper ───────────────────────────────────────────────────────
 const req = async (path, opts = {}) => {
-  const token = getToken();
   const headers = {
     'Content-Type': 'application/json',
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...opts.headers,
+  };
+
+  const fetchOpts = {
+    ...opts,
+    headers,
+    credentials: 'include', // Automatically send and receive cookies
   };
 
   // Cache-busting only for GET requests to prevent stale admin data
@@ -40,11 +37,10 @@ const req = async (path, opts = {}) => {
   const url = isGet ? `${BASE}${path}${path.includes('?') ? '&' : '?'}_cb=${Date.now()}` : `${BASE}${path}`;
 
   try {
-    const r = await fetch(url, { ...opts, headers });
+    const r = await fetch(url, fetchOpts);
 
     // Handle 401 globally — token expired or invalid (except on login itself)
     if (r.status === 401 && !path.includes('/auth/login')) {
-      clearToken();
       window.dispatchEvent(new CustomEvent('auth:expired'));
       throw new Error('Sesión expirada. Por favor inicia sesión de nuevo.');
     }
@@ -74,9 +70,11 @@ const del  = (path) => req(path, { method: 'DELETE' });
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const login = async (password) => {
   const res = await post('/api/auth/login', { password });
-  if (res.token) setToken(res.token);
+  // El backend ahora enviará una cookie HttpOnly con el token
   return res;
 };
+
+export const logout = () => post('/api/auth/logout', {});
 
 export const verifyToken = () => req('/api/auth/verify', { method: 'POST' });
 
@@ -107,12 +105,7 @@ export const getPublicReviews = async (tourId) => {
 };
 
 export const submitReview = async (data) => {
-  try {
-    return await post('/api/reviews/public', data);
-  } catch (err) {
-    console.log("Reseña no guardada (modo offline).");
-    return { status: 'success', data: { id: 'offline' } };
-  }
+  return await post('/api/reviews/public', data);
 };
 
 export const saveBooking = async (data) => {

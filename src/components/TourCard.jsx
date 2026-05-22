@@ -1,3 +1,4 @@
+import LocalLink from './LocalLink';
 import React from 'react';
 import { Clock, Users, Languages, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -24,7 +25,7 @@ const TourCard = ({ tour, index }) => {
             className="glass-card motion-safe overflow-hidden flex flex-col group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
         >
             <div className="relative h-72 overflow-hidden">
-                <Link to={`/tour/${tour.id}`} className="block w-full h-full">
+                <LocalLink to={`/tour/${tour.id}`} className="block w-full h-full">
                     <img
                         src={tour.image}
                         alt={`${l('title')} - ${l('description')}`}
@@ -33,7 +34,7 @@ const TourCard = ({ tour, index }) => {
                         loading={index > 2 ? "lazy" : "eager"}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
                     />
-                </Link>
+                </LocalLink>
 
                 <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-1 shadow-lg pointer-events-none">
                     <Star size={12} className="text-accent fill-accent" />
@@ -47,9 +48,9 @@ const TourCard = ({ tour, index }) => {
             </div>
 
             <div className="p-8 flex-grow flex flex-col">
-                <Link to={`/tour/${tour.id}`} className="group/title">
+                <LocalLink to={`/tour/${tour.id}`} className="group/title">
                     <h3 className="text-2xl font-black mb-3 group-hover/title:text-primary transition-colors leading-tight">{l('title')}</h3>
-                </Link>
+                </LocalLink>
                 <p className="text-gray-600 dark:text-gray-400 mb-8 line-clamp-3 text-sm leading-relaxed">
                     {l('description')}
                 </p>
@@ -88,7 +89,7 @@ const TourCard = ({ tour, index }) => {
                             <span className="text-3xl font-black text-bg-dark dark:text-bg-light">{price.symbol}{price.amount}</span>
                         </div>
                     </div>
-                    <Link
+                    <LocalLink
                         to={`/tour/${tour.id}`}
                         className="px-6 py-3 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-all active:scale-95 bg-gradient-to-r from-primary to-[#109db8] text-white selection:bg-white/20"
                     >
@@ -96,7 +97,7 @@ const TourCard = ({ tour, index }) => {
                             <span className="hidden md:inline">{t('detail.view_details')}</span>
                             <span className="md:hidden">{t('detail.view_details_short')}</span>
                         </span>
-                    </Link>
+                    </LocalLink>
                 </div>
             </div>
         </motion.div>

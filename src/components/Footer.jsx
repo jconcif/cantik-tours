@@ -1,3 +1,4 @@
+import LocalLink from './LocalLink';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -46,10 +47,10 @@ const Footer = () => {
                 <motion.div variants={columnVariants}>
                     <h3 className="font-bold text-lg mb-6">{t('footer.quick_links')}</h3>
                     <ul className="space-y-4 font-medium text-gray-600 dark:text-gray-400">
-                        <li><Link to="/" className="hover:text-primary transition-colors">{t('nav.home')}</Link></li>
-                        <li><Link to="/tours" className="hover:text-primary transition-colors">{t('nav.tours')}</Link></li>
-                        <li><Link to="/guia-bali" className="hover:text-primary transition-colors">{t('nav.guide')}</Link></li>
-                        <li><Link to="/politicas" className="hover:text-primary transition-colors">{t('footer.policies')}</Link></li>
+                        <li><LocalLink to="/" className="hover:text-primary transition-colors">{t('nav.home')}</LocalLink></li>
+                        <li><LocalLink to="/tours" className="hover:text-primary transition-colors">{t('nav.tours')}</LocalLink></li>
+                        <li><LocalLink to="/guia-bali" className="hover:text-primary transition-colors">{t('nav.guide')}</LocalLink></li>
+                        <li><LocalLink to="/politicas" className="hover:text-primary transition-colors">{t('footer.policies')}</LocalLink></li>
                     </ul>
                 </motion.div>
 

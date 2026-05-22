@@ -1,3 +1,4 @@
+import LocalLink from './LocalLink';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -48,22 +49,22 @@ const FinalCTA = () => {
                                 transition={{ duration: 0.6, delay: 0.2 }}
                                 className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-5"
                             >
-                                <Link
+                                <LocalLink
                                     to="/tours"
                                     className="btn-primary w-full sm:w-auto flex items-center justify-center gap-2 group shadow-xl"
                                 >
                                     <Compass size={20} />
                                     {t('cta.btn_availability')}
                                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                                </Link>
+                                </LocalLink>
 
-                                <Link
+                                <LocalLink
                                     to="/guia-bali"
                                     className="btn-outline w-full sm:w-auto flex items-center justify-center gap-2 group shadow-lg"
                                 >
                                     <BookOpen size={20} className="group-hover:scale-110 transition-transform" />
                                     {t('cta.btn_guide')}
-                                </Link>
+                                </LocalLink>
                             </motion.div>
                         </div>
 

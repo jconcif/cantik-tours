@@ -1,5 +1,6 @@
+import LocalLink from '../components/LocalLink';
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   MessageCircle, Star, CheckCircle2, ShieldCheck, Info,
@@ -30,12 +31,15 @@ export default function ItineraryPage() {
   const rawRef = searchParams.get('ref') || '';
   const ref = rawRef.replace(/^CT-/, '');
   const navigate = useNavigate();
+  const location = useLocation();
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
   const [copied, setCopied] = useState(false);
   const [relatedBookings, setRelatedBookings] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [charges, setCharges] = useState([]);
   const [showCheckin, setShowCheckin] = useState(false);
   const [checkinData, setCheckinData] = useState([]);
   const [submittingCheckin, setSubmittingCheckin] = useState(false);
@@ -50,6 +54,8 @@ export default function ItineraryPage() {
         if (data && data.status === 'success') {
           setBooking(data.data);
           if (data.related) setRelatedBookings(data.related);
+          if (data.payments) setPayments(data.payments);
+          if (data.charges) setCharges(data.charges);
           
           let existingPax = [];
           try {
@@ -78,6 +84,8 @@ export default function ItineraryPage() {
       const data = await getItinerary(ref);
       if (data && data.status === 'success') {
         setBooking(data.data);
+        if (data.payments) setPayments(data.payments);
+        if (data.charges) setCharges(data.charges);
       }
     } catch (err) {
       alert(err.message);
@@ -108,7 +116,7 @@ export default function ItineraryPage() {
         <h2 className="text-2xl font-black mb-3">{error || 'Reserva no encontrada'}</h2>
         <p className="text-gray-400 font-bold leading-relaxed">Verifica el enlace recibido por WhatsApp.</p>
       </div>
-      <Link to="/" className="bg-primary text-white px-10 py-5 rounded-[2rem] font-black shadow-xl shadow-primary/20 uppercase tracking-widest text-xs">Volver al Inicio</Link>
+      <LocalLink to="/" className="bg-primary text-white px-10 py-5 rounded-[2rem] font-black shadow-xl shadow-primary/20 uppercase tracking-widest text-xs">Volver al Inicio</LocalLink>
     </div>
   );
 
@@ -155,10 +163,16 @@ export default function ItineraryPage() {
     : expType === 'comfort' 
       ? 'M - GUIA PROFESIONAL (INGLÉS)' 
       : 'L - GUIA PROFESIONAL (ESPAÑOL)';
-  const expColor = expType === 'economy' ? '#9ca3af' : expType === 'comfort' ? '#11BDDB' : '#D4AF37';
+  const expColor = '#11BDDB';
 
-  const priceData = formatPrice(parseFloat(booking.total_price || 0));
+  const extraCharges = charges.reduce((sum, c) => sum + Number(c.amount), 0);
+  const finalTotal = parseFloat(booking.total_price || 0) + extraCharges;
+  const priceData = formatPrice(finalTotal);
   const priceVal = `${priceData.symbol}${priceData.amount}`;
+
+  const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
+  const balance = finalTotal - totalPaid;
+  const hasPendingPayment = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status);
 
   const fichaUrl = `https://cantiktours.com/booking?ref=CT-${ref}`;
   const supportMsg = encodeURIComponent(
@@ -273,14 +287,26 @@ export default function ItineraryPage() {
 
       {/* Navbar */}
       <div className={`sticky top-0 z-50 px-6 py-4 flex items-center justify-between backdrop-blur-xl border-b ${dark ? 'bg-[#0a0a0a]/80 border-white/5' : 'bg-white/80 border-gray-200'}`}>
-        <Link to="/" className="flex items-center gap-2">
+        <LocalLink to="/" className="flex items-center gap-2">
           <span className="font-black text-primary text-sm tracking-widest uppercase">Cantik</span>
           <span className={`font-black text-sm tracking-widest uppercase ${sub}`}>Tours</span>
-        </Link>
+        </LocalLink>
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Language Toggle */}
           <button
-            onClick={() => i18n.changeLanguage(en ? 'es' : 'en')}
+            onClick={() => {
+              const nextLang = en ? 'es' : 'en';
+              i18n.changeLanguage(nextLang);
+              let newPath = location.pathname;
+              if (newPath.startsWith('/es/') || newPath === '/es') {
+                newPath = newPath.replace(/^\/es/, `/${nextLang}`);
+              } else if (newPath.startsWith('/en/') || newPath === '/en') {
+                newPath = newPath.replace(/^\/en/, `/${nextLang}`);
+              } else {
+                newPath = `/${nextLang}${newPath.startsWith('/') ? newPath : `/${newPath}`}`;
+              }
+              navigate(newPath + location.search);
+            }}
             className={`flex items-center justify-center w-8 h-8 rounded-full border text-[9px] font-black tracking-widest transition-all ${dark ? 'border-white/10 text-gray-400 hover:border-white/20' : 'border-gray-300 text-gray-500'}`}
           >
             {en ? 'ES' : 'EN'}
@@ -319,15 +345,42 @@ export default function ItineraryPage() {
         {/* ── MULTI-DAY TABS ────────────────────────────── */}
         {relatedBookings.length > 1 && (
           <div className="flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
-            {relatedBookings.map((rb, i) => (
-              <button
-                key={rb.id}
-                onClick={() => window.location.href = `/booking?ref=CT-${rb.reference || rb.id}`}
-                className={`flex-shrink-0 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${rb.id === booking.id ? 'bg-primary text-white shadow-lg shadow-primary/20' : (dark ? 'bg-white/5 text-gray-400 hover:bg-white/10' : 'bg-gray-200 text-gray-500 hover:bg-gray-300')}`}
-              >
-                {en ? 'DAY' : 'DÍA'} {i+1}: {rb.tour_title.split(' ')[0]}
-              </button>
-            ))}
+            {[...relatedBookings]
+              .sort((a, b) => {
+                const da = parseLocalDate(a.booking_date) || new Date(0);
+                const db = parseLocalDate(b.booking_date) || new Date(0);
+                return da.getTime() - db.getTime();
+              })
+              .map((rb) => {
+                const dObj = parseLocalDate(rb.booking_date);
+                const formattedTabDate = dObj ? dObj.toLocaleDateString(en ? 'en-US' : 'es-ES', { day: '2-digit', month: 'short' }) : '';
+                const refCode = `CT-${(rb.reference || String(rb.id)).replace('CT-', '')}`;
+                const isPast = dObj ? (() => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  return dObj < today;
+                })() : false;
+                const isTabActive = rb.id === booking.id;
+                let tabClass = '';
+                if (isTabActive) {
+                  tabClass = isPast 
+                    ? 'bg-gray-600 text-white shadow-lg' 
+                    : 'bg-primary text-white shadow-lg shadow-primary/20';
+                } else {
+                  tabClass = isPast
+                    ? (dark ? 'bg-white/5 text-gray-600 hover:bg-white/10 opacity-50' : 'bg-gray-200 text-gray-400 hover:bg-gray-300 opacity-60')
+                    : (dark ? 'bg-white/5 text-gray-400 hover:bg-white/10' : 'bg-gray-200 text-gray-500 hover:bg-gray-300');
+                }
+                return (
+                  <button
+                    key={rb.id}
+                    onClick={() => navigate(`/booking?ref=${refCode}`)}
+                    className={`flex-shrink-0 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${tabClass}`}
+                  >
+                    {refCode} {formattedTabDate ? `(${formattedTabDate})` : ''}
+                  </button>
+                );
+              })}
           </div>
         )}
 
@@ -377,7 +430,7 @@ export default function ItineraryPage() {
                   { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
                   { label: priceLabel,                  val: priceVal, style: { color: '#11BDDB' } },
                   { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
-                  { label: en ? 'BOARDING' : 'HORA',    val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
+                  { label: en ? 'START TIME' : 'Hora Inicio', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
                   { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
                 ].map((f, i) => (
                   <div key={i}>
@@ -426,9 +479,6 @@ export default function ItineraryPage() {
 
               {/* Mini status progress */}
               <div className="text-right space-y-2">
-                <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${status.bg_} ${status.color}`}>
-                  <CheckCircle2 size={11} /> {status.label}
-                </div>
                 <div className="flex items-center justify-end gap-1.5 mt-2">
                   {[1,2,3,4,5,6,7].map(s => (
                     <div key={s} className={`w-1.5 h-1.5 rounded-full transition-all ${status.step >= s ? 'bg-primary' : dark ? 'bg-white/10' : 'bg-gray-200'}`} />
@@ -438,6 +488,30 @@ export default function ItineraryPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* ── PENDING PAYMENT BANNER ─────────────────────── */}
+        {hasPendingPayment && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+            className={`rounded-2xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-4 ${dark ? 'bg-orange-500/10 border-orange-500/20' : 'bg-orange-50 border-orange-200'}`}
+          >
+            <div className="flex-1">
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 mb-1">
+                {en ? 'PENDING PAYMENT' : 'PAGO PENDIENTE'}
+              </div>
+              <p className={`text-xs font-bold leading-relaxed ${text}`}>
+                {en 
+                  ? `You have a remaining balance of ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Please complete the payment to secure your tour.` 
+                  : `Tienes un saldo pendiente de ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Por favor, completa el pago para asegurar tu tour.`}
+              </p>
+            </div>
+            <a
+              href="#support-section"
+              className="w-full sm:w-auto px-6 py-3 bg-orange-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 text-center transition-colors shadow-lg shadow-orange-500/20"
+            >
+              {en ? 'CONTACT SUPPORT' : 'CONTACTAR SOPORTE'}
+            </a>
+          </motion.div>
+        )}
 
         {/* ── CHECK-IN BANNER ───────────────────────────── */}
         {checkinData.some(p => !p.name || !p.passport) && (
@@ -588,39 +662,6 @@ export default function ItineraryPage() {
 
 
 
-        {/* ── FLEXIBILITY & IMPACT ───────────────────────── */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-          className={`rounded-[2rem] p-8 border ${card} text-center`}>
-          <div className="space-y-6">
-             <div>
-                <div className={`text-[8px] font-black uppercase tracking-[0.3em] mb-3 text-primary`}>
-                   {en ? 'PRIVATE & FLEXIBLE' : 'PRIVADO Y FLEXIBLE'}
-                </div>
-                <p className={`text-[13px] font-bold leading-relaxed ${text}`}>
-                   {en ? 'Our tours are private and flexible. You can adjust the order or duration of stops until the day before your trip.'
-                      : 'Nuestros tours son privados y flexibles. Puedes ajustar el orden o la duración de las paradas hasta el dia antes de tu viaje.'}
-                </p>
-             </div>
-             
-             <div className={`h-px ${dark ? 'bg-white/5' : 'bg-gray-100'} w-full`} />
-
-             <div>
-                <div className={`flex items-center justify-center gap-2 mb-3 ${sub}`}>
-                  <Heart size={11} className="text-primary flex-shrink-0" />
-                  <p className={`text-[10px] font-bold leading-relaxed italic`}>
-                    {en ? 'Every booking directly funds our guides and their families — fair pay, no delays.'
-                      : 'Cada reserva financia directamente a nuestros guías y sus familias — pago justo, sin demoras.'}
-                  </p>
-                </div>
-                <div className={`flex items-center justify-center gap-2 ${sub}`}>
-                  <ShieldCheck size={11} className="text-emerald-500 flex-shrink-0" />
-                  <span className="text-[8px] font-black uppercase tracking-widest">
-                    {en ? 'Free cancellation 48h before' : 'Cancelación gratuita 48h antes'}
-                  </span>
-                </div>
-             </div>
-          </div>
-        </motion.div>
 
         {/* Post-tour review */}
         {isExpired && (
@@ -637,8 +678,13 @@ export default function ItineraryPage() {
         )}
 
         {/* ── SUPPORT / WHATSAPP ─────────────────────── */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-          className={`rounded-[2rem] p-8 border ${card} flex flex-col items-center text-center gap-5`}>
+        <motion.div 
+          id="support-section"
+          initial={{ opacity: 0 }} 
+          animate={{ opacity: 1 }} 
+          transition={{ delay: 0.5 }}
+          className={`rounded-[2rem] p-8 border ${card} flex flex-col items-center text-center gap-5`}
+        >
           <div className={`text-[8px] font-black uppercase tracking-[0.3em] text-primary`}>
             {en ? 'QUESTIONS OR CHANGES?' : '¿DUDAS O CAMBIOS?'}
           </div>
@@ -647,16 +693,60 @@ export default function ItineraryPage() {
               ? 'Talk to us, we reply within minutes.'
               : 'Habla con nosotros, te respondemos en minutos.'}
           </p>
-          <a href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} target="_blank" rel="noreferrer"
-            className="w-full py-5 rounded-2xl bg-[#25D366] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#1fb355] transition-all shadow-xl shadow-[#25D366]/20">
-            <MessageCircle size={18} />
-            {en ? 'WhatsApp Support' : 'Soporte por WhatsApp'}
-          </a>
+          <div className="w-full flex flex-col gap-3">
+            {en ? (
+              <>
+                {/* English (Primary) */}
+                <a 
+                  href={`https://wa.me/6285691533356?text=${encodeURIComponent(`Hello Cantik Tours! I need help with my booking CT-${ref}.\n\nLink: ${fichaUrl}`)}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="w-full py-5 rounded-2xl bg-[#25D366] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#1fb355] transition-all shadow-xl shadow-[#25D366]/20"
+                >
+                  <MessageCircle size={18} />
+                  English Support (EN)
+                </a>
+                {/* Spanish (Secondary) */}
+                <a 
+                  href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className={`w-full py-5 rounded-2xl border font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${dark ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20' : 'border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400'}`}
+                >
+                  <MessageCircle size={18} />
+                  Soporte en Español (ES)
+                </a>
+              </>
+            ) : (
+              <>
+                {/* Spanish (Primary) */}
+                <a 
+                  href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className="w-full py-5 rounded-2xl bg-[#25D366] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#1fb355] transition-all shadow-xl shadow-[#25D366]/20"
+                >
+                  <MessageCircle size={18} />
+                  Soporte en Español (ES)
+                </a>
+                {/* English (Secondary) */}
+                <a 
+                  href={`https://wa.me/6285691533356?text=${encodeURIComponent(`Hello Cantik Tours! I need help with my booking CT-${ref}.\n\nLink: ${fichaUrl}`)}`} 
+                  target="_blank" 
+                  rel="noreferrer"
+                  className={`w-full py-5 rounded-2xl border font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${dark ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20' : 'border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400'}`}
+                >
+                  <MessageCircle size={18} />
+                  English Support (EN)
+                </a>
+              </>
+            )}
+          </div>
         </motion.div>
 
         {/* Footer */}
         <div className="pt-4 text-center opacity-20">
-          <Link to="/" className={`text-[8px] font-black uppercase tracking-[1em] ${text}`}>CANTIKTOURS.COM</Link>
+          <LocalLink to="/" className={`text-[8px] font-black uppercase tracking-[1em] ${text}`}>CANTIKTOURS.COM</LocalLink>
         </div>
       </div>
 

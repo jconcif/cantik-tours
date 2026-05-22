@@ -7,13 +7,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
  * Sets req.admin = true if valid.
  */
 export const requireAuth = (req, res, next) => {
-  const header = req.headers.authorization;
+  const token = req.cookies?.ctk_jwt;
 
-  if (!header || !header.startsWith('Bearer ')) {
+  if (!token) {
     return res.status(401).json({ status: 'error', message: 'Token de acceso requerido' });
   }
-
-  const token = header.split(' ')[1];
 
   try {
     const payload = jwt.verify(token, JWT_SECRET);
@@ -32,11 +30,10 @@ export const requireAuth = (req, res, next) => {
  * Optional auth: doesn't block the request if no token, but sets req.admin if valid.
  */
 export const optionalAuth = (req, res, next) => {
-  const header = req.headers.authorization;
+  const token = req.cookies?.ctk_jwt;
 
-  if (header && header.startsWith('Bearer ')) {
+  if (token) {
     try {
-      const token = header.split(' ')[1];
       const payload = jwt.verify(token, JWT_SECRET);
       req.admin = true;
       req.tokenPayload = payload;

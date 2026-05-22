@@ -1,3 +1,4 @@
+import LocalLink from '../components/LocalLink';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import TourCard from '../components/TourCard';
@@ -161,13 +162,13 @@ const TourList = () => {
                         <p className="text-gray-600 dark:text-gray-400 text-lg md:text-xl font-medium mb-10 max-w-xl leading-relaxed">
                             {t('guide.subtitle')}
                         </p>
-                        <Link
+                        <LocalLink
                             to="/guia-bali"
                             className="btn-primary inline-flex items-center gap-3 px-10 py-5 text-lg group/btn shadow-xl"
                         >
                             {t('nav.view_guide')}
                             <ArrowRight size={22} className="group-hover/btn:translate-x-1 transition-transform" />
-                        </Link>
+                        </LocalLink>
                     </div>
 
                     <div className="md:w-2/5 w-full aspect-[4/3] md:aspect-auto self-stretch relative overflow-hidden">

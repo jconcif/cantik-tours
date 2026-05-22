@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { CurrencyProvider } from './context/CurrencyContext';
 import { initGA, trackPageView } from './utils/analytics';
@@ -10,24 +10,8 @@ import Footer from './components/Footer';
 import ScrollToTop from './components/ScrollToTop';
 import WhatsAppButton from './components/WhatsAppButton';
 
-// Main pages (loaded directly for reliability)
-import Home from './pages/Home';
-import TourList from './pages/TourList';
-import TourDetail from './pages/TourDetail';
-
-// Secondary pages (lazy loaded)
-const BaliGuide = lazy(() => import('./pages/BaliGuide'));
-const AboutPage = lazy(() => import('./pages/AboutPage'));
-const ReviewsPage = lazy(() => import('./pages/ReviewsPage'));
-const Policies = lazy(() => import('./pages/Policies'));
-const VisaPage = lazy(() => import('./pages/VisaPage'));
-const ItineraryPage = lazy(() => import('./pages/ItineraryPage'));
-const NotFound = lazy(() => import('./pages/NotFound'));
-
-// Admin (Direct import for reliability)
-import AdminReviews from './pages/AdminReviews';
-
-
+import LanguageRouter from './components/LanguageRouter';
+import { useTranslation } from 'react-i18next';
 // Minimal loading component to avoid layout shifts
 const PageLoader = () => (
     <div className="h-screen w-full bg-bg-light dark:bg-bg-dark" />
@@ -48,8 +32,16 @@ function App() {
         trackPageView(location.pathname + location.search);
     }, [location]);
 
-    const isBooking = location.pathname.startsWith('/booking') || location.pathname.startsWith('/itinerario');
-    const isAdmin = location.pathname === '/admin' || location.pathname === '/cantik-admin';
+    const { i18n } = useTranslation();
+    const defaultLang = i18n.language || 'es';
+
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const firstSegment = pathSegments[0];
+    const isLangPrefixed = firstSegment === 'es' || firstSegment === 'en';
+    const mainPath = isLangPrefixed ? '/' + pathSegments.slice(1).join('/') : location.pathname;
+
+    const isBooking = mainPath.startsWith('/booking') || mainPath.startsWith('/itinerario') || mainPath.startsWith('/reviews');
+    const isAdmin = mainPath === '/admin' || mainPath === '/cantik-admin';
     const hideHeaderFooter = isBooking || isAdmin;
 
     return (
@@ -61,18 +53,9 @@ function App() {
                     <main className="flex-grow">
                         <Suspense fallback={<PageLoader />}>
                             <Routes>
-                                <Route path="/" element={<Home />} />
-                                <Route path="/tours" element={<TourList />} />
-                                <Route path="/tour/:id" element={<TourDetail />} />
-                                <Route path="/guia-bali" element={<BaliGuide />} />
-                                <Route path="/nosotros" element={<AboutPage />} />
-                                <Route path="/reviews" element={<ReviewsPage />} />
-                                <Route path="/politicas" element={<Policies />} />
-                                <Route path="/visados" element={<VisaPage />} />
-                                <Route path="/booking" element={<ItineraryPage />} />
-                                <Route path="/itinerario" element={<ItineraryPage />} />
-                                <Route path="/cantik-admin" element={<AdminReviews />} />
-                                <Route path="*" element={<NotFound />} />
+                                <Route path="/:lang/*" element={<LanguageRouter />} />
+                                <Route path="/" element={<Navigate to={`/${defaultLang}`} replace />} />
+                                <Route path="*" element={<Navigate to={`/${defaultLang}${location.pathname}`} replace />} />
                             </Routes>
                         </Suspense>
                     </main>

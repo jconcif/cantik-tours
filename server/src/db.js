@@ -8,4 +8,6 @@ if (!supabaseUrl || !supabaseKey) {
   process.exit(1);
 }
 
+console.log(`🔌 Supabase: URL=${supabaseUrl}, Key starts with ${supabaseKey.substring(0, 10)}...`);
+
 export const supabase = createClient(supabaseUrl, supabaseKey);

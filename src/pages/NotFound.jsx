@@ -1,3 +1,4 @@
+import LocalLink from '../components/LocalLink';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -38,21 +39,21 @@ const NotFound = () => {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Link
+                    <LocalLink
                         to="/"
                         className="px-8 py-4 bg-primary text-white rounded-full font-black flex items-center justify-center gap-2 hover:scale-105 transition-transform"
                     >
                         <Home size={20} />
                         {t('not_found.back_home', 'Volver al Inicio')}
-                    </Link>
+                    </LocalLink>
                     
-                    <Link
+                    <LocalLink
                         to="/tours"
                         className="px-8 py-4 bg-white dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-full font-black flex items-center justify-center gap-2 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors"
                     >
                         <Compass size={20} />
                         {t('not_found.see_tours', 'Ver todos los Tours')}
-                    </Link>
+                    </LocalLink>
                 </div>
             </div>
         </div>

@@ -1,3 +1,4 @@
+import LocalLink from './LocalLink';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sun, Moon, Menu, X, BookOpen, ChevronLeft, Globe } from 'lucide-react';
@@ -15,8 +16,18 @@ const Navbar = () => {
     const navigate = useNavigate();
 
     const toggleLanguage = () => {
-        const nextLang = i18n.language === 'es' ? 'en' : 'es';
+        const nextLang = i18n.language.startsWith('es') ? 'en' : 'es';
         i18n.changeLanguage(nextLang);
+        
+        let newPath = location.pathname;
+        if (newPath.startsWith('/es/') || newPath === '/es') {
+            newPath = newPath.replace(/^\/es/, `/${nextLang}`);
+        } else if (newPath.startsWith('/en/') || newPath === '/en') {
+            newPath = newPath.replace(/^\/en/, `/${nextLang}`);
+        } else {
+            newPath = `/${nextLang}${newPath.startsWith('/') ? newPath : `/${newPath}`}`;
+        }
+        navigate(newPath + location.search);
     };
 
     // Check if we are on home or if we are on a page that needs a back button
@@ -75,7 +86,7 @@ const Navbar = () => {
                             <ChevronLeft size={24} />
                         </button>
                     )}
-                    <Link
+                    <LocalLink
                         to="/"
                         onClick={(e) => {
                             if (isHome) {
@@ -87,11 +98,11 @@ const Navbar = () => {
                     >
                         <span className="text-xl sm:text-2xl font-black tracking-tighter text-primary-dark transition-transform">CANTIK</span>
                         <span className={`text-xl sm:text-2xl font-light tracking-widest uppercase transition-all group-hover:tracking-[0.2em] ${textColorClass}`}>Tours</span>
-                    </Link>
+                    </LocalLink>
                 </div>
 
                 <div className="hidden md:flex items-center gap-8 font-semibold">
-                    <Link
+                    <LocalLink
                         to="/"
                         onClick={(e) => {
                             if (isHome) {
@@ -103,23 +114,23 @@ const Navbar = () => {
                     >
                         {t('nav.home')}
                         <span className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${isHome ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-                    </Link>
+                    </LocalLink>
 
-                    <Link to="/tours" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
+                    <LocalLink to="/tours" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
                         {t('nav.tours')}
                         <span className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${isTourList ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-                    </Link>
+                    </LocalLink>
 
-                    <Link to="/nosotros" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
+                    <LocalLink to="/nosotros" className={`hover:text-primary transition-colors relative group py-2 ${textColorClass}`}>
                         {t('nav.about')}
                         <span className={`absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300 ${isAbout ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-                    </Link>
+                    </LocalLink>
 
-                    <Link to="/guia-bali" className={`hover:text-primary transition-colors relative group py-2 flex items-center gap-2 ${textColorClass}`}>
+                    <LocalLink to="/guia-bali" className={`hover:text-primary transition-colors relative group py-2 flex items-center gap-2 ${textColorClass}`}>
                         <BookOpen size={16} />
                         {t('nav.guide')}
                         {isBaliGuide && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />}
-                    </Link>
+                    </LocalLink>
                 </div>
 
                 <div className="flex items-center gap-1 sm:gap-4">
@@ -155,7 +166,14 @@ const Navbar = () => {
                                                 {['es', 'en'].map((lang) => (
                                                     <button
                                                         key={lang}
-                                                        onClick={() => { i18n.changeLanguage(lang); }}
+                                                        onClick={() => { 
+                                                            i18n.changeLanguage(lang);
+                                                            let newPath = location.pathname;
+                                                            if (newPath.startsWith('/es/') || newPath === '/es') newPath = newPath.replace(/^\/es/, `/${lang}`);
+                                                            else if (newPath.startsWith('/en/') || newPath === '/en') newPath = newPath.replace(/^\/en/, `/${lang}`);
+                                                            else newPath = `/${lang}${newPath.startsWith('/') ? newPath : `/${newPath}`}`;
+                                                            navigate(newPath + location.search);
+                                                        }}
                                                         className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${i18n.language.startsWith(lang)
                                                             ? 'bg-primary text-white shadow-md shadow-primary/30'
                                                             : 'bg-gray-100 dark:bg-white/5 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10'
@@ -258,7 +276,7 @@ const Navbar = () => {
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: 0.1 + idx * 0.07, duration: 0.35, ease: [0.23, 1, 0.32, 1] }}
                                 >
-                                    <Link
+                                    <LocalLink
                                         to={item.to}
                                         onClick={item.onClick}
                                         className="flex items-center justify-between py-5 group transition-all active:scale-98"
@@ -279,7 +297,7 @@ const Navbar = () => {
                                                 <div className="w-2 h-2 rounded-full bg-primary" />
                                             )}
                                         </div>
-                                    </Link>
+                                    </LocalLink>
                                 </motion.div>
                             ))}
                         </div>
@@ -297,7 +315,14 @@ const Navbar = () => {
                                     {['es', 'en'].map((lang) => (
                                         <button
                                             key={lang}
-                                            onClick={() => i18n.changeLanguage(lang)}
+                                            onClick={() => {
+                                                i18n.changeLanguage(lang);
+                                                let newPath = location.pathname;
+                                                if (newPath.startsWith('/es/') || newPath === '/es') newPath = newPath.replace(/^\/es/, `/${lang}`);
+                                                else if (newPath.startsWith('/en/') || newPath === '/en') newPath = newPath.replace(/^\/en/, `/${lang}`);
+                                                else newPath = `/${lang}${newPath.startsWith('/') ? newPath : `/${newPath}`}`;
+                                                navigate(newPath + location.search);
+                                            }}
                                             className={`flex-1 py-3 rounded-xl text-xs font-black uppercase transition-all ${i18n.language.startsWith(lang)
                                                 ? 'bg-white dark:bg-gray-800 text-primary shadow-sm'
                                                 : 'text-gray-400 dark:text-gray-500'

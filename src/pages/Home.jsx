@@ -1,3 +1,4 @@
+import LocalLink from '../components/LocalLink';
 import React from 'react';
 import Hero from '../components/Hero';
 import { tours } from '../data/tours';
@@ -86,13 +87,13 @@ const Home = () => {
                     </div>
 
                     <div className="mt-16 flex justify-center">
-                        <Link
+                        <LocalLink
                             to="/tours"
                             className="btn-primary group flex items-center gap-3 px-10 py-5 text-lg"
                         >
                             {t('tours.see_all')}
                             <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                        </Link>
+                        </LocalLink>
                     </div>
                 </div>
             </div>

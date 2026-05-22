@@ -1,3 +1,4 @@
+import LocalLink from '../components/LocalLink';
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -208,20 +209,20 @@ const AboutPage = () => {
                             </p>
 
                             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                                <Link
+                                <LocalLink
                                     to="/tours"
                                     className="group relative w-full sm:w-auto px-12 py-6 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl shadow-primary/40 flex items-center justify-center gap-3"
                                 >
                                     {t('hero.btn_tours')}
                                     <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-                                </Link>
+                                </LocalLink>
 
-                                <Link
+                                <LocalLink
                                     to="/guia-bali"
                                     className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 font-black uppercase tracking-widest text-xs transition-all text-white flex items-center justify-center gap-3"
                                 >
                                     {t('nav.view_guide')}
-                                </Link>
+                                </LocalLink>
                             </div>
 
                             <p className="mt-10 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
