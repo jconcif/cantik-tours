@@ -33,7 +33,8 @@ function App() {
     }, [location]);
 
     const { i18n } = useTranslation();
-    const defaultLang = i18n.language || 'es';
+    const rawLang = i18n.language || 'es';
+    const defaultLang = rawLang.startsWith('en') ? 'en' : 'es';
 
     const pathSegments = location.pathname.split('/').filter(Boolean);
     const firstSegment = pathSegments[0];

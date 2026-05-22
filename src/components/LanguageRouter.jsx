@@ -32,8 +32,11 @@ const LanguageRouter = () => {
 
     const supportedLangs = ['es', 'en'];
     if (!supportedLangs.includes(lang)) {
-        // Fallback to Spanish or browser language
-        return <Navigate to={`/es/${lang}`} replace />;
+        // Fallback to Spanish or browser language, preserving the rest of the path
+        const targetLang = lang.startsWith('en') ? 'en' : 'es';
+        const pathSegments = window.location.pathname.split('/').filter(Boolean);
+        const restOfPath = pathSegments.slice(1).join('/');
+        return <Navigate to={`/${targetLang}/${restOfPath}`} replace />;
     }
 
     return (
