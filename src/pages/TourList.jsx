@@ -136,8 +136,12 @@ const TourList = () => {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="mt-32 relative group"
             >
-                <div className="bg-white dark:bg-surface-dark rounded-[3rem] overflow-hidden flex flex-col md:flex-row items-center border border-black/5 dark:border-white/5 shadow-2xl transition-all duration-500 hover:shadow-primary/10">
-                    <div className="flex-1 p-10 md:p-16 text-center md:text-left">
+                <div className="bg-white dark:bg-surface-dark rounded-[3rem] overflow-hidden flex flex-col md:flex-row items-center border border-black/5 dark:border-white/5 shadow-2xl transition-all duration-500 hover:shadow-primary/10 relative isolate">
+                    {/* Decorative glows inside the card (contained, no clipping issues) */}
+                    <div className="absolute -top-24 -left-24 w-72 h-72 bg-primary/15 rounded-full blur-[80px] z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+                    <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-secondary/15 rounded-full blur-[80px] z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+
+                    <div className="flex-1 p-10 md:p-16 text-center md:text-left relative z-10">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-black text-[10px] uppercase tracking-widest mb-6 border border-primary/20">
                             <BookOpen size={14} /> {t('guide.badge')}
                         </div>
@@ -157,7 +161,7 @@ const TourList = () => {
                         </LocalLink>
                     </div>
 
-                    <div className="md:w-2/5 w-full aspect-[4/3] md:aspect-auto self-stretch relative overflow-hidden">
+                    <div className="md:w-2/5 w-full aspect-[4/3] md:aspect-auto self-stretch relative overflow-hidden z-10">
                         <img
                             src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=80"
                             alt="Bali Guía 2026"
