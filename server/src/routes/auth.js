@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 
-  res.json({ status: 'success' });
+  res.json({ status: 'success', token });
 });
 
 /**
@@ -56,7 +56,10 @@ router.post('/login', async (req, res) => {
  * Verifies if a token is still valid.
  */
 router.post('/verify', (req, res) => {
-  const token = req.cookies?.ctk_jwt;
+  let token = req.cookies?.ctk_jwt;
+  if (!token && req.headers.authorization?.startsWith('Bearer ')) {
+    token = req.headers.authorization.split(' ')[1];
+  }
   if (!token) {
     return res.status(401).json({ status: 'error', valid: false });
   }

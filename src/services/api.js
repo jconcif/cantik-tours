@@ -21,10 +21,15 @@ export const BASE = USE_LEGACY_PHP ? PHP_API_URL : NODE_API_URL;
 
 // ── Core request helper ───────────────────────────────────────────────────────
 const req = async (path, opts = {}) => {
+  const token = localStorage.getItem('ctk_jwt_token');
   const headers = {
     'Content-Type': 'application/json',
     ...opts.headers,
   };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const fetchOpts = {
     ...opts,
@@ -41,6 +46,7 @@ const req = async (path, opts = {}) => {
 
     // Handle 401 globally — token expired or invalid (except on login itself)
     if (r.status === 401 && !path.includes('/auth/login')) {
+      localStorage.removeItem('ctk_jwt_token');
       window.dispatchEvent(new CustomEvent('auth:expired'));
       throw new Error('Sesión expirada. Por favor inicia sesión de nuevo.');
     }
@@ -70,11 +76,16 @@ const del  = (path) => req(path, { method: 'DELETE' });
 // ── Auth ──────────────────────────────────────────────────────────────────────
 export const login = async (password) => {
   const res = await post('/api/auth/login', { password });
-  // El backend ahora enviará una cookie HttpOnly con el token
+  if (res.status === 'success' && res.token) {
+    localStorage.setItem('ctk_jwt_token', res.token);
+  }
   return res;
 };
 
-export const logout = () => post('/api/auth/logout', {});
+export const logout = async () => {
+  localStorage.removeItem('ctk_jwt_token');
+  return post('/api/auth/logout', {});
+};
 
 export const verifyToken = () => req('/api/auth/verify', { method: 'POST' });
 
