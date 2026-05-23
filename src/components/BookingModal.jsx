@@ -457,8 +457,8 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             {/* Texto explicativo */}
                                             <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed text-center">
                                                 {i18n.language === 'en'
-                                                    ? <>Tap the button to open WhatsApp with your request. Our team will confirm availability and send you payment details. <span className="text-primary font-black">No upfront charges.</span></>
-                                                    : <>Al pulsar el botón se abrirá WhatsApp con tu solicitud. Nuestro equipo confirmará disponibilidad y te enviará los detalles del pago. <span className="text-primary font-black">Sin cobros por adelantado.</span></>
+                                                    ? <>Tap <span className="text-gray-800 dark:text-white font-black">REQUEST BOOKING</span> to send your request via WhatsApp. We'll confirm availability and share payment details — your booking is only set once everything is confirmed.</>
+                                                    : <>Pulsa <span className="text-gray-800 dark:text-white font-black">SOLICITAR RESERVA</span> para enviar tu solicitud por WhatsApp. Confirmaremos disponibilidad y te enviamos los detalles del pago — solo entonces queda agendada tu reserva.</>
                                                 }
                                             </p>
 
