@@ -53,11 +53,11 @@ const Hero = () => {
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8 }}
                 >
-                    <span className="inline-block py-2 px-5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-white text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-6 md:mb-10 shadow-2xl">
+                    <span className="inline-block py-2 px-5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-white text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-8 md:mb-12 shadow-2xl">
                         {t('hero.badge')}
                     </span>
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white mb-5 md:mb-8 leading-[1.05] drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] tracking-tight">
-                        {t('hero.title_1')} <br />
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 md:mb-10 leading-[1.05] drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] tracking-tight">
+                        {t('hero.title_1')} <br className="hidden md:inline" />
                         <span className="text-primary italic">
                             {t('hero.title_2')}
                         </span>
@@ -68,7 +68,7 @@ const Hero = () => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="text-base sm:text-lg md:text-2xl text-white/90 mb-8 md:mb-12 max-w-2xl mx-auto font-medium drop-shadow-lg leading-relaxed"
+                    className="text-lg sm:text-xl md:text-2xl text-white/90 mb-10 md:mb-16 max-w-2xl mx-auto font-medium drop-shadow-lg leading-relaxed"
                 >
                     {t('hero.subtitle')}
                 </motion.p>

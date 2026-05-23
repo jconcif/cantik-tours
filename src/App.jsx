@@ -55,8 +55,8 @@ function App() {
                         <Suspense fallback={<PageLoader />}>
                             <Routes>
                                 <Route path="/:lang/*" element={<LanguageRouter />} />
-                                <Route path="/" element={<Navigate to={`/${defaultLang}`} replace />} />
-                                <Route path="*" element={<Navigate to={`/${defaultLang}${location.pathname}`} replace />} />
+                                <Route path="/" element={<Navigate to={`/${defaultLang}${location.search}`} replace />} />
+                                <Route path="*" element={<Navigate to={`/${defaultLang}${location.pathname}${location.search}`} replace />} />
                             </Routes>
                         </Suspense>
                     </main>

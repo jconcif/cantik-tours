@@ -35,8 +35,13 @@ const LanguageRouter = () => {
         // Fallback to Spanish or browser language, preserving the rest of the path
         const targetLang = lang.startsWith('en') ? 'en' : 'es';
         const pathSegments = window.location.pathname.split('/').filter(Boolean);
-        const restOfPath = pathSegments.slice(1).join('/');
-        return <Navigate to={`/${targetLang}/${restOfPath}`} replace />;
+        
+        // If the first segment looks like a language variation (e.g. es-419, en-US, es-ES),
+        // we replace it. Otherwise, we assume it's a page name and keep the entire path.
+        const isLangVariation = lang.startsWith('es-') || lang.startsWith('en-') || lang.length === 2;
+        const restOfPath = isLangVariation ? pathSegments.slice(1).join('/') : pathSegments.join('/');
+        
+        return <Navigate to={`/${targetLang}/${restOfPath}${window.location.search}`} replace />;
     }
 
     return (
