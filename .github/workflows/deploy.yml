@@ -1,9 +1,10 @@
 name: Deploy to Hostinger
 
 on:
+  workflow_dispatch: # Despliegue manual (botón en GitHub)
   push:
-    branches:
-      - main
+    tags:
+      - 'v*' # Solo despliega cuando se crea un tag de versión (ej. v1.8.1)
 
 jobs:
   build-and-deploy:
