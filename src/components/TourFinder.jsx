@@ -84,12 +84,12 @@ const TourFinder = () => {
     const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
     return (
-        <div className="relative w-full max-w-4xl mx-auto mb-16 px-4">
+        <div className="relative w-full h-full flex flex-col">
             {/* Background elements */}
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-secondary/5 to-transparent rounded-[2.5rem] -z-10" />
             <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl -z-10" />
             
-            <div className="glass dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <div className="glass dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden flex-grow flex flex-col justify-center">
                 <AnimatePresence mode="wait">
                     {step === null && (
                         <motion.div

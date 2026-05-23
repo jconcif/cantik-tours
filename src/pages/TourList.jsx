@@ -62,27 +62,9 @@ const TourList = () => {
                 </motion.p>
             </div>
 
-            {/* Search & Filters */}
-            <div className="space-y-10 mb-20">
-                {/* Search Bar */}
-                <div className="relative max-w-2xl mx-auto group">
-                    <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity" />
-                    <div className="relative">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-primary" size={24} />
-                        <input
-                            type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            placeholder={t('tours.search_placeholder')}
-                            className="w-full pl-16 pr-8 py-6 rounded-3xl bg-white dark:bg-gray-800 border-none outline-none focus:ring-2 ring-primary/50 shadow-2xl shadow-black/5 transition-all text-xl font-bold placeholder:text-gray-300 dark:placeholder:text-gray-600"
-                        />
-                    </div>
-                </div>
-
-                {/* Category Chips */}
-                <div className="flex justify-center">
-                    <CategoryChips active={activeCategory} onSelect={setActiveCategory} />
-                </div>
+            {/* Category Filters */}
+            <div className="mb-20 flex justify-center">
+                <CategoryChips active={activeCategory} onSelect={setActiveCategory} />
             </div>
 
             <AnimatePresence mode="popLayout">
@@ -94,47 +76,6 @@ const TourList = () => {
                         {filteredTours.map((tour, index) => (
                             <TourCard key={tour.id} tour={tour} index={index} />
                         ))}
-
-                        {/* Coming Soon Card */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 0.3 }}
-                            className="relative overflow-hidden rounded-[2rem] border-2 border-dashed border-primary/20 dark:border-white/10 bg-primary/5 dark:bg-white/5 p-8 flex flex-col items-center text-center justify-between group hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-500 shadow-xl shadow-black/5"
-                        >
-                            {/* Decorative element */}
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl -z-10" />
-
-                            <div className="flex flex-col items-center flex-1 justify-center py-6">
-                                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg">
-                                    <Compass size={32} />
-                                </div>
-                                <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-black tracking-widest uppercase mb-4 border border-primary/20">
-                                    {t('tours.coming_soon.badge')}
-                                </span>
-                                <h3 className="text-2xl font-black mb-4 tracking-tight text-gray-900 dark:text-white">
-                                    {t('tours.coming_soon.title')}
-                                </h3>
-                                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium leading-relaxed max-w-xs">
-                                    {t('tours.coming_soon.description')}
-                                </p>
-                            </div>
-                            
-                            <a
-                                href={`https://wa.me/34642517787?text=${encodeURIComponent(
-                                    i18n.language.startsWith('es')
-                                        ? '¡Hola Cantik Tours! He visto que próximamente tendréis tours en Nusa Penida y Lombok, y me gustaría recibir información al respecto.'
-                                        : 'Hello Cantik Tours! I saw that you will soon offer tours in Nusa Penida and Lombok, and I would like to receive details about them.'
-                                )}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="btn-primary w-full flex items-center justify-center gap-2 py-3.5 shadow-md shadow-primary/20"
-                            >
-                                {t('tours.coming_soon.btn')}
-                                <ArrowRight size={16} />
-                            </a>
-                        </motion.div>
                     </motion.div>
                 ) : (
                     <motion.div
@@ -155,9 +96,50 @@ const TourList = () => {
                 )}
             </AnimatePresence>
 
-            {/* Tour Finder Recommendation Quiz */}
-            <div className="mt-32">
+            {/* Tour Finder & Coming Soon (Side-by-side on desktop) */}
+            <div className="grid md:grid-cols-2 gap-10 mt-32 items-stretch">
                 <TourFinder />
+
+                {/* Coming Soon Card */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    className="relative overflow-hidden rounded-[2.5rem] border-2 border-dashed border-primary/20 dark:border-white/10 bg-primary/5 dark:bg-white/5 p-8 md:p-12 flex flex-col items-center text-center justify-between group hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-500 shadow-xl shadow-black/5 min-h-[350px]"
+                >
+                    {/* Decorative element */}
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl -z-10" />
+
+                    <div className="flex flex-col items-center flex-1 justify-center py-6">
+                        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg">
+                            <Compass size={32} />
+                        </div>
+                        <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-black tracking-widest uppercase mb-4 border border-primary/20">
+                            {t('tours.coming_soon.badge')}
+                        </span>
+                        <h3 className="text-2xl md:text-3xl font-black mb-4 tracking-tight text-gray-900 dark:text-white">
+                            {t('tours.coming_soon.title')}
+                        </h3>
+                        <p className="text-gray-600 dark:text-gray-400 text-sm font-medium leading-relaxed max-w-xs">
+                            {t('tours.coming_soon.description')}
+                        </p>
+                    </div>
+                    
+                    <a
+                        href={`https://wa.me/34642517787?text=${encodeURIComponent(
+                            i18n.language.startsWith('es')
+                                ? '¡Hola Cantik Tours! He visto que próximamente tendréis tours en Nusa Penida y Lombok, y me gustaría recibir información al respecto.'
+                                : 'Hello Cantik Tours! I saw that you will soon offer tours in Nusa Penida and Lombok, and I would like to receive details about them.'
+                        )}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="btn-primary w-full flex items-center justify-center gap-2 py-3.5 shadow-md shadow-primary/20"
+                    >
+                        {t('tours.coming_soon.btn')}
+                        <ArrowRight size={16} />
+                    </a>
+                </motion.div>
             </div>
 
             {/* Guide 2026 CTA Section */}
