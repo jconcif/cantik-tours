@@ -62,9 +62,6 @@ const TourList = () => {
                 </motion.p>
             </div>
 
-            {/* Tour Finder Recommendation Quiz */}
-            <TourFinder />
-
             {/* Search & Filters */}
             <div className="space-y-10 mb-20">
                 {/* Search Bar */}
@@ -157,6 +154,11 @@ const TourList = () => {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Tour Finder Recommendation Quiz */}
+            <div className="mt-32">
+                <TourFinder />
+            </div>
 
             {/* Guide 2026 CTA Section */}
             <motion.div
