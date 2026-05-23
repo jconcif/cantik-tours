@@ -1,9 +1,15 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import legacy from '@vitejs/plugin-legacy'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react(),
+        legacy({
+            targets: ['defaults', 'not IE 11']
+        })
+    ],
     base: '/',
     build: {
         rollupOptions: {
@@ -29,14 +35,8 @@ export default defineConfig({
         },
         // Optimize chunk size
         chunkSizeWarningLimit: 1000,
-        // Enable minification and compression
-        minify: 'terser',
-        terserOptions: {
-            compress: {
-                drop_console: true, // Remove console.logs in production
-                drop_debugger: true
-            }
-        },
+        // Enable safe esbuild minification to prevent mobile crashes
+        minify: 'esbuild',
         // Optimize CSS
         cssCodeSplit: true,
         // Source maps for production debugging (optional, can be disabled for smaller builds)

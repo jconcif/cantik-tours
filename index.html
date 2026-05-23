@@ -8,14 +8,15 @@
     <meta name="description"
         content="Tours privados en Bali con guías locales en español. Vive la esencia de Bali con Perty y su equipo." />
 
-    <!-- DNS Prefetch & Preconnect for faster font loading -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <!-- Preconnect for faster font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Load critical fonts normally to prevent CLS from font swapping -->
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+    <!-- Load critical fonts asynchronously to prevent blocking rendering on mobile -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap">
+    </noscript>
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
@@ -27,7 +28,11 @@
 </head>
 
 <body>
-    <div id="root"></div>
+    <div id="root">
+        <div style="display:flex;justify-content:center;align-items:center;height:100vh;width:100vw;background:#1a1a1a;color:#11BDDB;font-family:sans-serif;font-weight:bold;">
+            Iniciando experiencia...
+        </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
 </body>
 
