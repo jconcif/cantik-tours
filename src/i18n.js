@@ -17,8 +17,8 @@ i18n
                     nav: {
                         home: "Inicio",
                         tours: "Explorar Tours",
-                        guide: "Guía Bali 2026",
-                        view_guide: "Ver Guía Bali 2026",
+                        guide: "Bali Guía 2026",
+                        view_guide: "Ver Bali Guía 2026",
                         contact: "Habla con nosotros",
                         about: "Nosotros",
                         expert_choice: "Elección del Experto",
@@ -73,7 +73,7 @@ i18n
                         title: "¿Listo para vivir Bali como un local?",
                         subtitle: "Reserva hoy y vive el Bali que siempre soñaste con guías expertos.",
                         btn_availability: "Ver Todos los Tours",
-                        btn_guide: "Ver Guía Bali 2026",
+                        btn_guide: "Ver Bali Guía 2026",
                         btn_whatsapp: "WhatsApp directo",
                         general_inquiry: "Consulta General"
                     },
@@ -214,7 +214,7 @@ i18n
                     },
                     guide: {
                         badge: "Bali Guide 2026",
-                        title: "Guía Bali",
+                        title: "Bali Guía",
                         title_accent: "2026",
                         subtitle: "Todo lo que necesitas saber antes de aterrizar en la \"Isla de los Dioses\".",
                         chapters: {

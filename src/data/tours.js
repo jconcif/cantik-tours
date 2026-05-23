@@ -1,8 +1,8 @@
 export const tours = [
     {
         id: 'ubud-central',
-        title: "Tegalalang: Arrozales y Esencia de Ubud",
-        title_en: "Tegalalang: Rice Terraces & Ubud Essence",
+        title: "Ubud Central: Arrozales y la Esencia de Ubud",
+        title_en: "Ubud Central: Rice Terraces & the Essence of Ubud",
         description: "Vive la esencia de Bali: visita cascadas, templos milenarios y los arrozales más icónicos.",
         description_en: "Experience the essence of Bali: visit waterfalls, ancient temples, and the most iconic rice terraces.",
         heroSubtitle: "Un día completo descubriendo el corazón espiritual de Bali, a tu ritmo y sin prisas.",
@@ -346,8 +346,8 @@ export const tours = [
     },
     {
         id: 'north-lake-temple',
-        title: "Ubud Norte: Terrazas y Cascadas",
-        title_en: "North Ubud: Terraces & Waterfalls",
+        title: "Ubud Norte: Cascadas, Terrazas, y Templos",
+        title_en: "North Ubud: Waterfalls, Terraces, and Temples",
         description: "El icónico templo sobre el lago, grandes cascadas y los arrozales Patrimonio UNESCO.",
         description_en: "The iconic lake temple, big waterfalls and UNESCO rice terraces.",
         heroSubtitle: "Explora la exuberancia del norte: un hermoso templo sobre el agua y arrozales infinitos.",
@@ -820,8 +820,8 @@ export const tours = [
 
     {
         id: 'beji-griya-tanah-lot',
-        title: "Oeste de Bali: Purificación, Templos y Atardecer",
-        title_en: "West Bali: Purification, Temples & Sunset",
+        title: "Oeste de Bali: Purificación y Tanah lot al Atardecer",
+        title_en: "West Bali: Purification & Tanah Lot Sunset",
         description: "Vive una purificación espiritual intensa, el bosque Sangeh y el atardecer en Tanah Lot.",
         description_en: "Experience intense spiritual purification, explore Sangeh forest and marvel at Tanah Lot.",
         heroSubtitle: "Desde el ritual de agua en Beji Griya hasta el atardecer épico en el Templo Tanah Lot.",

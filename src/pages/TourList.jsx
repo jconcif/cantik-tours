@@ -174,7 +174,7 @@ const TourList = () => {
                     <div className="md:w-2/5 w-full aspect-[4/3] md:aspect-auto self-stretch relative overflow-hidden">
                         <img
                             src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1000&q=80"
-                            alt="Guía Bali 2026"
+                            alt="Bali Guía 2026"
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-[4s] group-hover:scale-110"
                         />
                         {/* More subtle gradient overlays */}

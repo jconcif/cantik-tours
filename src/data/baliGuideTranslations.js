@@ -1,9 +1,9 @@
 export const baliGuideTranslations = {
     es: {
-        seoTitle: "Guía Bali 2026: Todo lo que necesitas saber | Cantik Tours",
+        seoTitle: "Bali Guía 2026: Todo lo que necesitas saber | Cantik Tours",
         seoDescription: "La guía definitiva para viajar a Bali en 2026. Visado, clima, alojamiento, dinero y consejos de cultura de la mano de locales.",
         badge: "Imprescindible",
-        title1: "Guía Bali ",
+        title1: "Bali Guía ",
         title2: "2026",
         subtitle: "Todo lo que necesitas saber antes de aterrizar en la \"Isla de los Dioses\".",
         chapters: [
@@ -109,11 +109,11 @@ export const baliGuideTranslations = {
             { label: 'Nyepi (Día del Silencio)', text: 'Si viajas en marzo, infórmate. La isla se detiene totalmente por 24 horas.' },
         ],
 
-        ctaTitle: "¿Listo para vivir tu propia historia?",
-        ctaDesc: "Ahora que conoces los secretos de Bali, es hora de vivirlos. Únete a nosotros en una aventura privada y déjanos mostrarte la verdadera magia de nuestra isla.",
-        ctaBtn1: "Explorar Experiencias",
-        ctaBtn2: "Contactar por WhatsApp",
-        wspText: "Hola Cantik Tours! He leído vuestra Guía Bali 2026 y me gustaría organizar mi viaje."
+        ctaTitle: "¿Listo para vivir Bali como un local?",
+        ctaDesc: "Reserva hoy y vive el Bali que siempre soñaste con guías expertos.",
+        ctaBtn1: "Ver Todos los Tours",
+        ctaBtn2: "WhatsApp directo",
+        wspText: "Hola Cantik Tours! He leído vuestra Bali Guía 2026 y me gustaría organizar mi viaje."
     },
     en: {
         seoTitle: "Bali Guide 2026: Everything you need to know | Cantik Tours",
@@ -225,10 +225,10 @@ export const baliGuideTranslations = {
             { label: 'Nyepi (Day of Silence)', text: 'If traveling in March, do your research. The island shuts down completely for 24 hours.' },
         ],
 
-        ctaTitle: "Ready to live your own story?",
-        ctaDesc: "Now that you know the secrets of Bali, it's time to live them. Join us on a private adventure and let us show you the true magic of our island.",
-        ctaBtn1: "Explore Experiences",
-        ctaBtn2: "Contact via WhatsApp",
+        ctaTitle: "Ready to live Bali like a local?",
+        ctaDesc: "Book today and experience the Bali you've always dreamed of with expert guides.",
+        ctaBtn1: "View All Tours",
+        ctaBtn2: "Direct WhatsApp",
         wspText: "Hi Cantik Tours! I've read your Bali Guide 2026 and would like to organize my trip."
     }
 };
