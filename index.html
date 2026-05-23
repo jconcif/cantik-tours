@@ -29,8 +29,46 @@
 
 <body>
     <div id="root">
-        <div style="display:flex;justify-content:center;align-items:center;height:100vh;width:100vw;background:#1a1a1a;color:#11BDDB;font-family:sans-serif;font-weight:bold;">
-            Iniciando experiencia...
+        <style>
+            @keyframes pulse-elegant {
+                0%, 100% { opacity: 1; transform: scale(1); }
+                50% { opacity: 0.6; transform: scale(0.98); }
+            }
+            .preloader-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                width: 100vw;
+                background-color: #0B0F19; /* Fondo oscuro muy premium */
+                margin: 0;
+            }
+            .preloader-logo {
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                animation: pulse-elegant 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .preloader-cantik {
+                font-size: 28px;
+                font-weight: 900;
+                letter-spacing: -1px;
+                color: #13c8ec; /* Color primario */
+            }
+            .preloader-tours {
+                font-size: 28px;
+                font-weight: 300;
+                letter-spacing: 4px;
+                text-transform: uppercase;
+                color: #ffffff;
+            }
+        </style>
+        <div class="preloader-container">
+            <div class="preloader-logo">
+                <span class="preloader-cantik">CANTIK</span>
+                <span class="preloader-tours">Tours</span>
+            </div>
         </div>
     </div>
     <script type="module" src="/src/main.jsx"></script>
