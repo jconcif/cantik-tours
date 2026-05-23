@@ -451,64 +451,54 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                 </div>
                                             </div>
                                         </div>
-                                                     <div className="space-y-4">
-                                            {/* Last Step Info Box */}
-                                            <div className="rounded-2xl border border-primary/15 overflow-hidden">
-                                                <div className="bg-primary/10 px-4 py-2.5 flex items-center gap-2">
-                                                    <ShieldCheck size={14} className="text-primary flex-shrink-0" />
-                                                    <span className="text-[10px] font-black text-primary uppercase tracking-widest">
-                                                        {i18n.language === 'en' ? 'Last Step — How it works' : 'Último Paso — Cómo funciona'}
+                                        
+                                        <div className="space-y-3 pt-1">
+                                            {/* 3 trust chips */}
+                                            <div className="grid grid-cols-3 gap-2">
+                                                <div className="flex flex-col items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
+                                                    <div className="w-7 h-7 rounded-full bg-[#25D366]/15 flex items-center justify-center">
+                                                        <MessageCircle size={13} className="text-[#25D366]" />
+                                                    </div>
+                                                    <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
+                                                        {i18n.language === 'en' ? 'Via\nWhatsApp' : 'Por\nWhatsApp'}
                                                     </span>
                                                 </div>
-                                                <div className="p-4 space-y-3 bg-white dark:bg-white/3">
-                                                    <div className="flex items-start gap-3">
-                                                        <div className="w-5 h-5 rounded-full bg-[#25D366]/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                            <MessageCircle size={11} className="text-[#25D366]" />
-                                                        </div>
-                                                        <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300 leading-relaxed">
-                                                            {i18n.language === 'en'
-                                                                ? 'A WhatsApp chat will open. Send the message and our team will reply to confirm availability.'
-                                                                : 'Se abrirá un chat de WhatsApp. Envía el mensaje y nuestro equipo te responderá para confirmar disponibilidad.'}
-                                                        </p>
+                                                <div className="flex flex-col items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
+                                                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
+                                                        <ShieldCheck size={13} className="text-primary" />
                                                     </div>
-                                                    <div className="flex items-start gap-3">
-                                                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                            <ShieldCheck size={11} className="text-primary" />
-                                                        </div>
-                                                        <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300 leading-relaxed">
-                                                            {i18n.language === 'en'
-                                                                ? 'No upfront payment — you only pay once we confirm all the details of your trip together.'
-                                                                : 'Sin pago por adelantado — solo abonas cuando confirmemos juntos todos los detalles de tu viaje.'}
-                                                        </p>
+                                                    <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
+                                                        {i18n.language === 'en' ? 'No upfront\npayment' : 'Sin pago\nadelantado'}
+                                                    </span>
+                                                </div>
+                                                <div className="flex flex-col items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
+                                                    <div className="w-7 h-7 rounded-full bg-amber-400/15 flex items-center justify-center">
+                                                        <Star size={13} className="text-amber-500" />
                                                     </div>
-                                                    <div className="flex items-start gap-3">
-                                                        <div className="w-5 h-5 rounded-full bg-amber-400/15 flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                            <Star size={11} className="text-amber-500" />
-                                                        </div>
-                                                        <p className="text-[11px] font-black text-primary leading-relaxed">
-                                                            {i18n.language === 'en' ? 'See you in Bali!' : '¡Nos vemos en Bali!'}
-                                                        </p>
-                                                    </div>
+                                                    <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
+                                                        {i18n.language === 'en' ? 'We confirm\navailability' : 'Confirmamos\ndisponibilidad'}
+                                                    </span>
                                                 </div>
                                             </div>
 
+                                            {/* CTA WhatsApp */}
                                             <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-5 rounded-[2rem] bg-[#25D366] text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355] relative overflow-hidden group">
                                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
-                                                <MessageCircle size={24} /> 
-                                                <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
+                                                <MessageCircle size={22} />
+                                                <span className="text-[15px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
                                             </button>
 
-                                            <div className="text-center w-full">
-                                                <p className="text-[9px] font-bold text-gray-400 dark:text-gray-500 leading-relaxed uppercase tracking-widest mt-2">
-                                                    {i18n.language === 'en' 
-                                                        ? <>By requesting the booking I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms of Service</a>.</> 
-                                                        : <>Al solicitar la reserva Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos de Servicio</a>.</>
-                                                    }
-                                                </p>
-                                            </div>
+                                            {/* Terms */}
+                                            <p className="text-center text-[9px] font-bold text-gray-400 dark:text-gray-500 leading-relaxed uppercase tracking-widest">
+                                                {i18n.language === 'en'
+                                                    ? <span>By requesting I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms of Service</a>.</span>
+                                                    : <span>Al solicitar acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos de Servicio</a>.</span>
+                                                }
+                                            </p>
                                         </div>
 
-                                        <div className="flex justify-center pt-2">
+                                        {/* Back button */}
+                                        <div className="flex justify-center">
                                             <button type="button" onClick={() => setStep(3)} className="text-gray-400 hover:text-gray-600 dark:hover:text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2 transition-colors">
                                                 <ArrowLeft size={14} /> {i18n.language === 'en' ? 'BACK' : 'VOLVER'}
                                             </button>
