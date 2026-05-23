@@ -462,8 +462,8 @@ export default function AdminPanel() {
 
     if (b.client_phone) {
       const message = lang === 'en'
-        ? `Hello ${b.client_name}! ✨ We hope you had an amazing trip with Cantik Tours. 🌴 It would help us a lot if you could share your experience with us and other travelers by leaving a quick review in this link (it will take you less than a minute): ${link} Thank you so much for your time! 🙏`
-        : `¡Hola ${b.client_name}! ✨ Esperamos que hayas tenido un viaje increíble con Cantik Tours. 🌴 Nos ayudaría muchísimo que compartas tu experiencia con nosotros y otros viajeros dejando una breve reseña en este link (te tomará menos de un minuto): ${link} ¡Muchísimas gracias por tu tiempo! 🙏`;
+        ? `Hello ${b.client_name}! We hope you had an amazing experience with Cantik Tours in Bali. It would mean the world to us if you could take 1 minute to share your experience - it helps other travelers and supports our local team: ${link} -- Thank you so much!`
+        : `Hola ${b.client_name}! Esperamos que hayas tenido una experiencia increible con Cantik Tours en Bali. Nos ayudaria mucho que dedicaras 1 minuto a compartir tu experiencia - ayuda a otros viajeros y a nuestro equipo local: ${link} -- Muchas gracias!`;
       const url = waLink(b.client_phone, message);
       window.open(url, '_blank', 'noopener,noreferrer');
     } else {

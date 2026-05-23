@@ -451,25 +451,44 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div className="space-y-4">
-                                            <div className="text-center w-full">
-                                                <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-2xl p-4 border border-primary/10 space-y-2">
-                                                    <p className="text-gray-700 dark:text-gray-200 text-[11px] font-black leading-normal">
-                                                        {i18n.language === 'en' 
-                                                            ? 'Last step! By clicking REQUEST BOOKING, you will open a WhatsApp chat, please wait for our reply to confirm the availability of your trip.' 
-                                                            : '¡Último paso! Al hacer clic en SOLICITAR RESERVA, abrirás un chat en WhatsApp, espera nuestra respuesta para confirmar la disponibilidad de tu viaje.'
-                                                        }
-                                                    </p>
-                                                    <p>
-                                                        {i18n.language === 'en' 
-                                                            ? 'No upfront payment: You will only pay the amount once we have validated all the details of your trip together.' 
-                                                            : 'Sin pagos por adelantado: Solo abonarás el importe una vez hayamos validado juntos todos los detalles de tu viaje.'
-                                                        }
-                                                    </p>
-                                                    <p className="text-primary text-[12px] font-black tracking-wide pt-1">
-                                                        {i18n.language === 'en' ? 'See you in Bali!' : '¡Nos vemos en Bali!'}
-                                                    </p>
+                                                     <div className="space-y-4">
+                                            {/* Last Step Info Box */}
+                                            <div className="rounded-2xl border border-primary/15 overflow-hidden">
+                                                <div className="bg-primary/10 px-4 py-2.5 flex items-center gap-2">
+                                                    <ShieldCheck size={14} className="text-primary flex-shrink-0" />
+                                                    <span className="text-[10px] font-black text-primary uppercase tracking-widest">
+                                                        {i18n.language === 'en' ? 'Last Step — How it works' : 'Último Paso — Cómo funciona'}
+                                                    </span>
+                                                </div>
+                                                <div className="p-4 space-y-3 bg-white dark:bg-white/3">
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="w-5 h-5 rounded-full bg-[#25D366]/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                            <MessageCircle size={11} className="text-[#25D366]" />
+                                                        </div>
+                                                        <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300 leading-relaxed">
+                                                            {i18n.language === 'en'
+                                                                ? 'A WhatsApp chat will open. Send the message and our team will reply to confirm availability.'
+                                                                : 'Se abrirá un chat de WhatsApp. Envía el mensaje y nuestro equipo te responderá para confirmar disponibilidad.'}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                            <ShieldCheck size={11} className="text-primary" />
+                                                        </div>
+                                                        <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300 leading-relaxed">
+                                                            {i18n.language === 'en'
+                                                                ? 'No upfront payment — you only pay once we confirm all the details of your trip together.'
+                                                                : 'Sin pago por adelantado — solo abonas cuando confirmemos juntos todos los detalles de tu viaje.'}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="w-5 h-5 rounded-full bg-amber-400/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                            <Star size={11} className="text-amber-500" />
+                                                        </div>
+                                                        <p className="text-[11px] font-black text-primary leading-relaxed">
+                                                            {i18n.language === 'en' ? 'See you in Bali!' : '¡Nos vemos en Bali!'}
+                                                        </p>
+                                                    </div>
                                                 </div>
                                             </div>
 
