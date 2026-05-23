@@ -391,33 +391,17 @@ export default function ItineraryPage() {
           <div className={`rounded-t-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50' : 'shadow-gray-300/80'}`}>
 
             {/* Header strip */}
-            <div className="bg-primary px-8 pt-8 pb-6 relative overflow-hidden">
+            <div className="bg-primary px-8 py-7 relative overflow-hidden">
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg,white 0,white 1px,transparent 0,transparent 50%)', backgroundSize: '8px 8px' }} />
-              <div className="relative z-10 flex items-start justify-between mb-6">
+              <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <div className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-1">
                     {en ? 'BOOKING CARD' : 'TARJETA DE RESERVA'}
                   </div>
                   <div className="text-white font-black text-2xl tracking-tight uppercase">{booking.client_name}</div>
                 </div>
-                <div className={`px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${status.bg_} ${status.color}`}>
-                  {status.label}
-                </div>
-              </div>
-
-              {/* FROM → TO */}
-              <div className="flex items-center justify-between relative z-10">
-                <div className="text-center">
-                  <div className="text-4xl font-black text-white tracking-tighter">BALI</div>
-                  <div className="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">{en ? 'THE ISLAND' : 'LA ISLA'}</div>
-                </div>
-                <div className="flex-1 flex flex-col items-center px-4 gap-1">
-                  <Plane size={18} className="text-white/70 rotate-90" />
-                  <div className="w-full h-px bg-white/20" />
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-black text-white tracking-tighter">{tourCode}</div>
-                  <div className="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-1">{en ? 'THE ADVENTURE' : 'LA AVENTURA'}</div>
+                <div className="font-mono font-black text-lg sm:text-xl tracking-wider text-white bg-white/10 px-4 py-1.5 rounded-xl backdrop-blur-sm border border-white/10">
+                  CT-{ref}
                 </div>
               </div>
             </div>
@@ -468,23 +452,59 @@ export default function ItineraryPage() {
               <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
             </div>
 
-            {/* Stub */}
-            <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6 rounded-b-[2.5rem] flex items-center justify-between gap-6`}>
-              <div>
-                <div className={`text-[8px] font-black uppercase tracking-[0.3em] mb-2 ${sub}`}>
-                  {en ? 'BOOKING REF' : 'REFERENCIA'}
+            {/* Stub (Expandable status section) */}
+            <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6 rounded-b-[2.5rem] transition-all duration-300`}>
+              <button 
+                onClick={() => setShowStatusDetail(!showStatusDetail)}
+                className="w-full flex items-center justify-between text-left focus:outline-none"
+              >
+                <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
+                  <Activity size={12} className="text-primary animate-pulse" />
+                  {en ? 'BOOKING STATUS' : 'ESTADO DE TU RESERVA'}
                 </div>
-                <div className="font-mono font-black text-xl tracking-widest text-primary">CT-{ref}</div>
-              </div>
-
-              {/* Mini status progress */}
-              <div className="text-right space-y-2">
-                <div className="flex items-center justify-end gap-1.5 mt-2">
-                  {[1,2,3,4,5,6,7].map(s => (
-                    <div key={s} className={`w-1.5 h-1.5 rounded-full transition-all ${status.step >= s ? 'bg-primary' : dark ? 'bg-white/10' : 'bg-gray-200'}`} />
-                  ))}
+                <div className="flex items-center gap-2">
+                  <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${status.bg_} ${status.color}`}>
+                    {status.label}
+                  </span>
+                  <span className={`text-[9px] ${sub} transition-transform duration-300 ${showStatusDetail ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                    ▼
+                  </span>
                 </div>
-              </div>
+              </button>
+              
+              {showStatusDetail && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="mt-6 space-y-6 relative pt-6 border-t border-dashed border-white/5"
+                >
+                  <div className={`absolute top-6 bottom-2 left-[7px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
+                  {[
+                    statusMap.requested, 
+                    statusMap.pending_payment, 
+                    statusMap.payment_received, 
+                    statusMap.reserved, 
+                    statusMap.confirmed,
+                    statusMap.in_progress,
+                    statusMap.completed
+                  ].map((st, i) => {
+                    const isPast = st.step <= currentStep;
+                    const isCurrent = st.step === currentStep;
+                    return (
+                      <div key={i} className="flex gap-6 relative z-10">
+                        <div className={`w-4 h-4 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_15px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
+                          {isPast && !isCurrent && <CheckCircle2 size={8} className="text-white" />}
+                          {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
+                        </div>
+                        <div className="flex-1">
+                          <div className={`text-[10px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
+                          {isCurrent && <div className={`text-[11px] mt-1 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </motion.div>
+              )}
             </div>
           </div>
         </motion.div>
@@ -535,65 +555,6 @@ export default function ItineraryPage() {
           </motion.div>
         )}
 
-        {/* ── STATUS TIMELINE ───────────────────────────── */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          transition={{ delay: 0.1 }}
-          className={`rounded-[2rem] p-8 border ${card} transition-all duration-300`}
-        >
-          <button 
-            onClick={() => setShowStatusDetail(!showStatusDetail)}
-            className="w-full flex items-center justify-between text-left focus:outline-none"
-          >
-            <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
-              <Activity size={12} className="text-primary animate-pulse" />
-              {en ? 'BOOKING STATUS' : 'ESTADO DE TU RESERVA'}
-            </div>
-            <div className="flex items-center gap-2">
-              <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${status.bg_} ${status.color}`}>
-                {status.label}
-              </span>
-              <span className={`text-[9px] ${sub} transition-transform duration-300 ${showStatusDetail ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
-                ▼
-              </span>
-            </div>
-          </button>
-          
-          {showStatusDetail && (
-            <motion.div 
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className="mt-8 space-y-6 relative pt-6 border-t border-dashed border-white/5"
-            >
-              <div className={`absolute top-6 bottom-2 left-[7px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
-              {[
-                statusMap.requested, 
-                statusMap.pending_payment, 
-                statusMap.payment_received, 
-                statusMap.reserved, 
-                statusMap.confirmed,
-                statusMap.in_progress,
-                statusMap.completed
-              ].map((st, i) => {
-                const isPast = st.step <= currentStep;
-                const isCurrent = st.step === currentStep;
-                return (
-                  <div key={i} className="flex gap-6 relative z-10">
-                    <div className={`w-4 h-4 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_15px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
-                      {isPast && !isCurrent && <CheckCircle2 size={8} className="text-white" />}
-                      {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
-                    </div>
-                    <div className="flex-1">
-                      <div className={`text-[10px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
-                      {isCurrent && <div className={`text-[11px] mt-1 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
-                    </div>
-                  </div>
-                )
-              })}
-            </motion.div>
-          )}
-        </motion.div>
 
         {/* ── DETAILED ITINERARY ────────────────────────── */}
         {finalItinerary.length > 0 && (
