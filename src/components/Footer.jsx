@@ -81,7 +81,7 @@ const Footer = () => {
                 <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 text-center md:text-left">
                     <p>© {currentYear} Cantik Tours. {t('footer.rights')}</p>
                     <span className="hidden md:inline-flex px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400">
-                        v{version}
+                        v{version}.0
                     </span>
                 </div>
                 <p className="flex items-center gap-2">
@@ -89,7 +89,7 @@ const Footer = () => {
                 </p>
                 {/* Mobile version indicator at the very bottom */}
                 <span className="md:hidden px-2 py-0.5 rounded-full bg-black/5 dark:bg-white/5 text-[10px] font-black uppercase tracking-widest text-gray-400">
-                    v{version}
+                    v{version}.0
                 </span>
             </div>
         </footer>

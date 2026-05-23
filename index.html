@@ -30,12 +30,12 @@
 <body>
     <div id="root">
         <style>
-            @keyframes pulse-elegant {
-                0%, 100% { opacity: 1; transform: scale(1); }
-                50% { opacity: 0.6; transform: scale(0.98); }
+            @keyframes spin-loader {
+                to { transform: rotate(360deg); }
             }
             .preloader-container {
                 display: flex;
+                flex-direction: column;
                 justify-content: center;
                 align-items: center;
                 height: 100vh;
@@ -45,10 +45,10 @@
             }
             .preloader-logo {
                 font-family: 'Plus Jakarta Sans', sans-serif;
-                animation: pulse-elegant 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
                 display: flex;
                 align-items: center;
                 gap: 8px;
+                margin-bottom: 24px;
             }
             .preloader-cantik {
                 font-size: 28px;
@@ -63,12 +63,21 @@
                 text-transform: uppercase;
                 color: #ffffff;
             }
+            .preloader-spinner {
+                width: 32px;
+                height: 32px;
+                border: 3px solid rgba(255, 255, 255, 0.1);
+                border-top-color: #13c8ec;
+                border-radius: 50%;
+                animation: spin-loader 1s linear infinite;
+            }
         </style>
         <div class="preloader-container">
             <div class="preloader-logo">
                 <span class="preloader-cantik">CANTIK</span>
                 <span class="preloader-tours">Tours</span>
             </div>
+            <div class="preloader-spinner"></div>
         </div>
     </div>
     <script type="module" src="/src/main.jsx"></script>
