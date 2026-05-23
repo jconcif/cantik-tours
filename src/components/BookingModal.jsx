@@ -452,34 +452,15 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             </div>
                                         </div>
                                         
-                                        <div className="space-y-3 pt-1">
-                                            {/* 3 trust chips */}
-                                            <div className="grid grid-cols-3 gap-2">
-                                                <div className="flex flex-col items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
-                                                    <div className="w-7 h-7 rounded-full bg-[#25D366]/15 flex items-center justify-center">
-                                                        <MessageCircle size={13} className="text-[#25D366]" />
-                                                    </div>
-                                                    <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
-                                                        {i18n.language === 'en' ? 'Support via WhatsApp' : 'Soporte vía WhatsApp'}
-                                                    </span>
-                                                </div>
-                                                <div className="flex flex-col items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
-                                                    <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-                                                        <ShieldCheck size={13} className="text-primary" />
-                                                    </div>
-                                                    <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
-                                                        {i18n.language === 'en' ? 'No upfront payment' : 'Sin pago previo'}
-                                                    </span>
-                                                </div>
-                                                <div className="flex flex-col items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
-                                                    <div className="w-7 h-7 rounded-full bg-amber-400/15 flex items-center justify-center">
-                                                        <Star size={13} className="text-amber-500" />
-                                                    </div>
-                                                    <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
-                                                        {i18n.language === 'en' ? 'We confirm availability' : 'Confirmamos disponibilidad'}
-                                                    </span>
-                                                </div>
-                                            </div>
+                                        <div className="space-y-4 pt-1">
+
+                                            {/* Texto explicativo */}
+                                            <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed text-center">
+                                                {i18n.language === 'en'
+                                                    ? <>Tap the button to open WhatsApp with your request. Our team will confirm availability and send you payment details. <span className="text-primary font-black">No upfront charges.</span></>
+                                                    : <>Al pulsar el botón se abrirá WhatsApp con tu solicitud. Nuestro equipo confirmará disponibilidad y te enviará los detalles del pago. <span className="text-primary font-black">Sin cobros por adelantado.</span></>
+                                                }
+                                            </p>
 
                                             {/* CTA WhatsApp */}
                                             <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-5 rounded-[2rem] bg-[#25D366] text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355] relative overflow-hidden group">
