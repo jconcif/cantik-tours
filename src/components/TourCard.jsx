@@ -38,7 +38,7 @@ const TourCard = ({ tour, index }) => {
 
                 <div className="absolute top-4 right-4 bg-white/90 dark:bg-black/80 backdrop-blur-md px-3 py-1.5 rounded-full text-xs font-black flex items-center gap-1 shadow-lg pointer-events-none">
                     <Star size={12} className="text-accent fill-accent" />
-                    <span>4.9</span>
+                    <span>{(tour.rating || 4.9).toFixed(1).replace('.', i18n.language.startsWith('es') ? ',' : '.')}</span>
                 </div>
                 <div className="absolute bottom-4 left-4">
                     <span className="bg-primary/90 backdrop-blur-md text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg uppercase tracking-wider">

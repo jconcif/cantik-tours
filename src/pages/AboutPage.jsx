@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Award, ArrowRight, Star, HeartHandshake } from 'lucide-react';
 import SEO from '../components/SEO';
+import FinalCTA from '../components/FinalCTA';
 
 const AboutPage = () => {
     const { t } = useTranslation();
@@ -186,52 +187,8 @@ const AboutPage = () => {
                 </motion.div>
             </section>
 
-            {/* 5. Final Conversion CTA - High Impact */}
-            <section className="relative py-24 px-6 overflow-hidden">
-                <div className="max-w-5xl mx-auto">
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="relative bg-bg-dark text-white rounded-[3.5rem] p-12 md:p-24 text-center overflow-hidden border border-white/5"
-                    >
-                        {/* Interactive Background Glows */}
-                        <div className="absolute top-0 left-0 w-96 h-96 bg-primary/20 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2" />
-                        <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/10 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2" />
-
-                        <div className="relative z-10">
-                            <h2 className="text-3xl md:text-6xl font-black mb-8 leading-[0.95] tracking-tighter">
-                                {t('about.cta_emotional_title')}
-                            </h2>
-
-                            <p className="text-lg md:text-2xl text-white/60 font-medium mb-12 max-w-2xl mx-auto leading-relaxed">
-                                {t('about.cta_emotional_text')}
-                            </p>
-
-                            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                                <LocalLink
-                                    to="/tours"
-                                    className="group relative w-full sm:w-auto px-12 py-6 rounded-2xl bg-primary text-white font-black uppercase tracking-widest text-xs hover:scale-105 transition-all shadow-2xl shadow-primary/40 flex items-center justify-center gap-3"
-                                >
-                                    {t('hero.btn_tours')}
-                                    <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-                                </LocalLink>
-
-                                <LocalLink
-                                    to="/guia-bali"
-                                    className="w-full sm:w-auto px-12 py-6 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 font-black uppercase tracking-widest text-xs transition-all text-white flex items-center justify-center gap-3"
-                                >
-                                    {t('nav.view_guide')}
-                                </LocalLink>
-                            </div>
-
-                            <p className="mt-10 text-[10px] font-black text-primary uppercase tracking-[0.4em]">
-                                Reservas 2026 Abiertas
-                            </p>
-                        </div>
-                    </motion.div>
-                </div>
-            </section>
+            {/* 5. Final Conversion CTA - Unified Component */}
+            <FinalCTA />
         </div>
     );
 };
