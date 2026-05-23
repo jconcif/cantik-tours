@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 const CurrencyContext = createContext();
 
 // Fixed rate — update manually each quarter
-const EUR_TO_USD = 1.08;
+const EUR_TO_USD = 1.18;
 
 export const CurrencyProvider = ({ children }) => {
     const [currency, setCurrency] = useState(() => {
