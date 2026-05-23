@@ -457,8 +457,8 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             {/* Texto explicativo */}
                                             <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed text-center">
                                                 {i18n.language === 'en'
-                                                    ? <>Tap <span className="text-gray-800 dark:text-white font-black">Request Booking</span> to send your request via WhatsApp. We'll confirm availability and share payment details — your booking is only set once everything is confirmed.</>
-                                                    : <>Pulsa <span className="text-gray-800 dark:text-white font-black">Solicitar Reserva</span> para enviar tu solicitud por WhatsApp. Confirmaremos disponibilidad y te enviamos los detalles del pago — solo entonces queda agendada tu reserva.</>
+                                                    ? <>Tap <span className="text-gray-800 dark:text-white font-black">Request Booking</span> to send your request via WhatsApp. We'll confirm availability and send you payment details. Only then your booking is set.</>
+                                                    : <>Pulsa <span className="text-gray-800 dark:text-white font-black">Solicitar Reserva</span> para enviar tu solicitud por WhatsApp. Te confirmaremos la disponibilidad y te enviamos los detalles del pago. Solo entonces tu reserva queda agendada.</>
                                                 }
                                             </p>
 
