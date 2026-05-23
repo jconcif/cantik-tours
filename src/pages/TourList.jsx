@@ -106,12 +106,12 @@ const TourList = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.3 }}
-                    className="relative overflow-hidden rounded-[2.5rem] border-2 border-dashed border-primary/20 dark:border-white/10 bg-primary/5 dark:bg-white/5 p-8 md:p-12 flex flex-col items-center text-center justify-between group hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-500 shadow-xl shadow-black/5 min-h-[350px]"
+                    className="relative overflow-hidden rounded-[2.5rem] border-2 border-dashed border-primary/20 dark:border-white/10 bg-primary/5 dark:bg-white/5 p-8 md:p-12 flex flex-col items-center text-center justify-center group hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-500 shadow-xl shadow-black/5 min-h-[350px]"
                 >
                     {/* Decorative element */}
                     <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl -z-10" />
 
-                    <div className="flex flex-col items-center flex-1 justify-center py-6">
+                    <div className="flex flex-col items-center justify-center py-6">
                         <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg">
                             <Compass size={32} />
                         </div>
@@ -121,24 +121,10 @@ const TourList = () => {
                         <h3 className="text-2xl md:text-3xl font-black mb-4 tracking-tight text-gray-900 dark:text-white">
                             {t('tours.coming_soon.title')}
                         </h3>
-                        <p className="text-gray-600 dark:text-gray-400 text-sm font-medium leading-relaxed max-w-xs">
+                        <p className="text-gray-650 dark:text-gray-400 text-sm font-medium leading-relaxed max-w-xs">
                             {t('tours.coming_soon.description')}
                         </p>
                     </div>
-                    
-                    <a
-                        href={`https://wa.me/34642517787?text=${encodeURIComponent(
-                            i18n.language.startsWith('es')
-                                ? '¡Hola Cantik Tours! He visto que próximamente tendréis tours en Nusa Penida y Lombok, y me gustaría recibir información al respecto.'
-                                : 'Hello Cantik Tours! I saw that you will soon offer tours in Nusa Penida and Lombok, and I would like to receive details about them.'
-                        )}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-primary w-full flex items-center justify-center gap-2 py-3.5 shadow-md shadow-primary/20"
-                    >
-                        {t('tours.coming_soon.btn')}
-                        <ArrowRight size={16} />
-                    </a>
                 </motion.div>
             </div>
 
@@ -150,10 +136,6 @@ const TourList = () => {
                 transition={{ duration: 0.8, delay: 0.2 }}
                 className="mt-32 relative group"
             >
-                {/* Decorative glows */}
-                <div className="absolute -top-24 -left-24 w-72 h-72 bg-primary/20 rounded-full blur-[100px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-secondary/20 rounded-full blur-[100px] -z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-
                 <div className="bg-white dark:bg-surface-dark rounded-[3rem] overflow-hidden flex flex-col md:flex-row items-center border border-black/5 dark:border-white/5 shadow-2xl transition-all duration-500 hover:shadow-primary/10">
                     <div className="flex-1 p-10 md:p-16 text-center md:text-left">
                         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary font-black text-[10px] uppercase tracking-widest mb-6 border border-primary/20">
