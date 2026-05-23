@@ -28,7 +28,18 @@
 
 <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+    <!-- CAZADOR DE ERRORES MÓVIL -->
+  <script>
+    window.onerror = function(msg, url, line, col, error) {
+      alert("⚠️ Error detectado:\n" + msg + "\nLínea: " + line);
+      return false;
+    };
+    window.addEventListener("unhandledrejection", function(e) {
+      alert("⚠️ Promesa fallida:\n" + (e.reason ? e.reason.message || e.reason : 'Unknown error'));
+    });
+  </script>
+
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 
 </html>
