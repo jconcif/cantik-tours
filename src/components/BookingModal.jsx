@@ -156,17 +156,17 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     let expSub = '';
     switch (formData.experience) {
         case 'economy':
-            expName = 'S - CONDUCTOR LOCAL (INGLES)';
+            expName = i18n.language === 'en' ? 'S - LOCAL DRIVER (ENGLISH)' : 'S - CONDUCTOR LOCAL (INGLÉS)';
             expSub = t('detail.exp_economy_sub');
             extraPrice = 0;
             break;
         case 'comfort':
-            expName = 'M - GUIA PROFESIONAL (INGLÉS)';
+            expName = i18n.language === 'en' ? 'M - PROFESSIONAL GUIDE (ENGLISH)' : 'M - GUÍA PROFESIONAL (INGLÉS)';
             expSub = t('detail.exp_comfort_sub');
             extraPrice = 10;
             break;
         case 'elite':
-            expName = 'L - GUIA PROFESIONAL (ESPAÑOL)';
+            expName = i18n.language === 'en' ? 'L - PROFESSIONAL GUIDE (SPANISH)' : 'L - GUÍA PROFESIONAL (ESPAÑOL)';
             expSub = t('detail.exp_elite_sub');
             extraPrice = 25;
             break;
@@ -317,7 +317,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             })}
                                         </div>
                                         <div className="flex gap-3">
-                                            <button type="submit" disabled={formData.selectedStops.length === 0} className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all ${formData.selectedStops.length > 0 ? 'bg-secondary text-white shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>SIGUIENTE <ArrowRight size={20} className="inline ml-2" /></button>
+                                            <button type="submit" disabled={formData.selectedStops.length === 0} className={`flex-1 py-4 rounded-2xl font-black text-sm transition-all ${formData.selectedStops.length > 0 ? 'bg-secondary text-white shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}`}>{i18n.language === 'en' ? 'NEXT' : 'SIGUIENTE'} <ArrowRight size={20} className="inline ml-2" /></button>
                                         </div>
                                     </motion.div>
                                 )}
@@ -370,7 +370,11 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                                 <div className="flex items-center justify-between mb-1">
                                                                     <div className="flex flex-col">
                                                                         <span className={`text-xs font-black uppercase tracking-wider ${titleStyles}`}>
-                                                                            {tier === 'economy' ? 'S - CONDUCTOR LOCAL (INGLES)' : tier === 'comfort' ? 'M - GUIA PROFESIONAL (INGLÉS)' : 'L - GUIA PROFESIONAL (ESPAÑOL)'}
+                                                                            {tier === 'economy'
+                                                                                ? (i18n.language === 'en' ? 'S - LOCAL DRIVER (ENGLISH)' : 'S - CONDUCTOR LOCAL (INGLÉS)')
+                                                                                : tier === 'comfort'
+                                                                                    ? (i18n.language === 'en' ? 'M - PROFESSIONAL GUIDE (ENGLISH)' : 'M - GUÍA PROFESIONAL (INGLÉS)')
+                                                                                    : (i18n.language === 'en' ? 'L - PROFESSIONAL GUIDE (SPANISH)' : 'L - GUÍA PROFESIONAL (ESPAÑOL)')}
                                                                         </span>
                                                                     </div>
                                                                     <span className={`text-xl font-black ${priceStyles}`}>{formatPrice(price).symbol}{formatPrice(price).amount}</span>
@@ -385,7 +389,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                         </div>
                                         <div className="flex gap-3">
                                             {isUbudStops && <button type="button" onClick={() => setStep(1)} className="w-16 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center transition-colors"><ArrowLeft size={20} /></button>}
-                                            <button type="submit" className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl">Siguiente <ArrowRight size={20} className="inline ml-2" /></button>
+                                            <button type="submit" className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl">{i18n.language === 'en' ? 'Next' : 'Siguiente'} <ArrowRight size={20} className="inline ml-2" /></button>
                                         </div>
                                     </motion.div>
                                 )}
@@ -419,7 +423,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                         </div>
                                         <div className="flex gap-3">
                                             <button type="button" onClick={() => setStep(isUbudStops ? 2 : 1)} className="w-16 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center transition-colors"><ArrowLeft size={20} /></button>
-                                            <button type="submit" className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl">Siguiente <ArrowRight size={20} className="inline ml-2" /></button>
+                                            <button type="submit" className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl">{i18n.language === 'en' ? 'Next' : 'Siguiente'} <ArrowRight size={20} className="inline ml-2" /></button>
                                         </div>
                                     </motion.div>
                                 )}
@@ -449,11 +453,6 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                         </div>
 
                                         <div className="space-y-4">
-                                            <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-5 rounded-[2rem] bg-[#25D366] text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355] relative overflow-hidden group">
-                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
-                                                <MessageCircle size={24} /> 
-                                                <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
-                                            </button>
                                             <div className="text-center w-full">
                                                 <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed bg-primary/5 rounded-2xl p-4 border border-primary/10 space-y-2">
                                                     <p className="text-gray-700 dark:text-gray-200 text-[11px] font-black leading-normal">
@@ -472,7 +471,16 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                         {i18n.language === 'en' ? 'See you in Bali!' : '¡Nos vemos en Bali!'}
                                                     </p>
                                                 </div>
-                                                <p className="text-[9px] font-bold text-gray-400 dark:text-gray-500 leading-relaxed uppercase tracking-widest mt-4">
+                                            </div>
+
+                                            <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-5 rounded-[2rem] bg-[#25D366] text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355] relative overflow-hidden group">
+                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
+                                                <MessageCircle size={24} /> 
+                                                <span className="text-[16px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
+                                            </button>
+
+                                            <div className="text-center w-full">
+                                                <p className="text-[9px] font-bold text-gray-400 dark:text-gray-500 leading-relaxed uppercase tracking-widest mt-2">
                                                     {i18n.language === 'en' 
                                                         ? <>By requesting the booking I accept the <a href="/politicas" target="_blank" className="text-primary underline">Terms of Service</a>.</> 
                                                         : <>Al solicitar la reserva Acepto los <a href="/politicas" target="_blank" className="text-primary underline">Términos de Servicio</a>.</>
