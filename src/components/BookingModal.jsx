@@ -460,7 +460,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                         <MessageCircle size={13} className="text-[#25D366]" />
                                                     </div>
                                                     <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
-                                                        {i18n.language === 'en' ? 'Via\nWhatsApp' : 'Por\nWhatsApp'}
+                                                        {i18n.language === 'en' ? 'Support via WhatsApp' : 'Soporte vía WhatsApp'}
                                                     </span>
                                                 </div>
                                                 <div className="flex flex-col items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
@@ -468,7 +468,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                         <ShieldCheck size={13} className="text-primary" />
                                                     </div>
                                                     <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
-                                                        {i18n.language === 'en' ? 'No upfront\npayment' : 'Sin pago\nadelantado'}
+                                                        {i18n.language === 'en' ? 'No upfront payment' : 'Sin pago previo'}
                                                     </span>
                                                 </div>
                                                 <div className="flex flex-col items-center gap-1.5 bg-gray-50 dark:bg-white/5 rounded-2xl p-3 text-center">
@@ -476,7 +476,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                         <Star size={13} className="text-amber-500" />
                                                     </div>
                                                     <span className="text-[9px] font-black text-gray-500 dark:text-gray-400 leading-tight uppercase tracking-wide">
-                                                        {i18n.language === 'en' ? 'We confirm\navailability' : 'Confirmamos\ndisponibilidad'}
+                                                        {i18n.language === 'en' ? 'We confirm availability' : 'Confirmamos disponibilidad'}
                                                     </span>
                                                 </div>
                                             </div>
