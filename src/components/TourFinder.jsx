@@ -227,13 +227,13 @@ const TourFinder = ({ isOpen, onClose }) => {
                                 <div className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary/10 text-primary font-black text-[10px] uppercase tracking-widest mb-3 border border-primary/20">
                                     <Sparkles size={10} /> {isEs ? 'Ruta Recomendada' : 'Recommended Route'}
                                 </div>
-                                <h3 className="text-3xl font-black tracking-tight text-gray-900 dark:text-white">
+                                <h3 className="text-3xl font-black tracking-tight text-primary">
                                     {isEs ? '¡Hemos encontrado tu tour ideal!' : 'We found your ideal tour!'}
                                 </h3>
                             </div>
 
                             {/* Tour suggestion card */}
-                            <div className="bg-white dark:bg-gray-850 rounded-3xl border border-black/5 dark:border-white/5 shadow-xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center mb-8">
+                            <div className="bg-white dark:bg-white/5 rounded-3xl border border-black/5 dark:border-white/5 shadow-xl p-6 md:p-8 flex flex-col md:flex-row gap-8 items-center mb-8">
                                 <div className="w-full md:w-2/5 aspect-[4/3] rounded-2xl overflow-hidden shadow-lg relative group shrink-0">
                                     <img 
                                         src={matchedTour.image} 
