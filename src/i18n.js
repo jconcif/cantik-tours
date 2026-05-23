@@ -54,6 +54,12 @@ i18n
                             description: "¿No sabes qué elegir? Cuéntanos qué te gusta y diseñaremos un itinerario 100% exclusivo para ti.",
                             btn: "Crear mi itinerario"
                         },
+                        coming_soon: {
+                            badge: "Nuevos Destinos",
+                            title: "Próximamente...",
+                            description: "Los tours que ves aquí son solo el comienzo. Pronto añadiremos nuevas aventuras como Nusa Penida, Lombok y otros destinos mágicos en Indonesia.",
+                            btn: "Preguntar por WhatsApp"
+                        },
                         badge_popular: "Más Popular",
                         badge_recommended: "Recomendado",
                         badge_must: "Imprescindible",
@@ -735,6 +741,12 @@ i18n
                             title: "Design Your Own Adventure",
                             description: "Don't know what to choose? Tell us what you like and we'll design a 100% exclusive itinerary for you.",
                             btn: "Create my itinerary"
+                        },
+                        coming_soon: {
+                            badge: "New Destinations",
+                            title: "Coming Soon...",
+                            description: "The tours you see here are just the beginning. We will soon add new adventures like Nusa Penida, Lombok, and other magical destinations in Indonesia.",
+                            btn: "Inquire on WhatsApp"
                         },
                         badge_popular: "Most Popular",
                         badge_recommended: "Recommended",

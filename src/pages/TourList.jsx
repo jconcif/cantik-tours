@@ -2,12 +2,13 @@ import LocalLink from '../components/LocalLink';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import TourCard from '../components/TourCard';
-import { Search, Sparkles, Map, ArrowRight, BookOpen } from 'lucide-react';
+import { Search, Sparkles, Map, ArrowRight, BookOpen, Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tours as allTours } from '../data/tours';
 import CategoryChips from '../components/CategoryChips';
 import { useTranslation } from 'react-i18next';
 import BookingModal from '../components/BookingModal';
+import TourFinder from '../components/TourFinder';
 
 const TourList = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -61,6 +62,9 @@ const TourList = () => {
                 </motion.p>
             </div>
 
+            {/* Tour Finder Recommendation Quiz */}
+            <TourFinder />
+
             {/* Search & Filters */}
             <div className="space-y-10 mb-20">
                 {/* Search Bar */}
@@ -94,30 +98,46 @@ const TourList = () => {
                             <TourCard key={tour.id} tour={tour} index={index} />
                         ))}
 
-                        {/* Custom Itinerary Card
+                        {/* Coming Soon Card */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 0.3 }}
-                            className="relative overflow-hidden rounded-3xl border-2 border-dashed border-primary/30 bg-primary/5 p-8 flex flex-col items-center text-center justify-center group hover:bg-primary/10 transition-all duration-500"
+                            className="relative overflow-hidden rounded-[2rem] border-2 border-dashed border-primary/20 dark:border-white/10 bg-primary/5 dark:bg-white/5 p-8 flex flex-col items-center text-center justify-between group hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-500 shadow-xl shadow-black/5"
                         >
-                            <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500 shadow-xl">
-                                <Map size={40} />
+                            {/* Decorative element */}
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/10 rounded-full blur-2xl -z-10" />
+
+                            <div className="flex flex-col items-center flex-1 justify-center py-6">
+                                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg">
+                                    <Compass size={32} />
+                                </div>
+                                <span className="text-[10px] bg-primary/10 text-primary px-3 py-1 rounded-full font-black tracking-widest uppercase mb-4 border border-primary/20">
+                                    {t('tours.coming_soon.badge')}
+                                </span>
+                                <h3 className="text-2xl font-black mb-4 tracking-tight text-gray-900 dark:text-white">
+                                    {t('tours.coming_soon.title')}
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm font-medium leading-relaxed max-w-xs">
+                                    {t('tours.coming_soon.description')}
+                                </p>
                             </div>
-                            <h3 className="text-2xl font-black mb-4 tracking-tight">{t('tours.custom.title')}</h3>
-                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">
-                                {t('tours.custom.description')}
-                            </p>
-                            <button
-                                onClick={() => setIsBookingModalOpen(true)}
-                                className="btn-primary w-full flex items-center justify-center gap-2"
+                            
+                            <a
+                                href={`https://wa.me/34642517787?text=${encodeURIComponent(
+                                    i18n.language.startsWith('es')
+                                        ? '¡Hola Cantik Tours! He visto que próximamente tendréis tours en Nusa Penida y Lombok, y me gustaría recibir información al respecto.'
+                                        : 'Hello Cantik Tours! I saw that you will soon offer tours in Nusa Penida and Lombok, and I would like to receive details about them.'
+                                )}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="btn-primary w-full flex items-center justify-center gap-2 py-3.5 shadow-md shadow-primary/20"
                             >
-                                {t('tours.custom.btn')}
-                                <ArrowRight size={20} />
-                            </button>
+                                {t('tours.coming_soon.btn')}
+                                <ArrowRight size={16} />
+                            </a>
                         </motion.div>
-                        */}
                     </motion.div>
                 ) : (
                     <motion.div

@@ -59,19 +59,6 @@ const Navbar = () => {
 
     const positionClass = 'fixed top-0 left-0 right-0 z-50 transition-all duration-300';
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isGlobeOpen, setIsGlobeOpen] = useState(false);
-    const globeRef = useRef(null);
-
-    // Close dropdown when clicking outside
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (globeRef.current && !globeRef.current.contains(e.target)) {
-                setIsGlobeOpen(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, []);
 
     return (
         <>
@@ -137,80 +124,23 @@ const Navbar = () => {
                     {/* Desktop Toggles */}
                     <div className="hidden md:flex items-center gap-3">
 
-                        {/* Globe Dropdown */}
-                        <div className="relative" ref={globeRef}>
-                            <button
-                                onClick={() => setIsGlobeOpen(!isGlobeOpen)}
-                                className={`p-2 rounded-full transition-all ${textColorClass} hover:bg-black/5 dark:hover:bg-white/5 ${isGlobeOpen ? 'bg-black/5 dark:bg-white/10' : ''}`}
-                                aria-label="Preferencias de idioma y moneda"
-                                aria-expanded={isGlobeOpen}
-                            >
-                                <Globe size={20} />
-                            </button>
+                        {/* Language Selector Button */}
+                        <button
+                            onClick={toggleLanguage}
+                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1 ${textColorClass} active:scale-95`}
+                            aria-label="Cambiar idioma"
+                        >
+                            {i18n.language.startsWith('es') ? '🇪🇸 ES' : '🇬🇧 EN'}
+                        </button>
 
-                            <AnimatePresence>
-                                {isGlobeOpen && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: -8, scale: 0.95 }}
-                                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                                        exit={{ opacity: 0, y: -8, scale: 0.95 }}
-                                        transition={{ duration: 0.15 }}
-                                        className="absolute right-0 top-full mt-2 w-52 bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-black/5 dark:border-white/10 overflow-hidden z-50"
-                                    >
-                                        {/* Language */}
-                                        <div className="px-4 pt-4 pb-2">
-                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">
-                                                {i18n.language.startsWith('es') ? 'Idioma' : 'Language'}
-                                            </p>
-                                            <div className="flex gap-2">
-                                                {['es', 'en'].map((lang) => (
-                                                    <button
-                                                        key={lang}
-                                                        onClick={() => { 
-                                                            i18n.changeLanguage(lang);
-                                                            let newPath = location.pathname;
-                                                            if (newPath.startsWith('/es/') || newPath === '/es') newPath = newPath.replace(/^\/es/, `/${lang}`);
-                                                            else if (newPath.startsWith('/en/') || newPath === '/en') newPath = newPath.replace(/^\/en/, `/${lang}`);
-                                                            else newPath = `/${lang}${newPath.startsWith('/') ? newPath : `/${newPath}`}`;
-                                                            navigate(newPath + location.search);
-                                                        }}
-                                                        className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${i18n.language.startsWith(lang)
-                                                            ? 'bg-primary text-white shadow-md shadow-primary/30'
-                                                            : 'bg-gray-100 dark:bg-white/5 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10'
-                                                            }`}
-                                                    >
-                                                        {lang === 'es' ? '🇪🇸 ES' : '🇬🇧 EN'}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <div className="h-px bg-black/5 dark:bg-white/5 mx-4" />
-
-                                        {/* Currency */}
-                                        <div className="px-4 pt-2 pb-4">
-                                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2">
-                                                {i18n.language.startsWith('es') ? 'Moneda' : 'Currency'}
-                                            </p>
-                                            <div className="flex gap-2">
-                                                {['EUR', 'USD'].map((cur) => (
-                                                    <button
-                                                        key={cur}
-                                                        onClick={() => { if (currency !== cur) toggleCurrency(); }}
-                                                        className={`flex-1 py-2 rounded-xl text-xs font-black tracking-wider transition-all ${currency === cur
-                                                            ? 'bg-primary text-white shadow-md shadow-primary/30'
-                                                            : 'bg-gray-100 dark:bg-white/5 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10'
-                                                            }`}
-                                                    >
-                                                        {cur === 'EUR' ? '€ EUR' : '$ USD'}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                        </div>
+                        {/* Currency Selector Button */}
+                        <button
+                            onClick={toggleCurrency}
+                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1 ${textColorClass} active:scale-95`}
+                            aria-label="Cambiar moneda"
+                        >
+                            {currency === 'EUR' ? '€ EUR' : '$ USD'}
+                        </button>
 
                         {/* Dark mode */}
                         <button
