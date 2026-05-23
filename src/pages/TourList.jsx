@@ -14,6 +14,7 @@ const TourList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeCategory, setActiveCategory] = useState('todos');
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [isTourFinderOpen, setIsTourFinderOpen] = useState(false);
     const { t, i18n } = useTranslation();
 
     useEffect(() => {
@@ -98,14 +99,12 @@ const TourList = () => {
 
             {/* Tour Finder & Coming Soon (Side-by-side on desktop) */}
             <div className="grid md:grid-cols-2 gap-10 mt-32 items-stretch">
-                <TourFinder />
-
-                {/* Coming Soon Card */}
+                {/* Coming Soon Card (First) */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.3 }}
+                    transition={{ delay: 0.2 }}
                     className="relative overflow-hidden rounded-[2.5rem] border-2 border-dashed border-primary/20 dark:border-white/10 bg-primary/5 dark:bg-white/5 p-8 md:p-12 flex flex-col items-center text-center justify-center group hover:border-primary/50 dark:hover:border-primary/30 transition-all duration-500 shadow-xl shadow-black/5 min-h-[350px]"
                 >
                     {/* Decorative element */}
@@ -126,7 +125,49 @@ const TourList = () => {
                         </p>
                     </div>
                 </motion.div>
+
+                {/* Tour Finder Card (Second - Trigger for the modal) */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.3 }}
+                    className="relative overflow-hidden rounded-[2.5rem] border border-black/5 dark:border-white/5 bg-white dark:bg-surface-dark p-8 md:p-12 flex flex-col items-center text-center justify-center group hover:border-primary/30 transition-all duration-500 shadow-xl shadow-black/5 min-h-[350px]"
+                >
+                    {/* Decorative element */}
+                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-secondary/5 rounded-full blur-2xl -z-10" />
+
+                    <div className="flex flex-col items-center justify-center py-6">
+                        <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center text-secondary mb-6 group-hover:scale-110 transition-transform duration-500 shadow-lg">
+                            <Compass size={32} className="text-secondary" />
+                        </div>
+                        <span className="text-[10px] bg-secondary/10 text-secondary px-3 py-1 rounded-full font-black tracking-widest uppercase mb-4 border border-secondary/20">
+                            {i18n.language.startsWith('es') ? 'Recomendador' : 'Finder'}
+                        </span>
+                        <h3 className="text-2xl md:text-3xl font-black mb-4 tracking-tight text-gray-900 dark:text-white">
+                            {i18n.language.startsWith('es') ? '¿No sabes por dónde empezar?' : 'Don\'t know where to start?'}
+                        </h3>
+                        <p className="text-gray-650 dark:text-gray-400 text-sm font-medium leading-relaxed max-w-xs mb-6">
+                            {i18n.language.startsWith('es')
+                                ? 'Encuentra la ruta perfecta para ti respondiendo unas preguntas rápidas.'
+                                : 'Find the perfect route for you by answering a few quick questions.'}
+                        </p>
+                        <button
+                            onClick={() => setIsTourFinderOpen(true)}
+                            className="btn-primary flex items-center gap-2 px-8 py-3.5 shadow-lg text-sm group/btn active:scale-95"
+                        >
+                            {i18n.language.startsWith('es') ? 'Encontrar mi ruta ideal' : 'Find my ideal route'}
+                            <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                        </button>
+                    </div>
+                </motion.div>
             </div>
+
+            {/* Tour Finder Modal */}
+            <TourFinder
+                isOpen={isTourFinderOpen}
+                onClose={() => setIsTourFinderOpen(false)}
+            />
 
             {/* Guide 2026 CTA Section */}
             <motion.div

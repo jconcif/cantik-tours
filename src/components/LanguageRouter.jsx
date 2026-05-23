@@ -7,14 +7,14 @@ import Home from '../pages/Home';
 import TourList from '../pages/TourList';
 import TourDetail from '../pages/TourDetail';
 
-// Secondary pages (lazy loaded)
-const BaliGuide = React.lazy(() => import('../pages/BaliGuide'));
-const AboutPage = React.lazy(() => import('../pages/AboutPage'));
-const ReviewsPage = React.lazy(() => import('../pages/ReviewsPage'));
-const Policies = React.lazy(() => import('../pages/Policies'));
-const VisaPage = React.lazy(() => import('../pages/VisaPage'));
-const ItineraryPage = React.lazy(() => import('../pages/ItineraryPage'));
-const NotFound = React.lazy(() => import('../pages/NotFound'));
+// Secondary pages (loaded directly to eliminate chunk loading delay)
+import BaliGuide from '../pages/BaliGuide';
+import AboutPage from '../pages/AboutPage';
+import ReviewsPage from '../pages/ReviewsPage';
+import Policies from '../pages/Policies';
+import VisaPage from '../pages/VisaPage';
+import ItineraryPage from '../pages/ItineraryPage';
+import NotFound from '../pages/NotFound';
 
 // Admin (Direct import for reliability)
 import AdminReviews from '../pages/AdminReviews';

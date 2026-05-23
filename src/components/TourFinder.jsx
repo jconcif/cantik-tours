@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, ArrowRight, RotateCcw, Compass } from 'lucide-react';
+import { Sparkles, ArrowRight, RotateCcw, Compass, X } from 'lucide-react';
 import LocalLink from './LocalLink';
 import { tours } from '../data/tours';
 
@@ -37,12 +37,20 @@ const questions = [
     }
 ];
 
-const TourFinder = () => {
+const TourFinder = ({ isOpen, onClose }) => {
     const { i18n } = useTranslation();
     const isEs = i18n.language.startsWith('es');
     
     const [step, setStep] = useState(null); // null = welcome, 0-2 = questions, 3 = result
     const [answers, setAnswers] = useState({});
+
+    // Reset state on modal open/close
+    useEffect(() => {
+        if (!isOpen) {
+            setStep(null);
+            setAnswers({});
+        }
+    }, [isOpen]);
 
     const handleStart = () => {
         setAnswers({});
@@ -84,13 +92,47 @@ const TourFinder = () => {
     const whatsappLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
     return (
-        <div className="relative w-full h-full flex flex-col">
-            {/* Background elements */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-secondary/5 to-transparent rounded-[2.5rem] -z-10" />
-            <div className="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl -z-10" />
-            
-            <div className="glass dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden flex-grow flex flex-col justify-center">
-                <AnimatePresence mode="wait">
+        <AnimatePresence>
+            {isOpen && (
+                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+                    {/* Backdrop */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                    />
+
+                    {/* Modal Container */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }}
+                        className="relative w-full max-w-4xl bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh]"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Header */}
+                        <div className="bg-primary/10 p-6 flex justify-between items-center border-b border-primary/5 shrink-0">
+                            <div className="flex items-center gap-2">
+                                <Compass size={20} className="text-primary" />
+                                <h3 className="text-lg font-black text-primary uppercase tracking-tight">
+                                    {isEs ? 'Encuentra tu Ruta Ideal' : 'Find your Ideal Route'}
+                                </h3>
+                            </div>
+                            <button
+                                onClick={onClose}
+                                className="w-8 h-8 rounded-full bg-white/50 dark:bg-white/10 hover:bg-white flex items-center justify-center transition-colors"
+                                aria-label="Cerrar modal"
+                            >
+                                <X size={20} className="text-gray-655 dark:text-gray-400" />
+                            </button>
+                        </div>
+
+                        {/* Modal Body */}
+                        <div className="p-8 md:p-12 overflow-y-auto custom-scrollbar flex-grow flex flex-col justify-center min-h-[350px]">
+                            <AnimatePresence mode="wait">
                     {step === null && (
                         <motion.div
                             key="welcome"
@@ -247,8 +289,11 @@ const TourFinder = () => {
                         </motion.div>
                     )}
                 </AnimatePresence>
-            </div>
-        </div>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
+        </AnimatePresence>
     );
 };
  

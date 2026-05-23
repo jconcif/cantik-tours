@@ -52,10 +52,10 @@ const Navbar = () => {
     const useDarkText = scrolled || !isHome;
     const textColorClass = useDarkText ? 'text-gray-900 dark:text-white' : 'text-white drop-shadow-md';
 
-    // Dynamic border class for selector buttons
-    const buttonBorderClass = useDarkText
-        ? 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
-        : 'border-white/25 hover:bg-white/10 hover:border-white/50';
+    // Dynamic styles for selector buttons (matching the clean rectangular-rounded style of the admin panel)
+    const buttonClass = useDarkText
+        ? 'bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 text-gray-900 dark:text-white rounded-xl'
+        : 'bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 hover:border-white/40 text-white rounded-xl';
 
     // Background logic
     const navBackgroundClass = scrolled
@@ -132,28 +132,28 @@ const Navbar = () => {
                         {/* Language Selector Button */}
                         <button
                             onClick={toggleLanguage}
-                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${buttonBorderClass} flex items-center gap-1 ${textColorClass} active:scale-95`}
+                            className={`h-9 px-3 text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 active:scale-95 ${buttonClass}`}
                             aria-label="Cambiar idioma"
                         >
-                            {i18n.language.startsWith('es') ? '🇪🇸 ES' : '🇬🇧 EN'}
+                            {i18n.language.startsWith('es') ? 'ES' : 'EN'}
                         </button>
 
                         {/* Currency Selector Button */}
                         <button
                             onClick={toggleCurrency}
-                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${buttonBorderClass} flex items-center gap-1 ${textColorClass} active:scale-95`}
+                            className={`h-9 px-3 text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 active:scale-95 ${buttonClass}`}
                             aria-label="Cambiar moneda"
                         >
-                            {currency === 'EUR' ? '€ EUR' : '$ USD'}
+                            {currency === 'EUR' ? 'EUR' : 'USD'}
                         </button>
 
                         {/* Dark mode */}
                         <button
                             onClick={toggleDarkMode}
-                            className={`p-2 rounded-full transition-colors ${textColorClass} hover:bg-black/5 dark:hover:bg-white/5`}
+                            className={`w-9 h-9 flex items-center justify-center transition-all active:scale-95 ${buttonClass}`}
                             aria-label={isDark ? "Activar modo claro" : "Activar modo oscuro"}
                         >
-                            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+                            {isDark ? <Sun size={16} /> : <Moon size={16} />}
                         </button>
                     </div>
 
