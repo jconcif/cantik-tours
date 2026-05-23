@@ -539,6 +539,39 @@ export default function AdminPanel() {
     }
   };
 
+  const copyLogsToClipboard = (b) => {
+    let ext = {};
+    try {
+      if (typeof b.extras === 'string' && b.extras !== '[object Object]') ext = JSON.parse(b.extras);
+      else if (typeof b.extras === 'object' && b.extras !== null) ext = b.extras;
+    } catch(e) {}
+    const logs = Array.isArray(ext.logs) ? ext.logs : [];
+    
+    let text = `*BITÁCORA DE OPERACIONES*\n`;
+    text += `*Ref:* CT-${(b.reference || String(b.id)).replace('CT-', '')}\n`;
+    text += `*Cliente:* ${b.client_name}\n`;
+    text += `*Tour:* ${b.tour_title}\n\n`;
+    
+    if (logs.length === 0) {
+      text += `_Sin anotaciones registradas_`;
+    } else {
+      // Revertimos para copiar en orden cronológico, o dejamos como está (más reciente primero)
+      // Lo dejaremos cronológico (el más antiguo primero) para que se lea como una historia.
+      [...logs].forEach(log => {
+        const logText = typeof log === 'object' && log !== null ? log.text : String(log);
+        const logTime = typeof log === 'object' && log !== null ? log.timestamp : null;
+        const dateObj = new Date(logTime);
+        const baliTime = (logTime && !isNaN(dateObj.getTime())) 
+          ? dateObj.toLocaleString('es-ES', { timeZone: 'Asia/Makassar', day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) 
+          : '--';
+        text += `• *[${baliTime}]* ${logText.replace('Anotación: ', '')}\n`;
+      });
+    }
+    
+    navigator.clipboard.writeText(text);
+    toast('📋 Bitácora copiada para WhatsApp');
+  };
+
   const renderBookingLogs = (b) => {
     let ext = {};
     try {
@@ -556,8 +589,18 @@ export default function AdminPanel() {
       <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
         {/* Timeline */}
         <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff0a', flex:1, display:'flex', flexDirection:'column'}}>
-          <div style={{fontSize:'12px', fontWeight:900, color:'#fff', letterSpacing:'1px', textTransform:'uppercase', marginBottom:'12px', display:'flex', alignItems:'center', gap:'8px'}}>
-            <div style={{width:'8px', height:'8px', background:C, borderRadius:'50%'}} /> Historial de Operaciones
+          <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'12px'}}>
+            <div style={{fontSize:'12px', fontWeight:900, color:'#fff', letterSpacing:'1px', textTransform:'uppercase', display:'flex', alignItems:'center', gap:'8px'}}>
+              <div style={{width:'8px', height:'8px', background:C, borderRadius:'50%'}} /> Historial de Operaciones
+            </div>
+            <button 
+              onClick={() => copyLogsToClipboard(b)}
+              style={{background:'#ffffff11', border:`1px solid #ffffff22`, color:'#fff', padding:'4px 12px', borderRadius:'8px', fontSize:'10px', fontWeight:900, cursor:'pointer', display:'flex', alignItems:'center', gap:'6px'}}
+              onMouseOver={e=>e.target.style.background='#ffffff22'}
+              onMouseOut={e=>e.target.style.background='#ffffff11'}
+            >
+              📋 Copiar para WP
+            </button>
           </div>
 
           <div style={{marginBottom:'20px', fontSize:'10px', display:'flex', gap:'12px', alignItems:'center', padding:'10px 14px', background:'#ffffff05', borderRadius:'12px', width:'fit-content'}}>
