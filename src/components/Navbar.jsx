@@ -31,7 +31,7 @@ const Navbar = () => {
     };
 
     // Check if we are on home or if we are on a page that needs a back button
-    const isHome = location.pathname === '/' || location.pathname === '/index.html';
+    const isHome = ['/', '/index.html', '/es', '/es/', '/en', '/en/'].includes(location.pathname);
     const isTourDetail = location.pathname.startsWith('/tour/');
     const isBaliGuide = location.pathname.startsWith('/guia-bali');
     const isAbout = location.pathname.startsWith('/nosotros');
@@ -51,6 +51,11 @@ const Navbar = () => {
     // Logic for text color
     const useDarkText = scrolled || !isHome;
     const textColorClass = useDarkText ? 'text-gray-900 dark:text-white' : 'text-white drop-shadow-md';
+
+    // Dynamic border class for selector buttons
+    const buttonBorderClass = useDarkText
+        ? 'border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5'
+        : 'border-white/25 hover:bg-white/10 hover:border-white/50';
 
     // Background logic
     const navBackgroundClass = scrolled
@@ -127,7 +132,7 @@ const Navbar = () => {
                         {/* Language Selector Button */}
                         <button
                             onClick={toggleLanguage}
-                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1 ${textColorClass} active:scale-95`}
+                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${buttonBorderClass} flex items-center gap-1 ${textColorClass} active:scale-95`}
                             aria-label="Cambiar idioma"
                         >
                             {i18n.language.startsWith('es') ? '🇪🇸 ES' : '🇬🇧 EN'}
@@ -136,7 +141,7 @@ const Navbar = () => {
                         {/* Currency Selector Button */}
                         <button
                             onClick={toggleCurrency}
-                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 flex items-center gap-1 ${textColorClass} active:scale-95`}
+                            className={`px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all border ${buttonBorderClass} flex items-center gap-1 ${textColorClass} active:scale-95`}
                             aria-label="Cambiar moneda"
                         >
                             {currency === 'EUR' ? '€ EUR' : '$ USD'}

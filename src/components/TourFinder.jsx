@@ -120,7 +120,7 @@ const TourFinder = () => {
                         </motion.div>
                     )}
 
-                    {step >= 0 && step < questions.length && (
+                    {step !== null && step >= 0 && step < questions.length && (
                         <motion.div
                             key={`question-${step}`}
                             initial={{ opacity: 0, x: 20 }}
