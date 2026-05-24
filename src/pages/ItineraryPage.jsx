@@ -75,6 +75,11 @@ export default function ItineraryPage() {
   }, [ref]);
 
   const handleCheckinSubmit = async () => {
+    const missing = checkinData.some(p => !(p.name || '').trim() || !(p.passport || '').trim());
+    if (missing) {
+      alert(i18n.language.startsWith('en') ? 'Please fill in the Full Name and Passport Number for all passengers.' : 'Por favor, completa el Nombre Completo y el Número de Pasaporte para todos los pasajeros.');
+      return;
+    }
     setSubmittingCheckin(true);
     try {
       await submitCheckin({ ref: booking.reference || ref, passengers: checkinData });
@@ -741,7 +746,7 @@ export default function ItineraryPage() {
                   <div className="space-y-4">
                     <div>
                       <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
-                        {en ? 'Full Name' : 'Nombre Completo'}
+                        {en ? 'Full Name *' : 'Nombre Completo *'}
                       </label>
                       <input
                         type="text"
@@ -757,7 +762,7 @@ export default function ItineraryPage() {
                     </div>
                     <div>
                       <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
-                        {en ? 'Passport Number' : 'Número de Pasaporte'}
+                        {en ? 'Passport Number *' : 'Número de Pasaporte *'}
                       </label>
                       <input
                         type="text"
