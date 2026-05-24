@@ -693,21 +693,17 @@ export const PassengerManagement = ({booking, onUpdate, onClose}) => {
         ext = booking.extras;
       }
     } catch(e) {}
-    setPassengers(Array.isArray(ext.passengers) ? ext.passengers : []);
+    
+    let existingPax = Array.isArray(ext.passengers) ? ext.passengers : [];
+    const numPax = Math.max(1, Math.abs(parseInt(booking.pax) || 1));
+    let initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', phone: '', emergency: '', medical: '' });
+    
+    setPassengers(initCheckin);
   }, [booking]);
 
   const updateField = (idx, key, val) => {
     const list = [...passengers];
     list[idx] = { ...list[idx], [key]: val };
-    setPassengers(list);
-  };
-
-  const addRow = () => {
-    setPassengers([...passengers, { name: '', passport: '', emergency: '' }]);
-  };
-
-  const removeRow = (idx) => {
-    const list = passengers.filter((_, i) => i !== idx);
     setPassengers(list);
   };
 
@@ -724,7 +720,7 @@ export const PassengerManagement = ({booking, onUpdate, onClose}) => {
       } catch(e) {}
 
       // Clean empty rows if any
-      const cleanedPassengers = passengers.filter(p => p.name.trim() || p.passport.trim() || p.emergency.trim());
+      const cleanedPassengers = passengers.filter(p => (p.name || '').trim() || (p.passport || '').trim() || (p.phone || '').trim() || (p.emergency || '').trim() || (p.medical || '').trim());
       
       ext.passengers = cleanedPassengers;
 
@@ -785,21 +781,6 @@ export const PassengerManagement = ({booking, onUpdate, onClose}) => {
                 <span style={{fontSize:'11px', fontWeight:900, color:C, textTransform:'uppercase', letterSpacing:'0.05em'}}>
                   Pasajero #{idx + 1}
                 </span>
-                <button 
-                  onClick={() => removeRow(idx)}
-                  style={{
-                    background: '#ef444415',
-                    border: 'none',
-                    color: '#ef4444',
-                    padding: '4px 8px',
-                    borderRadius: '8px',
-                    fontSize: '11px',
-                    fontWeight: 700,
-                    cursor: 'pointer'
-                  }}
-                >
-                  ✕ Eliminar
-                </button>
               </div>
 
               <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px'}}>
@@ -813,24 +794,44 @@ export const PassengerManagement = ({booking, onUpdate, onClose}) => {
                     placeholder="Ej. Juan Pérez"
                   />
                 </Field>
-                <Field label="Pasaporte / DNI">
+                <Field label="Número de Pasaporte">
                   <input 
                     id={`pax_pass_${idx}`}
                     name={`pax_pass_${idx}`}
                     value={p.passport || ''} 
                     onChange={e => updateField(idx, 'passport', e.target.value)} 
                     style={inputStyle}
-                    placeholder="Ej. X12345678"
+                    placeholder="Ej. P1234567"
                   />
                 </Field>
-                <Field label="Contacto Emergencia">
+                <Field label="Teléfono / WhatsApp">
+                  <input 
+                    id={`pax_phone_${idx}`}
+                    name={`pax_phone_${idx}`}
+                    value={p.phone || ''} 
+                    onChange={e => updateField(idx, 'phone', e.target.value)} 
+                    style={inputStyle}
+                    placeholder="Ej. +34 600 000 000"
+                  />
+                </Field>
+                <Field label="Contacto de Emergencia">
                   <input 
                     id={`pax_emg_${idx}`}
                     name={`pax_emg_${idx}`}
                     value={p.emergency || ''} 
                     onChange={e => updateField(idx, 'emergency', e.target.value)} 
                     style={inputStyle}
-                    placeholder="Ej. +34 600 000 000 (Mamá)"
+                    placeholder="Ej. María Pérez +34..."
+                  />
+                </Field>
+                <Field label="Alergias o condiciones médicas">
+                  <input 
+                    id={`pax_med_${idx}`}
+                    name={`pax_med_${idx}`}
+                    value={p.medical || ''} 
+                    onChange={e => updateField(idx, 'medical', e.target.value)} 
+                    style={inputStyle}
+                    placeholder="Dejar en blanco si ninguna"
                   />
                 </Field>
               </div>
@@ -838,26 +839,6 @@ export const PassengerManagement = ({booking, onUpdate, onClose}) => {
           ))
         )}
       </div>
-
-      <button 
-        onClick={addRow} 
-        style={{
-          padding: '12px',
-          background: 'rgba(255, 255, 255, 0.03)',
-          border: '1px dashed #444',
-          color: '#fff',
-          borderRadius: '16px',
-          cursor: 'pointer',
-          fontWeight: 900,
-          fontSize: '11px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '6px'
-        }}
-      >
-        ➕ Añadir Pasajero
-      </button>
 
       <button 
         onClick={save} 
