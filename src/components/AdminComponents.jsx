@@ -696,7 +696,7 @@ export const PassengerManagement = ({booking, onUpdate, onClose}) => {
     
     let existingPax = Array.isArray(ext.passengers) ? ext.passengers : [];
     const numPax = Math.max(1, Math.abs(parseInt(booking.pax) || 1));
-    let initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', phone: '', emergency: '', medical: '' });
+    let initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', age: '', emergency: '', medical: '' });
     
     setPassengers(initCheckin);
   }, [booking]);
@@ -720,7 +720,7 @@ export const PassengerManagement = ({booking, onUpdate, onClose}) => {
       } catch(e) {}
 
       // Clean empty rows if any
-      const cleanedPassengers = passengers.filter(p => (p.name || '').trim() || (p.passport || '').trim() || (p.phone || '').trim() || (p.emergency || '').trim() || (p.medical || '').trim());
+      const cleanedPassengers = passengers.filter(p => (p.name || '').trim() || (p.passport || '').trim() || (p.age || '').trim() || (p.emergency || '').trim() || (p.medical || '').trim());
       
       ext.passengers = cleanedPassengers;
 
@@ -804,14 +804,17 @@ export const PassengerManagement = ({booking, onUpdate, onClose}) => {
                     placeholder="Ej. P1234567"
                   />
                 </Field>
-                <Field label="Teléfono / WhatsApp">
+                <Field label="Edad">
                   <input 
-                    id={`pax_phone_${idx}`}
-                    name={`pax_phone_${idx}`}
-                    value={p.phone || ''} 
-                    onChange={e => updateField(idx, 'phone', e.target.value)} 
+                    id={`pax_age_${idx}`}
+                    name={`pax_age_${idx}`}
+                    type="number"
+                    min="0"
+                    max="120"
+                    value={p.age || ''} 
+                    onChange={e => updateField(idx, 'age', e.target.value)} 
                     style={inputStyle}
-                    placeholder="Ej. +34 600 000 000"
+                    placeholder="Ej. 35"
                   />
                 </Field>
                 <Field label="Contacto de Emergencia">

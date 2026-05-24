@@ -64,7 +64,7 @@ export default function ItineraryPage() {
           } catch(e) {}
           
           const numPax = Math.max(1, Math.abs(parseInt(data.data.pax) || 1));
-          const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', phone: '', emergency: '', medical: '' });
+          const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', age: '', emergency: '', medical: '' });
           setCheckinData(initCheckin);
         }
         else setError('Reserva no encontrada');
@@ -773,18 +773,20 @@ export default function ItineraryPage() {
                     </div>
                     <div>
                       <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
-                        {en ? 'Phone / WhatsApp' : 'Teléfono / WhatsApp'}
+                        {en ? 'Age' : 'Edad'}
                       </label>
                       <input
-                        type="text"
-                        value={pax.phone}
+                        type="number"
+                        min="0"
+                        max="120"
+                        value={pax.age}
                         onChange={(e) => {
                           const nd = [...checkinData];
-                          nd[idx] = { ...nd[idx], phone: e.target.value };
+                          nd[idx] = { ...nd[idx], age: e.target.value };
                           setCheckinData(nd);
                         }}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
-                        placeholder="Ej: +34 600 000 000"
+                        placeholder="Ej: 35"
                       />
                     </div>
                     <div>
@@ -805,7 +807,7 @@ export default function ItineraryPage() {
                     </div>
                     <div>
                       <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
-                        {en ? 'Medical conditions / Allergies' : 'Alergias o condiciones médicas a tener en cuenta'}
+                        {en ? 'Medical conditions / Allergies' : 'Alergias o condiciones médicas'}
                       </label>
                       <input
                         type="text"
