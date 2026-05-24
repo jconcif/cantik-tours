@@ -21,10 +21,6 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
 
     const [formData, setFormData] = useState({
         name: '',
-        passport: '',
-        phone: '',
-        emergency: '',
-        medical: '',
         date: null,
         pax: '',
         hotel: '',
@@ -123,10 +119,6 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             setStep(1);
             setFormData({
                 name: '',
-                passport: '',
-                phone: '',
-                emergency: '',
-                medical: '',
                 date: null,
                 pax: '',
                 hotel: '',
@@ -227,10 +219,6 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         const cleanTourTitle = cleanTextForWhatsApp(tourTitle);
         const cleanClientName = cleanTextForWhatsApp(formData.name);
         const cleanHotel = cleanTextForWhatsApp(formData.hotel);
-        const cleanPassport = cleanTextForWhatsApp(formData.passport);
-        const cleanPhone = cleanTextForWhatsApp(formData.phone);
-        const cleanEmergency = cleanTextForWhatsApp(formData.emergency);
-        const cleanMedical = cleanTextForWhatsApp(formData.medical);
         const cleanExpName = cleanTextForWhatsApp(expName);
         const cleanStops = tourId === 'ubud-flexible' && formData.selectedStops.length > 0 
             ? cleanTextForWhatsApp(formData.selectedStops.join(', '))
@@ -243,10 +231,6 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             message = `*BOOKING REQUEST DETAILS (#CT-${instantId})*
 ------------------------------------------
 - *Client:* ${cleanClientName.toUpperCase()}
-- *Passport:* ${cleanPassport.toUpperCase()}
-- *Phone:* ${cleanPhone.toUpperCase()}
-- *Emergency Contact:* ${cleanEmergency.toUpperCase()}
-- *Medical/Allergies:* ${cleanMedical ? cleanMedical.toUpperCase() : 'NONE'}
 - *Tour:* ${cleanTourTitle.toUpperCase()}
 - *Date:* ${dateStr}
 - *Travelers:* ${paxLabel.toUpperCase()}
@@ -263,10 +247,6 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Stops:* ${cleanStops.toUpperCas
             message = `*DETALLES DE LA RESERVA (#CT-${instantId})*
 ------------------------------------------
 - *Cliente:* ${cleanClientName.toUpperCase()}
-- *Pasaporte:* ${cleanPassport.toUpperCase()}
-- *Tel/WhatsApp:* ${cleanPhone.toUpperCase()}
-- *Emergencia:* ${cleanEmergency.toUpperCase()}
-- *Alergias:* ${cleanMedical ? cleanMedical.toUpperCase() : 'NINGUNA'}
 - *Tour:* ${cleanTourTitle.toUpperCase()}
 - *Fecha:* ${dateStr}
 - *Pasajeros:* ${paxLabel.toUpperCase()}
@@ -436,22 +416,6 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><User size={14} className="text-primary" />{t('reviews_page.form.name')}</label>
                                             <input type="text" required placeholder={i18n.language === 'en' ? 'Your full name' : 'Tu nombre completo'} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className={inputClasses} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><User size={14} className="text-primary" />{i18n.language === 'en' ? 'Passport Number' : 'Número de Pasaporte'}</label>
-                                            <input type="text" required placeholder={i18n.language === 'en' ? 'e.g. P1234567' : 'Ej: P1234567'} value={formData.passport} onChange={(e) => setFormData({ ...formData, passport: e.target.value })} className={inputClasses} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><MessageCircle size={14} className="text-primary" />{i18n.language === 'en' ? 'Phone / WhatsApp' : 'Teléfono / WhatsApp'}</label>
-                                            <input type="text" required placeholder={i18n.language === 'en' ? 'e.g. +44 7700 900000' : 'Ej: +34 600 000 000'} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className={inputClasses} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><ShieldCheck size={14} className="text-primary" />{i18n.language === 'en' ? 'Emergency Contact' : 'Contacto de Emergencia'}</label>
-                                            <input type="text" required placeholder={i18n.language === 'en' ? 'e.g. Mary Smith +44...' : 'Ej: María Pérez +34...'} value={formData.emergency} onChange={(e) => setFormData({ ...formData, emergency: e.target.value })} className={inputClasses} />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Heart size={14} className="text-primary" />{i18n.language === 'en' ? 'Medical conditions / Allergies' : 'Alergias o Condiciones Médicas'}</label>
-                                            <input type="text" placeholder={i18n.language === 'en' ? 'Leave blank if none' : 'Dejar en blanco si ninguna'} value={formData.medical} onChange={(e) => setFormData({ ...formData, medical: e.target.value })} className={inputClasses} />
                                         </div>
                                         <div className="space-y-2">
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><MapPin size={14} className="text-primary" />{t('detail.booking_hotel')}</label>
