@@ -64,7 +64,7 @@ export default function ItineraryPage() {
           } catch(e) {}
           
           const numPax = Math.max(1, Math.abs(parseInt(data.data.pax) || 1));
-          const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', emergency: '' });
+          const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', phone: '', emergency: '', medical: '' });
           setCheckinData(initCheckin);
         }
         else setError('Reserva no encontrada');
@@ -757,7 +757,7 @@ export default function ItineraryPage() {
                     </div>
                     <div>
                       <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
-                        {en ? 'Passport / ID' : 'Pasaporte / DNI'}
+                        {en ? 'Passport Number' : 'Número de Pasaporte'}
                       </label>
                       <input
                         type="text"
@@ -768,7 +768,23 @@ export default function ItineraryPage() {
                           setCheckinData(nd);
                         }}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
-                        placeholder="XYZ123456"
+                        placeholder="Ej: P1234567"
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
+                        {en ? 'Phone / WhatsApp' : 'Teléfono / WhatsApp'}
+                      </label>
+                      <input
+                        type="text"
+                        value={pax.phone}
+                        onChange={(e) => {
+                          const nd = [...checkinData];
+                          nd[idx] = { ...nd[idx], phone: e.target.value };
+                          setCheckinData(nd);
+                        }}
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
+                        placeholder="Ej: +34 600 000 000"
                       />
                     </div>
                     <div>
@@ -784,7 +800,23 @@ export default function ItineraryPage() {
                           setCheckinData(nd);
                         }}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
-                        placeholder="+34 600 000 000"
+                        placeholder="Ej: María Pérez +34..."
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
+                        {en ? 'Medical conditions / Allergies' : 'Alergias o condiciones médicas a tener en cuenta'}
+                      </label>
+                      <input
+                        type="text"
+                        value={pax.medical}
+                        onChange={(e) => {
+                          const nd = [...checkinData];
+                          nd[idx] = { ...nd[idx], medical: e.target.value };
+                          setCheckinData(nd);
+                        }}
+                        className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
+                        placeholder={en ? 'Leave blank if none' : 'Dejar en blanco si ninguna'}
                       />
                     </div>
                   </div>
