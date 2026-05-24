@@ -7,7 +7,7 @@ export const DarkModeProvider = ({ children }) => {
         // Check local storage or system preference
         const saved = localStorage.getItem('darkMode');
         if (saved !== null) return saved === 'true';
-        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+        return true;
     });
 
     useEffect(() => {

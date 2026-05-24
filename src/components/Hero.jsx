@@ -45,7 +45,7 @@ const Hero = () => {
 
             {/* Overlay Gradient */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-bg-light dark:to-bg-dark" />
-            <div className="absolute inset-0 bg-black/20 pointer-events-none" />
+            <div className="absolute inset-0 bg-black/40 md:bg-black/20 pointer-events-none" />
 
             <div className="relative z-10 px-6 text-center max-w-5xl mx-auto flex flex-col items-center pt-20 md:pt-32">
                 <motion.div
@@ -57,7 +57,7 @@ const Hero = () => {
                         {t('hero.badge')}
                     </span>
                     <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 md:mb-10 leading-[1.05] drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)] tracking-tight">
-                        {t('hero.title_1')} <br className="hidden md:inline" />
+                        {t('hero.title_1')} <br />
                         <span className="text-primary italic">
                             {t('hero.title_2')}
                         </span>
