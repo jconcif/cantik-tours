@@ -503,8 +503,8 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                         </p>
                                                         <p className="opacity-90 leading-relaxed text-[11px] font-medium">
                                                             {i18n.language === 'en' 
-                                                                ? 'This package includes your private vehicle, and the charter of a private traditional boat (Jukung) exclusive for your group. No shared boats, no surprise costs.' 
-                                                                : 'Este paquete incluye tu vehículo privado, y el alquiler de un bote tradicional privado (Jukung) exclusivo para tu grupo. Sin barcos compartidos ni costes sorpresa.'}
+                                                                ? 'This package includes your private vehicle and the charter of a traditional boat (Jukung) exclusive for your group. Maximum capacity is 4 passengers per boat; for larger groups, we will add an additional or larger boat for your absolute safety and comfort. No shared boats, no surprise costs.' 
+                                                                : 'Este paquete incluye tu vehículo privado y el alquiler de un bote tradicional (Jukung) exclusivo para tu grupo. La capacidad máxima es de 4 pasajeros por bote; para grupos mayores, añadiremos un bote adicional o un barco más grande para tu total comodidad y seguridad. Sin barcos compartidos ni costes sorpresa.'}
                                                         </p>
                                                     </div>
                                                 </div>

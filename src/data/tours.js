@@ -530,12 +530,14 @@ export const tours = [
         packingList: ['swimwear', 'sunscreen', 'camera', 'shoes'],
         importantInfo: [
             "La salida en barco es muy temprano (amanecer). El mar suele estar tranquilo.",
+            "Capacidad del Bote: Cada barca tradicional (Jukung) tiene capacidad máxima de 4 pasajeros. Para grupos más grandes, asignaremos botes adicionales o de mayor tamaño.",
             "Turismo Ético: No perseguimos a los delfines. Mantenemos una distancia de respeto para no estresarlos.",
             "Lleva bañador y toalla para la cascada Banyumala.",
             "El trayecto de regreso es largo, aprovechamos para descansar."
         ],
         importantInfo_en: [
             "The boat departure is very early (sunrise). The sea is usually calm.",
+            "Boat Capacity: Each traditional boat (Jukung) has a maximum capacity of 4 passengers. For larger groups, we will assign additional or larger boats.",
             "Ethical Tourism: We do not chase the dolphins. We maintain a respectful distance to avoid stressing them.",
             "Bring swimwear and a towel for the Banyumala waterfall.",
             "The return journey is long, we take the opportunity to rest."
