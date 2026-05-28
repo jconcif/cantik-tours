@@ -600,42 +600,51 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
 
                                         {/* Coupon Input Box */}
                                         <div className="bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-3xl p-4 space-y-3">
-                                            <div className="flex items-center justify-between">
+                                            <button 
+                                                type="button"
+                                                onClick={() => setShowCoupon(!showCoupon)}
+                                                className="flex items-center justify-between w-full outline-none"
+                                            >
                                                 <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                                                     <Ticket size={12} className="text-primary" />
                                                     {i18n.language === 'en' ? 'HAVE A COUPON?' : '¿TIENES UN CUPÓN?'}
                                                 </span>
-                                                {appliedCoupon && (
-                                                    <span className="text-[9px] font-black bg-green-500/10 text-green-500 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                                        {i18n.language === 'en' ? 'Applied' : 'Aplicado'}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <input 
-                                                    type="text" 
-                                                    disabled={appliedCoupon}
-                                                    placeholder={i18n.language === 'en' ? 'Enter coupon code...' : 'Ingresa el código...'} 
-                                                    value={couponInput} 
-                                                    onChange={(e) => setCouponInput(e.target.value)} 
-                                                    className="flex-1 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-xs font-bold uppercase outline-none focus:border-primary/50 text-gray-800 dark:text-white"
-                                                />
-                                                <button 
-                                                    type="button" 
-                                                    onClick={appliedCoupon ? () => { setAppliedCoupon(null); setCouponInput(''); } : handleApplyCoupon}
-                                                    disabled={couponLoading || (!couponInput.trim() && !appliedCoupon)}
-                                                    className="px-4 py-2 bg-primary hover:bg-primary/95 text-white rounded-xl text-xs font-black transition-all active:scale-[0.98] disabled:opacity-50"
-                                                >
-                                                    {couponLoading ? '...' : appliedCoupon ? (i18n.language === 'en' ? 'REMOVE' : 'QUITAR') : (i18n.language === 'en' ? 'APPLY' : 'APLICAR')}
-                                                </button>
-                                            </div>
-                                            {couponError && <p className="text-[10px] text-red-500 font-bold">{couponError}</p>}
-                                            {appliedCoupon && (
-                                                <p className="text-[10px] text-green-500 font-bold">
-                                                    {i18n.language === 'en' 
-                                                        ? `Coupon "${appliedCoupon.code}" applied: -${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'} discount!` 
-                                                        : `¡Cupón "${appliedCoupon.code}" aplicado: -${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'} de descuento!`}
-                                                </p>
+                                                <span className="text-[10px] font-black text-primary hover:text-primary/80 transition-colors uppercase tracking-wider">
+                                                    {appliedCoupon 
+                                                        ? (i18n.language === 'en' ? 'Applied' : 'Aplicado') 
+                                                        : (showCoupon ? (i18n.language === 'en' ? 'Hide' : 'Ocultar') : (i18n.language === 'en' ? 'Show' : 'Mostrar'))}
+                                                </span>
+                                            </button>
+                                            
+                                            {(showCoupon || appliedCoupon) && (
+                                                <div className="space-y-3 pt-2 border-t border-black/5 dark:border-white/5">
+                                                    <div className="flex gap-2">
+                                                        <input 
+                                                            type="text" 
+                                                            disabled={appliedCoupon}
+                                                            placeholder={i18n.language === 'en' ? 'Enter coupon code...' : 'Ingresa el código...'} 
+                                                            value={couponInput} 
+                                                            onChange={(e) => setCouponInput(e.target.value)} 
+                                                            className="flex-1 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-xs font-bold uppercase outline-none focus:border-primary/50 text-gray-800 dark:text-white"
+                                                        />
+                                                        <button 
+                                                            type="button" 
+                                                            onClick={appliedCoupon ? () => { setAppliedCoupon(null); setCouponInput(''); } : handleApplyCoupon}
+                                                            disabled={couponLoading || (!couponInput.trim() && !appliedCoupon)}
+                                                            className="px-4 py-2 bg-primary hover:bg-primary/95 text-white rounded-xl text-xs font-black transition-all active:scale-[0.98] disabled:opacity-50"
+                                                        >
+                                                            {couponLoading ? '...' : appliedCoupon ? (i18n.language === 'en' ? 'REMOVE' : 'QUITAR') : (i18n.language === 'en' ? 'APPLY' : 'APLICAR')}
+                                                        </button>
+                                                    </div>
+                                                    {couponError && <p className="text-[10px] text-red-500 font-bold">{couponError}</p>}
+                                                    {appliedCoupon && (
+                                                        <p className="text-[10px] text-green-500 font-bold">
+                                                            {i18n.language === 'en' 
+                                                                ? `Coupon "${appliedCoupon.code}" applied: -${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'} discount!` 
+                                                                : `¡Cupón "${appliedCoupon.code}" aplicado: -${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'} de descuento!`}
+                                                        </p>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
 
