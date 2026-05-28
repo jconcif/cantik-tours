@@ -208,20 +208,16 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     let paxMessage = '';
     let paxMessageEn = '';
 
+    // Lovina specific counts (Base covers 1-4 pax, +10€ per pax from 5th, +35€ per extra boat (max 4 pax per boat))
+    const extraPaxCount = Math.max(0, paxNum - 4);
+    const paxExtraCost = extraPaxCount * 10;
+    const extraBoatsCount = Math.ceil(paxNum / 4) - 1;
+    const boatExtraCost = extraBoatsCount * 35;
+
     if (tourId === 'lovina-dolphins') {
-        if (paxNum >= 7) {
-            extraPaxFee = 45;
-            paxMessage = 'Suplemento Minivan Hiace + 2º Bote Privado (+45€)';
-            paxMessageEn = 'Upgrade to Minivan Hiace + 2nd Private Boat (+45€)';
-        } else if (paxNum >= 5) {
-            extraPaxFee = (paxNum - 4) * 15;
-            paxMessage = `Suplemento pasajeros adicionales (+${extraPaxFee}€)`;
-            paxMessageEn = `Extra passengers supplement (+${extraPaxFee}€)`;
-        } else {
-            extraPaxFee = 0;
-            paxMessage = '';
-            paxMessageEn = '';
-        }
+        extraPaxFee = paxExtraCost + boatExtraCost;
+        paxMessage = `Extras Lovina (+${extraPaxFee}€)`;
+        paxMessageEn = `Lovina Extras (+${extraPaxFee}€)`;
     } else {
         if (paxNum >= 7) {
             extraPaxFee = 30;
@@ -328,6 +324,30 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         if (appliedCoupon) {
             couponLineEs = `\n- *Cupón:* ${appliedCoupon.code} (-${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'})`;
         }
+
+        let supplementLine = '';
+        if (tourId === 'lovina-dolphins') {
+            if (paxExtraCost > 0) {
+                supplementLine += `\n- *Extra Passengers:* +${paxExtraCost} EUR (for ${extraPaxCount} extra pax)`;
+            }
+            if (boatExtraCost > 0) {
+                supplementLine += `\n- *Extra Boat:* +${boatExtraCost} EUR (${extraBoatsCount} extra Jukung boat)`;
+            }
+        } else if (extraPaxFee > 0) {
+            supplementLine = `\n- *Supplement:* +${extraPaxFee} EUR (${cleanTextForWhatsApp(paxMessageEn)})`;
+        }
+
+        let supplementLineEs = '';
+        if (tourId === 'lovina-dolphins') {
+            if (paxExtraCost > 0) {
+                supplementLineEs += `\n- *Pasajeros Adicionales:* +${paxExtraCost} EUR (por ${extraPaxCount} pax extra)`;
+            }
+            if (boatExtraCost > 0) {
+                supplementLineEs += `\n- *Bote Adicional:* +${boatExtraCost} EUR (${extraBoatsCount} bote Jukung adicional)`;
+            }
+        } else if (extraPaxFee > 0) {
+            supplementLineEs = `\n- *Suplemento:* +${extraPaxFee} EUR (${cleanTextForWhatsApp(paxMessage)})`;
+        }
         
         if (isEn) {
             message = `*BOOKING REQUEST DETAILS (#CT-${instantId})*
@@ -337,8 +357,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
 - *Date:* ${dateStr}
 - *Travelers:* ${paxLabel.toUpperCase()}
 - *Hotel:* ${cleanHotel.toUpperCase()}
-- *Service:* ${cleanExpName.toUpperCase()}${couponLine}
-${tourId === 'ubud-flexible' && cleanStops ? `- *Stops:* ${cleanStops.toUpperCase()}\n` : ''}- *Estimated Price:* ${finalTotalPriceWithFees} EUR
+- *Service:* ${cleanExpName.toUpperCase()}${couponLine}${supplementLine}
+${tourId === 'ubud-flexible' && cleanStops ? `- *Stops:* ${cleanStops.toUpperCase()}\n` : ''}- *Price:* ${finalTotalPriceWithFees} EUR
 ------------------------------------------
 
 *View Live Details:* https://cantiktours.com/booking?ref=CT-${instantId}
@@ -353,8 +373,8 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Stops:* ${cleanStops.toUpperCas
 - *Fecha:* ${dateStr}
 - *Pasajeros:* ${paxLabel.toUpperCase()}
 - *Hotel:* ${cleanHotel.toUpperCase()}
-- *Servicio:* ${cleanExpName.toUpperCase()}${couponLineEs}
-${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperCase()}\n` : ''}- *Precio Estimado:* ${finalTotalPriceWithFees} EUR
+- *Servicio:* ${cleanExpName.toUpperCase()}${couponLineEs}${supplementLineEs}
+${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperCase()}\n` : ''}- *Precio:* ${finalTotalPriceWithFees} EUR
 ------------------------------------------
 
 *Ver Ficha en Vivo:* https://cantiktours.com/booking?ref=CT-${instantId}
@@ -579,11 +599,41 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                     <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Service Selected' : 'Servicio Contratado'}</span>
                                                     <p className="text-[11px] font-bold text-primary">{expName} ({finalPriceForTier}€)</p>
                                                 </div>
-                                                {extraPaxFee > 0 && (
-                                                    <div className="pt-3 border-t border-black/5">
-                                                        <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Vehicle & Supplement' : 'Vehículo y Suplemento'}</span>
-                                                        <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300">{i18n.language === 'en' ? paxMessageEn : paxMessage}</p>
-                                                    </div>
+                                                {tourId === 'lovina-dolphins' ? (
+                                                    <>
+                                                        {extraPaxCount > 0 && (
+                                                            <div className="pt-3 border-t border-black/5 flex justify-between items-center">
+                                                                <div>
+                                                                    <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Extra Passengers' : 'Pasajeros Adicionales'}</span>
+                                                                    <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300">
+                                                                        {i18n.language === 'en' ? `Supplement for ${extraPaxCount} extra pax` : `Suplemento por ${extraPaxCount} pax extra`}
+                                                                    </p>
+                                                                </div>
+                                                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">+{paxExtraCost}€</span>
+                                                            </div>
+                                                        )}
+                                                        {extraBoatsCount > 0 && (
+                                                            <div className="pt-3 border-t border-black/5 flex justify-between items-center">
+                                                                <div>
+                                                                    <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Additional Boat' : 'Bote Adicional'}</span>
+                                                                    <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300">
+                                                                        {i18n.language === 'en' ? `${extraBoatsCount} extra Jukung boat` : `${extraBoatsCount} bote Jukung adicional`}
+                                                                    </p>
+                                                                </div>
+                                                                <span className="text-xs font-bold text-gray-700 dark:text-gray-300">+{boatExtraCost}€</span>
+                                                            </div>
+                                                        )}
+                                                    </>
+                                                ) : (
+                                                    extraPaxFee > 0 && (
+                                                        <div className="pt-3 border-t border-black/5 flex justify-between items-center">
+                                                            <div>
+                                                                <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Vehicle & Supplement' : 'Vehículo y Suplemento'}</span>
+                                                                <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300">{i18n.language === 'en' ? paxMessageEn : paxMessage}</p>
+                                                            </div>
+                                                            <span className="text-xs font-bold text-gray-700 dark:text-gray-300">+{extraPaxFee}€</span>
+                                                        </div>
+                                                    )
                                                 )}
                                                 {appliedCoupon && (
                                                     <div className="pt-3 border-t border-black/5 flex items-center justify-between text-green-500">
