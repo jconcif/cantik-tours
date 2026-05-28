@@ -413,7 +413,9 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                         <div className="space-y-4">
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Star size={14} className="text-primary" />{t('detail.booking_experience')}</label>
                                             <div className="grid gap-3">
-                                                {['economy', 'comfort', 'elite'].map((tier) => {
+                                                {['economy', 'comfort', 'elite']
+                                                    .filter((tier) => !(tourId === 'lovina-dolphins' && tier === 'elite'))
+                                                    .map((tier) => {
                                                     const price = tier === 'economy' ? pricing.economy : tier === 'comfort' ? pricing.comfort : pricing.elite;
                                                     const isAvailable = price !== null && price !== undefined;
                                                     const isSelected = formData.experience === tier;
@@ -422,27 +424,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                     let priceStyles = 'text-gray-900 dark:text-white';
                                                     
                                                     if (!isAvailable) {
-                                                        return (
-                                                            <div key={tier} className="relative flex items-start p-5 rounded-2xl border-2 border-dashed border-black/5 dark:border-white/5 opacity-40 cursor-not-allowed">
-                                                                <div className="flex-1">
-                                                                    <div className="flex items-center justify-between mb-1">
-                                                                        <span className="text-xs font-black uppercase tracking-wider text-gray-400">
-                                                                            {tier === 'economy'
-                                                                                ? (i18n.language === 'en' ? 'S - LOCAL DRIVER (ENGLISH)' : 'S - CONDUCTOR LOCAL (INGLÉS)')
-                                                                                : tier === 'comfort'
-                                                                                    ? (i18n.language === 'en' ? 'M - PROFESSIONAL GUIDE (ENGLISH)' : 'M - GUÍA PROFESIONAL (INGLÉS)')
-                                                                                    : (i18n.language === 'en' ? 'L - PROFESSIONAL GUIDE (SPANISH)' : 'L - GUÍA PROFESIONAL (ESPAÑOL)')}
-                                                                        </span>
-                                                                        <span className="text-[10px] font-black bg-red-500/10 text-red-500 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                                                                            {i18n.language === 'en' ? 'Not Available' : 'No Disponible'}
-                                                                        </span>
-                                                                    </div>
-                                                                    <span className="text-[10px] text-gray-400 font-bold block leading-relaxed mt-1">
-                                                                        {i18n.language === 'en' ? 'Spanish guide is not available for this route.' : 'No hay guía en español disponible para esta ruta.'}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        );
+                                                        return null;
                                                     }
 
                                                     if (isSelected) {
@@ -505,8 +487,8 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                         </p>
                                                         <p className="opacity-90 leading-relaxed text-[11px] font-medium">
                                                             {i18n.language === 'en' 
-                                                                ? 'This package includes your private vehicle, gasoline, driver, AND the private charter of a traditional boat (Jukung) for your group to see the dolphins at sunrise. No shared boats, no extra fees.' 
-                                                                : 'Este paquete incluye tu vehículo privado, gasolina, conductor, Y el alquiler completo de un bote tradicional privado (Jukung) exclusivo para tu grupo para ver los delfines al amanecer. Sin barcos compartidos ni costes sorpresa.'}
+                                                                ? 'This package includes your private vehicle, and the charter of a private traditional boat (Jukung) exclusive for your group. No shared boats, no surprise costs.' 
+                                                                : 'Este paquete incluye tu vehículo privado, y el alquiler de un bote tradicional privado (Jukung) exclusivo para tu grupo. Sin barcos compartidos ni costes sorpresa.'}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -581,10 +563,12 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                     <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Service Selected' : 'Servicio Contratado'}</span>
                                                     <p className="text-[11px] font-bold text-primary">{expName} ({finalPriceForTier}€)</p>
                                                 </div>
-                                                <div className="pt-3 border-t border-black/5">
-                                                    <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Vehicle & Supplement' : 'Vehículo y Suplemento'}</span>
-                                                    <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300">{i18n.language === 'en' ? paxMessageEn : paxMessage}</p>
-                                                </div>
+                                                {extraPaxFee > 0 && (
+                                                    <div className="pt-3 border-t border-black/5">
+                                                        <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Vehicle & Supplement' : 'Vehículo y Suplemento'}</span>
+                                                        <p className="text-[11px] font-bold text-gray-600 dark:text-gray-300">{i18n.language === 'en' ? paxMessageEn : paxMessage}</p>
+                                                    </div>
+                                                )}
                                                 {appliedCoupon && (
                                                     <div className="pt-3 border-t border-black/5 flex items-center justify-between text-green-500">
                                                         <span className="text-[10px] font-black uppercase tracking-wider">{i18n.language === 'en' ? 'DISCOUNT APPLIED' : 'DESCUENTO APLICADO'}</span>
@@ -592,7 +576,7 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                     </div>
                                                 )}
                                                 <div className="pt-3 border-t border-black/5 flex items-center justify-between">
-                                                    <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'TOTAL ESTIMATED' : 'TOTAL ESTIMADO'}</span>
+                                                    <span className="text-[10px] font-black text-primary uppercase tracking-wider">{i18n.language === 'en' ? 'TOTAL' : 'TOTAL'}</span>
                                                     <div className="text-2xl font-black text-primary">{finalTotalPriceWithFees}€</div>
                                                 </div>
                                             </div>
@@ -653,8 +637,8 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             {/* Texto explicativo */}
                                             <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed text-center">
                                                 {i18n.language === 'en'
-                                                    ? <>Tap <span className="text-gray-800 dark:text-white font-black">Request Booking</span> to send your request via WhatsApp. We'll confirm availability and send you payment details. Only then your booking is set.</>
-                                                    : <>Pulsa <span className="text-gray-800 dark:text-white font-black">Solicitar Reserva</span> para enviar tu solicitud por WhatsApp. Te confirmaremos la disponibilidad y te enviamos los detalles del pago. Solo entonces tu reserva queda agendada.</>
+                                                    ? <>Tap <span className="text-gray-800 dark:text-white font-black">Request Booking</span> to send us your request via WhatsApp. We will confirm availability and send you the details to make the payment. Only then your booking will be scheduled.</>
+                                                    : <>Pulsa <span className="text-gray-800 dark:text-white font-black">Solicitar Reserva</span> para enviarnos tu solicitud por WhatsApp. Te confirmaremos la disponibilidad y te enviamos los detalles para realizar el pago. Solo entonces tu reserva quedara agendada.</>
                                                 }
                                             </p>
 
