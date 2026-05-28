@@ -236,6 +236,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const finalTotalPriceWithDiscount = Math.max(0, finalTotalPrice - discountAmount);
     const finalTotalPriceWithFees = finalTotalPriceWithDiscount;
 
+    const isUbudStops = tourId === 'ubud-flexible' && (!initialSelectedStops || (initialSelectedStops?.length || 0) === 0);
+
     const handleApplyCoupon = async () => {
         if (!couponInput || !couponInput.trim()) return;
         setCouponLoading(true);
