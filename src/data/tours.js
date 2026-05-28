@@ -10,6 +10,13 @@ export const tours = [
         fullDescription: "Sumérgete en el corazón espiritual de Bali. Este tour está diseñado para quienes buscan autenticidad, combinando templos históricos, cascadas escondidas y la belleza inigualable de Tegalalang Rice Terrace. Desde rituales de purificación tradicional hasta el relax en los mejores restaurantes con vistas a los arrozales, vive la experiencia completa de los alrededores de Ubud en un solo dia.",
         fullDescription_en: "Immerse yourself in Bali's spiritual heart. This tour is designed for those seeking authenticity, combining historic temples, hidden waterfalls, and the unparalleled beauty of Tegalalang Rice Terrace. From traditional purification rituals to relaxing in the best restaurants with views of the rice fields, live the complete experience of the surroundings of Ubud in a single day.",
         price: 59,
+        pricing: {
+            economy: 59,
+            comfort: 69,
+            elite: 85,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "8-10 hrs",
         duration_en: "8-10 hrs",
         image: "/images/tours/ubud-central/ubud-central-columpio.webp",
@@ -136,6 +143,13 @@ export const tours = [
         fullDescription: "Nuestra ruta más versátil y libre. Olvídate de itinerarios rígidos; con este tour tienes a tu disposición un conductor privado experto durante 10 horas para visitar hasta 5 lugares que tú elijas del área de Ubud. Es la opción ideal para quienes quieren optimizar su tiempo al máximo, tienen pocos días en la isla o simplemente prefieren seguir su propio ritmo sin seguir a la masa. Tú marcas los tiempos y nosotros nos encargamos de que el trayecto sea impecable.",
         fullDescription_en: "Our most versatile and free route. Forget about rigid itineraries; with this tour you have an expert private driver at your disposal for 10 hours to visit up to 5 places of your choice in the Ubud area. It is the ideal option for those who want to optimize their time to the fullest, have few days on the island or simply prefer to follow their own pace without following the crowd. You set the times and we make sure the journey is flawless.",
         price: 59,
+        pricing: {
+            economy: 59,
+            comfort: 69,
+            elite: 85,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "8-10 hrs",
         duration_en: "8-10 hrs",
         image: "/images/tours/ubud-central/ubud-central-rice-field.webp",
@@ -355,6 +369,13 @@ export const tours = [
         fullDescription: "Descubre la exuberante naturaleza del norte de Ubud. Visitaremos el templo Ulun Danu Beratan, el templo sobre el lago, la impresionante cascada Nungnung o Leke Leke, y caminaremos por los campos de arroz infinitos de Jatiluwih.",
         fullDescription_en: "Discover the lush nature of north Ubud. We will visit the Ulun Danu Beratan temple on the lake, the impressive Nungnung or Leke Leke waterfall, and walk through the endless rice fields of Jatiluwih.",
         price: 69,
+        pricing: {
+            economy: 69,
+            comfort: 79,
+            elite: 95,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "8-10 hrs",
         duration_en: "8-10 hrs",
         image: "/images/tours/ubud-norte/leke-leke.webp",
@@ -486,6 +507,13 @@ export const tours = [
         fullDescription: "La aventura definitiva para los madrugadores. El precio incluye transporte privado y barca privada bajo reserva. En Cantik Tours practicamos un turismo responsable, para que disfrutes de una experiencia ética y tranquila. Nos alejamos de las persecuciones masivas de delfines, priorizando el respeto por los animales y su hábitat natural.",
         fullDescription_en: "The ultimate adventure for early birds. Price includes private transport and private boat with pre-booking. At Cantik Tours we practice responsible tourism: we keep our distance from massive dolphin chases, prioritizing respect for the animals and their natural habitat for an ethical and peaceful experience.",
         price: 97,
+        pricing: {
+            economy: 99,
+            comfort: 120,
+            elite: null,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "10 hrs",
         duration_en: "10 hrs",
         image: "/images/tours/lovina-dolphins/lovina-sunrise.webp",
@@ -601,6 +629,13 @@ export const tours = [
         fullDescription: "Una inmersión profunda en la historia de Bali. Visitaremos el Templo Madre Besakih, situado en las faldas del monte Agung, el volcán más sagrado de la isla. También descubriremos Kintamani, un mirador espectacular al volcán Batur donde almorzaremos, y caminaremos por el místico bosque de bambú tras visitar la aldea tradicional de Penglipuran.",
         fullDescription_en: "A deep immersion into Bali's history. We will visit the Besakih Mother Temple, located on the slopes of Mount Agung, the island's most sacred volcano. We will also discover Kintamani, a spectacular viewpoint of Mount Batur where we will have lunch, and walk through the mystical bamboo forest after visiting the traditional village of Penglipuran.",
         price: 69,
+        pricing: {
+            economy: 69,
+            comfort: 79,
+            elite: 95,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "8-10 hrs",
         duration_en: "8-10 hrs",
         image: "/images/tours/east-bali-besakih/besakih.webp",
@@ -714,6 +749,13 @@ export const tours = [
         fullDescription: "Prepárate para las vistas más espectaculares. Madrugaremos para llegar a las famosas Puertas del Cielo en Lempuyang, seguidas de la belleza real de Tirta Gangga y finalizar en una de las mejores playas de Bali.",
         fullDescription_en: "Get ready for the most spectacular views. We will start early to reach the famous Gates of Heaven at Lempuyang, followed by the royal beauty of Tirta Gangga and ending at one of Bali's best beaches.",
         price: 79,
+        pricing: {
+            economy: 79,
+            comfort: 89,
+            elite: 105,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "10 hrs",
         duration_en: "10 hrs",
         image: "/images/tours/lempuyang-gates/lempuyang-temple.webp",
@@ -829,6 +871,13 @@ export const tours = [
         fullDescription: "Prepárate para una inmersión cultural profunda. Empezaremos el día con un viaje interior realizando el ritual de purificación (Melukat) en la cascada y zona de esculturas escondidas de Beji Griya. Continuaremos paseando entre inmensos árboles de Nuez moscada en Sangeh, admiraremos la arquitectura del templo real de Taman Ayun y terminaremos con uno de los momentos más épicos de Bali: el atardecer en Tanah Lot, donde el templo parece flotar sobre el mar.",
         fullDescription_en: "Get ready for a deep cultural immersion. We will start the day with an inner journey performing the purification ritual (Melukat) at the hidden Beji Griya waterfall. We will continue walking among immense nutmeg trees in Sangeh, admire the royal temple of Taman Ayun and finish with sunset at Tanah Lot, where the temple seems to float on the sea.",
         price: 69,
+        pricing: {
+            economy: 69,
+            comfort: 79,
+            elite: 95,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "9-10 hrs",
         duration_en: "9-10 hrs",
         image: "https://www.ministryofvillas.com/wp-content/uploads/2016/04/bali-tanah-lot-temple-sunset.jpg",
@@ -937,6 +986,13 @@ export const tours = [
         fullDescription: "Explora la península de Bukit, el secreto mejor guardado para los amantes del sol y la brisa oceánica. Navegaremos por la costa sur para descubrir playas inmaculadas de arena blanca y agua turquesa protegidas por inmensos muros de piedra caliza. Terminaremos la jornada de la forma más épica posible: al borde de un acantilado de 70 metros de altura en el Templo de Uluwatu, donde la tradicional danza del fuego cobrará vida mientras el sol se hunde en el extenso Océano Índico.",
         fullDescription_en: "Explore the Bukit peninsula, the best kept secret for sun and ocean breeze lovers. We will navigate the south coast to discover immaculate white sand and turquoise water beaches protected by immense limestone walls. We will end the day in the most epic way possible: on the edge of a 70-meter-high cliff at the Uluwatu Temple, where the traditional fire dance will come alive as the sun sinks into the Indian Ocean.",
         price: 60,
+        pricing: {
+            economy: 60,
+            comfort: 70,
+            elite: 85,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "8-10 hrs",
         duration_en: "8-10 hrs",
         image: "/images/tours/uluwatu/uluwatu-temple.webp",
@@ -1065,6 +1121,13 @@ export const tours = [
         fullDescription: "Viaja con total tranquilidad y comodidad. Evita las esperas y el estrés del transporte público o el regateo. Nuestro conductor privado te estará esperando con un cartel personalizado para llevarte directamente a tu destino en un vehículo moderno, limpio y con aire acondicionado. Servicio puntual, seguro y sin sorpresas, ideal para empezar o terminar tu viaje en Bali de la mejor manera.",
         fullDescription_en: "Travel with complete peace of mind and comfort. Avoid the wait and stress of public transport or haggling. Our private driver will be waiting for you with a personalized sign to take you directly to your destination in a modern, clean, and air-conditioned vehicle. Punctual, safe service with no surprises, ideal for starting or ending your Bali trip the best way.",
         price: 25,
+        pricing: {
+            economy: 25,
+            comfort: 35,
+            elite: 45,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "Flexible",
         duration_en: "Flexible",
         image: "/images/tours/transfers-bali/bali-private-airport-transfer.webp",
@@ -1091,6 +1154,13 @@ export const tours = [
         fullDescription: "Prepárate para mojarte y maravillarte. Este tour está diseñado para los amantes de la naturaleza y la fotografía que quieren evitar las rutas tradicionales y centrarse en la belleza de las cascadas de Bali. Desde la cueva iluminada de Tukad Cepung hasta la serenidad de Tibumana, vive un día refrescante rodeado de vegetación tropical exuberante.",
         fullDescription_en: "Get ready to get wet and marvel. This tour is designed for nature and photography lovers who want to avoid traditional routes and focus on the beauty of Bali's waterfalls. From the light-filled cave of Tukad Cepung to the serenity of Tibumana, experience a refreshing day surrounded by lush tropical vegetation.",
         price: 65,
+        pricing: {
+            economy: 65,
+            comfort: 75,
+            elite: 85,
+            extraPaxStartThreshold: 5,
+            extraPaxFee: 2.5
+        },
         duration: "8-10 hrs",
         duration_en: "8-10 hrs",
         image: "/images/tours/ubud-central/ubud-central-kanto-lampo.webp",

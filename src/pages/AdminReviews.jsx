@@ -92,6 +92,7 @@ export default function AdminPanel() {
   const [msg, setMsg] = useState(null);
   const [detailedStats, setDetailedStats] = useState(null);
   const [calMonth, setCalMonth] = useState(new Date());
+  const [selectedCalDay, setSelectedCalDay] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const { currency, toggleCurrency } = useCurrency();
   const { isDark, toggleDarkMode } = useDarkMode();
@@ -1133,39 +1134,143 @@ export default function AdminPanel() {
         </>}
 
         {tab==='calendar'&&(
-          <div style={{background:'#1a1a1a',borderRadius:'24px',padding:'24px'}}>
-            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'20px'}}>
-              <button style={s.btn('#222')} onClick={()=>setCalMonth(new Date(calMonth.getFullYear(),calMonth.getMonth()-1))}>◀</button>
-              <h3 style={{margin:0}}>{calMonth.toLocaleString('es',{month:'long',year:'numeric'})}</h3>
-              <button style={s.btn('#222')} onClick={()=>setCalMonth(new Date(calMonth.getFullYear(),calMonth.getMonth()+1))}>▶</button>
-            </div>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:'4px'}}>
-              {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d=><div key={d} style={{textAlign:'center',fontSize:'10px',fontWeight:900,color:'#444'}}>{d}</div>)}
-              {calDays.map((d,i)=>{
-                if (!d) return <div key={i} style={{minHeight:'60px',background:'transparent',padding:'8px'}} />;
-                
-                const dayBookings = bookings.filter(b => {
-                  const dObj = parseLocalDate(b.booking_date);
-                  return dObj.getDate() === d && dObj.getMonth() === calMonth.getMonth() && dObj.getFullYear() === calMonth.getFullYear();
-                });
-                const isBlocked = dayBookings.some(b => b.payment_status === 'blocked');
-                const validBookings = dayBookings.filter(b => b.payment_status !== 'blocked');
+          <div style={{display:'flex', flexDirection:'column', gap:'20px'}}>
+            <div style={{background:'#1a1a1a',borderRadius:'24px',padding: isMobile ? '16px' : '24px'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'20px'}}>
+                <button style={s.btn('#222')} onClick={()=>{setCalMonth(new Date(calMonth.getFullYear(),calMonth.getMonth()-1)); setSelectedCalDay(null);}}>◀</button>
+                <h3 style={{margin:0, textTransform:'capitalize'}}>{calMonth.toLocaleString('es',{month:'long',year:'numeric'})}</h3>
+                <button style={s.btn('#222')} onClick={()=>{setCalMonth(new Date(calMonth.getFullYear(),calMonth.getMonth()+1)); setSelectedCalDay(null);}}>▶</button>
+              </div>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:'6px'}}>
+                {['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].map(d=><div key={d} style={{textAlign:'center',fontSize:'11px',fontWeight:900,color:'#666',paddingBottom:'8px'}}>{d}</div>)}
+                {calDays.map((d,i)=>{
+                  if (!d) return <div key={i} style={{aspectRatio:'1',background:'transparent'}} />;
+                  
+                  const dayBookings = bookings.filter(b => {
+                    const dObj = parseLocalDate(b.booking_date);
+                    return dObj.getDate() === d && dObj.getMonth() === calMonth.getMonth() && dObj.getFullYear() === calMonth.getFullYear();
+                  });
+                  const isBlocked = dayBookings.some(b => b.payment_status === 'blocked');
+                  const validBookings = dayBookings.filter(b => b.payment_status !== 'blocked');
+                  const isSelected = selectedCalDay === d;
 
-                return (
-                <div key={i} onClick={()=>handleToggleBlock(d)} style={{minHeight:'60px',background:'#222',borderRadius:'12px',padding:'8px', cursor:'pointer', position:'relative', opacity: isBlocked ? 0.6 : 1, border: isBlocked ? '1px solid #ef4444' : '1px solid transparent', transition:'all 0.2s'}}>
-                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                    <div style={{fontSize:'12px',fontWeight:900, color: isBlocked ? '#ef4444' : '#fff'}}>{d}</div>
-                    {isBlocked && <Lock size={10} color="#ef4444" />}
+                  return (
+                  <div key={i} onClick={()=>setSelectedCalDay(d)} style={{
+                    aspectRatio:'1',
+                    background: isSelected ? C+'22' : '#222',
+                    borderRadius:'12px',
+                    padding:'6px', 
+                    cursor:'pointer', 
+                    position:'relative', 
+                    display:'flex',
+                    flexDirection:'column',
+                    justifyContent:'space-between',
+                    alignItems:'center',
+                    border: isSelected ? `2px solid ${C}` : isBlocked ? '1px solid #ef444444' : '1px solid transparent', 
+                    transition:'all 0.2s'
+                  }}>
+                    <div style={{fontSize:'13px',fontWeight:900, color: isBlocked ? '#ef4444' : '#fff'}}>{d}</div>
+                    
+                    <div style={{display:'flex', gap:'2px', flexWrap:'wrap', justifyContent:'center', marginTop:'4px'}}>
+                      {isBlocked && <Lock size={12} color="#ef4444" />}
+                      {!isBlocked && validBookings.length > 0 && (
+                        <div style={{
+                          background: C, 
+                          color: '#000', 
+                          fontSize: '8px', 
+                          fontWeight: 900, 
+                          borderRadius: '6px', 
+                          padding: '1px 4px', 
+                          minWidth: '10px', 
+                          textAlign: 'center'
+                        }}>
+                          {validBookings.length}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  {isBlocked && (
-                    <div style={{fontSize:'8px',background:'#ef444444',color:'#ef4444',padding:'2px',borderRadius:'4px',marginTop:'4px',marginBottom:'4px',textAlign:'center',fontWeight:900}}>BLOQUEADO</div>
-                  )}
-                  {validBookings.map(b=>(
-                    <div key={b.id} style={{fontSize:'8px',background:PAY_COLOR[b.payment_status]||'#555',padding:'2px',borderRadius:'4px',marginTop:'2px',overflow:'hidden', whiteSpace:'nowrap', color:'#fff'}}>{b.client_name.split(' ')[0]}</div>
-                  ))}
-                </div>
-              )})}
+                )})}
+              </div>
             </div>
+
+            {/* Detalle del Día Seleccionado */}
+            {selectedCalDay && (() => {
+              const d = selectedCalDay;
+              const dayBookings = bookings.filter(b => {
+                const dObj = parseLocalDate(b.booking_date);
+                return dObj.getDate() === d && dObj.getMonth() === calMonth.getMonth() && dObj.getFullYear() === calMonth.getFullYear();
+              });
+              const isBlocked = dayBookings.some(b => b.payment_status === 'blocked');
+              const validBookings = dayBookings.filter(b => b.payment_status !== 'blocked');
+              
+              return (
+                <div style={{background:theme.card, borderRadius:'24px', padding:'24px', border:`1px solid ${theme.border}`, boxShadow: theme.shadow}}>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start', flexWrap:'wrap', gap:'12px', marginBottom:'20px', borderBottom:`1px solid ${theme.border}`, paddingBottom:'16px'}}>
+                    <div>
+                      <h4 style={{margin:0, fontSize:'18px', fontWeight:900}}>
+                        {new Date(calMonth.getFullYear(), calMonth.getMonth(), d).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                      </h4>
+                      <p style={{margin:'4px 0 0 0', fontSize:'13px', color:'#888'}}>
+                        {isBlocked ? 'Este día está bloqueado para nuevas reservas' : `${validBookings.length} reservas programadas`}
+                      </p>
+                    </div>
+                    
+                    <button 
+                      onClick={() => handleToggleBlock(d)} 
+                      style={s.btn(isBlocked ? '#10b981' : '#ef4444', '#fff')}
+                    >
+                      {isBlocked ? <Unlock size={14} /> : <Lock size={14} />}
+                      {isBlocked ? 'Desbloquear Día' : 'Bloquear Día'}
+                    </button>
+                  </div>
+
+                  <h5 style={{margin:'0 0 12px 0', fontSize:'13px', fontWeight:900, color:'#888', textTransform:'uppercase', letterSpacing:'1px'}}>Reservas de la Jornada</h5>
+                  
+                  {validBookings.length === 0 ? (
+                    <div style={{padding:'20px', textAlign:'center', color:'#555', border:`2px dashed ${theme.border}`, borderRadius:'16px'}}>
+                      No hay reservas programadas para este día
+                    </div>
+                  ) : (
+                    <div style={{display:'flex', flexDirection:'column', gap:'10px'}}>
+                      {validBookings.map(b => (
+                        <div key={b.id} style={{
+                          background: theme.bg,
+                          border: `1px solid ${theme.border}`,
+                          borderRadius: '16px',
+                          padding: '16px',
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                          flexWrap: 'wrap',
+                          gap: '12px'
+                        }}>
+                          <div>
+                            <div style={{fontWeight:900, fontSize:'15px'}}>{b.client_name}</div>
+                            <div style={{fontSize:'12px', color: C, fontWeight:700, marginTop:'2px'}}>{b.tour_title}</div>
+                            <div style={{fontSize:'11px', color:'#777', marginTop:'4px'}}>
+                              📍 Hotel: {b.hotel} • 👥 Pax: {b.pax}
+                            </div>
+                          </div>
+                          <div style={{display:'flex', flexDirection:'column', alignItems:'flex-end', gap:'6px'}}>
+                            <div style={{fontWeight:900, fontSize:'16px'}}>{b.total_price}€</div>
+                            <span style={s.tag(PAY_COLOR[b.payment_status] || '#555')}>{PAY_LABEL[b.payment_status] || b.payment_status}</span>
+                            <button 
+                              style={{...s.btn('rgba(255,255,255,0.05)', theme.text), padding:'4px 8px', borderRadius:'8px', fontSize:'10px'}} 
+                              onClick={() => {
+                                setTab('bookings');
+                                setSearch(b.reference || b.client_name);
+                              }}
+                            >
+                              Ver Ficha
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
           </div>
         )}
 

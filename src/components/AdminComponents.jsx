@@ -68,6 +68,10 @@ export const BookingForm = ({data,onChange}) => {
         {value:'guide_en',  label:'M - Guía Local (inglés)'},
         {value:'guide_es',  label:'L - Guía Local Certificado (español)'}
       ]} />
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',gridColumn:'1/-1'}}>
+        <Input label="Precio Total (€)" value={data.total_price} onChange={v=>onChange('total_price',v)} type="number" />
+        <Input label="Depósito Recibido (€)" value={data.deposit_amount} onChange={v=>onChange('deposit_amount',v)} type="number" />
+      </div>
     </div>
   );
 };
