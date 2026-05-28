@@ -208,18 +208,34 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     let paxMessage = '';
     let paxMessageEn = '';
 
-    if (paxNum >= 7) {
-        extraPaxFee = 30;
-        paxMessage = 'Cambio obligatorio a Minivan Hiace o similar (+30€)';
-        paxMessageEn = 'Mandatory upgrade to Minivan Hiace or similar (+30€)';
-    } else if (paxNum >= 5) {
-        extraPaxFee = (paxNum - 4) * 5;
-        paxMessage = `Coche estándar al máximo de su capacidad (+${extraPaxFee}€)`;
-        paxMessageEn = `Standard car at maximum capacity (+${extraPaxFee}€)`;
+    if (tourId === 'lovina-dolphins') {
+        if (paxNum >= 7) {
+            extraPaxFee = 45;
+            paxMessage = 'Suplemento Minivan Hiace + 2º Bote Privado (+45€)';
+            paxMessageEn = 'Upgrade to Minivan Hiace + 2nd Private Boat (+45€)';
+        } else if (paxNum >= 5) {
+            extraPaxFee = (paxNum - 4) * 15;
+            paxMessage = `Suplemento pasajeros adicionales (+${extraPaxFee}€)`;
+            paxMessageEn = `Extra passengers supplement (+${extraPaxFee}€)`;
+        } else {
+            extraPaxFee = 0;
+            paxMessage = '';
+            paxMessageEn = '';
+        }
     } else {
-        extraPaxFee = 0;
-        paxMessage = 'Precio base (sin suplemento)';
-        paxMessageEn = 'Base price (no supplement)';
+        if (paxNum >= 7) {
+            extraPaxFee = 30;
+            paxMessage = 'Cambio obligatorio a Minivan Hiace o similar (+30€)';
+            paxMessageEn = 'Mandatory upgrade to Minivan Hiace or similar (+30€)';
+        } else if (paxNum >= 5) {
+            extraPaxFee = (paxNum - 4) * 5;
+            paxMessage = `Coche estándar al máximo de su capacidad (+${extraPaxFee}€)`;
+            paxMessageEn = `Standard car at maximum capacity (+${extraPaxFee}€)`;
+        } else {
+            extraPaxFee = 0;
+            paxMessage = 'Precio base (sin suplemento)';
+            paxMessageEn = 'Base price (no supplement)';
+        }
     }
 
     const finalTotalPrice = finalPriceForTier + extraPaxFee;
