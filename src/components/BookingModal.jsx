@@ -496,6 +496,21 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                     );
                                                 })}
                                             </div>
+                                            {tourId === 'lovina-dolphins' && (
+                                                <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 text-xs font-bold text-primary flex items-start gap-3 mt-4">
+                                                    <ShieldCheck size={18} className="shrink-0 mt-0.5" />
+                                                    <div>
+                                                        <p className="font-extrabold uppercase tracking-wide mb-1 text-primary">
+                                                            {i18n.language === 'en' ? '💎 Exclusive Private Boat Included' : '💎 Barca Privada Exclusiva Incluida'}
+                                                        </p>
+                                                        <p className="opacity-90 leading-relaxed text-[11px] font-medium">
+                                                            {i18n.language === 'en' 
+                                                                ? 'This package includes your private vehicle, gasoline, driver, AND the private charter of a traditional boat (Jukung) for your group to see the dolphins at sunrise. No shared boats, no extra fees.' 
+                                                                : 'Este paquete incluye tu vehículo privado, gasolina, conductor, Y el alquiler completo de un bote tradicional privado (Jukung) exclusivo para tu grupo para ver los delfines al amanecer. Sin barcos compartidos ni costes sorpresa.'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                         <div className="flex gap-3">
                                             {isUbudStops && <button type="button" onClick={() => setStep(1)} className="w-16 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center transition-colors"><ArrowLeft size={20} /></button>}
