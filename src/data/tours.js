@@ -506,7 +506,7 @@ export const tours = [
         heroSubtitle_en: "A magical adventure at sunrise connecting with marine life and the northern jungle.",
         fullDescription: "La aventura definitiva para los madrugadores. El precio incluye transporte privado y barca privada bajo reserva. En Cantik Tours practicamos un turismo responsable, para que disfrutes de una experiencia ética y tranquila. Nos alejamos de las persecuciones masivas de delfines, priorizando el respeto por los animales y su hábitat natural.",
         fullDescription_en: "The ultimate adventure for early birds. Price includes private transport and private boat with pre-booking. At Cantik Tours we practice responsible tourism: we keep our distance from massive dolphin chases, prioritizing respect for the animals and their natural habitat for an ethical and peaceful experience.",
-        price: 97,
+        price: 99,
         pricing: {
             economy: 99,
             comfort: 120,
