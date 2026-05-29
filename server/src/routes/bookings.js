@@ -2,6 +2,9 @@ import { Router } from 'express';
 import { supabase } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
 import { validateBody, sanitize } from '../middleware/validate.js';
+import { sendClientConfirmation, sendAdminAlert, sendReceiptUploadedAlert } from '../services/email.js';
+import fs from 'fs';
+import path from 'path';
 
 const router = Router();
 
@@ -51,14 +54,116 @@ router.post(
           reference: reference || null,
           extras: JSON.stringify(initialExtras)
         })
-        .select('id')
+        .select('*')
         .single();
 
       if (error) throw error;
+
+      // Send emails asynchronously (don't block the HTTP response)
+      const bookingForEmail = {
+        ...data,
+        client_email: client_email || '',
+        extras: initialExtras
+      };
+
+      sendClientConfirmation(bookingForEmail).catch(err => {
+        console.error('Failed to send client confirmation email:', err);
+      });
+
+      sendAdminAlert(bookingForEmail).catch(err => {
+        console.error('Failed to send admin alert email:', err);
+      });
+
       res.json({ status: 'success', id: data.id });
     } catch (err) {
       console.error('Error saving booking:', err);
       res.status(500).json({ status: 'error', message: 'Error guardando la reserva' });
+    }
+  }
+);
+
+// ── Public: Upload payment receipt for a booking ──
+router.post(
+  '/:id/receipt',
+  validateBody(['filename', 'fileData']),
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { filename, fileData } = req.body;
+
+      // Extract raw base64 data by removing any data URL scheme prefix
+      const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+      let base64Content = fileData;
+      if (matches && matches.length === 3) {
+        base64Content = matches[2];
+      }
+
+      const buffer = Buffer.from(base64Content, 'base64');
+      
+      // Setup file structure
+      const uploadDir = path.join(process.cwd(), 'uploads', 'receipts');
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      // Create unique filename to prevent overwrites
+      const cleanFilename = `${id}_${Date.now()}_${filename.replace(/[^a-zA-Z0-9.\-_]/g, '')}`;
+      const filePath = path.join(uploadDir, cleanFilename);
+
+      // Write file
+      fs.writeFileSync(filePath, buffer);
+      const relativeUrl = `/uploads/receipts/${cleanFilename}`;
+
+      // Get current booking to update its extras
+      const { data: currentBooking, error: fetchErr } = await supabase
+        .from('bookings')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (fetchErr || !currentBooking) {
+        throw new Error(fetchErr?.message || 'Booking not found');
+      }
+
+      // Update extras
+      let extrasObj = {};
+      try {
+        extrasObj = typeof currentBooking.extras === 'string' 
+          ? JSON.parse(currentBooking.extras) 
+          : (currentBooking.extras || {});
+      } catch (e) {
+        extrasObj = {};
+      }
+
+      extrasObj.receipt_url = relativeUrl;
+      if (!extrasObj.logs) extrasObj.logs = [];
+      extrasObj.logs.push({
+        timestamp: new Date().toISOString(),
+        text: `Comprobante de pago subido por el cliente (${filename}).`
+      });
+
+      // Update booking status
+      const { data: updatedBooking, error: updateErr } = await supabase
+        .from('bookings')
+        .update({
+          payment_status: 'verifying_payment',
+          extras: JSON.stringify(extrasObj)
+        })
+        .eq('id', id)
+        .select('*')
+        .single();
+
+      if (updateErr) throw updateErr;
+
+      // Trigger admin email alert asynchronously
+      sendReceiptUploadedAlert(updatedBooking, relativeUrl).catch(err => {
+        console.error('Failed to send receipt upload email notification:', err);
+      });
+
+      res.json({ status: 'success', data: updatedBooking });
+    } catch (err) {
+      console.error('Error uploading payment receipt:', err);
+      res.status(500).json({ status: 'error', message: 'Error al subir el comprobante de pago.' });
     }
   }
 );

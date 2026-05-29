@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import {
   MessageCircle, Star, CheckCircle2, ShieldCheck, Info,
   Heart, Sun, Moon, Plane, Copy, ExternalLink,
-  Clock, MapPin, Coffee, Camera, Waves, Map, Activity
+  Clock, MapPin, Coffee, Camera, Waves, Map, Activity, Upload
 } from 'lucide-react';
-import { getItinerary, submitCheckin } from '../services/api';
+import { getItinerary, submitCheckin, uploadReceipt } from '../services/api';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
 import { useCurrency } from '../context/CurrencyContext';
@@ -44,8 +44,9 @@ export default function ItineraryPage() {
   const [checkinData, setCheckinData] = useState([]);
   const [submittingCheckin, setSubmittingCheckin] = useState(false);
   const [showStatusDetail, setShowStatusDetail] = useState(false);
-  const [showItinerary, setShowItinerary] = useState(true);
+  const [showItinerary, setShowItinerary] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [uploadingReceipt, setUploadingReceipt] = useState(false);
   const [copiedField, setCopiedField] = useState('');
   const [paymentTab, setPaymentTab] = useState('eur');
   const [showChecklist, setShowChecklist] = useState(true);
@@ -115,6 +116,48 @@ export default function ItineraryPage() {
     } finally {
       setSubmittingCheckin(false);
     }
+  };
+
+  const handleReceiptUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      alert(i18n.language.startsWith('en') ? 'File size must be under 10MB.' : 'El archivo debe pesar menos de 10MB.');
+      return;
+    }
+
+    setUploadingReceipt(true);
+    const reader = new FileReader();
+
+    reader.onload = async () => {
+      try {
+        const fileData = reader.result;
+        const res = await uploadReceipt(booking.id, {
+          filename: file.name,
+          fileData
+        });
+
+        if (res.status === 'success' && res.data) {
+          setBooking(res.data);
+          alert(i18n.language.startsWith('en') ? 'Receipt uploaded successfully! We are verifying your payment.' : '¡Comprobante subido con éxito! Estamos verificando tu pago.');
+        } else {
+          throw new Error(res.message || 'Error uploading file');
+        }
+      } catch (err) {
+        console.error('Upload Error:', err);
+        alert(i18n.language.startsWith('en') ? 'Failed to upload receipt. Please try again.' : 'Error al subir el comprobante. Por favor, vuelve a intentarlo.');
+      } finally {
+        setUploadingReceipt(false);
+      }
+    };
+
+    reader.onerror = () => {
+      alert(i18n.language.startsWith('en') ? 'Failed to read file.' : 'Error al leer el archivo.');
+      setUploadingReceipt(false);
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const dark = darkMode;
@@ -491,248 +534,262 @@ export default function ItineraryPage() {
               <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
             </div>
 
-            {/* Stub (Expandable checklist section) */}
+            {/* Stub (Detailed Itinerary) */}
             <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6 rounded-b-[2.5rem] transition-all duration-300`}>
               <button
-                onClick={() => setShowChecklist(!showChecklist)}
+                onClick={() => setShowItinerary(!showItinerary)}
                 className="w-full flex items-center justify-between text-left focus:outline-none"
               >
                 <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
-                  <CheckCircle2 className="text-primary" size={12} />
-                  {en ? 'YOUR BOOKING PROGRESS' : 'TU PROGRESO DE RESERVA'}
+                  <Map className="text-primary" size={12} />
+                  {en ? 'DETAILED ITINERARY' : 'ITINERARIO DETALLADO'}
                 </div>
                 <div className="flex items-center gap-2">
-                  {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
-                    <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
-                      {en ? 'Action Required' : 'Acción Requerida'}
-                    </span>
-                  ) : (
-                    <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
-                      {en ? 'Completed ✓' : 'Completado ✓'}
-                    </span>
-                  )}
-                  <span className={`text-[9px] ${sub} transition-transform duration-300 ${showChecklist ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                  <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
+                    {en ? 'Your Route' : 'Tu Ruta'}
+                  </span>
+                  <span className={`text-[9px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
                     ▼
                   </span>
                 </div>
               </button>
 
-              {showChecklist && (
-                <div className="space-y-4 mt-6">
-                  {/* Step 1: Payment */}
-                  <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                    <div className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
-                        {!isPaymentPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">1</div>}
-                      </div>
-                      <div>
-                        <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                          {en ? '1. Booking Payment' : '1. Pago de Reserva'}
-                        </div>
-                        <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                          {!isPaymentPending
-                            ? (en ? 'Booking fully paid!' : '¡Reserva totalmente pagada!')
-                            : (en 
-                                ? `Remaining balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount}` 
-                                : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}`)}
-                        </div>
-                      </div>
-                    </div>
-                    {isPaymentPending && (
-                      <button
-                        onClick={() => setShowPaymentModal(true)}
-                        className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
-                      >
-                        {en ? 'Pay by Transfer' : 'Pagar con Transferencia'}
-                      </button>
-                    )}
-                  </div>
+              {showItinerary && finalItinerary.length > 0 && (
+                <motion.div 
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="mt-6 space-y-6 relative pt-5 border-t border-dashed border-gray-200 dark:border-white/10"
+                >
+                  {/* Connector line */}
+                  <div className={`absolute top-6 bottom-4 left-[0.875rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
 
-                  {/* Step 2: Send Receipt */}
-                  <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${isReceiptSentOrVerified ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                    <div className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isReceiptSentOrVerified ? 'bg-emerald-500/20 text-emerald-500' : (booking.payment_status === 'payment_sent' ? 'bg-amber-500/20 text-amber-500' : 'bg-gray-500/20 text-gray-400')}`}>
-                        {isReceiptSentOrVerified ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">2</div>}
+                  {finalItinerary.map((item, idx) => (
+                    <div key={idx} className="flex gap-4 relative">
+                      <div className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
+                        {getActivityIcon(item.type)}
                       </div>
-                      <div>
-                        <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                          {en ? '2. Send Payment Receipt' : '2. Enviar Comprobante'}
+                      <div className="flex-1 pt-0.5">
+                        <div className="flex items-center justify-between gap-4 mb-0.5">
+                          <h4 className="text-[10px] font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
+                          {item.duration && (
+                            <div className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter ${sub}`}>
+                              <Clock size={8} />
+                              {en ? (item.duration_en || item.duration) : item.duration}
+                            </div>
+                          )}
                         </div>
-                        <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                          {booking.payment_status === 'verifying_payment' || booking.payment_status === 'payment_sent'
-                            ? (en ? 'Verifying payment receipt...' : 'Verificando comprobante de pago...')
-                            : isReceiptSentOrVerified
-                              ? (en ? 'Receipt received and verified!' : '¡Comprobante verificado con éxito!')
-                              : (en ? 'Please send proof of payment once transferred.' : 'Envíanos el comprobante tras realizar el pago.')}
-                        </div>
-                      </div>
-                    </div>
-                    {!isReceiptSentOrVerified && booking.payment_status !== 'verifying_payment' && booking.payment_status !== 'payment_sent' && (
-                      <a
-                        href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90 text-center flex items-center justify-center gap-1.5"
-                      >
-                        <MessageCircle size={12} />
-                        {en ? 'Send via WhatsApp' : 'Enviar por WhatsApp'}
-                      </a>
-                    )}
-                  </div>
-
-                  {/* Step 3: Check-in */}
-                  <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                    <div className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isCheckinPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
-                        {!isCheckinPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">3</div>}
-                      </div>
-                      <div>
-                        <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                          {en ? '3. Passenger Check-in' : '3. Registro de Pasajeros'}
-                        </div>
-                        <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                          {!isCheckinPending
-                            ? (en ? 'All passengers registered!' : '¡Todos los viajeros registrados!')
-                            : (en ? 'Please register passenger passports.' : 'Completa los datos y pasaportes de los viajeros.')}
-                        </div>
+                        <p className={`text-[10px] leading-relaxed font-medium ${sub}`}>
+                          {en ? (item.desc_en || item.desc) : item.desc}
+                        </p>
                       </div>
                     </div>
-                    {isCheckinPending && (
-                      <button
-                        onClick={() => setShowCheckin(true)}
-                        className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
-                      >
-                        {en ? 'Complete Check-in' : 'Hacer Check-in'}
-                      </button>
-                    )}
-                  </div>
-                </div>
+                  ))}
+                </motion.div>
               )}
             </div>
+
           </div>
         </motion.div>
 
-        {/* ── BOOKING STATUS TIMELINE ──────────────────── */}
+        {/* ── BOOKING PROGRESS & TIMELINE CARD ──────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
+          transition={{ delay: 0.1 }}
           className={`rounded-[2rem] p-6 border shadow-xl ${card}`}
         >
-          <button
-            onClick={() => setShowStatusDetail(!showStatusDetail)}
-            className="w-full flex items-center justify-between text-left focus:outline-none"
-          >
-            <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
-              <Activity className="text-primary animate-pulse" size={18} />
-              {en ? 'Booking Status' : 'Estado de tu Reserva'}
-            </h3>
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 pb-6 border-b border-dashed border-gray-200 dark:border-white/10">
+            <div>
+              <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
+                {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
+              </span>
+              <div className="flex items-center gap-2 mt-1">
+                <span className={`w-2.5 h-2.5 rounded-full ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+                <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${text}`}>
+                  {status.label}
+                </h3>
+              </div>
+            </div>
             <div className="flex items-center gap-2">
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest ${status.bg_} ${status.color}`}>
-                {status.label}
+              {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
+                <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
+                  {en ? 'Action Required' : 'Acción Requerida'}
+                </span>
+              ) : (
+                <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
+                  {en ? 'Completed ✓' : 'Completado ✓'}
+                </span>
+              )}
+              <button
+                onClick={() => setShowChecklist(!showChecklist)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[9px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/10 text-gray-300 hover:bg-white/5' : 'border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+              >
+                <span>{en ? 'Tasks' : 'Tareas'}</span>
+                <span className={`text-[8px] transition-transform duration-300 ${showChecklist ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>▼</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Checklist Content */}
+          {showChecklist && (
+            <div className="space-y-4 mb-6">
+              {/* Step 1: Payment */}
+              <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
+                    {!isPaymentPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">1</div>}
+                  </div>
+                  <div>
+                    <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                      {en ? '1. Booking Payment' : '1. Pago de Reserva'}
+                    </div>
+                    <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                      {!isPaymentPending
+                        ? (en ? 'Booking fully paid!' : '¡Reserva totalmente pagada!')
+                        : (en 
+                            ? `Remaining balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount}` 
+                            : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}`)}
+                    </div>
+                  </div>
+                </div>
+                {isPaymentPending && (
+                  <button
+                    onClick={() => setShowPaymentModal(true)}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
+                  >
+                    {en ? 'Pay by Transfer' : 'Pagar con Transferencia'}
+                  </button>
+                )}
+              </div>
+
+              {/* Step 2: Send Receipt */}
+              <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${isReceiptSentOrVerified ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isReceiptSentOrVerified ? 'bg-emerald-500/20 text-emerald-500' : (booking.payment_status === 'payment_sent' ? 'bg-amber-500/20 text-amber-500' : 'bg-gray-500/20 text-gray-400')}`}>
+                    {isReceiptSentOrVerified ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">2</div>}
+                  </div>
+                  <div>
+                    <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                      {en ? '2. Send Payment Receipt' : '2. Enviar Comprobante'}
+                    </div>
+                    <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                      {booking.payment_status === 'verifying_payment' || booking.payment_status === 'payment_sent'
+                        ? (en ? 'Verifying payment receipt...' : 'Verificando comprobante de pago...')
+                        : isReceiptSentOrVerified
+                          ? (en ? 'Receipt received and verified!' : '¡Comprobante verificado con éxito!')
+                          : (en ? 'Please send proof of payment once transferred.' : 'Envíanos el comprobante tras realizar el pago.')}
+                    </div>
+                  </div>
+                </div>
+                {!isReceiptSentOrVerified && booking.payment_status !== 'verifying_payment' && booking.payment_status !== 'payment_sent' && (
+                  <div className="w-full sm:w-auto flex flex-col items-stretch sm:items-end gap-2">
+                    <label className="px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90 text-center flex items-center justify-center gap-1.5 cursor-pointer select-none">
+                      {uploadingReceipt ? (
+                        <>
+                          <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>{en ? 'Uploading...' : 'Subiendo...'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={12} />
+                          <span>{en ? 'Upload Receipt' : 'Subir Comprobante'}</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*,application/pdf"
+                        className="hidden"
+                        onChange={handleReceiptUpload}
+                        disabled={uploadingReceipt}
+                      />
+                    </label>
+                    <a
+                      href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`text-[9px] font-bold uppercase tracking-wider text-center underline hover:text-primary transition-all ${sub}`}
+                    >
+                      {en ? 'Or send via WhatsApp' : 'O enviar por WhatsApp'}
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              {/* Step 3: Check-in */}
+              <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isCheckinPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
+                    {!isCheckinPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">3</div>}
+                  </div>
+                  <div>
+                    <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                      {en ? '3. Passenger Check-in' : '3. Registro de Pasajeros'}
+                    </div>
+                    <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                      {!isCheckinPending
+                        ? (en ? 'All passengers registered!' : '¡Todos los viajeros registrados!')
+                        : (en ? 'Please register passenger passports.' : 'Completa los datos y pasaportes de los viajeros.')}
+                    </div>
+                  </div>
+                </div>
+                {isCheckinPending && (
+                  <button
+                    onClick={() => setShowCheckin(true)}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
+                  >
+                    {en ? 'Complete Check-in' : 'Hacer Check-in'}
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Collapsible Official Timeline */}
+          <div className="pt-4 border-t border-dashed border-gray-200 dark:border-white/10">
+            <button
+              onClick={() => setShowStatusDetail(!showStatusDetail)}
+              className="w-full flex items-center justify-between text-left focus:outline-none"
+            >
+              <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
+                {en ? 'Official Timeline & History' : 'Historial y Línea de Tiempo Oficial'}
               </span>
               <span className={`text-[9px] ${sub} transition-transform duration-300 ${showStatusDetail ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
                 ▼
               </span>
-            </div>
-          </button>
-
-          {showStatusDetail && (
-            <div className="mt-6 space-y-6 relative pt-6 border-t border-dashed border-white/5">
-              <div className={`absolute top-6 bottom-2 left-[7px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
-              {[
-                statusMap.requested, 
-                statusMap.pending_payment, 
-                statusMap.payment_received, 
-                statusMap.reserved, 
-                statusMap.confirmed,
-                statusMap.in_progress,
-                statusMap.completed
-              ].map((st, i) => {
-                const isPast = st.step <= currentStep;
-                const isCurrent = st.step === currentStep;
-                return (
-                  <div key={i} className="flex gap-6 relative z-10">
-                    <div className={`w-4 h-4 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_15px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
-                      {isPast && !isCurrent && <CheckCircle2 size={8} className="text-white" />}
-                      {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
-                    </div>
-                    <div className="flex-1">
-                      <div className={`text-[10px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
-                      {isCurrent && <div className={`text-[11px] mt-1 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </motion.div>
-
-
-        {/* ── DETAILED ITINERARY ────────────────────────── */}
-        {finalItinerary.length > 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ type: 'spring', stiffness: 100, delay: 0.1 }}
-            className={`rounded-[2.5rem] p-8 shadow-2xl ${card}`}
-          >
-            <button
-              onClick={() => setShowItinerary(!showItinerary)}
-              className="w-full flex items-center justify-between text-left focus:outline-none"
-            >
-              <div>
-                <h3 className="text-lg font-black tracking-tight uppercase">
-                  {en ? 'Detailed Itinerary' : 'Itinerario Detallado'}
-                </h3>
-                <p className={`text-[10px] font-bold uppercase tracking-widest mt-1 ${sub}`}>
-                  {en ? 'Your planned route' : 'Tu ruta planificada'}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-2xl flex items-center justify-center ${dark ? 'bg-white/5' : 'bg-primary/5'}`}>
-                  <Map className="text-primary" size={20} />
-                </div>
-                <span className={`text-[9px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
-                  ▼
-                </span>
-              </div>
             </button>
 
-            {showItinerary && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="mt-8 space-y-8 relative pt-6 border-t border-dashed border-white/5"
-              >
-                {/* Connector line */}
-                <div className={`absolute top-8 bottom-4 left-[1.125rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
-
-                {finalItinerary.map((item, idx) => (
-                  <div key={idx} className="flex gap-6 relative">
-                    <div className={`w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
-                      {getActivityIcon(item.type)}
-                    </div>
-                    <div className="flex-1 pt-1.5">
-                      <div className="flex items-center justify-between gap-4 mb-1">
-                        <h4 className="text-xs font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
-                        {item.duration && (
-                          <div className={`flex items-center gap-1 text-[9px] font-black uppercase tracking-tighter ${sub}`}>
-                            <Clock size={10} />
-                            {en ? (item.duration_en || item.duration) : item.duration}
-                          </div>
-                        )}
+            {showStatusDetail && (
+              <div className="mt-4 space-y-4 relative pl-2 pt-2">
+                <div className={`absolute top-2 bottom-2 left-[15px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
+                {[
+                  statusMap.requested, 
+                  statusMap.pending_payment, 
+                  statusMap.payment_received, 
+                  statusMap.reserved, 
+                  statusMap.confirmed,
+                  statusMap.in_progress,
+                  statusMap.completed
+                ].map((st, i) => {
+                  const isPast = st.step <= currentStep;
+                  const isCurrent = st.step === currentStep;
+                  return (
+                    <div key={i} className="flex gap-4 relative z-10">
+                      <div className={`w-3.5 h-3.5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_10px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
+                        {isPast && !isCurrent && <CheckCircle2 size={6} className="text-white" />}
+                        {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
                       </div>
-                      <p className={`text-[11px] leading-relaxed font-medium ${sub}`}>
-                        {en ? (item.desc_en || item.desc) : item.desc}
-                      </p>
+                      <div className="flex-1">
+                        <div className={`text-[9px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
+                        {isCurrent && <div className={`text-[10px] mt-0.5 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </motion.div>
+                  )
+                })}
+              </div>
             )}
-          </motion.div>
-        )}
+          </div>
+        </motion.div>
 
 
 

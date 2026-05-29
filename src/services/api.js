@@ -94,6 +94,7 @@ export const getAvailability   = () => get('/api/availability');
 export const toggleAvailability = (date) => post('/api/availability/toggle', { date });
 export const getItinerary      = (ref) => get(`/api/itinerary?ref=${encodeURIComponent(ref)}`);
 export const submitCheckin     = (data) => post('/api/itinerary/checkin', data);
+export const uploadReceipt     = (bookingId, data) => post(`/api/bookings/${bookingId}/receipt`, data);
 
 export const getPublicReviews = async (tourId) => {
   try {

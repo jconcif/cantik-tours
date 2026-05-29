@@ -520,6 +520,49 @@ export const FinancialManagement = ({booking, onUpdate}) => {
             <div style={{height:'100%',background:balance > 0 ? C : '#10b981',width:`${paidPct}%`,borderRadius:'4px',transition:'width 0.5s'}}></div>
           </div>
         </div>
+
+        {/* Desglose de Cálculo */}
+        <div style={{
+          marginTop: '16px',
+          paddingTop: '16px',
+          borderTop: '1px dashed #ffffff10',
+          fontSize: '11px',
+          color: '#aaa',
+          fontFamily: 'monospace',
+          lineHeight: '1.6'
+        }}>
+          <div style={{ fontWeight: 'bold', color: '#fff', marginBottom: '6px', fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Desglose Matemático (Suma / Resta)</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>Precio Base del Tour:</span>
+            <span style={{ color: '#fff' }}>{basePrice.toFixed(2)}€</span>
+          </div>
+          {positiveCharges.map(c => (
+            <div key={c.id} style={{ display: 'flex', justifyContent: 'space-between', color: '#f59e0b' }}>
+              <span>[+] Extra: {c.concept}:</span>
+              <span>+{Number(c.amount).toFixed(2)}€</span>
+            </div>
+          ))}
+          {discounts.map(d => (
+            <div key={d.id} style={{ display: 'flex', justifyContent: 'space-between', color: '#ec4899' }}>
+              <span>[-] Descuento: {d.concept}:</span>
+              <span>-{Math.abs(Number(d.amount)).toFixed(2)}€</span>
+            </div>
+          ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #333', marginTop: '4px', paddingTop: '4px', fontWeight: 'bold', color: '#fff' }}>
+            <span>(=) VALOR TOTAL DEL TOUR:</span>
+            <span>{totalOwed.toFixed(2)}€</span>
+          </div>
+          {payments.map(p => (
+            <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', color: C }}>
+              <span>[-] Pago Recibido ({p.payment_method} - {p.payment_date}):</span>
+              <span>-{Number(p.amount).toFixed(2)}€</span>
+            </div>
+          ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '2px solid #555', marginTop: '6px', paddingTop: '6px', fontWeight: '900', color: balance > 0.01 ? '#ef4444' : '#10b981', fontSize: '12px' }}>
+            <span>(=) SALDO PENDIENTE FINAL:</span>
+            <span>{balance.toFixed(2)}€</span>
+          </div>
+        </div>
       </div>
 
       {/* === TABS === */}
