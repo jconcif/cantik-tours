@@ -57,7 +57,10 @@ export const BookingForm = ({data,onChange}) => {
 
       {/* Client Info */}
       <Input label="Cliente" value={data.client_name} onChange={v=>onChange('client_name',v)} />
-      <Input label="WhatsApp" value={data.client_phone} onChange={v=>onChange('client_phone',v)} />
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+        <Input label="WhatsApp" value={data.client_phone} onChange={v=>onChange('client_phone',v)} />
+        <Input label="Email" value={data.client_email || ''} onChange={v=>onChange('client_email',v)} type="email" />
+      </div>
       <Input label="Hotel / Recogida" value={data.hotel} onChange={v=>onChange('hotel',v)} />
 
       {/* Tour Setup */}
@@ -247,8 +250,14 @@ export const FinancialManagement = ({booking, onUpdate}) => {
   // -- Calculations --
   const totalPaid    = payments.reduce((s, p) => s + Number(p.amount), 0);
   const totalExp     = expenses.reduce((s, e) => s + Number(e.amount), 0);
-  const totalCharges = charges.reduce((s, c) => s + Number(c.amount), 0);
-  const totalOwed    = basePrice + totalCharges; // Lo que debe el cliente en total
+  
+  const positiveCharges = charges.filter(c => Number(c.amount) >= 0);
+  const discounts       = charges.filter(c => Number(c.amount) < 0);
+
+  const totalCharges   = positiveCharges.reduce((s, c) => s + Number(c.amount), 0);
+  const totalDiscounts = discounts.reduce((s, c) => s + Math.abs(Number(c.amount)), 0);
+
+  const totalOwed    = basePrice + totalCharges - totalDiscounts; // Lo que debe el cliente en total
   const balance      = totalOwed - totalPaid;    // Saldo pendiente del cliente
   const profit       = totalPaid - totalExp;     // Beneficio neto del negocio
   const paidPct      = Math.min(100, (totalPaid / Math.max(totalOwed, 1)) * 100);
@@ -421,11 +430,57 @@ export const FinancialManagement = ({booking, onUpdate}) => {
     );
   };
 
+  const DiscountForm = () => {
+    const PRESETS = ['Descuento Especial','Cortesía','Cupón Manual','Ajuste de Precio','Descuento Grupo','Otros'];
+    const [d, setD] = React.useState({concept:'', amount:'', charge_date: new Date().toISOString().split('T')[0]});
+    const save = async () => {
+      if (!d.amount || !d.concept) return;
+      setLoading(true);
+      try { 
+        const negAmount = -Math.abs(Number(d.amount));
+        await api.addCharge({concept: d.concept, amount: negAmount, charge_date: d.charge_date, booking_id: bookingId}); 
+        const res = await api.getCharges(bookingId);
+        const newCharges = res.data || [];
+        setCharges(newCharges);
+        await updateBookingExtrasTotal(newCharges);
+        await addSystemLog(`Descuento registrado: -${Math.abs(negAmount)}€ en concepto de "${d.concept}".`);
+        await load(); 
+        setAdding(false); 
+        if(onUpdate) onUpdate(); 
+      }
+      catch(e) { alert(e.message); } finally { setLoading(false); }
+    };
+    return (
+      <div style={{background:'#222', padding:'18px', borderRadius:'20px', marginBottom:'16px', border:'1px solid #ec489944'}}>
+        <div style={{marginBottom:'10px'}}>
+          <label style={{fontSize:'10px',fontWeight:900,color:'#ec4899',textTransform:'uppercase',letterSpacing:'0.05em'}}>Concepto de Descuento</label>
+          <div style={{display:'flex',flexWrap:'wrap',gap:'6px',marginTop:'6px'}}>
+            {PRESETS.map(p => (
+              <button key={p} type="button" onClick={()=>setD({...d,concept:p})}
+                style={{padding:'5px 10px',background: d.concept===p ? '#ec489922' : '#333',color: d.concept===p ? '#ec4899' : '#aaa',border: d.concept===p ? '1px solid #ec489944' : '1px solid #444',borderRadius:'8px',fontSize:'11px',fontWeight:700,cursor:'pointer'}}>
+                {p}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:'10px', marginBottom:'10px'}}>
+          <Input label="Concepto" value={d.concept} onChange={v=>setD({...d,concept:v})} />
+          <Input label="Importe Descuento €" type="number" value={d.amount} onChange={v=>setD({...d,amount:v})} placeholder="Ej: 15" />
+          <Input label="Fecha" type="date" value={d.charge_date} onChange={v=>setD({...d,charge_date:v})} />
+        </div>
+        <div style={{display:'flex',gap:'8px'}}>
+          <button onClick={save} style={{flex:2,padding:'12px',background:'#ec4899',color:'#fff',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✓ GUARDAR DESCUENTO</button>
+          <button onClick={()=>setAdding(false)} style={{flex:1,padding:'12px',background:'#333',color:'#ccc',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✕</button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div style={{color:'#fff'}}>
       {/* === RESUMEN FINANCIERO === */}
       <div style={{background:'linear-gradient(135deg,#11BDDB11,#10b98111)', border:'1px solid #11BDDB22', borderRadius:'20px', padding:'20px', marginBottom:'20px'}}>
-        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(110px,1fr))', gap:'12px', marginBottom:'16px'}}>
+        <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(95px,1fr))', gap:'12px', marginBottom:'16px'}}>
           <div style={{textAlign:'center'}}>
             <div style={{fontSize:'9px',fontWeight:900,color:'#aaa',textTransform:'uppercase',marginBottom:'4px'}}>Precio Base</div>
             <div style={{fontSize:'20px',fontWeight:900,color:'#fff'}}>{basePrice.toFixed(2)}€</div>
@@ -433,6 +488,10 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           <div style={{textAlign:'center'}}>
             <div style={{fontSize:'9px',fontWeight:900,color:'#f59e0b',textTransform:'uppercase',marginBottom:'4px'}}>+ Extras</div>
             <div style={{fontSize:'20px',fontWeight:900,color:'#f59e0b'}}>{totalCharges.toFixed(2)}€</div>
+          </div>
+          <div style={{textAlign:'center'}}>
+            <div style={{fontSize:'9px',fontWeight:900,color:'#ec4899',textTransform:'uppercase',marginBottom:'4px'}}>- Descuentos</div>
+            <div style={{fontSize:'20px',fontWeight:900,color:'#ec4899'}}>{totalDiscounts.toFixed(2)}€</div>
           </div>
           <div style={{textAlign:'center'}}>
             <div style={{fontSize:'9px',fontWeight:900,color:C,textTransform:'uppercase',marginBottom:'4px'}}>Cobrado</div>
@@ -466,7 +525,8 @@ export const FinancialManagement = ({booking, onUpdate}) => {
       {/* === TABS === */}
       <div style={{display:'flex',gap:'6px',marginBottom:'16px', background:'#111', padding:'4px', borderRadius:'14px'}}>
         <button style={tabStyle('cobros')} onClick={()=>{setActiveTab('cobros');setAdding(false);}}>💰 Cobros ({payments.length})</button>
-        <button style={tabStyle('extras')} onClick={()=>{setActiveTab('extras');setAdding(false);}}>⚡ Extras ({charges.length})</button>
+        <button style={tabStyle('extras')} onClick={()=>{setActiveTab('extras');setAdding(false);}}>⚡ Extras ({positiveCharges.length})</button>
+        <button style={tabStyle('descuentos')} onClick={()=>{setActiveTab('descuentos');setAdding(false);}}>🏷️ Descuentos ({discounts.length})</button>
         <button style={tabStyle('gastos')} onClick={()=>{setActiveTab('gastos');setAdding(false);}}>📉 Gastos ({expenses.length})</button>
       </div>
 
@@ -474,16 +534,17 @@ export const FinancialManagement = ({booking, onUpdate}) => {
       {!adding && (
         <button onClick={()=>setAdding(true)} style={{
           width:'100%', marginBottom:'16px', padding:'13px',
-          background: activeTab==='cobros' ? C : activeTab==='extras' ? '#f59e0b' : '#ef4444',
+          background: activeTab==='cobros' ? C : activeTab==='extras' ? '#f59e0b' : activeTab==='descuentos' ? '#ec4899' : '#ef4444',
           color: activeTab==='cobros' ? '#000' : '#fff',
           border:'none', borderRadius:'14px', fontWeight:900, cursor:'pointer', fontSize:'13px'
         }}>
-          + {activeTab==='cobros' ? 'REGISTRAR COBRO' : activeTab==='extras' ? 'AÑADIR CARGO EXTRA AL CLIENTE' : 'REGISTRAR GASTO'}
+          + {activeTab==='cobros' ? 'REGISTRAR COBRO' : activeTab==='extras' ? 'AÑADIR CARGO EXTRA AL CLIENTE' : activeTab==='descuentos' ? 'AÑADIR DESCUENTO AL CLIENTE' : 'REGISTRAR GASTO'}
         </button>
       )}
 
       {adding && activeTab==='cobros' && <PayForm />}
       {adding && activeTab==='extras' && <ChargeForm />}
+      {adding && activeTab==='descuentos' && <DiscountForm />}
       {adding && activeTab==='gastos' && <ExpForm />}
 
       {/* === LISTA DE MOVIMIENTOS === */}
@@ -520,14 +581,14 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           </div>
         )})}
 
-        {activeTab==='extras' && charges.length===0 && !adding && (
+        {activeTab==='extras' && positiveCharges.length===0 && !adding && (
           <div style={{textAlign:'center',color:'#aaa',padding:'30px',border:'2px dashed #333',borderRadius:'20px'}}>
             <div style={{fontSize:'22px',marginBottom:'8px'}}>⚡</div>
             <div>Sin cargos extra</div>
             <div style={{fontSize:'12px',color:'#777',marginTop:'4px'}}>Pasajeros extra, tiempo adicional, actividades...</div>
           </div>
         )}
-        {activeTab==='extras' && charges.map(c => (
+        {activeTab==='extras' && positiveCharges.map(c => (
           <div key={c.id} style={rowStyle('#f59e0b')}>
             <div style={{background:'#f59e0b22',color:'#f59e0b',width:'44px',height:'44px',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,flexShrink:0}}>+€</div>
             <div style={{flex:1,minWidth:0}}>
@@ -539,6 +600,31 @@ export const FinancialManagement = ({booking, onUpdate}) => {
                 {new Date(c.charge_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
                 <span style={{marginLeft:'6px', opacity:0.5}}>{c.created_at ? '🌴 ' + new Date(c.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
                 <span style={{marginLeft:'8px',fontSize:'10px',color:'#f59e0b',background:'#f59e0b11',padding:'2px 6px',borderRadius:'4px'}}>CARGO AL CLIENTE</span>
+              </div>
+            </div>
+            <button onClick={()=>delCharge(c.id)} style={{width:'32px',height:'32px',borderRadius:'10px',background:'#ef444411',border:'none',color:'#ef4444',cursor:'pointer',flexShrink:0}}>✕</button>
+          </div>
+        ))}
+
+        {activeTab==='descuentos' && discounts.length===0 && !adding && (
+          <div style={{textAlign:'center',color:'#aaa',padding:'30px',border:'2px dashed #333',borderRadius:'20px'}}>
+            <div style={{fontSize:'22px',marginBottom:'8px'}}>🏷️</div>
+            <div>Sin descuentos aplicados</div>
+            <div style={{fontSize:'12px',color:'#777',marginTop:'4px'}}>Descuentos especiales, compensaciones, cortesías...</div>
+          </div>
+        )}
+        {activeTab==='descuentos' && discounts.map(c => (
+          <div key={c.id} style={rowStyle('#ec4899')}>
+            <div style={{background:'#ec489922',color:'#ec4899',width:'44px',height:'44px',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,flexShrink:0}}>-€</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                <div style={{fontSize:'14px',fontWeight:900}}>{c.concept}</div>
+                <div style={{fontSize:'16px',fontWeight:900,color:'#ec4899'}}>-{Math.abs(Number(c.amount)).toFixed(2)}€</div>
+              </div>
+              <div style={{fontSize:'11px',color:'#aaa',marginTop:'2px'}}>
+                {new Date(c.charge_date).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'})}
+                <span style={{marginLeft:'6px', opacity:0.5}}>{c.created_at ? '🌴 ' + new Date(c.created_at).toLocaleTimeString('es-ES',{timeZone:'Asia/Makassar',hour:'2-digit',minute:'2-digit'}) : ''}</span>
+                <span style={{marginLeft:'8px',fontSize:'10px',color:'#ec4899',background:'#ec489911',padding:'2px 6px',borderRadius:'4px'}}>DESCUENTO</span>
               </div>
             </div>
             <button onClick={()=>delCharge(c.id)} style={{width:'32px',height:'32px',borderRadius:'10px',background:'#ef444411',border:'none',color:'#ef4444',cursor:'pointer',flexShrink:0}}>✕</button>

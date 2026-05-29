@@ -78,6 +78,20 @@ export default function ItineraryPage() {
     fetch_();
   }, [ref]);
 
+  useEffect(() => {
+    if (booking && !loading) {
+      const extraCharges = charges.reduce((sum, c) => sum + Number(c.amount), 0);
+      const finalTotal = parseFloat(booking.total_price || 0) + extraCharges;
+      const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
+      const balance = finalTotal - totalPaid;
+      const isPaymentPending = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status);
+      const isReceiptSentOrVerified = ['verifying_payment', 'payment_received', 'payment_confirmed', 'reserved', 'confirmed', 'in_progress', 'completed'].includes(booking.payment_status);
+      const isCheckinPending = checkinData.some(p => !p.name || !p.passport);
+      const hasPending = isPaymentPending || isCheckinPending || !isReceiptSentOrVerified;
+      setShowChecklist(hasPending);
+    }
+  }, [loading, booking, payments, charges, checkinData]);
+
   const handleCheckinSubmit = async () => {
     const missing = checkinData.some(p => !(p.name || '').trim() || !(p.passport || '').trim());
     if (missing) {
@@ -488,9 +502,13 @@ export default function ItineraryPage() {
                   {en ? 'YOUR BOOKING PROGRESS' : 'TU PROGRESO DE RESERVA'}
                 </div>
                 <div className="flex items-center gap-2">
-                  {(isPaymentPending || isCheckinPending) && (
+                  {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
                     <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
                       {en ? 'Action Required' : 'Acción Requerida'}
+                    </span>
+                  ) : (
+                    <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
+                      {en ? 'Completed ✓' : 'Completado ✓'}
                     </span>
                   )}
                   <span className={`text-[9px] ${sub} transition-transform duration-300 ${showChecklist ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>

@@ -329,6 +329,9 @@ export default function AdminPanel() {
         if (finalData.pickup_time !== undefined) {
           ext.pickup_time = finalData.pickup_time;
         }
+        if (finalData.client_email !== undefined) {
+          ext.client_email = finalData.client_email;
+        }
         finalData.extras = JSON.stringify(ext);
       }
 
@@ -367,6 +370,7 @@ export default function AdminPanel() {
           ext = row.extras;
         }
         dataToEdit.pickup_time = ext.pickup_time || row.pickup_time || '';
+        dataToEdit.client_email = ext.client_email || '';
       } catch(e) {}
     }
     setModal({type,action:'update',data:dataToEdit});
