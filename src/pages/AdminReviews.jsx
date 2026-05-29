@@ -99,6 +99,10 @@ export default function AdminPanel() {
   const [annotationTexts, setAnnotationTexts] = useState({});
   const [reloading, setReloading] = useState(false);
 
+  const pendingValidationCount = useMemo(() => {
+    return bookings.filter(b => b.payment_status === 'verifying_payment').length;
+  }, [bookings]);
+
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace('_', ' ');
 
   const statsCharts = useMemo(() => {
@@ -731,7 +735,23 @@ export default function AdminPanel() {
             {/* Desktop Tabs integrated in Header */}
             {!isMobile && (
               <div style={{display:'flex', gap:'4px', background:theme.tabBg, padding:'4px', borderRadius:'14px'}}>
-                {TABS.map(t=><button key={t} style={{...s.tabBtn(tab===t), fontSize:'12px', padding:'6px 12px', borderRadius:'10px'}} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
+                {TABS.map(t => {
+                  const count = t === 'bookings' ? pendingValidationCount : 0;
+                  return (
+                    <button 
+                      key={t} 
+                      style={{...s.tabBtn(tab===t), fontSize:'12px', padding:'6px 12px', borderRadius:'10px', display:'flex', alignItems:'center', gap:'6px'}} 
+                      onClick={()=>setTab(t)}
+                    >
+                      <span>{TLABEL[t]}</span>
+                      {count > 0 && (
+                        <span style={{background:'#ef4444', color:'#fff', fontSize:'9px', fontWeight:900, borderRadius:'99px', minWidth:'14px', padding:'1px 4px', lineHeight:1, display:'inline-block', textAlign:'center'}}>
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
             )}
 
@@ -759,7 +779,23 @@ export default function AdminPanel() {
           {/* Mobile Tabs sub-header */}
           {isMobile && (
             <div style={{display:'flex', gap:'4px', background:theme.tabBg, padding:'4px', borderRadius:'14px', overflowX:'auto', scrollbarWidth:'none', msOverflowStyle:'none', marginTop:'4px'}}>
-              {TABS.map(t=><button key={t} style={{...s.tabBtn(tab===t), fontSize:'11px', padding:'6px 10px', borderRadius:'8px', whiteSpace:'nowrap'}} onClick={()=>setTab(t)}>{TLABEL[t]}</button>)}
+              {TABS.map(t => {
+                const count = t === 'bookings' ? pendingValidationCount : 0;
+                return (
+                  <button 
+                    key={t} 
+                    style={{...s.tabBtn(tab===t), fontSize:'11px', padding:'6px 10px', borderRadius:'8px', whiteSpace:'nowrap', display:'flex', alignItems:'center', gap:'4px'}} 
+                    onClick={()=>setTab(t)}
+                  >
+                    <span>{TLABEL[t]}</span>
+                    {count > 0 && (
+                      <span style={{background:'#ef4444', color:'#fff', fontSize:'8px', fontWeight:900, borderRadius:'99px', minWidth:'12px', padding:'1px 3px', lineHeight:1}}>
+                        {count}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
@@ -917,6 +953,25 @@ export default function AdminPanel() {
                   <div style={{display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap', marginBottom:'2px'}}>
                     <div style={{fontWeight:900, fontSize: isMobile ? '14px' : '16px', color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{b.client_name}</div>
                     {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
+                    {b.payment_status === 'verifying_payment' && (
+                       <span 
+                         title="Comprobante de pago pendiente de validar" 
+                         style={{
+                           fontSize:'9px',
+                           background:'rgba(59, 130, 246, 0.15)',
+                           color:'#3b82f6',
+                           border:'1px solid rgba(59, 130, 246, 0.25)',
+                           padding:'1px 6px',
+                           borderRadius:'4px',
+                           fontWeight:900,
+                           display:'inline-flex',
+                           alignItems:'center',
+                           gap:'2px'
+                         }}
+                       >
+                         🔔 Validar Pago
+                       </span>
+                     )}
                     {(() => {
                       let ext = {};
                       try {
@@ -992,6 +1047,7 @@ export default function AdminPanel() {
                       {[
                         {k:'requested', l:'Solicitud Recibida'},
                         {k:'pending_payment', l:'Pago Pendiente'},
+                        {k:'verifying_payment', l:'Validar Comprobante 🔔'},
                         {k:'payment_confirmed', l:'Pago Confirmado'},
                         {k:'reserved', l:'Ratificando Disp.'},
                         {k:'confirmed', l:'Tour Confirmado'},
@@ -1041,6 +1097,33 @@ export default function AdminPanel() {
                     <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); setModal({type:'passengers', action:'edit', data:b})}} title="Gestionar Pasajeros (Check-In)">
                       <Users size={16} /><span style={{fontSize:'11px'}}>Check-In Pax</span>
                     </button>
+
+                     {(() => {
+                       let ext = {};
+                       try {
+                         if (typeof b.extras === 'string' && b.extras !== '[object Object]') ext = JSON.parse(b.extras);
+                         else if (typeof b.extras === 'object' && b.extras !== null) ext = b.extras;
+                       } catch(e){}
+                       if (ext.receipt_url) {
+                         const fullReceiptUrl = ext.receipt_url.startsWith('http') 
+                           ? ext.receipt_url 
+                           : `https://cantik-tours.onrender.com${ext.receipt_url}`;
+                         return (
+                           <a 
+                             href={fullReceiptUrl} 
+                             target="_blank" 
+                             rel="noopener noreferrer" 
+                             style={{...s.btn('#3b82f611','#3b82f6'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px', display:'inline-flex', alignItems:'center', textDecoration:'none', border:'1px solid rgba(59, 130, 246, 0.25)', borderRadius:'12px'}} 
+                             onClick={e=>e.stopPropagation()}
+                             title="Ver Comprobante de Pago"
+                           >
+                             <ExternalLink size={16} />
+                             <span style={{fontSize:'11px'}}>Ver Comprobante</span>
+                           </a>
+                         );
+                       }
+                       return null;
+                     })()}
 
                     <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); handleManagePayments(b)}} title="Finanzas">
                       <Wallet size={16} /><span style={{fontSize:'11px'}}>Finanzas</span>
