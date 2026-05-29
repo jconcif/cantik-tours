@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, ShieldCheck, User } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, ShieldCheck, User, Phone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useCurrency } from '../context/CurrencyContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -11,6 +12,7 @@ import { getAvailability, saveBooking, validateCoupon } from '../services/api';
 
 const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSelectedStops }) => {
     const { t, i18n } = useTranslation();
+    const navigate = useNavigate();
     const { formatPrice } = useCurrency();
     const [step, setStep] = useState(1);
     const flexibleTour = tours.find(t => t.id === 'ubud-flexible');
@@ -32,7 +34,9 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         coupon: '',
         experience: 'comfort',
         selectedStops: [],
-        acceptedTerms: false
+        acceptedTerms: false,
+        email: '',
+        phone: ''
     });
 
     useEffect(() => {
@@ -107,6 +111,8 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                 tour_id: tourId || tourTitle.toLowerCase().replace(/\s+/g, '-'),
                 tour_title: tourTitle,
                 client_name: formData.name,
+                client_phone: formData.phone,
+                client_email: formData.email,
                 date: formData.date ? getLocalISO(formData.date) : '',
                 pax: formData.pax,
                 hotel: formData.hotel,
@@ -122,9 +128,12 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             const res = await saveBooking(data);
             if (res.status === 'success') {
                 setNewBookingId(res.data?.id || res.id);
+                return res;
             }
+            throw new Error(res.message || 'Error api');
         } catch (e) { 
             console.error("Error saving booking:", e); 
+            return null;
         }
     };
 
@@ -140,7 +149,9 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                 coupon: '',
                 experience: 'comfort',
                 selectedStops: [],
-                acceptedTerms: false
+                acceptedTerms: false,
+                email: '',
+                phone: ''
             });
             setShowCoupon(false);
             setNewBookingId(null);
@@ -290,106 +301,15 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         }
     };
 
-    const handleConfirmWhatsApp = () => {
-        const cleanTextForWhatsApp = (text) => {
-            if (!text) return '';
-            return text
-                .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\/\-,\s\(\)]/g, '')
-                .replace(/\s+/g, ' ')
-                .trim();
-        };
-
+    const handleConfirmBooking = async () => {
         const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
-        const paxValue = String(formData.pax).replace(' o más', '');
-        const paxLabel = t(`detail.booking_pax_${paxValue}`);
-        const dateStr = formData.date ? formData.date.toLocaleDateString('es-ES') : '';
         
-        const cleanTourTitle = cleanTextForWhatsApp(tourTitle);
-        const cleanClientName = cleanTextForWhatsApp(formData.name);
-        const cleanHotel = cleanTextForWhatsApp(formData.hotel);
-        const cleanExpName = cleanTextForWhatsApp(expName);
-        const cleanStops = tourId === 'ubud-flexible' && formData.selectedStops.length > 0 
-            ? cleanTextForWhatsApp(formData.selectedStops.join(', '))
-            : '';
-
-        const isEn = i18n.language === 'en';
-        let message = '';
-        
-        let couponLine = '';
-        if (appliedCoupon) {
-            couponLine = `\n- *Coupon:* ${appliedCoupon.code} (-${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'})`;
-        }
-
-        let couponLineEs = '';
-        if (appliedCoupon) {
-            couponLineEs = `\n- *Cupón:* ${appliedCoupon.code} (-${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'})`;
-        }
-
-        let supplementLine = '';
-        if (tourId === 'lovina-dolphins') {
-            if (paxExtraCost > 0) {
-                supplementLine += `\n- *Extra Passengers:* +${paxExtraCost} EUR (for ${extraPaxCount} extra pax)`;
-            }
-            if (boatExtraCost > 0) {
-                supplementLine += `\n- *Extra Boat:* +${boatExtraCost} EUR (${extraBoatsCount} extra Jukung boat)`;
-            }
-        } else if (extraPaxFee > 0) {
-            supplementLine = `\n- *Supplement:* +${extraPaxFee} EUR (${cleanTextForWhatsApp(paxMessageEn)})`;
-        }
-
-        let supplementLineEs = '';
-        if (tourId === 'lovina-dolphins') {
-            if (paxExtraCost > 0) {
-                supplementLineEs += `\n- *Pasajeros Adicionales:* +${paxExtraCost} EUR (por ${extraPaxCount} pax extra)`;
-            }
-            if (boatExtraCost > 0) {
-                supplementLineEs += `\n- *Bote Adicional:* +${boatExtraCost} EUR (${extraBoatsCount} bote Jukung adicional)`;
-            }
-        } else if (extraPaxFee > 0) {
-            supplementLineEs = `\n- *Suplemento:* +${extraPaxFee} EUR (${cleanTextForWhatsApp(paxMessage)})`;
-        }
-        
-        if (isEn) {
-            message = `*BOOKING REQUEST DETAILS (#CT-${instantId})*
-------------------------------------------
-- *Client:* ${cleanClientName.toUpperCase()}
-- *Tour:* ${cleanTourTitle.toUpperCase()}
-- *Date:* ${dateStr}
-- *Travelers:* ${paxLabel.toUpperCase()}
-- *Hotel:* ${cleanHotel.toUpperCase()}
-- *Service:* ${cleanExpName.toUpperCase()}${couponLine}${supplementLine}
-${tourId === 'ubud-flexible' && cleanStops ? `- *Stops:* ${cleanStops.toUpperCase()}\n` : ''}- *Price:* ${finalTotalPriceWithFees} EUR
-------------------------------------------
-
-*View Live Details:* https://cantiktours.com/booking?ref=CT-${instantId}
-
-------------------------------------------
-*FINAL STEP:* Hello Cantik Tours! I would like to request this booking. Could you please confirm availability and send me the payment details? Thank you!`;
-        } else {
-            message = `*DETALLES DE LA RESERVA (#CT-${instantId})*
-------------------------------------------
-- *Cliente:* ${cleanClientName.toUpperCase()}
-- *Tour:* ${cleanTourTitle.toUpperCase()}
-- *Fecha:* ${dateStr}
-- *Pasajeros:* ${paxLabel.toUpperCase()}
-- *Hotel:* ${cleanHotel.toUpperCase()}
-- *Servicio:* ${cleanExpName.toUpperCase()}${couponLineEs}${supplementLineEs}
-${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperCase()}\n` : ''}- *Precio:* ${finalTotalPriceWithFees} EUR
-------------------------------------------
-
-*Ver Ficha en Vivo:* https://cantiktours.com/booking?ref=CT-${instantId}
-
-------------------------------------------
-*PASO FINAL:* ¡Hola Cantik Tours! Me gustaría solicitar esta reserva. ¿Me podéis confirmar disponibilidad y enviarme los datos para el pago? ¡Gracias!`;
-        }
-
-        const finalUrl = `https://wa.me/34642517787?text=${encodeURIComponent(message)}`;
-        window.open(finalUrl, '_blank');
-
-        saveBookingToDB(instantId); 
-        trackEvent('Conversion', 'WhatsApp Booking Request', tourTitle);
+        await saveBookingToDB(instantId); 
+        trackEvent('Conversion', 'Web Booking Request', tourTitle);
         trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
+        
         resetModal();
+        navigate(`/${i18n.language}/booking?ref=CT-${instantId}`);
     };
 
     const inputClasses = "w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all text-gray-700 dark:text-gray-200 min-h-[62px] block box-border";
@@ -575,6 +495,14 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><MapPin size={14} className="text-primary" />{t('detail.booking_hotel')}</label>
                                             <input type="text" required placeholder={t('detail.booking_hotel_placeholder')} value={formData.hotel} onChange={(e) => setFormData({ ...formData, hotel: e.target.value })} className={inputClasses} />
                                         </div>
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><span className="text-primary">@</span> {i18n.language === 'en' ? 'Email Address' : 'Correo Electrónico'}</label>
+                                            <input type="email" required placeholder={i18n.language === 'en' ? 'your@email.com' : 'tu@correo.com'} value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className={inputClasses} />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="flex items-center gap-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]"><Phone size={14} className="text-primary" />{i18n.language === 'en' ? 'WhatsApp / Phone Number' : 'WhatsApp / Teléfono'}</label>
+                                            <input type="tel" required placeholder={i18n.language === 'en' ? 'e.g. +34 600 000 000' : 'ej: +34 600 000 000'} value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className={inputClasses} />
+                                        </div>
                                         <div className="flex gap-3">
                                             <button type="button" onClick={() => setStep(isUbudStops ? 2 : 1)} className="w-16 bg-gray-100 dark:bg-white/5 rounded-2xl flex items-center justify-center transition-colors"><ArrowLeft size={20} /></button>
                                             <button type="submit" className="flex-1 btn-primary py-4 rounded-2xl text-lg font-black shadow-xl">{i18n.language === 'en' ? 'Next' : 'Siguiente'} <ArrowRight size={20} className="inline ml-2" /></button>
@@ -706,16 +634,16 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             {/* Texto explicativo */}
                                             <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed text-center">
                                                 {i18n.language === 'en'
-                                                    ? <>Click <span className="text-gray-800 dark:text-white font-black">"Request Booking"</span> to send us your request directly via WhatsApp. We will confirm availability immediately and send you the payment details. Your booking will be officially scheduled once the deposit is confirmed.</>
-                                                    : <>Haz clic en <span className="text-gray-800 dark:text-white font-black">"Solicitar Reserva"</span> para enviarnos tu solicitud directamente por WhatsApp. Confirmaremos disponibilidad de inmediato y te enviaremos los datos para el pago. Tu reserva quedará agendada oficialmente una vez confirmado el depósito.</>
+                                                    ? <>Click <span className="text-gray-800 dark:text-white font-black">"CONFIRM BOOKING"</span> to register your request. You will be redirected to your live Booking Page where you can see the payment instructions and passenger forms.</>
+                                                    : <>Haz clic en <span className="text-gray-800 dark:text-white font-black">"CONFIRMAR RESERVA"</span> para registrar tu solicitud. Serás redirigido a la Ficha de Reserva en vivo, donde podrás ver las instrucciones de pago y registrar los datos de los pasajeros.</>
                                                 }
                                             </p>
 
-                                            {/* CTA WhatsApp */}
-                                            <button type="button" onClick={handleConfirmWhatsApp} className="w-full py-5 rounded-[2rem] bg-[#25D366] text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-[#25D366]/20 active:scale-[0.98] hover:bg-[#1fb355] relative overflow-hidden group">
+                                            {/* CTA Confirm Booking */}
+                                            <button type="button" onClick={handleConfirmBooking} className="w-full py-5 rounded-[2rem] bg-primary text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20 active:scale-[0.98] hover:opacity-95 relative overflow-hidden group">
                                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
-                                                <MessageCircle size={22} />
-                                                <span className="text-[15px] font-black tracking-tight">{i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA'}</span>
+                                                <ShieldCheck size={22} />
+                                                <span className="text-[15px] font-black tracking-tight">{i18n.language === 'en' ? 'CONFIRM BOOKING' : 'CONFIRMAR RESERVA'}</span>
                                             </button>
 
                                             {/* Terms */}

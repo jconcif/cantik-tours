@@ -15,7 +15,7 @@ router.post(
       const {
         tour_id, tour_title, client_name, date, pax, hotel,
         experience, payment_type, total_price, deposit_amount,
-        is_paid, coupon, itinerary, reference
+        is_paid, coupon, itinerary, reference, client_phone, client_email
       } = req.body;
 
       // Server-side price validation would go here
@@ -26,7 +26,8 @@ router.post(
           timestamp: new Date().toISOString(),
           text: `Reserva creada e ingresada por el cliente desde la web pública. Estado inicial: ${is_paid ? 'reserved' : 'requested'}.`
         }],
-        passengers: []
+        passengers: [],
+        client_email: client_email || ''
       };
 
       const { data, error } = await supabase
@@ -35,6 +36,7 @@ router.post(
           tour_id,
           tour_title: tour_title || tour_id,
           client_name,
+          client_phone: client_phone || '',
           booking_date: date,
           pax: parseInt(pax) || 2,
           hotel: hotel || '',

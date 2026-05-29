@@ -1331,6 +1331,26 @@ export default function AdminPanel() {
               </div>
             </div>
 
+            <div style={{display:'grid',gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3,1fr)', gap: isMobile ? '10px' : '16px'}}>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#666', textTransform:'uppercase', marginBottom:'8px'}}>Total Reservas</div>
+                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:'#fff'}}>{detailedStats?.total_bookings || 0}</div>
+                <div style={{fontSize:'10px',color:'#888',marginTop:'4px'}}>Reservas ingresadas</div>
+              </div>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #10b98115'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:'#10b981', textTransform:'uppercase', marginBottom:'8px'}}>Tours Realizados</div>
+                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:'#10b981'}}>{detailedStats?.completed_bookings || 0}</div>
+                <div style={{fontSize:'10px',color:'#888',marginTop:'4px'}}>Confirmados, en curso o finalizados</div>
+              </div>
+              <div style={{background:'#1a1a1a',padding: isMobile ? '16px' : '24px',borderRadius:'24px', border:'1px solid #ffffff05'}}>
+                <div style={{fontSize: isMobile ? '9px' : '12px', fontWeight:900, color:C, textTransform:'uppercase', marginBottom:'8px'}}>Tasa de Conversión</div>
+                <div style={{fontSize: isMobile ? '20px' : '32px',fontWeight:900,color:C}}>
+                  {(((detailedStats?.completed_bookings || 0) / (detailedStats?.total_bookings || 1)) * 100).toFixed(1)}%
+                </div>
+                <div style={{fontSize:'10px',color:'#888',marginTop:'4px'}}>Éxito de tours finalizados</div>
+              </div>
+            </div>
+
             {/* GRÁFICOS VISUALES */}
             <div style={{display:'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap:'20px', marginTop:'12px'}}>
               {/* Tendencia de Ingresos */}

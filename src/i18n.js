@@ -537,7 +537,7 @@ i18n
                                 items: [
                                     { label: "Depósito de Confirmación", text: "Se requiere el pago íntegro por Tour contratado, pagado al momento de realizar la reserva de forma oficial, para bloquear fechas y servicios." },
                                     { label: "Pago Total", text: "Si existiese algun saldo pendiente, debe estar liquidado 48-24 horas antes del inicio del viaje." },
-                                    { label: "Métodos de Pago", text: "Aceptamos pagos vía Transferencia Bancaria. Los gastos por comisiones bancarias o de conversión de divisa corren por cuenta del cliente." }
+                                    { label: "Métodos de Pago", text: "Aceptamos pagos vía transferencia electrónica bancaria. No recibimos efectivo. Los gastos por comisiones bancarias o de conversión de divisa corren por cuenta del cliente." }
                                 ]
                             },
                             s2: {
@@ -560,7 +560,7 @@ i18n
                             },
                             s4: {
                                 title: "4. ACTIVIDADES DE AVENTURA",
-                                content: "Al contratar actividades como rafting, trekking o buceo, el cliente declara y acepta:",
+                                content: "Al contratar actividades como rafting, trekking, buceo, u otros, el cliente declara y acepta:",
                                 items: [
                                     { label: "Asunción de Riesgo", text: "El cliente reconoce que estas actividades implican un riesgo inherente y participa bajo su propia responsabilidad." },
                                     { label: "Estado de Salud", text: "Confirma que no padece afecciones cardíacas, lesiones graves, cirugías recientes o embarazo." },
@@ -571,7 +571,7 @@ i18n
                                 title: "5. RESPONSABILIDAD Y SEGUROS",
                                 items: [
                                     { label: "Seguro de Viaje", text: "Cantik Tours recomienda encarecidamente contar con un seguro de viaje internacional. Cada viajero es responsable de su propia integridad física." },
-                                    { label: "Vuelos", text: "No gestionamos vuelos internacionales; la puntualidad para el inicio del tour es responsabilidad exclusiva del cliente." }
+                                    { label: "Horarios", text: "No gestionamos vuelos internacionales; la puntualidad para el inicio del tour es responsabilidad exclusiva del cliente." }
                                 ]
                             },
                             s6: {
@@ -590,7 +590,7 @@ i18n
                                 title: "8. INCIDENCIAS Y RECLAMACIONES",
                                 items: [
                                     { label: "Durante el tour", text: "Con el fin de ofrecer una solución inmediata, cualquier disconformidad con el servicio deberá comunicarse en el momento a nuestro equipo de soporte. Esto nos permite actuar en tiempo real para mejorar su experiencia." },
-                                    { label: "Post-tour", text: "Si desea realizar una reclamación formal tras el servicio, dispone de un plazo máximo de 24 horas desde la finalización del tour. Este margen es esencial para que podamos investigar lo sucedido con nuestro equipo local y ofrecer una resolución precisa y objetiva." },
+                                    { label: "Post-tour", text: "Si desea realizar una reclamación formal tras el servicio, dispone de un plazo máximo de 24 horas desde la finalización del tour. Este margen es esencial para que podamos investigar lo sucedido con nuestro equipo local y ofrecer una resolución precisa y oportuna." },
                                     { label: "Ley Aplicable", text: "Este contrato se rige bajo las leyes vigentes de la República de Indonesia." }
                                 ]
                             }
@@ -1223,7 +1223,7 @@ i18n
                                 items: [
                                     { label: "Confirmation Deposit", text: "Full payment per contracted Tour is required at the time of official booking to block dates and services." },
                                     { label: "Total Payment", text: "If there is any outstanding balance, it must be settled 48-24 hours before the start of the trip." },
-                                    { label: "Payment Methods", text: "We accept payments via Bank Transfer. Bank commission or currency conversion costs are the responsibility of the client." }
+                                    { label: "Payment Methods", text: "We accept payments via electronic bank transfer. We do not accept cash. Bank commission or currency conversion costs are the responsibility of the client." }
                                 ]
                             },
                             s2: {
@@ -1246,7 +1246,7 @@ i18n
                             },
                             s4: {
                                 title: "4. ADVENTURE ACTIVITIES",
-                                content: "By hiring activities such as rafting, trekking, or diving, the client declares and accepts:",
+                                content: "By hiring activities such as rafting, trekking, diving, or others, the client declares and accepts:",
                                 items: [
                                     { label: "Assumption of Risk", text: "The client recognizes that these activities involve an inherent risk and participates under their own responsibility." },
                                     { label: "Health Status", text: "Confirms that they do not suffer from heart conditions, serious injuries, recent surgeries, or pregnancy." },
@@ -1257,7 +1257,7 @@ i18n
                                 title: "5. RESPONSIBILITY AND INSURANCE",
                                 items: [
                                     { label: "Travel Insurance", text: "Cantik Tours strongly recommends having international travel insurance. Each traveler is responsible for their own physical integrity." },
-                                    { label: "Flights", text: "We do not manage international flights; punctuality for the start of the tour is the client's exclusive responsibility." }
+                                    { label: "Schedules", text: "We do not manage international flights; punctuality for the start of the tour is the client's exclusive responsibility." }
                                 ]
                             },
                             s6: {
@@ -1276,7 +1276,7 @@ i18n
                                 title: "8. INCIDENTS AND CLAIMS",
                                 items: [
                                     { label: "During the tour", text: "In order to offer an immediate solution, any dissatisfaction with the service must be communicated at the time to our support team. This allows us to act in real time to improve your experience." },
-                                    { label: "Post-tour", text: "If you wish to make a formal claim after the service, you have a maximum period of 24 hours from the end of the tour. This margin is essential for us to investigate what happened with our local team and offer a precise and objective resolution." },
+                                    { label: "Post-tour", text: "If you wish to make a formal claim after the service, you have a maximum period of 24 hours from the end of the tour. This margin is essential for us to investigate what happened with our local team and offer a precise and timely resolution." },
                                     { label: "Applicable Law", text: "This contract is governed by the current laws of the Republic of Indonesia." }
                                 ]
                             }

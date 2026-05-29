@@ -45,6 +45,10 @@ export default function ItineraryPage() {
   const [submittingCheckin, setSubmittingCheckin] = useState(false);
   const [showStatusDetail, setShowStatusDetail] = useState(false);
   const [showItinerary, setShowItinerary] = useState(true);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [copiedField, setCopiedField] = useState('');
+  const [paymentTab, setPaymentTab] = useState('eur');
+  const [showChecklist, setShowChecklist] = useState(true);
 
   useEffect(() => {
     if (!ref) { setError('Referencia no válida'); setLoading(false); return; }
@@ -178,11 +182,27 @@ export default function ItineraryPage() {
   const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
   const balance = finalTotal - totalPaid;
   const hasPendingPayment = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status);
+  
+  const isPaymentPending = hasPendingPayment;
+  const isReceiptSentOrVerified = ['verifying_payment', 'payment_received', 'payment_confirmed', 'reserved', 'confirmed', 'in_progress', 'completed'].includes(booking.payment_status);
+  const isCheckinPending = checkinData.some(p => !p.name || !p.passport);
 
   const fichaUrl = `https://cantiktours.com/booking?ref=CT-${ref}`;
   const supportMsg = encodeURIComponent(
     `Hola Cantik Tours! Necesito ayuda con mi solicitud CT-${ref}.\n\nFicha: ${fichaUrl}`
   );
+
+  const receiptMsg = encodeURIComponent(
+    en
+      ? `Hello Cantik Tours! I have completed the bank transfer of ${formatPrice(balance).symbol}${formatPrice(balance).amount} for my booking CT-${ref}. Here is my payment receipt:\n\nLink: ${fichaUrl}`
+      : `¡Hola Cantik Tours! He realizado la transferencia bancaria por ${formatPrice(balance).symbol}${formatPrice(balance).amount}, para mi reserva CT-${ref}. Aquí os comparto el comprobante de pago:\n\nFicha: ${fichaUrl}`
+  );
+
+  const handleCopy = (txt, fieldName) => {
+    navigator.clipboard.writeText(txt);
+    setCopiedField(fieldName);
+    setTimeout(() => setCopiedField(''), 2000);
+  };
 
   const getTourCode = (id) => {
     const s = String(id || '').toLowerCase();
@@ -514,51 +534,125 @@ export default function ItineraryPage() {
           </div>
         </motion.div>
 
-        {/* ── PENDING PAYMENT BANNER ─────────────────────── */}
-        {hasPendingPayment && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
-            className={`rounded-2xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-4 ${dark ? 'bg-orange-500/10 border-orange-500/20' : 'bg-orange-50 border-orange-200'}`}
+        {/* ── BOOKING CHECKLIST ─────────────────────────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className={`rounded-[2rem] p-6 border shadow-xl ${card}`}
+        >
+          <button
+            onClick={() => setShowChecklist(!showChecklist)}
+            className="w-full flex items-center justify-between text-left focus:outline-none"
           >
-            <div className="flex-1">
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 mb-1">
-                {en ? 'PENDING PAYMENT' : 'PAGO PENDIENTE'}
-              </div>
-              <p className={`text-xs font-bold leading-relaxed ${text}`}>
-                {en 
-                  ? `You have a remaining balance of ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Please complete the payment to secure your tour.` 
-                  : `Tienes un saldo pendiente de ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Por favor, completa el pago para asegurar tu tour.`}
-              </p>
+            <h3 className="text-sm font-black uppercase tracking-widest flex items-center gap-2">
+              <CheckCircle2 className="text-primary" size={18} />
+              {en ? 'Your Booking Progress' : 'Tu Progreso de Reserva'}
+            </h3>
+            <div className="flex items-center gap-2">
+              {(isPaymentPending || isCheckinPending) && (
+                <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
+                  {en ? 'Action Required' : 'Acción Requerida'}
+                </span>
+              )}
+              <span className={`text-[9px] ${sub} transition-transform duration-300 ${showChecklist ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                ▼
+              </span>
             </div>
-            <a
-              href="#support-section"
-              className="w-full sm:w-auto px-6 py-3 bg-orange-500 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-orange-600 text-center transition-colors shadow-lg shadow-orange-500/20"
-            >
-              {en ? 'CONTACT SUPPORT' : 'CONTACTAR SOPORTE'}
-            </a>
-          </motion.div>
-        )}
+          </button>
 
-        {/* ── CHECK-IN BANNER ───────────────────────────── */}
-        {checkinData.some(p => !p.name || !p.passport) && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
-            className={`rounded-2xl p-5 border flex flex-col sm:flex-row items-center justify-between gap-4 ${dark ? 'bg-[#f59e0b]/10 border-[#f59e0b]/20' : 'bg-[#f59e0b]/10 border-[#f59e0b]/30'}`}
-          >
-            <div>
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[#f59e0b] mb-1">
-                {en ? 'ACTION REQUIRED' : 'ACCIÓN REQUERIDA'}
+          {showChecklist && (
+            <div className="space-y-4 mt-6">
+              {/* Step 1: Payment */}
+              <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
+                    {!isPaymentPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">1</div>}
+                  </div>
+                  <div>
+                    <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                      {en ? '1. Booking Payment' : '1. Pago de Reserva'}
+                    </div>
+                    <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                      {!isPaymentPending
+                        ? (en ? 'Booking fully paid!' : '¡Reserva totalmente pagada!')
+                        : (en 
+                            ? `Remaining balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount}` 
+                            : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}`)}
+                    </div>
+                  </div>
+                </div>
+                {isPaymentPending && (
+                  <button
+                    onClick={() => setShowPaymentModal(true)}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
+                  >
+                    {en ? 'Pay by Transfer' : 'Pagar con Transferencia'}
+                  </button>
+                )}
               </div>
-              <p className={`text-xs font-bold leading-relaxed ${text}`}>
-                {en ? 'Please complete passenger check-in' : 'Completa el registro de pasajeros antes de viajar.'}
-              </p>
+
+              {/* Step 2: Send Receipt */}
+              <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${isReceiptSentOrVerified ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isReceiptSentOrVerified ? 'bg-emerald-500/20 text-emerald-500' : (booking.payment_status === 'payment_sent' ? 'bg-amber-500/20 text-amber-500' : 'bg-gray-500/20 text-gray-400')}`}>
+                    {isReceiptSentOrVerified ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">2</div>}
+                  </div>
+                  <div>
+                    <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                      {en ? '2. Send Payment Receipt' : '2. Enviar Comprobante'}
+                    </div>
+                    <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                      {booking.payment_status === 'verifying_payment' || booking.payment_status === 'payment_sent'
+                        ? (en ? 'Verifying payment receipt...' : 'Verificando comprobante de pago...')
+                        : isReceiptSentOrVerified
+                          ? (en ? 'Receipt received and verified!' : '¡Comprobante verificado con éxito!')
+                          : (en ? 'Please send proof of payment once transferred.' : 'Envíanos el comprobante tras realizar el pago.')}
+                    </div>
+                  </div>
+                </div>
+                {!isReceiptSentOrVerified && booking.payment_status !== 'verifying_payment' && booking.payment_status !== 'payment_sent' && (
+                  <a
+                    href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90 text-center flex items-center justify-center gap-1.5"
+                  >
+                    <MessageCircle size={12} />
+                    {en ? 'Send via WhatsApp' : 'Enviar por WhatsApp'}
+                  </a>
+                )}
+              </div>
+
+              {/* Step 3: Check-in */}
+              <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isCheckinPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
+                    {!isCheckinPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">3</div>}
+                  </div>
+                  <div>
+                    <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                      {en ? '3. Passenger Check-in' : '3. Registro de Pasajeros'}
+                    </div>
+                    <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                      {!isCheckinPending
+                        ? (en ? 'All passengers registered!' : '¡Todos los viajeros registrados!')
+                        : (en ? 'Please register passenger passports.' : 'Completa los datos y pasaportes de los viajeros.')}
+                    </div>
+                  </div>
+                </div>
+                {isCheckinPending && (
+                  <button
+                    onClick={() => setShowCheckin(true)}
+                    className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
+                  >
+                    {en ? 'Complete Check-in' : 'Hacer Check-in'}
+                  </button>
+                )}
+              </div>
             </div>
-            <button
-              onClick={() => setShowCheckin(true)}
-              className="w-full sm:w-auto px-6 py-3 bg-[#f59e0b] text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#d97706] transition-colors"
-            >
-              {en ? 'CHECK-IN' : 'HACER CHECK-IN'}
-            </button>
-          </motion.div>
-        )}
+          )}
+        </motion.div>
 
 
         {/* ── DETAILED ITINERARY ────────────────────────── */}
@@ -838,6 +932,168 @@ export default function ItineraryPage() {
             >
               {submittingCheckin ? (en ? 'SAVING...' : 'GUARDANDO...') : (en ? 'SAVE CHECK-IN' : 'GUARDAR CHECK-IN')}
             </button>
+          </motion.div>
+        </div>
+      )}
+
+      {/* ── PAYMENT MODAL ────────────────────────────────── */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[2rem] p-8 border shadow-2xl ${dark ? 'bg-[#141414] border-white/10 shadow-black' : 'bg-white border-gray-200'}`}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h3 className={`text-lg font-black uppercase tracking-widest ${text}`}>
+                {en ? 'Transfer Details' : 'Datos de Transferencia'}
+              </h3>
+              <button onClick={() => setShowPaymentModal(false)} className={`w-8 h-8 flex items-center justify-center rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-gray-200 text-gray-800'}`}>
+                ✕
+              </button>
+            </div>
+
+            <div className={`p-5 rounded-2xl border mb-6 text-center ${dark ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200'}`}>
+              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 mb-2">
+                {en ? 'AMOUNT TO PAY' : 'MONTO A PAGAR'}
+              </div>
+              <div className={`text-3xl font-black mb-4 ${text}`}>
+                {formatPrice(balance).symbol}{formatPrice(balance).amount}
+              </div>
+              <div className="flex items-center justify-center gap-2 bg-black/20 dark:bg-black/40 py-2 px-4 rounded-xl max-w-xs mx-auto">
+                <div className="text-left">
+                  <div className="text-[8px] font-black uppercase tracking-widest text-gray-400">
+                    {en ? 'REFERENCE / CONCEPT' : 'REFERENCIA / CONCEPTO'}
+                  </div>
+                  <div className={`text-xs font-bold ${text}`}>
+                    CT-{ref}
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleCopy(`CT-${ref}`, 'ref')}
+                  className={`ml-auto p-2 rounded-lg transition-colors ${dark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-200 hover:bg-gray-300 text-black'}`}
+                  title={en ? 'Copy reference' : 'Copiar referencia'}
+                >
+                  {copiedField === 'ref' ? (
+                    <span className="text-[9px] font-black text-emerald-500 uppercase">Copied</span>
+                  ) : (
+                    <Copy size={14} />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex gap-2 p-1 bg-black/20 dark:bg-black/40 rounded-xl mb-6">
+              <button
+                onClick={() => setPaymentTab('eur')}
+                className={`flex-1 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${paymentTab === 'eur' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                Wise EUR (IBAN)
+              </button>
+              <button
+                onClick={() => setPaymentTab('usd')}
+                className={`flex-1 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${paymentTab === 'usd' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'}`}
+              >
+                Wise USD (ACH/Wire)
+              </button>
+            </div>
+
+            {/* Tab Contents */}
+            <div className="space-y-4 mb-8">
+              {paymentTab === 'eur' ? (
+                <>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Name / Beneficiario</div>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-bold ${text}`}>Javier Ignacio Contreras Cifuentes</span>
+                      <button onClick={() => handleCopy('Javier Ignacio Contreras Cifuentes', 'name')} className="text-gray-400 hover:text-primary">
+                        {copiedField === 'name' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">IBAN</div>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-mono font-bold ${text}`}>BE97 9673 8690 2549</span>
+                      <button onClick={() => handleCopy('BE97 9673 8690 2549', 'iban')} className="text-gray-400 hover:text-primary">
+                        {copiedField === 'iban' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Swift / BIC</div>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-mono font-bold ${text}`}>TRWIBEB1XXX</span>
+                      <button onClick={() => handleCopy('TRWIBEB1XXX', 'bic')} className="text-gray-400 hover:text-primary">
+                        {copiedField === 'bic' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Bank Name / Banco</div>
+                    <div className="text-xs font-bold leading-normal text-gray-400">
+                      Wise, Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Name / Beneficiario</div>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-bold ${text}`}>Javier Ignacio Contreras Cifuentes</span>
+                      <button onClick={() => handleCopy('Javier Ignacio Contreras Cifuentes', 'name')} className="text-gray-400 hover:text-primary">
+                        {copiedField === 'name' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Account Number / Cuenta</div>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-mono font-bold ${text}`}>214247934891</span>
+                      <button onClick={() => handleCopy('214247934891', 'acc')} className="text-gray-400 hover:text-primary">
+                        {copiedField === 'acc' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Routing Number / Ruteo</div>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-mono font-bold ${text}`}>101019628</span>
+                      <button onClick={() => handleCopy('101019628', 'route')} className="text-gray-400 hover:text-primary">
+                        {copiedField === 'route' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Swift / BIC (Outside US)</div>
+                    <div className="flex justify-between items-center">
+                      <span className={`text-xs font-mono font-bold ${text}`}>TRWIUS35XXX</span>
+                      <button onClick={() => handleCopy('TRWIUS35XXX', 'bic_us')} className="text-gray-400 hover:text-primary">
+                        {copiedField === 'bic_us' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Bank Name / Banco</div>
+                    <div className="text-xs font-bold leading-normal text-gray-400">
+                      Wise US Inc, 108 W 13th St, Wilmington, DE, 19801, United States
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <a
+              href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#25D366] text-white font-black text-xs uppercase tracking-widest hover:opacity-90 transition-opacity"
+            >
+              <MessageCircle size={16} />
+              {en ? 'Send receipt via WhatsApp' : 'Enviar comprobante por WhatsApp'}
+            </a>
           </motion.div>
         </div>
       )}

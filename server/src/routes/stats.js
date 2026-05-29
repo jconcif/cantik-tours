@@ -68,6 +68,7 @@ router.get('/', requireAuth, async (req, res) => {
         profit: totalPayments - totalExpenses,
         total_bookings: (bookings || []).length,
         paid_bookings: activeBookings.length,
+        completed_bookings: (bookings || []).filter(b => ['confirmed', 'in_progress', 'completed'].includes(b.payment_status)).length,
         driver_performance: driverPerformance,
         service_quality: serviceQuality,
       },
