@@ -523,8 +523,8 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                         </p>
                                                         <p className="opacity-90 leading-relaxed text-[11px] font-medium">
                                                             {i18n.language === 'en' 
-                                                                ? 'This package includes your private vehicle and the charter of a traditional boat (Jukung) exclusive for your group. Maximum capacity is 4 passengers per boat; for larger groups, we will add an additional or larger boat for your absolute safety and comfort. No shared boats, no surprise costs.' 
-                                                                : 'Este paquete incluye tu vehículo privado y el alquiler de un bote tradicional (Jukung) exclusivo para tu grupo. La capacidad máxima es de 4 pasajeros por bote; para grupos mayores, añadiremos un bote adicional o un barco más grande para tu total comodidad y seguridad. Sin barcos compartidos ni costes sorpresa.'}
+                                                                ? 'This package includes your private vehicle and the charter of a traditional boat (Jukung) exclusive for your group. Maximum capacity is 4 passengers per boat; for larger groups, we will add an additional or larger boat for your absolute safety and comfort.' 
+                                                                : 'Este paquete incluye tu vehículo privado y el alquiler de un bote tradicional (Jukung) exclusivo para tu grupo. La capacidad máxima es de 4 pasajeros por bote; para grupos mayores, añadiremos un bote adicional o un barco más grande para tu total comodidad y seguridad.'}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -595,9 +595,12 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                                     <div><span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Client' : 'Cliente'}</span><p className="text-[11px] font-bold text-gray-900 dark:text-white truncate">{formData.name}</p></div>
                                                     <div><span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{t('detail.msg_pax')}</span><p className="text-[11px] font-bold text-gray-900 dark:text-white">{formData.pax} {i18n.language === 'en' ? 'People' : 'Personas'}</p></div>
                                                 </div>
-                                                <div className="pt-3 border-t border-black/5">
-                                                    <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Service Selected' : 'Servicio Contratado'}</span>
-                                                    <p className="text-[11px] font-bold text-primary">{expName} ({finalPriceForTier}€)</p>
+                                                <div className="pt-3 border-t border-black/5 flex justify-between items-center">
+                                                    <div>
+                                                        <span className="text-[8px] font-black text-gray-400 uppercase block mb-1">{i18n.language === 'en' ? 'Service Selected' : 'Servicio Contratado'}</span>
+                                                        <p className="text-[11px] font-bold text-primary">{expName}</p>
+                                                    </div>
+                                                    <span className="text-xs font-bold text-primary">{finalPriceForTier}€</span>
                                                 </div>
                                                 {tourId === 'lovina-dolphins' ? (
                                                     <>
@@ -653,17 +656,17 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             <button 
                                                 type="button"
                                                 onClick={() => setShowCoupon(!showCoupon)}
-                                                className="flex items-center justify-between w-full outline-none"
+                                                className="flex items-center justify-between w-full outline-none group text-left"
                                             >
-                                                <span className="text-[10px] font-black text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                                                <span className="text-[10px] font-black text-gray-400 group-hover:text-primary transition-colors uppercase tracking-wider flex items-center gap-1.5">
                                                     <Ticket size={12} className="text-primary" />
                                                     {i18n.language === 'en' ? 'HAVE A COUPON?' : '¿TIENES UN CUPÓN?'}
                                                 </span>
-                                                <span className="text-[10px] font-black text-primary hover:text-primary/80 transition-colors uppercase tracking-wider">
-                                                    {appliedCoupon 
-                                                        ? (i18n.language === 'en' ? 'Applied' : 'Aplicado') 
-                                                        : (showCoupon ? (i18n.language === 'en' ? 'Hide' : 'Ocultar') : (i18n.language === 'en' ? 'Show' : 'Mostrar'))}
-                                                </span>
+                                                {appliedCoupon && (
+                                                    <span className="text-[9px] font-black bg-green-500/10 text-green-500 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                                        {i18n.language === 'en' ? 'Applied' : 'Aplicado'}
+                                                    </span>
+                                                )}
                                             </button>
                                             
                                             {(showCoupon || appliedCoupon) && (
@@ -703,8 +706,8 @@ ${tourId === 'ubud-flexible' && cleanStops ? `- *Paradas:* ${cleanStops.toUpperC
                                             {/* Texto explicativo */}
                                             <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed text-center">
                                                 {i18n.language === 'en'
-                                                    ? <>Tap <span className="text-gray-800 dark:text-white font-black">Request Booking</span> to send us your request via WhatsApp. We will confirm availability and send you the details to make the payment. Only then your booking will be scheduled.</>
-                                                    : <>Pulsa <span className="text-gray-800 dark:text-white font-black">Solicitar Reserva</span> para enviarnos tu solicitud por WhatsApp. Te confirmaremos la disponibilidad y te enviamos los detalles para realizar el pago. Solo entonces tu reserva quedara agendada.</>
+                                                    ? <>Click <span className="text-gray-800 dark:text-white font-black">"Request Booking"</span> to send us your request directly via WhatsApp. We will confirm availability immediately and send you the payment details. Your booking will be officially scheduled once the deposit is confirmed.</>
+                                                    : <>Haz clic en <span className="text-gray-800 dark:text-white font-black">"Solicitar Reserva"</span> para enviarnos tu solicitud directamente por WhatsApp. Confirmaremos disponibilidad de inmediato y te enviaremos los datos para el pago. Tu reserva quedará agendada oficialmente una vez confirmado el depósito.</>
                                                 }
                                             </p>
 
