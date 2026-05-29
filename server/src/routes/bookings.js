@@ -136,6 +136,15 @@ router.post(
       }
 
       extrasObj.receipt_url = relativeUrl;
+      if (!extrasObj.receipts) {
+        extrasObj.receipts = [];
+      }
+      extrasObj.receipts.push({
+        url: relativeUrl,
+        filename: filename,
+        timestamp: new Date().toISOString()
+      });
+
       if (!extrasObj.logs) extrasObj.logs = [];
       extrasObj.logs.push({
         timestamp: new Date().toISOString(),
