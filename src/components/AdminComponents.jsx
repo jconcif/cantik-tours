@@ -322,11 +322,47 @@ export const FinancialManagement = ({booking, onUpdate}) => {
   // -- Add Forms --
   const PayForm = () => {
     const [d, setD] = React.useState({amount:'', payment_date: new Date().toISOString().split('T')[0], payment_method:'Transferencia', notes:'', status:'completado'});
+    const [file, setFile] = React.useState(null);
+    const [uploading, setUploading] = React.useState(false);
+
+    const handleFileChange = (e) => {
+      const selected = e.target.files[0];
+      if (!selected) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        setFile({
+          filename: selected.name,
+          fileData: reader.result
+        });
+      };
+      reader.readAsDataURL(selected);
+    };
+
     const save = async () => {
       if (!d.amount) return;
       setLoading(true);
-      const finalNotes = d.status === 'verificando' ? `[VERIFICANDO] ${d.notes}`.trim() : d.notes;
-      try { 
+      try {
+        let receiptUrl = '';
+        if (file) {
+          setUploading(true);
+          const uploadRes = await api.uploadReceipt(bookingId, { filename: file.filename, fileData: file.fileData });
+          if (uploadRes && uploadRes.status === 'success') {
+            const updatedBooking = uploadRes.data;
+            let ext = {};
+            try {
+              ext = typeof updatedBooking.extras === 'string' ? JSON.parse(updatedBooking.extras) : (updatedBooking.extras || {});
+            } catch(e){}
+            receiptUrl = ext.receipt_url || '';
+          }
+          setUploading(false);
+        }
+
+        const finalNotes = [
+          receiptUrl ? `[COMPROBANTE:${receiptUrl}]` : '',
+          d.status === 'verificando' ? '[VERIFICANDO]' : '',
+          d.notes
+        ].filter(Boolean).join(' ').trim();
+
         await api.addPayment({amount:d.amount, payment_date:d.payment_date, payment_method:d.payment_method, notes:finalNotes, booking_id: bookingId}); 
         await addSystemLog(`Cobro registrado: ${d.amount}€ vía ${d.payment_method} (${d.status === 'verificando' ? 'Pendiente Verificación' : 'Completado'}).`);
         await load(); 
@@ -335,6 +371,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
       }
       catch(e) { alert(e.message); } finally { setLoading(false); }
     };
+
     return (
       <div style={{background:'#222', padding:'18px', borderRadius:'20px', marginBottom:'16px', border:`1px solid ${C}44`}}>
         <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))', gap:'10px', marginBottom:'10px'}}>
@@ -344,6 +381,23 @@ export const FinancialManagement = ({booking, onUpdate}) => {
             options={[{value:'Transferencia',label:'Transferencia'},{value:'Efectivo',label:'Efectivo'},{value:'PayPal',label:'PayPal'},{value:'Tarjeta',label:'Tarjeta'},{value:'Wise',label:'Wise'}]} />
           <Select label="Estado" value={d.status} onChange={v=>setD({...d,status:v})}
             options={[{value:'completado',label:'✅ Completado (Recibido)'},{value:'verificando',label:'⏳ Verificando (Justificante)'}]} />
+          
+          {/* File Upload Row */}
+          <div style={{gridColumn:'1/-1', display:'flex', flexDirection:'column', gap:'4px', marginTop:'4px'}}>
+            <label style={{fontSize:'10px', fontWeight:900, color:C, textTransform:'uppercase', letterSpacing:'0.05em'}}>Foto de Comprobante / Justificante (Opcional)</label>
+            <div style={{display:'flex', alignItems:'center', gap:'12px'}}>
+              <label style={{padding:'8px 16px', background:'#333', color:'#fff', borderRadius:'10px', fontSize:'11px', fontWeight:900, cursor:'pointer', border:'1px solid #444', display:'inline-block'}}>
+                {uploading ? 'Subiendo...' : file ? '📎 Cambiar Archivo' : '📁 Seleccionar Comprobante'}
+                <input type="file" accept="image/*,application/pdf" onChange={handleFileChange} style={{display:'none'}} disabled={uploading} />
+              </label>
+              {file && (
+                <span style={{fontSize:'11px', color:'#10b981', fontWeight:900}}>
+                  ✓ {file.filename} (Listo para subir)
+                </span>
+              )}
+            </div>
+          </div>
+
           <div style={{gridColumn:'1/-1'}}><Input label="Referencia / Notas" value={d.notes} onChange={v=>setD({...d,notes:v})} placeholder="ID Transacción o Banco..." /></div>
         </div>
         <div style={{display:'flex',gap:'8px'}}>
@@ -599,8 +653,13 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           </div>
         )}
         {activeTab==='cobros' && payments.map(p => {
+          const receiptMatch = (p.notes || '').match(/\[COMPROBANTE:(.+?)\]/);
+          const receiptUrl = receiptMatch ? receiptMatch[1] : '';
           const isVerifying = (p.notes||'').includes('[VERIFICANDO]');
-          const cleanNotes = (p.notes||'').replace('[VERIFICANDO]', '').trim();
+          let cleanNotes = (p.notes||'')
+            .replace(/\[COMPROBANTE:(.+?)\]/, '')
+            .replace('[VERIFICANDO]', '')
+            .trim();
           return (
           <div key={p.id} style={rowStyle(isVerifying ? '#f59e0b' : C)}>
             <div style={{background:isVerifying ? '#f59e0b22' : C+'22',color:isVerifying ? '#f59e0b' : C,width:'44px',height:'44px',borderRadius:'12px',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:900,flexShrink:0}}>
@@ -609,7 +668,28 @@ export const FinancialManagement = ({booking, onUpdate}) => {
             <div style={{flex:1,minWidth:0}}>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
                 <div style={{fontSize:'16px',fontWeight:900,color:isVerifying ? '#f59e0b' : C}}>+{Number(p.amount).toFixed(2)}€</div>
-                <div style={{display:'flex', gap:'4px'}}>
+                <div style={{display:'flex', gap:'4px', alignItems:'center'}}>
+                  {receiptUrl && (
+                    <a
+                      href={receiptUrl.startsWith('http') ? receiptUrl : `https://cantik-tours.onrender.com${receiptUrl}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        fontSize: '9px',
+                        fontWeight: 900,
+                        background: 'rgba(59, 130, 246, 0.15)',
+                        color: '#3b82f6',
+                        border: '1px solid rgba(59, 130, 246, 0.25)',
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        textDecoration: 'none',
+                        marginRight: '4px'
+                      }}
+                      title="Ver Comprobante Asociado"
+                    >
+                      📄 Comprobante
+                    </a>
+                  )}
                   {isVerifying && <div style={{fontSize:'9px',color:'#f59e0b',border:'1px solid #f59e0b',padding:'2px 6px',borderRadius:'6px',fontWeight:900}}>VERIFICANDO</div>}
                   <div style={{fontSize:'10px',color:isVerifying ? '#f59e0b' : C,background:isVerifying ? '#f59e0b11' : C+'11',padding:'2px 8px',borderRadius:'6px',fontWeight:900}}>{(p.payment_method||'').toUpperCase()}</div>
                 </div>
