@@ -202,21 +202,30 @@ export const FinancialManagement = ({booking, onUpdate}) => {
   const basePrice = Number(booking.total_price) || 0;
   const C = '#11BDDB';
 
-  // Extract pending receipts from booking extras
-  const pendingReceipts = React.useMemo(() => {
+  // Extract pending receipts from booking extras — managed as local state
+  // so we can remove validated receipts immediately without waiting for parent reload
+  const [pendingReceipts, setPendingReceipts] = React.useState(() => {
     try {
       const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {});
       return ext.pending_receipts || [];
     } catch(e) { return []; }
+  });
+
+  // Sync if parent refreshes the booking prop
+  React.useEffect(() => {
+    try {
+      const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {});
+      setPendingReceipts(ext.pending_receipts || []);
+    } catch(e) { setPendingReceipts([]); }
   }, [booking.extras]);
 
   const [payments, setPayments] = React.useState([]);
   const [expenses, setExpenses] = React.useState([]);
   const [charges, setCharges] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState('pagos'); // pagos | gastos | extras
+  const [activeTab, setActiveTab] = React.useState('pagos');
   const [adding, setAdding] = React.useState(false);
-  const [validatingReceipt, setValidatingReceipt] = React.useState(null); // { url, filename, timestamp }
+  const [validatingReceipt, setValidatingReceipt] = React.useState(null);
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -354,6 +363,8 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           notes: v.notes
         });
         await addSystemLog(`Comprobante validado: ${v.amount}€ vía ${v.payment_method}.`);
+        // Immediately remove from local state so UI updates without parent reload
+        setPendingReceipts(prev => prev.filter(r => r.url !== receipt.url));
         await load();
         onDone();
       } catch(e) { alert(e.message); }

@@ -955,7 +955,11 @@ export default function AdminPanel() {
                     {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
                     {b.payment_status === 'verifying_payment' && (
                        <span 
-                         title="Comprobante de pago pendiente de validar" 
+                         onClick={(e) => {
+                           e.stopPropagation();
+                           setModal({type:'finance', action:'view', data:b});
+                         }}
+                         title="Comprobante de pago pendiente de validar (Haz clic para validar)" 
                          style={{
                            fontSize:'9px',
                            background:'rgba(59, 130, 246, 0.15)',
@@ -966,7 +970,8 @@ export default function AdminPanel() {
                            fontWeight:900,
                            display:'inline-flex',
                            alignItems:'center',
-                           gap:'2px'
+                           gap:'2px',
+                           cursor:'pointer'
                          }}
                        >
                          🔔 Validar Pago
