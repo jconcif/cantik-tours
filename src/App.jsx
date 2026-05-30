@@ -42,7 +42,7 @@ function App() {
     const mainPath = isLangPrefixed ? '/' + pathSegments.slice(1).join('/') : location.pathname;
 
     const isBooking = mainPath.startsWith('/booking') || mainPath.startsWith('/itinerario') || mainPath.startsWith('/reviews');
-    const isAdmin = mainPath === '/admin' || mainPath === '/cantik-admin';
+    const isAdmin = mainPath.startsWith('/admin') || mainPath.startsWith('/cantik-admin');
     const hideHeaderFooter = isBooking || isAdmin;
 
     return (

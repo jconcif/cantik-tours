@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, ShieldCheck, User, Phone } from 'lucide-react';
+import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, ShieldCheck, User, Phone, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useCurrency } from '../context/CurrencyContext';
@@ -25,6 +25,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [couponError, setCouponError] = useState('');
     const [couponLoading, setCouponLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -302,6 +303,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     };
 
     const handleConfirmBooking = async () => {
+        setIsSubmitting(true);
         const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
         
         await saveBookingToDB(instantId); 
@@ -309,6 +311,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
         
         resetModal();
+        setIsSubmitting(false);
         navigate(`/${i18n.language}/booking?ref=CT-${instantId}`);
     };
 
@@ -640,10 +643,10 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                                             </p>
 
                                             {/* CTA Confirm Booking */}
-                                            <button type="button" onClick={handleConfirmBooking} className="w-full py-5 rounded-[2rem] bg-primary text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20 active:scale-[0.98] hover:opacity-95 relative overflow-hidden group">
-                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
-                                                <ShieldCheck size={22} />
-                                                <span className="text-[15px] font-black tracking-tight">{i18n.language === 'en' ? 'CONFIRM BOOKING' : 'CONFIRMAR RESERVA'}</span>
+                                            <button type="button" disabled={isSubmitting} onClick={handleConfirmBooking} className={`w-full py-5 rounded-[2rem] bg-primary text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20 active:scale-[0.98] relative overflow-hidden group ${isSubmitting ? 'opacity-80 cursor-not-allowed' : 'hover:opacity-95'}`}>
+                                                {!isSubmitting && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />}
+                                                {isSubmitting ? <Loader2 size={22} className="animate-spin" /> : <ShieldCheck size={22} />}
+                                                <span className="text-[15px] font-black tracking-tight">{isSubmitting ? (i18n.language === 'en' ? 'PROCESSING...' : 'PROCESANDO...') : (i18n.language === 'en' ? 'CONFIRM BOOKING' : 'CONFIRMAR RESERVA')}</span>
                                             </button>
 
                                             {/* Terms */}

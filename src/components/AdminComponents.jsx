@@ -4,6 +4,33 @@ import { BASE } from '../services/api';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
 
+export const openDataUrl = (e, url) => {
+  e.preventDefault();
+  if (url.startsWith('data:')) {
+    try {
+      const arr = url.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      const blob = new Blob([u8arr], { type: mime });
+      const blobUrl = URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+      
+      // Cleanup the blob URL after a short delay
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+    } catch (err) {
+      console.error('Error parsing Data URL', err);
+      alert('Error opening receipt.');
+    }
+  } else {
+    window.open(url, '_blank');
+  }
+};
+
 const inputStyle = {padding:'10px 14px',borderRadius:'12px',border:'1px solid #333',fontSize:'14px',fontWeight:600,background:'#222',color:'#fff',width:'100%',boxSizing:'border-box',outline:'none'};
 const labelStyle = {fontSize:'10px',fontWeight:900,color:'#11BDDB',textTransform:'uppercase',letterSpacing:'0.05em'};
 
@@ -750,7 +777,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
                 {/* Receipt preview row */}
                 <div style={{display:'flex',gap:'12px',alignItems:'flex-start',marginBottom: isValidating ? '14px' : '0'}}>
                   {/* Thumbnail */}
-                  <a href={fullUrl} target="_blank" rel="noopener noreferrer" style={{flexShrink:0}}>
+                  <a href={fullUrl} target="_blank" rel="noopener noreferrer" style={{flexShrink:0}} onClick={(e) => openDataUrl(e, fullUrl)}>
                     {isPdf ? (
                       <div style={{width:'56px',height:'56px',background:'#ef444422',border:'1px solid #ef444444',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'22px'}}>📄</div>
                     ) : (
@@ -763,6 +790,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
                     <div style={{fontSize:'11px',color:'#aaa',marginBottom:'6px'}}>Subido: {dateStr}</div>
                     <div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
                       <a href={fullUrl} target="_blank" rel="noopener noreferrer"
+                        onClick={(e) => openDataUrl(e, fullUrl)}
                         style={{fontSize:'10px',fontWeight:900,color:'#3b82f6',background:'#3b82f622',border:'1px solid #3b82f644',padding:'3px 8px',borderRadius:'6px',textDecoration:'none'}}>
                         👁 Ver
                       </a>

@@ -474,7 +474,8 @@ export default function AdminPanel() {
 
   const copyReviewLink = (b, lang = 'es') => {
     const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
-    const link = `https://cantiktours.com/reviews?ref=${ref}`;
+    const dName = b.driver_name || (b.drivers ? b.drivers.name : '');
+    const link = `https://cantiktours.com/reviews?ref=${ref}&name=${encodeURIComponent(b.client_name || '')}&tour=${encodeURIComponent(b.tour_id || '')}&driver=${encodeURIComponent(dName)}`;
     navigator.clipboard.writeText(link);
     toast(`Link de review (${lang.toUpperCase()}) copiado`);
 

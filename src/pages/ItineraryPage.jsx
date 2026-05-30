@@ -6,7 +6,7 @@ import {
   MessageCircle, Star, CheckCircle2, ShieldCheck, Info,
   Heart, Sun, Moon, Plane, Copy, ExternalLink,
   Clock, MapPin, Coffee, Camera, Waves, Map, Activity, Upload,
-  ChevronLeft, ChevronRight
+  ChevronLeft, ChevronRight, CreditCard, Users
 } from 'lucide-react';
 import { getItinerary, submitCheckin, uploadReceipt } from '../services/api';
 import { useTranslation } from 'react-i18next';
@@ -36,7 +36,13 @@ export default function ItineraryPage() {
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => setToast(prev => ({ ...prev, show: false })), 4000);
+  };
   const [copied, setCopied] = useState(false);
   const [relatedBookings, setRelatedBookings] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -105,6 +111,33 @@ export default function ItineraryPage() {
     fetch_();
   }, [ref]);
 
+  // Auto-update (polling) every 15 seconds
+  useEffect(() => {
+    if (!ref || !allRelatedData.length) return;
+    
+    const interval = setInterval(async () => {
+      try {
+        const currentRef = allRelatedData[currentIndex]?.data?.reference?.replace(/^CT-/, '') || allRelatedData[currentIndex]?.data?.id;
+        if (!currentRef) return;
+        
+        const data = await getItinerary(currentRef);
+        if (data && data.status === 'success') {
+          // Update the current view silently
+          applyBookingData(data);
+          setAllRelatedData(prev => {
+            const arr = [...prev];
+            arr[currentIndex] = data;
+            return arr;
+          });
+        }
+      } catch (e) {
+        // Silent fail for polling
+      }
+    }, 15000);
+    
+    return () => clearInterval(interval);
+  }, [ref, allRelatedData, currentIndex]);
+
   const applyBookingData = (data) => {
     setBooking(data.data);
     if (data.related) setRelatedBookings(data.related);
@@ -143,16 +176,27 @@ export default function ItineraryPage() {
     }
   }, [loading, booking, payments, charges, checkinData]);
 
+  useEffect(() => {
+    if (showPaymentModal || showCheckin) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [showPaymentModal, showCheckin]);
+
   const handleCheckinSubmit = async () => {
     const missing = checkinData.some(p => !(p.name || '').trim() || !(p.passport || '').trim());
     if (missing) {
-      alert(i18n.language.startsWith('en') ? 'Please fill in the Full Name and Passport Number for all passengers.' : 'Por favor, completa el Nombre Completo y el Número de Pasaporte para todos los pasajeros.');
+      showToast(i18n.language.startsWith('en') ? 'Please fill in the Full Name and Passport Number for all passengers.' : 'Por favor, completa el Nombre Completo y el Número de Pasaporte para todos los pasajeros.', 'error');
       return;
     }
     setSubmittingCheckin(true);
     try {
       await submitCheckin({ ref: booking.reference || ref, passengers: checkinData });
-      alert(i18n.language.startsWith('en') ? 'Check-in saved!' : 'Check-in guardado con éxito!');
+      showToast(i18n.language.startsWith('en') ? 'Check-in saved!' : 'Check-in guardado con éxito!', 'success');
       setShowCheckin(false);
       // reload booking to get updated extras
       const data = await getItinerary(ref);
@@ -162,7 +206,7 @@ export default function ItineraryPage() {
         if (data.charges) setCharges(data.charges);
       }
     } catch (err) {
-      alert(err.message);
+      showToast(err.message || 'Error', 'error');
     } finally {
       setSubmittingCheckin(false);
     }
@@ -173,7 +217,7 @@ export default function ItineraryPage() {
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      alert(i18n.language.startsWith('en') ? 'File size must be under 10MB.' : 'El archivo debe pesar menos de 10MB.');
+      showToast(i18n.language.startsWith('en') ? 'File size must be under 10MB.' : 'El archivo debe pesar menos de 10MB.', 'error');
       return;
     }
 
@@ -235,13 +279,14 @@ export default function ItineraryPage() {
 
       if (res.status === 'success' && res.data) {
         setBooking(res.data);
-        alert(i18n.language.startsWith('en') ? 'Receipt uploaded successfully! We are verifying your payment.' : '¡Comprobante subido con éxito! Estamos verificando tu pago.');
+        setShowPaymentModal(false);
+        showToast(i18n.language.startsWith('en') ? 'Receipt uploaded successfully! We are verifying your payment.' : '¡Comprobante subido con éxito! Estamos verificando tu pago.', 'success');
       } else {
         throw new Error(res.message || 'Error uploading file');
       }
     } catch (err) {
       console.error('Upload Error:', err);
-      alert(i18n.language.startsWith('en') ? 'Failed to upload receipt. Please try again.' : 'Error al subir el comprobante. Por favor, vuelve a intentarlo.');
+      showToast(i18n.language.startsWith('en') ? 'Failed to upload receipt. Please try again.' : 'Error al subir el comprobante. Por favor, vuelve a intentarlo.', 'error');
     } finally {
       setUploadingReceipt(false);
     }
@@ -287,14 +332,14 @@ export default function ItineraryPage() {
 
   // ── 5-step status flow ──────────────────────────────────────────
   const statusMap = {
-    requested:        { step: 1, label: en ? 'REQUEST RECEIVED'          : 'SOLICITUD RECIBIDA',            desc: en ? 'We have received your request and will contact you shortly.' : 'Hemos recibido tu solicitud. Nos pondremos en contacto contigo muy pronto.', color: 'text-amber-400',   bg_: 'bg-amber-400/10' },
-    pending_payment:  { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'We sent payment details via WhatsApp. Please transfer to secure your spot.' : 'Te hemos enviado los datos de pago por WhatsApp. Realiza la transferencia para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
-    payment_sent:     { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'We sent payment details via WhatsApp. Please transfer to secure your spot.' : 'Te hemos enviado los datos de pago por WhatsApp. Realiza la transferencia para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
-    payment_received: { step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Payment received! Thank you. We are now preparing your experience.' : '¡Pago recibido! Gracias. Estamos preparando tu experiencia.', color: 'text-primary',     bg_: 'bg-primary/10' },
-    payment_confirmed:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Payment received! Thank you. We are now preparing your experience.' : '¡Pago recibido! Gracias. Estamos preparando tu experiencia.', color: 'text-primary',     bg_: 'bg-primary/10' },
-    verifying_payment:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Payment received! Thank you. We are now preparing your experience.' : '¡Pago recibido! Gracias. Estamos preparando tu experiencia.', color: 'text-primary',     bg_: 'bg-primary/10' },
-    reserved:         { step: 4, label: en ? 'CONFIRMING AVAILABILITY'    : 'RATIFICANDO DISPONIBILIDAD',    desc: en ? 'Coordinating with our local Bali team to ensure every detail is perfect.' : 'Estamos coordinando con nuestro equipo local en Bali para asegurar todos los detalles.', color: 'text-primary',     bg_: 'bg-primary/10' },
-    confirmed:        { step: 5, label: en ? 'TOUR CONFIRMED'             : 'TOUR CONFIRMADO',               desc: en ? 'See you in Bali! Everything is ready for your adventure.' : '¡Nos vemos en Bali! Todo está listo para tu aventura.', color: 'text-emerald-400', bg_: 'bg-emerald-400/10' },
+    requested:        { step: 1, label: en ? 'REQUEST RECEIVED'          : 'SOLICITUD RECIBIDA',            desc: en ? 'Request received. Proceed to payment to reserve.' : 'Solicitud recibida. Procede al pago para reservar.', color: 'text-amber-400',   bg_: 'bg-amber-400/10' },
+    pending_payment:  { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'Waiting for transfer receipt to secure your spot.' : 'Esperando comprobante de transferencia para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
+    payment_sent:     { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'Waiting for transfer receipt to secure your spot.' : 'Esperando comprobante de transferencia para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
+    payment_received: { step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
+    payment_confirmed:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
+    verifying_payment:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
+    reserved:         { step: 4, label: en ? 'CONFIRMING AVAILABILITY'    : 'RATIFICANDO DISPONIBILIDAD',    desc: en ? 'Coordinating details with the team in Bali.' : 'Coordinando detalles con el equipo en Bali.', color: 'text-primary',     bg_: 'bg-primary/10' },
+    confirmed:        { step: 5, label: en ? 'TOUR CONFIRMED'             : 'TOUR CONFIRMADO',               desc: en ? 'All set! Booking 100% guaranteed.' : '¡Todo listo! Reserva 100% garantizada.', color: 'text-emerald-400', bg_: 'bg-emerald-400/10' },
     in_progress:      { step: 6, label: en ? 'TOUR IN PROGRESS'           : 'TOUR EN CURSO',                 desc: en ? 'Your tour is underway! Enjoy every moment in Bali.' : '¡Tu tour está en marcha! Disfruta cada momento en Bali.', color: 'text-primary',     bg_: 'bg-primary/10' },
     completed:        { step: 7, label: en ? 'COMPLETED'                  : 'TOUR FINALIZADO',               desc: en ? 'We hope it was an unforgettable experience. Thank you for choosing Cantik Tours!' : '¡Esperamos que haya sido una experiencia inolvidable. Gracias por confiar en Cantik Tours!', color: 'text-gray-400',   bg_: 'bg-white/5' },
     postponed:        { step: 1, label: en ? 'POSTPONED'                  : 'TOUR POSPUESTO',                desc: en ? 'Your tour has been postponed. Please contact us for new dates.' : 'Tu tour ha sido pospuesto. Contacta con nosotros para acordar nuevas fechas.', color: 'text-indigo-400', bg_: 'bg-indigo-400/10' },
@@ -531,30 +576,23 @@ export default function ItineraryPage() {
                   {booking.client_name}
                 </div>
                 {/* Reference directly under name, alongside arrows */}
-                <div className="flex items-center gap-2">
-                  <div className="font-mono font-black text-[10px] sm:text-xs tracking-wider text-white bg-white/10 px-2 sm:px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10 inline-flex items-center gap-1.5">
+                <div className="flex items-center gap-3 mt-1">
+                  {allRelatedData.length > 1 && currentIndex > 0 && (
+                    <button onClick={() => switchBooking(-1)} className="text-white hover:bg-white/30 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/20 backdrop-blur-md shadow-sm">
+                      <ChevronLeft size={18} />
+                    </button>
+                  )}
+                  
+                  <div className="font-mono font-black text-base sm:text-lg tracking-widest text-white flex items-center gap-2 px-1">
                     <span>{booking.reference ? (booking.reference.startsWith('CT-') ? booking.reference : `CT-${booking.reference}`) : `CT-${booking.id}`}</span>
-                    <span className="text-[8px] sm:text-[9px] text-white/70 uppercase">({dayNum} {monthStr})</span>
+                    <span className="text-[10px] sm:text-xs text-white/80 uppercase tracking-widest font-bold bg-white/10 px-2 py-0.5 rounded-md">({dayNum} {monthStr})</span>
                   </div>
 
-                  {allRelatedData.length > 1 && (() => {
-                    const prev = currentIndex > 0;
-                    const next = currentIndex < allRelatedData.length - 1;
-                    return (
-                      <div className="flex items-center gap-1">
-                        {prev && (
-                          <button onClick={() => switchBooking(-1)} className="text-white hover:bg-white/20 p-1 rounded-full transition-colors flex items-center justify-center bg-white/10 border border-white/10 backdrop-blur-sm">
-                            <ChevronLeft size={14} />
-                          </button>
-                        )}
-                        {next && (
-                          <button onClick={() => switchBooking(1)} className="text-white hover:bg-white/20 p-1 rounded-full transition-colors flex items-center justify-center bg-white/10 border border-white/10 backdrop-blur-sm">
-                            <ChevronRight size={14} />
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })()}
+                  {allRelatedData.length > 1 && currentIndex < allRelatedData.length - 1 && (
+                    <button onClick={() => switchBooking(1)} className="text-white hover:bg-white/30 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/20 backdrop-blur-md shadow-sm">
+                      <ChevronRight size={18} />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -622,7 +660,7 @@ export default function ItineraryPage() {
                 </div>
 
                 {/* Perforated divider */}
-                <div className={`relative h-8 flex items-center ${dark ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
+                <div className={`relative h-8 flex items-center -translate-y-2 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
                   <div className="absolute left-0 -translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
                   <div className="absolute right-0 translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
                   <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
@@ -685,70 +723,67 @@ export default function ItineraryPage() {
               <motion.div key="management" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="p-6">
                 {/* ── SECTIONS WITHOUT ACCORDION ──────────────────── */}
                 <div className="space-y-8">
-                  {/* Official Status & Timeline Combined Card */}
-                  <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 sm:p-6 border border-gray-100 dark:border-white/10">
-                    <div className="flex flex-row items-center justify-between gap-3 mb-6">
-                      <div>
-                        <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
-                          {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
-                        </span>
-                        <div className="flex items-center gap-2 mt-1">
+                  {/* Official Status */}
+                  <div>
+                    <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
+                      {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
+                    </div>
+                    <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 sm:p-6 border border-gray-100 dark:border-white/10 shadow-sm">
+                      <div className="flex flex-row items-center justify-between gap-3">
+                        <div className="flex items-center gap-2">
                           <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
                           <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${text}`}>
                             {status.label}
                           </h3>
                         </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
+                            <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
+                              {en ? 'Action Required' : 'Acción Requerida'}
+                            </span>
+                          ) : (
+                            <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
+                              {en ? 'Completed ✓' : 'Completado ✓'}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
-                          <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
-                            {en ? 'Action Required' : 'Acción Requerida'}
-                          </span>
-                        ) : (
-                          <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
-                            {en ? 'Completed ✓' : 'Completado ✓'}
-                          </span>
-                        )}
-                      </div>
-                    </div>
 
-                    <div className="border-t border-dashed border-gray-200 dark:border-white/10 pt-6">
-                      <span className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
-                        {en ? 'Official Timeline & History' : 'Historial y Línea de Tiempo Oficial'}
-                      </span>
-
-                      <div className="mt-4 space-y-4 relative pl-2 pt-2">
-                        <div className={`absolute top-2 bottom-2 left-[15px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
-                        {[
-                          statusMap.requested, 
-                          statusMap.pending_payment, 
-                          statusMap.payment_received, 
-                          statusMap.reserved, 
-                          statusMap.confirmed,
-                          statusMap.in_progress,
-                          statusMap.completed
-                        ].map((st, i) => {
-                          const isPast = st.step <= currentStep;
-                          const isCurrent = st.step === currentStep;
-                          return (
-                            <div key={i} className="flex gap-4 relative z-10">
-                              <div className={`w-3.5 h-3.5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_10px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
-                                {isPast && !isCurrent && <CheckCircle2 size={6} className="text-white" />}
-                                {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
+                      <div className="border-t border-dashed border-gray-200 dark:border-white/10 pt-6 mt-6">
+                        <div className="space-y-4 relative pl-2 pt-2">
+                          <div className={`absolute top-2 bottom-2 left-[15px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
+                          {[
+                            statusMap.requested, 
+                            statusMap.pending_payment, 
+                            statusMap.payment_received, 
+                            statusMap.reserved, 
+                            statusMap.confirmed,
+                            statusMap.in_progress,
+                            statusMap.completed
+                          ].map((st, i) => {
+                            const isPast = st.step <= currentStep;
+                            const isCurrent = st.step === currentStep;
+                            return (
+                              <div key={i} className="flex gap-4 relative z-10">
+                                <div className={`w-3.5 h-3.5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_10px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
+                                  {isPast && !isCurrent && <CheckCircle2 size={6} className="text-white" />}
+                                  {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
+                                </div>
+                                <div className="flex-1">
+                                  <div className={`text-[9px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
+                                  {isCurrent && <div className={`text-[10px] mt-0.5 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
+                                </div>
                               </div>
-                              <div className="flex-1">
-                                <div className={`text-[9px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
-                                {isCurrent && <div className={`text-[10px] mt-0.5 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
-                              </div>
-                            </div>
-                          )
-                        })}
+                            )
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
 
                   {/* Finance Section */}
-                  <div>
+                  {(!['payment_confirmed', 'reserved', 'confirmed', 'in_progress', 'completed'].includes(booking?.payment_status)) && (
+                    <div className="mb-8">
                       <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
                         {en ? 'Finance & Payments' : 'Finanzas y Pagos'}
                       </div>
@@ -757,7 +792,7 @@ export default function ItineraryPage() {
                         <div className={`p-5 rounded-2xl border transition-all ${isReceiptSentOrVerified || !isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm')}`}>
                           <div className="flex items-start gap-4">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isReceiptSentOrVerified || !isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
-                              {isReceiptSentOrVerified || !isPaymentPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">1</div>}
+                              {isReceiptSentOrVerified || !isPaymentPending ? <CheckCircle2 size={16} /> : <CreditCard size={14} />}
                             </div>
                             <div className="flex-1">
                               <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
@@ -788,9 +823,11 @@ export default function ItineraryPage() {
                         </div>
                       </div>
                     </div>
+                  )}
 
                     {/* Check-in Section */}
-                    <div className="pt-4">
+                    {isCheckinPending && (
+                    <div className="mb-8">
                       <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
                         {en ? 'Passengers' : 'Pasajeros'}
                       </div>
@@ -798,11 +835,11 @@ export default function ItineraryPage() {
                       <div className={`p-5 rounded-2xl border transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm')}`}>
                         <div className="flex items-start gap-4">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isCheckinPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
-                            {!isCheckinPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">3</div>}
+                            {!isCheckinPending ? <CheckCircle2 size={16} /> : <Users size={16} />}
                           </div>
                           <div className="flex-1">
                             <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                              {en ? '3. Passenger Check-in' : '3. Registro de Pasajeros'}
+                              {en ? 'Passenger Check-in' : 'Registro de Pasajeros'}
                             </div>
                             <div className={`text-[11px] font-medium leading-relaxed mt-1 ${sub}`}>
                               {!isCheckinPending
@@ -824,29 +861,13 @@ export default function ItineraryPage() {
                         </div>
                       </div>
                     </div>
-
-
+                    )}
 
             </div>
           </motion.div>
         )}
         </div>
       </div>
-
-        {/* Post-tour review */}
-        {isExpired && (
-          <motion.a href={`https://cantiktours.com/reviews?ref=${ref}`} initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className={`block rounded-[2rem] p-10 border ${card} text-center hover:border-primary/30 transition-all`}>
-            <Star className="text-primary mb-3 mx-auto" size={28} />
-            <h4 className={`font-black text-lg uppercase tracking-tight mb-1 ${text}`}>
-              {en ? 'Share Your Experience' : 'Comparte tu Experiencia'}
-            </h4>
-            <p className={`text-xs font-bold ${sub}`}>
-              {en ? 'Inspire future travelers with your review.' : 'Inspira a futuros viajeros con tu reseña.'}
-            </p>
-          </motion.a>
-        )}
-
         {/* ── SUPPORT / WHATSAPP ─────────────────────── */}
         <motion.div 
           id="support-section"
@@ -1048,197 +1069,156 @@ export default function ItineraryPage() {
 
       {/* ── PAYMENT MODAL ────────────────────────────────── */}
       {showPaymentModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md">
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className={`w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-[2rem] p-8 border shadow-2xl ${dark ? 'bg-[#141414] border-white/10 shadow-black' : 'bg-white border-gray-200'}`}
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className={`w-full max-w-md max-h-[90vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative custom-scrollbar ${dark ? 'bg-[#141414] border border-white/10' : 'bg-white border border-gray-100'}`}
           >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className={`text-lg font-black uppercase tracking-widest ${text}`}>
-                {en ? 'Transfer Details' : 'Datos de Transferencia'}
+            {/* Header */}
+            <div className={`sticky top-0 z-10 px-8 py-6 flex justify-between items-center border-b backdrop-blur-xl ${dark ? 'border-white/10 bg-[#141414]/80' : 'border-gray-100 bg-white/80'}`}>
+              <h3 className={`text-xs font-black uppercase tracking-widest ${sub}`}>
+                {en ? 'Payment & Transfer' : 'Pago y Transferencia'}
               </h3>
-              <button onClick={() => setShowPaymentModal(false)} className={`w-8 h-8 flex items-center justify-center rounded-full ${dark ? 'bg-white/10 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              <button onClick={() => setShowPaymentModal(false)} className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors ${dark ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-600'}`}>
                 ✕
               </button>
             </div>
 
-            <div className={`p-5 rounded-2xl border mb-6 text-center ${dark ? 'bg-orange-500/5 border-orange-500/10' : 'bg-orange-50 border-orange-200'}`}>
-              <div className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-500 mb-2">
-                {en ? 'AMOUNT TO PAY' : 'MONTO A PAGAR'}
-              </div>
-              <div className={`text-3xl font-black mb-4 ${text}`}>
-                {formatPrice(balance).symbol}{formatPrice(balance).amount}
-              </div>
-              <div className="flex items-center justify-center gap-2 bg-black/20 dark:bg-black/40 py-2 px-4 rounded-xl max-w-xs mx-auto">
-                <div className="text-left">
-                  <div className="text-[8px] font-black uppercase tracking-widest text-gray-400">
-                    {en ? 'REFERENCE / CONCEPT' : 'REFERENCIA / CONCEPTO'}
-                  </div>
-                  <div className={`text-xs font-bold ${text}`}>
-                    CT-{ref}
-                  </div>
+            <div className="px-8 pt-8 pb-10">
+              {/* Total Amount */}
+              <div className="text-center mb-8">
+                <div className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3">
+                  {en ? 'AMOUNT TO PAY' : 'MONTO A PAGAR'}
                 </div>
+                <div className={`text-5xl font-black mb-6 tracking-tighter ${text}`}>
+                  <span className="text-3xl opacity-50 mr-1">{formatPrice(balance).symbol}</span>
+                  {formatPrice(balance).amount}
+                </div>
+                
+                {/* Reference Pill */}
+                <div className="inline-flex flex-col items-center">
+                  <div className={`flex items-center gap-3 pl-5 pr-2 py-1.5 rounded-full border ${dark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
+                    <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">REF:</span>
+                    <span className={`text-sm font-mono font-black tracking-widest ${text}`}>CT-{ref}</span>
+                    <button
+                      onClick={() => handleCopy(`CT-${ref}`, 'ref')}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${copiedField === 'ref' ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-white/10 text-gray-500 hover:text-primary shadow-sm'}`}
+                    >
+                      {copiedField === 'ref' ? <CheckCircle2 size={14} /> : <Copy size={14} />}
+                    </button>
+                  </div>
+                  <span className={`text-[9px] font-bold uppercase tracking-widest mt-3 opacity-60 ${sub}`}>
+                    {en ? 'Include this REF in your transfer' : 'Incluye esta REF en el concepto'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Pill Tabs */}
+              <div className={`flex p-1 rounded-2xl mb-8 ${dark ? 'bg-white/5' : 'bg-gray-100'}`}>
                 <button
-                  onClick={() => handleCopy(`CT-${ref}`, 'ref')}
-                  className={`ml-auto p-2 rounded-lg transition-colors ${dark ? 'bg-white/5 hover:bg-white/10 text-white' : 'bg-gray-200 hover:bg-gray-300 text-black'}`}
-                  title={en ? 'Copy reference' : 'Copiar referencia'}
+                  onClick={() => setPaymentTab('eur')}
+                  className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${paymentTab === 'eur' ? 'bg-white dark:bg-[#2a2a2a] text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'}`}
                 >
-                  {copiedField === 'ref' ? (
-                    <span className="text-[9px] font-black text-emerald-500 uppercase">Copied</span>
-                  ) : (
-                    <Copy size={14} />
-                  )}
+                  {en ? 'EUR Account' : 'Cuenta EUR'}
+                </button>
+                <button
+                  onClick={() => setPaymentTab('usd')}
+                  className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${paymentTab === 'usd' ? 'bg-white dark:bg-[#2a2a2a] text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'}`}
+                >
+                  {en ? 'USD Account' : 'Cuenta USD'}
                 </button>
               </div>
-            </div>
 
-            {/* Tabs */}
-            <div className="flex gap-2 p-1 bg-black/20 dark:bg-black/40 rounded-xl mb-6">
-              <button
-                onClick={() => setPaymentTab('eur')}
-                className={`flex-1 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${paymentTab === 'eur' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                Wise EUR (IBAN)
-              </button>
-              <button
-                onClick={() => setPaymentTab('usd')}
-                className={`flex-1 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all ${paymentTab === 'usd' ? 'bg-primary text-white' : 'text-gray-400 hover:text-white'}`}
-              >
-                Wise USD (ACH/Wire)
-              </button>
-            </div>
-
-            {/* Tab Contents */}
-            <div className="space-y-4 mb-8">
-              {paymentTab === 'eur' ? (
-                <>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Name / Beneficiario</div>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-bold ${text}`}>Javier Ignacio Contreras Cifuentes</span>
-                      <button onClick={() => handleCopy('Javier Ignacio Contreras Cifuentes', 'name')} className="text-gray-400 hover:text-primary">
-                        {copiedField === 'name' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
+              {/* Bank Details */}
+              <div className="space-y-5 mb-10">
+                {[
+                  { label: en ? 'BENEFICIARY' : 'BENEFICIARIO', value: 'Javier Ignacio Contreras Cifuentes', id: 'name' },
+                  ...(paymentTab === 'eur' ? [
+                    { label: 'IBAN', value: 'BE97 9673 8690 2549', id: 'iban', mono: true },
+                    { label: 'SWIFT / BIC', value: 'TRWIBEB1XXX', id: 'bic', mono: true },
+                    { label: en ? 'BANK' : 'BANCO', value: 'Wise, Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium', id: 'bank', noCopy: true }
+                  ] : [
+                    { label: en ? 'ACCOUNT NO.' : 'CUENTA', value: '214247934891', id: 'acc', mono: true },
+                    { label: en ? 'ROUTING' : 'RUTEO', value: '101019628', id: 'route', mono: true },
+                    { label: 'SWIFT / BIC', value: 'TRWIUS35XXX', id: 'bic_us', mono: true },
+                    { label: en ? 'BANK' : 'BANCO', value: 'Wise US Inc, 108 W 13th St, Wilmington, DE, 19801, USA', id: 'bank_us', noCopy: true }
+                  ])
+                ].map((item, idx) => (
+                  <div key={idx} className="flex items-start justify-between group">
+                    <div className="flex-1 pr-4">
+                      <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">{item.label}</div>
+                      <div className={`text-sm ${item.mono ? 'font-mono tracking-wider' : ''} font-bold ${text} ${item.noCopy ? 'leading-snug opacity-70 text-xs' : ''}`}>
+                        {item.value}
+                      </div>
+                    </div>
+                    {!item.noCopy && (
+                      <button 
+                        onClick={() => handleCopy(item.value, item.id)} 
+                        className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${copiedField === item.id ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-100 dark:bg-white/5 text-gray-400 hover:text-primary hover:bg-primary/10'}`}
+                      >
+                        {copiedField === item.id ? <CheckCircle2 size={14} /> : <Copy size={14} />}
                       </button>
-                    </div>
+                    )}
                   </div>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">IBAN</div>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-mono font-bold ${text}`}>BE97 9673 8690 2549</span>
-                      <button onClick={() => handleCopy('BE97 9673 8690 2549', 'iban')} className="text-gray-400 hover:text-primary">
-                        {copiedField === 'iban' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Swift / BIC</div>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-mono font-bold ${text}`}>TRWIBEB1XXX</span>
-                      <button onClick={() => handleCopy('TRWIBEB1XXX', 'bic')} className="text-gray-400 hover:text-primary">
-                        {copiedField === 'bic' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Bank Name / Banco</div>
-                    <div className="text-xs font-bold leading-normal text-gray-400">
-                      Wise, Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Name / Beneficiario</div>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-bold ${text}`}>Javier Ignacio Contreras Cifuentes</span>
-                      <button onClick={() => handleCopy('Javier Ignacio Contreras Cifuentes', 'name')} className="text-gray-400 hover:text-primary">
-                        {copiedField === 'name' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Account Number / Cuenta</div>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-mono font-bold ${text}`}>214247934891</span>
-                      <button onClick={() => handleCopy('214247934891', 'acc')} className="text-gray-400 hover:text-primary">
-                        {copiedField === 'acc' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Routing Number / Ruteo</div>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-mono font-bold ${text}`}>101019628</span>
-                      <button onClick={() => handleCopy('101019628', 'route')} className="text-gray-400 hover:text-primary">
-                        {copiedField === 'route' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Swift / BIC (Outside US)</div>
-                    <div className="flex justify-between items-center">
-                      <span className={`text-xs font-mono font-bold ${text}`}>TRWIUS35XXX</span>
-                      <button onClick={() => handleCopy('TRWIUS35XXX', 'bic_us')} className="text-gray-400 hover:text-primary">
-                        {copiedField === 'bic_us' ? <span className="text-[8px] font-bold text-emerald-500">Copied</span> : <Copy size={12} />}
-                      </button>
-                    </div>
-                  </div>
-                  <div className={`p-4 rounded-xl border ${dark ? 'bg-[#1a1a1a] border-white/5' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">Bank Name / Banco</div>
-                    <div className="text-xs font-bold leading-normal text-gray-400">
-                      Wise US Inc, 108 W 13th St, Wilmington, DE, 19801, United States
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Upload Receipt Section Inside Modal */}
-            <div className={`pt-6 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200'} mt-6`}>
-              <div className="text-center mb-4">
-                <h4 className={`text-sm font-black uppercase tracking-widest ${text}`}>
-                  {en ? 'Step 2: Upload Receipt' : 'Paso 2: Subir Comprobante'}
-                </h4>
-                <p className={`text-[11px] mt-1 ${sub}`}>
-                  {en ? 'Once you complete the transfer, upload the screenshot.' : 'Una vez realizada la transferencia, sube el pantallazo.'}
-                </p>
+                ))}
               </div>
-              <div className="flex flex-col items-center justify-center gap-4">
-                <label className="inline-flex px-6 py-3.5 bg-primary text-white hover:bg-primary/90 border border-primary/20 text-xs font-black uppercase tracking-widest rounded-full transition-all cursor-pointer select-none items-center gap-2 shadow-lg shadow-primary/20 w-full sm:w-auto justify-center">
-                  {uploadingReceipt ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                      <span>{en ? 'UPLOADING...' : 'SUBIENDO...'}</span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload size={16} />
-                      <span>{en ? 'UPLOAD RECEIPT' : 'SUBIR COMPROBANTE'}</span>
-                    </>
-                  )}
-                  <input
-                    type="file"
-                    accept="image/*,application/pdf"
-                    className="hidden"
-                    onChange={handleReceiptUpload}
-                    disabled={uploadingReceipt}
-                  />
-                </label>
-                <a
-                  href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`text-[10px] font-bold uppercase tracking-wider underline hover:text-primary transition-colors ${sub}`}
-                >
-                  {en ? 'Or send via WhatsApp' : 'O enviar por WhatsApp'}
-                </a>
+
+              {/* Upload Section */}
+              <div className={`pt-8 border-t ${dark ? 'border-white/10' : 'border-gray-100'}`}>
+                <div className="text-center mb-6">
+                  <h4 className={`text-xs font-black uppercase tracking-widest ${text}`}>
+                    {en ? 'UPLOAD RECEIPT' : 'SUBIR COMPROBANTE'}
+                  </h4>
+                </div>
+                
+                <div className="flex flex-col items-center justify-center gap-4">
+                  <label className="relative overflow-hidden group cursor-pointer flex w-full justify-center items-center gap-3 px-8 py-5 bg-primary text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-[0.98]">
+                    {uploadingReceipt ? (
+                      <>
+                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>{en ? 'UPLOADING...' : 'SUBIENDO...'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
+                      <Upload size={18} />
+                      <span>{en ? 'SELECT IMAGE' : 'SELECCIONAR IMAGEN'}</span>
+                      </>
+                    )}
+                    <input
+                      type="file"
+                      accept="image/*,application/pdf"
+                      className="hidden"
+                      onChange={handleReceiptUpload}
+                      disabled={uploadingReceipt}
+                    />
+                  </label>
+                  <a
+                    href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`text-[9px] font-black uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-2 ${sub}`}
+                  >
+                    <span>{en ? 'Or send via WhatsApp' : 'O envíalo por WhatsApp'}</span>
+                    <ExternalLink size={10} />
+                  </a>
+                </div>
               </div>
             </div>
           </motion.div>
         </div>
       )}
+
+      {/* Toast Notification */}
+      <motion.div
+        initial={{ opacity: 0, y: 50 }}
+        animate={{ opacity: toast.show ? 1 : 0, y: toast.show ? 0 : 50 }}
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl z-[200] flex items-center gap-3 pointer-events-none transition-all duration-300 ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`}
+      >
+        {toast.type === 'error' ? <Info size={16} /> : <CheckCircle2 size={16} />}
+        <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{toast.message}</span>
+      </motion.div>
     </div>
   );
 }

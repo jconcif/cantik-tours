@@ -15,11 +15,15 @@ const ReviewsPage = () => {
     const location = useLocation();
     const [searchParams] = useSearchParams();
     const ref = searchParams.get('ref');
+    const paramName = searchParams.get('name');
+    const paramTour = searchParams.get('tour');
+    const paramDriver = searchParams.get('driver');
 
     const [step, setStep] = useState(1);
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
     const [booking, setBooking] = useState(null);
-    const [isPreFilled, setIsPreFilled] = useState(false);
+    const [isPreFilled, setIsPreFilled] = useState(!!(paramName || paramTour || paramDriver));
+    const [isFetchingInfo, setIsFetchingInfo] = useState(false);
     
     const [ratings, setRatings] = useState({
         rating_booking: 5,
@@ -40,9 +44,9 @@ const ReviewsPage = () => {
     });
 
     const [formData, setFormData] = useState({
-        name: '',
-        tour_type: 'ubud_central',
-        driver_name: '',
+        name: paramName || '',
+        tour_type: paramTour || 'ubud_central',
+        driver_name: paramDriver || '',
         find_us: 'instagram',
         comment: '',
         ig_user: '',
@@ -52,24 +56,31 @@ const ReviewsPage = () => {
 
     useEffect(() => {
         if (ref) {
-            const fetchPreFill = async () => {
-                try {
-                    const j = await getItinerary(ref);
-                    if (j.status === 'success' && j.data) {
-                        setBooking(j.data);
-                        setFormData(prev => ({
-                            ...prev,
-                            name: j.data.client_name || '',
-                            tour_type: j.data.tour_id || 'ubud_central',
-                            driver_name: (j.data.drivers && j.data.drivers.name) || j.data.driver_name || '',
-                        }));
-                        setIsPreFilled(true);
-                    }
-                } catch (e) { console.error("Error pre-filling review:", e); }
-            };
-            fetchPreFill();
+            if (paramName || paramTour || paramDriver) {
+                // If we have URL parameters, no need to fetch from DB and overwrite user input
+                setIsPreFilled(true);
+            } else {
+                setIsFetchingInfo(true);
+                const fetchPreFill = async () => {
+                    try {
+                        const j = await getItinerary(ref);
+                        if (j.status === 'success' && j.data) {
+                            setBooking(j.data);
+                            setFormData(prev => ({
+                                ...prev,
+                                name: prev.name || j.data.client_name || '',
+                                tour_type: prev.tour_type !== 'ubud_central' ? prev.tour_type : (j.data.tour_id || 'ubud_central'),
+                                driver_name: prev.driver_name || (j.data.drivers && j.data.drivers.name) || j.data.driver_name || '',
+                            }));
+                            setIsPreFilled(true);
+                        }
+                    } catch (e) { console.error("Error pre-filling review:", e); }
+                    finally { setIsFetchingInfo(false); }
+                };
+                fetchPreFill();
+            }
         }
-    }, [ref]);
+    }, [ref, paramName, paramTour, paramDriver]);
 
     const nextStep = () => {
         if (step < 3) setStep(step + 1);
@@ -226,15 +237,22 @@ const ReviewsPage = () => {
                                     exit={{ opacity: 0, x: -20 }}
                                     className="space-y-6"
                                 >
-                                    {isPreFilled && (
-                                        <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 p-6 rounded-2xl text-center mb-6">
-                                            <p className="text-sm font-bold text-gray-900 dark:text-white leading-relaxed">
-                                                {welcomeMessage}
-                                            </p>
+                                    {isFetchingInfo ? (
+                                        <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                                            <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+                                            <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">{t('reviews_page.loading') || 'Cargando información...'}</p>
                                         </div>
-                                    )}
+                                    ) : (
+                                        <>
+                                            {isPreFilled && (
+                                                <div className="bg-primary/5 dark:bg-primary/10 border border-primary/20 p-6 rounded-2xl text-center mb-6">
+                                                    <p className="text-sm font-bold text-gray-900 dark:text-white leading-relaxed">
+                                                        {welcomeMessage}
+                                                    </p>
+                                                </div>
+                                            )}
 
-                                    {!isPreFilled && (
+                                            {!isPreFilled && (
                                         <div>
                                             <label htmlFor="name" className={labelClasses}>{t('reviews_page.form.name')}</label>
                                             <input id="name" type="text" className={inputClasses} value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
@@ -293,6 +311,8 @@ const ReviewsPage = () => {
                                     >
                                         {t('reviews_page.form.next')} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
                                     </button>
+                                    </>
+                                    )}
                                 </motion.div>
                             )}
 
