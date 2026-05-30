@@ -366,6 +366,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         // Immediately remove from local state so UI updates without parent reload
         setPendingReceipts(prev => prev.filter(r => r.url !== receipt.url));
         await load();
+        if (onUpdate) onUpdate();
         onDone();
       } catch(e) { alert(e.message); }
       finally { setSaving(false); }

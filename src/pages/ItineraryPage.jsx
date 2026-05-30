@@ -430,356 +430,356 @@ export default function ItineraryPage() {
 
       <div className="max-w-2xl mx-auto px-4 pt-10 space-y-5">
 
-        {/* ── MULTI-DAY TABS: integrated inside the ticket header strip ────── */}
+        {/* ── UNIFIED TICKET CONTAINER ────────────────────────────── */}
+        <div className={`rounded-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50 bg-[#1a1a1a]' : 'shadow-gray-300/80 bg-white'}`}>
 
-        {/* ── APP TABS (TICKET VS GESTION) ────────────────────────────── */}
-        <div className="flex gap-2 mb-4 p-1 rounded-[1.5rem] bg-black/5 dark:bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/5">
-          <button 
-            onClick={() => setActiveTab('ticket')}
-            className={`flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'ticket' ? (dark ? 'bg-[#1a1a1a] shadow-sm text-primary' : 'bg-white shadow-sm text-primary') : (dark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700')}`}
-          >
-            {en ? 'My Ticket' : 'Mi Billete'}
-          </button>
-          <button 
-            onClick={() => setActiveTab('management')}
-            className={`flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${activeTab === 'management' ? (dark ? 'bg-[#1a1a1a] shadow-sm text-primary' : 'bg-white shadow-sm text-primary') : (dark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700')}`}
-          >
-            {en ? 'Management' : 'Gestión'}
-            {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) && (
-              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-            )}
-          </button>
-        </div>
-
-        {activeTab === 'ticket' && (
-          <motion.div key="ticket" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 100 }}>
-
-          {/* Strip + fields */}
-          <div className={`rounded-t-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50' : 'shadow-gray-300/80'}`}>
-
-            {/* Header strip */}
-            <div className="bg-primary px-8 py-7 relative overflow-hidden">
-              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg,white 0,white 1px,transparent 0,transparent 50%)', backgroundSize: '8px 8px' }} />
-              <div className="relative z-10 flex items-center justify-between">
-                <div>
-                  <div className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-1">
-                    {en ? 'BOOKING CARD' : 'TARJETA DE RESERVA'}
-                  </div>
-                  <div className="text-white font-black text-2xl tracking-tight uppercase">{booking.client_name}</div>
+          {/* Header strip (always visible) */}
+          <div className="bg-primary px-6 sm:px-8 py-7 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg,white 0,white 1px,transparent 0,transparent 50%)', backgroundSize: '8px 8px' }} />
+            <div className="relative z-10 flex items-center justify-between">
+              <div>
+                <div className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-1">
+                  {en ? 'BOOKING CARD' : 'TARJETA DE RESERVA'}
                 </div>
-                <div className="font-mono font-black text-xs sm:text-sm tracking-wider text-white bg-white/10 px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10">
-                  CT-{ref}
+                <div className="text-white font-black text-xl sm:text-2xl tracking-tight uppercase truncate max-w-[150px] sm:max-w-[250px]">{booking.client_name}</div>
+              </div>
+              
+              {/* Navigation and Ref/Date on the right */}
+              <div className="flex flex-col items-end gap-1">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  {relatedBookings.length > 1 ? (() => {
+                    const sorted = [...relatedBookings].sort((a,b) => (parseLocalDate(a.booking_date)||new Date(0)).getTime() - (parseLocalDate(b.booking_date)||new Date(0)).getTime());
+                    const idx = sorted.findIndex(b => b.id === booking.id);
+                    const prev = idx > 0 ? sorted[idx - 1] : null;
+                    const next = idx !== -1 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
+                    return (
+                      <>
+                        {prev ? (
+                          <button onClick={() => navigate(`/booking?ref=CT-${(prev.reference || String(prev.id)).replace('CT-', '')}`)} className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/10">
+                            <ChevronLeft size={16} />
+                          </button>
+                        ) : <div className="w-7 sm:w-8" />}
+                        <div className="font-mono font-black text-[10px] sm:text-xs tracking-wider text-white bg-white/10 px-2 sm:px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/10 flex items-center gap-1.5">
+                          <span>CT-{ref}</span>
+                          <span className="text-[8px] sm:text-[9px] text-white/70 uppercase">({dayNum} {monthStr})</span>
+                        </div>
+                        {next ? (
+                          <button onClick={() => navigate(`/booking?ref=CT-${(next.reference || String(next.id)).replace('CT-', '')}`)} className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/10">
+                            <ChevronRight size={16} />
+                          </button>
+                        ) : <div className="w-7 sm:w-8" />}
+                      </>
+                    );
+                  })() : (
+                    <div className="font-mono font-black text-xs sm:text-sm tracking-wider text-white bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/10 flex items-center gap-2">
+                      <span>CT-{ref}</span>
+                      <span className="text-[10px] text-white/70 uppercase">({dayNum} {monthStr})</span>
+                    </div>
+                  )}
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Multi-booking day selector — shown inside the header when there are related bookings */}
-              {relatedBookings.length > 1 && (
-                <div className="relative z-10 mt-5 flex gap-2 overflow-x-auto hide-scrollbar -mb-1">
-                  {[...relatedBookings]
-                    .sort((a, b) => {
-                      const da = parseLocalDate(a.booking_date) || new Date(0);
-                      const db = parseLocalDate(b.booking_date) || new Date(0);
-                      return da.getTime() - db.getTime();
-                    })
-                    .map((rb, idx) => {
-                      const dObj = parseLocalDate(rb.booking_date);
-                      const dayNum = dObj ? String(dObj.getDate()).padStart(2,'0') : '--';
-                      const monStr = dObj ? dObj.toLocaleDateString(en ? 'en-US' : 'es-ES', { month: 'short' }).toUpperCase() : '---';
-                      const refCode = `CT-${(rb.reference || String(rb.id)).replace('CT-', '')}`;
-                      const today = new Date(); today.setHours(0,0,0,0);
-                      const isPast = dObj ? dObj < today : false;
-                      const isActive = rb.id === booking.id;
-                      return (
-                        <button
-                          key={rb.id}
-                          onClick={() => navigate(`/booking?ref=${refCode}`)}
-                          className={`flex-shrink-0 flex flex-col items-center px-3 py-1.5 rounded-xl transition-all text-center ${
-                            isActive
-                              ? 'bg-white text-primary shadow-md'
-                              : isPast
-                                ? 'bg-white/10 text-white/40 hover:bg-white/20'
-                                : 'bg-white/20 text-white hover:bg-white/30'
-                          }`}
-                        >
-                          <span className="text-[16px] font-black leading-none">{dayNum}</span>
-                          <span className="text-[8px] font-black tracking-widest leading-tight mt-0.5">{monStr}</span>
-                          {isActive && <span className="mt-1 w-1 h-1 rounded-full bg-primary" />}
-                        </button>
-                      );
-                    })}
-                </div>
+          {/* APP TABS (TICKET VS GESTION) inside the container */}
+          <div className={`flex border-b ${dark ? 'border-white/5 bg-black/20' : 'border-gray-100 bg-gray-50'}`}>
+            <button 
+              onClick={() => setActiveTab('ticket')}
+              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'ticket' ? (dark ? 'text-primary bg-white/5 shadow-[inset_0_-2px_0_0_#11BDDB]' : 'text-primary bg-white shadow-[inset_0_-2px_0_0_#11BDDB]') : (dark ? 'text-gray-500 hover:text-gray-300 hover:bg-white/5' : 'text-gray-500 hover:text-gray-700 hover:bg-white')}`}
+            >
+              {en ? 'My Ticket' : 'Mi Billete'}
+            </button>
+            <button 
+              onClick={() => setActiveTab('management')}
+              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${activeTab === 'management' ? (dark ? 'text-primary bg-white/5 shadow-[inset_0_-2px_0_0_#11BDDB]' : 'text-primary bg-white shadow-[inset_0_-2px_0_0_#11BDDB]') : (dark ? 'text-gray-500 hover:text-gray-300 hover:bg-white/5' : 'text-gray-500 hover:text-gray-700 hover:bg-white')}`}
+            >
+              {en ? 'Management' : 'Gestión'}
+              {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) && (
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
               )}
-            </div>
+            </button>
+          </div>
 
-            {/* Fields */}
-            <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6`}>
-              <div className="grid className='grid-cols-3 gap-x-4 gap-y-5'" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1.25rem 1rem' }}>
-                {[
-                  { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
-                  { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
-                  { label: priceLabel,                  val: priceVal, style: { color: '#11BDDB' } },
-                  { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
-                  { label: en ? 'START TIME' : 'Hora Inicio', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
-                  { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
-                ].map((f, i) => (
-                  <div key={i}>
-                    <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
-                    <div className={`font-black text-sm ${text} truncate`} style={f.style}>{f.val}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex flex-col gap-4`}>
-                <div>
-                  <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
-                    {en ? 'TOUR' : 'EXPERIENCIA'}
-                  </div>
-                  <div className={`font-black text-sm ${text} uppercase tracking-tight`}>
-                    {booking.tour_title}
-                  </div>
-                </div>
-
-                <div>
-                  <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
-                    {en ? 'SERVICE' : 'SERVICIO'}
-                  </div>
-                  <div className="font-black text-[10px] uppercase tracking-widest" style={{ color: expColor }}>
-                    {expName}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Perforated divider */}
-            <div className={`relative h-8 flex items-center ${dark ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
-              <div className="absolute left-0 -translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
-              <div className="absolute right-0 translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
-              <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
-            </div>
-
-            {/* Stub (Detailed Itinerary) */}
-            <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6 rounded-b-[2.5rem] transition-all duration-300`}>
-              <button
-                onClick={() => setShowItinerary(!showItinerary)}
-                className="w-full flex items-center justify-between text-left focus:outline-none"
-              >
-                <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
-                  <Map className="text-primary" size={12} />
-                  {en ? 'DETAILED ITINERARY' : 'ITINERARIO DETALLADO'}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
-                    {en ? 'Your Route' : 'Tu Ruta'}
-                  </span>
-                  <span className={`text-[9px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
-                    ▼
-                  </span>
-                </div>
-              </button>
-
-              {showItinerary && finalItinerary.length > 0 && (
-                <motion.div 
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="mt-6 space-y-6 relative pt-5 border-t border-dashed border-gray-200 dark:border-white/10"
-                >
-                  {/* Connector line */}
-                  <div className={`absolute top-6 bottom-4 left-[0.875rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
-
-                  {finalItinerary.map((item, idx) => (
-                    <div key={idx} className="flex gap-4 relative">
-                      <div className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
-                        {getActivityIcon(item.type)}
+          <div className="relative">
+            {activeTab === 'ticket' && (
+              <motion.div key="ticket" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+                {/* Fields */}
+                <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6`}>
+                  <div className="grid className='grid-cols-3 gap-x-4 gap-y-5'" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1.25rem 1rem' }}>
+                    {[
+                      { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
+                      { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
+                      { label: priceLabel,                  val: priceVal, style: { color: '#11BDDB' } },
+                      { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
+                      { label: en ? 'START TIME' : 'Hora Inicio', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
+                      { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
+                    ].map((f, i) => (
+                      <div key={i}>
+                        <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
+                        <div className={`font-black text-sm ${text} truncate`} style={f.style}>{f.val}</div>
                       </div>
-                      <div className="flex-1 pt-0.5">
-                        <div className="flex items-center justify-between gap-4">
-                          <h4 className="text-[10px] font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
-                          {item.duration && (
-                            <div className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter ${sub}`}>
-                              <Clock size={8} />
-                              {en ? (item.duration_en || item.duration) : item.duration}
+                    ))}
+                  </div>
+
+                  <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex flex-col gap-4`}>
+                    <div>
+                      <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
+                        {en ? 'TOUR' : 'EXPERIENCIA'}
+                      </div>
+                      <div className={`font-black text-sm ${text} uppercase tracking-tight`}>
+                        {booking.tour_title}
+                      </div>
+                    </div>
+
+                    <div>
+                      <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
+                        {en ? 'SERVICE' : 'SERVICIO'}
+                      </div>
+                      <div className="font-black text-[10px] uppercase tracking-widest" style={{ color: expColor }}>
+                        {expName}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Perforated divider */}
+                <div className={`relative h-8 flex items-center ${dark ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
+                  <div className="absolute left-0 -translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
+                  <div className="absolute right-0 translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
+                  <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+                </div>
+
+                {/* Stub (Detailed Itinerary) */}
+                <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6 rounded-b-[2.5rem] transition-all duration-300`}>
+                  <button
+                    onClick={() => setShowItinerary(!showItinerary)}
+                    className="w-full flex items-center justify-between text-left focus:outline-none"
+                  >
+                    <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
+                      <Map className="text-primary" size={12} />
+                      {en ? 'DETAILED ITINERARY' : 'ITINERARIO DETALLADO'}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
+                        {en ? 'Your Route' : 'Tu Ruta'}
+                      </span>
+                      <span className={`text-[9px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                        ▼
+                      </span>
+                    </div>
+                  </button>
+
+                  {showItinerary && finalItinerary.length > 0 && (
+                    <motion.div 
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mt-6 space-y-6 relative pt-5 border-t border-dashed border-gray-200 dark:border-white/10"
+                    >
+                      {/* Connector line */}
+                      <div className={`absolute top-6 bottom-4 left-[0.875rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+
+                      {finalItinerary.map((item, idx) => (
+                        <div key={idx} className="flex gap-4 relative">
+                          <div className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
+                            {getActivityIcon(item.type)}
+                          </div>
+                          <div className="flex-1 pt-0.5">
+                            <div className="flex items-center justify-between gap-4">
+                              <h4 className="text-[10px] font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
+                              {item.duration && (
+                                <div className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter ${sub}`}>
+                                  <Clock size={8} />
+                                  {en ? (item.duration_en || item.duration) : item.duration}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {activeTab === 'management' && (
+              <motion.div key="management" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="p-6">
+                
+                {/* ── BOOKING PROGRESS & TIMELINE ──────────────────── */}
+                <button
+                  onClick={() => setShowStatusCard(!showStatusCard)}
+                  className={`w-full flex flex-row items-center justify-between gap-3 text-left focus:outline-none transition-all ${
+                    showStatusCard 
+                      ? 'mb-6 pb-6 border-b border-dashed border-gray-200 dark:border-white/10' 
+                      : ''
+                  }`}
+                >
+                  <div>
+                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
+                      {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
+                    </span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+                      <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${text}`}>
+                        {status.label}
+                      </h3>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
+                      <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
+                        {en ? 'Action Required' : 'Acción Requerida'}
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
+                        {en ? 'Completed ✓' : 'Completado ✓'}
+                      </span>
+                    )}
+                    <span className={`text-[9px] ${sub} transition-transform duration-300 ${showStatusCard ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                      ▼
+                    </span>
+                  </div>
+                </button>
+
+                {/* Checklist Content & Timeline */}
+                {showStatusCard && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="space-y-6"
+                  >
+                    
+                    {/* Finance Section */}
+                    <div>
+                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                        {en ? 'Finance & Payments' : 'Finanzas y Pagos'}
+                      </div>
+                      <div className="space-y-4">
+                        {/* Step 1: Payment */}
+                        <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                          <div className="flex items-start gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
+                              {!isPaymentPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">1</div>}
+                            </div>
+                            <div>
+                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                                {en ? '1. Booking Payment' : '1. Pago de Reserva'}
+                              </div>
+                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                                {!isPaymentPending
+                                  ? (en ? 'Booking fully paid!' : '¡Reserva totalmente pagada!')
+                                  : (en 
+                                      ? `Remaining balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount}` 
+                                      : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}`)}
+                              </div>
+                            </div>
+                          </div>
+                          {isPaymentPending && (
+                            <button
+                              onClick={() => setShowPaymentModal(true)}
+                              className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
+                            >
+                              {en ? 'Pay by Transfer' : 'Pagar con Transferencia'}
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Step 2: Send Receipt */}
+                        <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${isReceiptSentOrVerified ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                          <div className="flex items-start gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                              isReceiptSentOrVerified
+                                ? 'bg-emerald-500/20 text-emerald-500'
+                                : canUploadReceipt
+                                  ? 'bg-orange-500/20 text-orange-500'
+                                  : 'bg-gray-500/20 text-gray-400'
+                            }`}>
+                              {isReceiptSentOrVerified ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">2</div>}
+                            </div>
+                            <div>
+                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                                {en ? '2. Send Payment Receipt' : '2. Enviar Comprobante'}
+                              </div>
+                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                                {isReceiptSentOrVerified
+                                  ? (en ? 'Receipt received and verified!' : '¡Comprobante verificado con éxito!')
+                                  : canUploadReceipt
+                                    ? (en
+                                        ? `Pending balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount} — upload proof of payment.`
+                                        : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount} — sube el comprobante de pago.`)
+                                    : (en ? 'Please send proof of payment once transferred.' : 'Envíanos el comprobante tras realizar el pago.')}
+                              </div>
+                            </div>
+                          </div>
+                          {canUploadReceipt && (
+                            <div className="w-full sm:w-auto flex flex-col items-stretch sm:items-end gap-2">
+                              <label className="px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90 text-center flex items-center justify-center gap-1.5 cursor-pointer select-none">
+                                {uploadingReceipt ? (
+                                  <>
+                                    <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    <span>{en ? 'Uploading...' : 'Subiendo...'}</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Upload size={12} />
+                                    <span>{en ? 'Upload Receipt' : 'Subir Comprobante'}</span>
+                                  </>
+                                )}
+                                <input
+                                  type="file"
+                                  accept="image/*,application/pdf"
+                                  className="hidden"
+                                  onChange={handleReceiptUpload}
+                                  disabled={uploadingReceipt}
+                                />
+                              </label>
+                              <a
+                                href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`text-[9px] font-bold uppercase tracking-wider text-center underline hover:text-primary transition-all ${sub}`}
+                              >
+                                {en ? 'Or send via WhatsApp' : 'O enviar por WhatsApp'}
+                              </a>
                             </div>
                           )}
                         </div>
                       </div>
                     </div>
-                  ))}
-                </motion.div>
-              )}
-            </div>
 
-          </div>
-        </motion.div>
-        )}
-
-        {activeTab === 'management' && (
-        <motion.div key="management" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 100 }} className="space-y-5">
-          {/* ── BOOKING PROGRESS & TIMELINE CARD ──────────────────── */}
-          <div
-            className={`rounded-[2rem] border shadow-xl ${card} transition-all duration-300 ${showStatusCard ? 'p-6' : 'p-5 sm:p-6'}`}
-          >
-          {/* Header */}
-          <button
-            onClick={() => setShowStatusCard(!showStatusCard)}
-            className={`w-full flex flex-row items-center justify-between gap-3 text-left focus:outline-none transition-all ${
-              showStatusCard 
-                ? 'mb-6 pb-6 border-b border-dashed border-gray-200 dark:border-white/10' 
-                : ''
-            }`}
-          >
-            <div>
-              <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
-                {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
-              </span>
-              <div className="flex items-center gap-2 mt-1">
-                <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${text}`}>
-                  {status.label}
-                </h3>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
-                <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
-                  {en ? 'Action Required' : 'Acción Requerida'}
-                </span>
-              ) : (
-                <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
-                  {en ? 'Completed ✓' : 'Completado ✓'}
-                </span>
-              )}
-              <span className={`text-[9px] ${sub} transition-transform duration-300 ${showStatusCard ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
-                ▼
-              </span>
-            </div>
-          </button>
-
-          {/* Checklist Content & Timeline */}
-          {showStatusCard && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              className="space-y-6"
-            >
-              {/* Checklist Content */}
-              <div className="space-y-4 mb-6">
-                {/* Step 1: Payment */}
-                <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                  <div className="flex items-start gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
-                      {!isPaymentPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">1</div>}
-                    </div>
-                    <div>
-                      <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                        {en ? '1. Booking Payment' : '1. Pago de Reserva'}
+                    {/* Check-in Section */}
+                    <div className="pt-2">
+                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                        {en ? 'Passengers' : 'Pasajeros'}
                       </div>
-                      <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                        {!isPaymentPending
-                          ? (en ? 'Booking fully paid!' : '¡Reserva totalmente pagada!')
-                          : (en 
-                              ? `Remaining balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount}` 
-                              : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}`)}
-                      </div>
-                    </div>
-                  </div>
-                  {isPaymentPending && (
-                    <button
-                      onClick={() => setShowPaymentModal(true)}
-                      className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
-                    >
-                      {en ? 'Pay by Transfer' : 'Pagar con Transferencia'}
-                    </button>
-                  )}
-                </div>
-
-                {/* Step 2: Send Receipt */}
-                <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${isReceiptSentOrVerified ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                  <div className="flex items-start gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                      isReceiptSentOrVerified
-                        ? 'bg-emerald-500/20 text-emerald-500'
-                        : canUploadReceipt
-                          ? 'bg-orange-500/20 text-orange-500'
-                          : 'bg-gray-500/20 text-gray-400'
-                    }`}>
-                      {isReceiptSentOrVerified ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">2</div>}
-                    </div>
-                    <div>
-                      <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                        {en ? '2. Send Payment Receipt' : '2. Enviar Comprobante'}
-                      </div>
-                      <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                        {isReceiptSentOrVerified
-                          ? (en ? 'Receipt received and verified!' : '¡Comprobante verificado con éxito!')
-                          : canUploadReceipt
-                            ? (en
-                                ? `Pending balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount} — upload proof of payment.`
-                                : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount} — sube el comprobante de pago.`)
-                            : (en ? 'Please send proof of payment once transferred.' : 'Envíanos el comprobante tras realizar el pago.')}
-                      </div>
-                    </div>
-                  </div>
-                  {canUploadReceipt && (
-                    <div className="w-full sm:w-auto flex flex-col items-stretch sm:items-end gap-2">
-                      <label className="px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90 text-center flex items-center justify-center gap-1.5 cursor-pointer select-none">
-                        {uploadingReceipt ? (
-                          <>
-                            <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            <span>{en ? 'Uploading...' : 'Subiendo...'}</span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload size={12} />
-                            <span>{en ? 'Upload Receipt' : 'Subir Comprobante'}</span>
-                          </>
+                      {/* Step 3: Check-in */}
+                      <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
+                        <div className="flex items-start gap-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isCheckinPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
+                            {!isCheckinPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">3</div>}
+                          </div>
+                          <div>
+                            <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                              {en ? '3. Passenger Check-in' : '3. Registro de Pasajeros'}
+                            </div>
+                            <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                              {!isCheckinPending
+                                ? (en ? 'All passengers registered!' : '¡Todos los viajeros registrados!')
+                                : (en ? 'Please register passenger passports.' : 'Completa los datos y pasaportes de los viajeros.')}
+                            </div>
+                          </div>
+                        </div>
+                        {isCheckinPending && (
+                          <button
+                            onClick={() => setShowCheckin(true)}
+                            className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
+                          >
+                            {en ? 'Complete Check-in' : 'Hacer Check-in'}
+                          </button>
                         )}
-                        <input
-                          type="file"
-                          accept="image/*,application/pdf"
-                          className="hidden"
-                          onChange={handleReceiptUpload}
-                          disabled={uploadingReceipt}
-                        />
-                      </label>
-                      <a
-                        href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`text-[9px] font-bold uppercase tracking-wider text-center underline hover:text-primary transition-all ${sub}`}
-                      >
-                        {en ? 'Or send via WhatsApp' : 'O enviar por WhatsApp'}
-                      </a>
+                      </div>
                     </div>
-                  )}
-                </div>
 
-                {/* Step 3: Check-in */}
-                <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                  <div className="flex items-start gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isCheckinPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
-                      {!isCheckinPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">3</div>}
-                    </div>
-                    <div>
-                      <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                        {en ? '3. Passenger Check-in' : '3. Registro de Pasajeros'}
-                      </div>
-                      <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                        {!isCheckinPending
-                          ? (en ? 'All passengers registered!' : '¡Todos los viajeros registrados!')
-                          : (en ? 'Please register passenger passports.' : 'Completa los datos y pasaportes de los viajeros.')}
-                      </div>
-                    </div>
-                  </div>
-                  {isCheckinPending && (
-                    <button
-                      onClick={() => setShowCheckin(true)}
-                      className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
-                    >
-                      {en ? 'Complete Check-in' : 'Hacer Check-in'}
-                    </button>
-                  )}
-                </div>
-              </div>
 
               {/* Official Timeline */}
               <div className="pt-6 border-t border-dashed border-gray-200 dark:border-white/10">
@@ -817,9 +817,10 @@ export default function ItineraryPage() {
               </div>
             </motion.div>
           )}
-          </div>
-        </motion.div>
+          </motion.div>
         )}
+        </div>
+      </div>
 
         {/* Post-tour review */}
         {isExpired && (
