@@ -164,6 +164,13 @@ export const addPayment     = (d) => post('/api/payments', d);
 export const updatePayment  = (d) => put(`/api/payments/${d.id}`, d);
 export const deletePayment  = (id) => del(`/api/payments/${id}`);
 
+// Validates a pending client receipt: creates payment + updates booking status + clears from pending queue
+export const validateReceipt = (bookingId, { receiptUrl, receiptFilename, receiptTimestamp, amount, payment_date, payment_method, notes, booking }) =>
+  post(`/api/bookings/${bookingId}/validate-receipt`, {
+    receiptUrl, receiptFilename, receiptTimestamp,
+    amount, payment_date, payment_method, notes, booking
+  });
+
 // ── Admin: Expenses ───────────────────────────────────────────────────────────
 export const getExpenses    = (bookingId) => get(`/api/expenses/${bookingId}`);
 export const addExpense     = (d) => post('/api/expenses', d);

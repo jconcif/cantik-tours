@@ -216,7 +216,6 @@ export default function ItineraryPage() {
   };
 
   const priceLabel = booking.payment_status === 'confirmed' ? (en ? 'Total Paid' : 'Total Pagado') : (en ? 'Total' : 'Total');
-  const status = statusMap[booking.payment_status] || statusMap.requested;
 
   // ── Experience ────────────────────────────────────────────────
   const expType = booking.experience
@@ -241,8 +240,14 @@ export default function ItineraryPage() {
   const hasPendingPayment = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status);
   
   const isPaymentPending = hasPendingPayment;
-  const isReceiptSentOrVerified = ['verifying_payment', 'payment_received', 'payment_confirmed', 'reserved', 'confirmed', 'in_progress', 'completed'].includes(booking.payment_status);
+  // Receipt is considered verified only when there's no pending balance and status is confirmed/received
+  const isReceiptSentOrVerified = !hasPendingPayment && ['verifying_payment', 'payment_received', 'payment_confirmed', 'reserved', 'confirmed', 'in_progress', 'completed'].includes(booking.payment_status);
+  // Show upload button whenever there's a pending balance
+  const canUploadReceipt = hasPendingPayment;
   const isCheckinPending = checkinData.some(p => !p.name || !p.passport);
+  // If there's a pending balance, always show PAGO PENDIENTE regardless of payment_status
+  const effectiveStatus = hasPendingPayment ? 'pending_payment' : booking.payment_status;
+  const status = statusMap[effectiveStatus] || statusMap.requested;
 
   const fichaUrl = `https://cantiktours.com/booking?ref=CT-${ref}`;
   const supportMsg = encodeURIComponent(
@@ -598,7 +603,7 @@ export default function ItineraryPage() {
           {/* Header */}
           <button
             onClick={() => setShowStatusCard(!showStatusCard)}
-            className={`w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-left focus:outline-none transition-all ${
+            className={`w-full flex flex-row items-center justify-between gap-3 text-left focus:outline-none transition-all ${
               showStatusCard 
                 ? 'mb-6 pb-6 border-b border-dashed border-gray-200 dark:border-white/10' 
                 : ''
@@ -609,13 +614,13 @@ export default function ItineraryPage() {
                 {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
               </span>
               <div className="flex items-center gap-2 mt-1">
-                <span className={`w-2.5 h-2.5 rounded-full ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+                <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
                 <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${text}`}>
                   {status.label}
                 </h3>
               </div>
             </div>
-            <div className="flex items-center gap-2 self-end sm:self-auto">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
                 <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
                   {en ? 'Action Required' : 'Acción Requerida'}
@@ -672,7 +677,13 @@ export default function ItineraryPage() {
                 {/* Step 2: Send Receipt */}
                 <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${isReceiptSentOrVerified ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
                   <div className="flex items-start gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isReceiptSentOrVerified ? 'bg-emerald-500/20 text-emerald-500' : (booking.payment_status === 'payment_sent' ? 'bg-amber-500/20 text-amber-500' : 'bg-gray-500/20 text-gray-400')}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      isReceiptSentOrVerified
+                        ? 'bg-emerald-500/20 text-emerald-500'
+                        : canUploadReceipt
+                          ? 'bg-orange-500/20 text-orange-500'
+                          : 'bg-gray-500/20 text-gray-400'
+                    }`}>
                       {isReceiptSentOrVerified ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">2</div>}
                     </div>
                     <div>
@@ -680,15 +691,17 @@ export default function ItineraryPage() {
                         {en ? '2. Send Payment Receipt' : '2. Enviar Comprobante'}
                       </div>
                       <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                        {booking.payment_status === 'verifying_payment' || booking.payment_status === 'payment_sent'
-                          ? (en ? 'Verifying payment receipt...' : 'Verificando comprobante de pago...')
-                          : isReceiptSentOrVerified
-                            ? (en ? 'Receipt received and verified!' : '¡Comprobante verificado con éxito!')
+                        {isReceiptSentOrVerified
+                          ? (en ? 'Receipt received and verified!' : '¡Comprobante verificado con éxito!')
+                          : canUploadReceipt
+                            ? (en
+                                ? `Pending balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount} — upload proof of payment.`
+                                : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount} — sube el comprobante de pago.`)
                             : (en ? 'Please send proof of payment once transferred.' : 'Envíanos el comprobante tras realizar el pago.')}
                       </div>
                     </div>
                   </div>
-                  {!isReceiptSentOrVerified && booking.payment_status !== 'verifying_payment' && booking.payment_status !== 'payment_sent' && (
+                  {canUploadReceipt && (
                     <div className="w-full sm:w-auto flex flex-col items-stretch sm:items-end gap-2">
                       <label className="px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90 text-center flex items-center justify-center gap-1.5 cursor-pointer select-none">
                         {uploadingReceipt ? (
@@ -821,7 +834,7 @@ export default function ItineraryPage() {
               ? 'Talk to us, we reply within minutes.'
               : 'Habla con nosotros, te respondemos en minutos.'}
           </p>
-          <div className="w-full flex flex-col gap-3">
+          <div className="w-full flex flex-row gap-2">
             {en ? (
               <>
                 {/* English (Primary) */}
@@ -829,20 +842,20 @@ export default function ItineraryPage() {
                   href={`https://wa.me/6285691533356?text=${encodeURIComponent(`Hello Cantik Tours! I need help with my booking CT-${ref}.\n\nLink: ${fichaUrl}`)}`} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="w-full py-5 rounded-2xl bg-[#25D366] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#1fb355] transition-all shadow-xl shadow-[#25D366]/20"
+                  className="flex-1 py-3 px-3 rounded-xl bg-[#25D366] text-white font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-[#1fb355] transition-all shadow-lg shadow-[#25D366]/20"
                 >
-                  <MessageCircle size={18} />
-                  English Support (EN)
+                  <MessageCircle size={14} />
+                  English (EN)
                 </a>
                 {/* Spanish (Secondary) */}
                 <a 
                   href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} 
                   target="_blank" 
                   rel="noreferrer"
-                  className={`w-full py-5 rounded-2xl border font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${dark ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20' : 'border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400'}`}
+                  className={`flex-1 py-3 px-3 rounded-xl border font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all ${dark ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20' : 'border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400'}`}
                 >
-                  <MessageCircle size={18} />
-                  Soporte en Español (ES)
+                  <MessageCircle size={14} />
+                  Español (ES)
                 </a>
               </>
             ) : (
@@ -852,20 +865,20 @@ export default function ItineraryPage() {
                   href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} 
                   target="_blank" 
                   rel="noreferrer"
-                  className="w-full py-5 rounded-2xl bg-[#25D366] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-[#1fb355] transition-all shadow-xl shadow-[#25D366]/20"
+                  className="flex-1 py-3 px-3 rounded-xl bg-[#25D366] text-white font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-[#1fb355] transition-all shadow-lg shadow-[#25D366]/20"
                 >
-                  <MessageCircle size={18} />
-                  Soporte en Español (ES)
+                  <MessageCircle size={14} />
+                  Español (ES)
                 </a>
                 {/* English (Secondary) */}
                 <a 
                   href={`https://wa.me/6285691533356?text=${encodeURIComponent(`Hello Cantik Tours! I need help with my booking CT-${ref}.\n\nLink: ${fichaUrl}`)}`} 
                   target="_blank" 
                   rel="noreferrer"
-                  className={`w-full py-5 rounded-2xl border font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all ${dark ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20' : 'border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400'}`}
+                  className={`flex-1 py-3 px-3 rounded-xl border font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all ${dark ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20' : 'border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400'}`}
                 >
-                  <MessageCircle size={18} />
-                  English Support (EN)
+                  <MessageCircle size={14} />
+                  English (EN)
                 </a>
               </>
             )}

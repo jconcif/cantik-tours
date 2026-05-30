@@ -3,6 +3,8 @@ import * as api from '../services/api';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
 
+const SERVER = 'https://cantik-tours.onrender.com';
+
 const inputStyle = {padding:'10px 14px',borderRadius:'12px',border:'1px solid #333',fontSize:'14px',fontWeight:600,background:'#222',color:'#fff',width:'100%',boxSizing:'border-box',outline:'none'};
 const labelStyle = {fontSize:'10px',fontWeight:900,color:'#11BDDB',textTransform:'uppercase',letterSpacing:'0.05em'};
 
@@ -200,12 +202,21 @@ export const FinancialManagement = ({booking, onUpdate}) => {
   const basePrice = Number(booking.total_price) || 0;
   const C = '#11BDDB';
 
+  // Extract pending receipts from booking extras
+  const pendingReceipts = React.useMemo(() => {
+    try {
+      const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {});
+      return ext.pending_receipts || [];
+    } catch(e) { return []; }
+  }, [booking.extras]);
+
   const [payments, setPayments] = React.useState([]);
   const [expenses, setExpenses] = React.useState([]);
   const [charges, setCharges] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState('summary'); // summary | cobros | gastos | extras
+  const [activeTab, setActiveTab] = React.useState('pagos'); // pagos | gastos | extras
   const [adding, setAdding] = React.useState(false);
+  const [validatingReceipt, setValidatingReceipt] = React.useState(null); // { url, filename, timestamp }
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -264,12 +275,12 @@ export const FinancialManagement = ({booking, onUpdate}) => {
 
   // -- Helpers --
   const delPayment = async (id) => { 
-    if (!window.confirm('¿Eliminar cobro?')) return; 
+    if (!window.confirm('¿Eliminar pago?')) return; 
     try { 
       const item = payments.find(p => p.id === id);
       const amountStr = item ? `${item.amount}€` : '';
       await api.deletePayment(id); 
-      await addSystemLog(`Cobro eliminado: ${amountStr}.`);
+      await addSystemLog(`Pago eliminado: ${amountStr}.`);
       await load(); 
       if (onUpdate) onUpdate(); 
     } catch(e) { alert(e.message); } 
@@ -319,7 +330,59 @@ export const FinancialManagement = ({booking, onUpdate}) => {
     };
   };
 
-  // -- Add Forms --
+  // -- Validate Receipt Form (inline) --
+  const ValidateForm = ({ receipt, onDone }) => {
+    const [v, setV] = React.useState({
+      amount: '',
+      payment_date: new Date().toISOString().split('T')[0],
+      payment_method: 'Transferencia',
+      notes: ''
+    });
+    const [saving, setSaving] = React.useState(false);
+
+    const confirm = async () => {
+      if (!v.amount) { alert('Ingresa el importe recibido'); return; }
+      setSaving(true);
+      try {
+        await api.validateReceipt(bookingId, {
+          receiptUrl: receipt.url,
+          receiptFilename: receipt.filename,
+          receiptTimestamp: receipt.timestamp,
+          amount: v.amount,
+          payment_date: v.payment_date,
+          payment_method: v.payment_method,
+          notes: v.notes
+        });
+        await addSystemLog(`Comprobante validado: ${v.amount}€ vía ${v.payment_method}.`);
+        await load();
+        onDone();
+      } catch(e) { alert(e.message); }
+      finally { setSaving(false); }
+    };
+
+    return (
+      <div style={{background:'#1a1a1a',border:'1px solid #10b98133',borderRadius:'12px',padding:'14px',marginTop:'4px'}}>
+        <div style={{fontSize:'10px',fontWeight:900,color:'#10b981',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:'10px'}}>Confirmar Pago Recibido</div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(140px,1fr))',gap:'8px',marginBottom:'10px'}}>
+          <Input label="Importe €" type="number" value={v.amount} onChange={val=>setV({...v,amount:val})} />
+          <Input label="Fecha" type="date" value={v.payment_date} onChange={val=>setV({...v,payment_date:val})} />
+          <Select label="Método" value={v.payment_method} onChange={val=>setV({...v,payment_method:val})}
+            options={[{value:'Transferencia',label:'Transferencia'},{value:'Efectivo',label:'Efectivo'},{value:'PayPal',label:'PayPal'},{value:'Wise',label:'Wise'},{value:'Tarjeta',label:'Tarjeta'}]} />
+          <div style={{gridColumn:'1/-1'}}><Input label="Notas (opcional)" value={v.notes} onChange={val=>setV({...v,notes:val})} placeholder="ID transacción, banco, etc." /></div>
+        </div>
+        <div style={{display:'flex',gap:'8px'}}>
+          <button onClick={confirm} disabled={saving}
+            style={{flex:2,padding:'11px',background:'#10b981',color:'#fff',border:'none',borderRadius:'10px',fontWeight:900,cursor:saving?'wait':'pointer',fontSize:'13px'}}>
+            {saving ? 'Guardando...' : '✓ CONFIRMAR Y VALIDAR'}
+          </button>
+          <button onClick={()=>setValidatingReceipt(null)}
+            style={{flex:1,padding:'11px',background:'#333',color:'#ccc',border:'none',borderRadius:'10px',fontWeight:900,cursor:'pointer'}}>✕</button>
+        </div>
+      </div>
+    );
+  };
+
+
   const PayForm = () => {
     const [d, setD] = React.useState({amount:'', payment_date: new Date().toISOString().split('T')[0], payment_method:'Transferencia', notes:'', status:'completado'});
     const [file, setFile] = React.useState(null);
@@ -364,7 +427,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
         ].filter(Boolean).join(' ').trim();
 
         await api.addPayment({amount:d.amount, payment_date:d.payment_date, payment_method:d.payment_method, notes:finalNotes, booking_id: bookingId}); 
-        await addSystemLog(`Cobro registrado: ${d.amount}€ vía ${d.payment_method} (${d.status === 'verificando' ? 'Pendiente Verificación' : 'Completado'}).`);
+        await addSystemLog(`Pago registrado: ${d.amount}€ vía ${d.payment_method} (${d.status === 'verificando' ? 'Pendiente Verificación' : 'Completado'}).`);
         await load(); 
         setAdding(false); 
         if(onUpdate) onUpdate(); 
@@ -401,7 +464,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           <div style={{gridColumn:'1/-1'}}><Input label="Referencia / Notas" value={d.notes} onChange={v=>setD({...d,notes:v})} placeholder="ID Transacción o Banco..." /></div>
         </div>
         <div style={{display:'flex',gap:'8px'}}>
-          <button onClick={save} style={{flex:2,padding:'12px',background:C,color:'#000',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✓ GUARDAR COBRO</button>
+          <button onClick={save} style={{flex:2,padding:'12px',background:C,color:'#000',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✓ GUARDAR PAGO</button>
           <button onClick={()=>setAdding(false)} style={{flex:1,padding:'12px',background:'#333',color:'#ccc',border:'none',borderRadius:'12px',fontWeight:900,cursor:'pointer'}}>✕</button>
         </div>
       </div>
@@ -621,38 +684,88 @@ export const FinancialManagement = ({booking, onUpdate}) => {
 
       {/* === TABS === */}
       <div style={{display:'flex',gap:'6px',marginBottom:'16px', background:'#111', padding:'4px', borderRadius:'14px'}}>
-        <button style={tabStyle('cobros')} onClick={()=>{setActiveTab('cobros');setAdding(false);}}>💰 Cobros ({payments.length})</button>
-        <button style={tabStyle('extras')} onClick={()=>{setActiveTab('extras');setAdding(false);}}>⚡ Extras ({positiveCharges.length})</button>
-        <button style={tabStyle('descuentos')} onClick={()=>{setActiveTab('descuentos');setAdding(false);}}>🏷️ Descuentos ({discounts.length})</button>
-        <button style={tabStyle('gastos')} onClick={()=>{setActiveTab('gastos');setAdding(false);}}>📉 Gastos ({expenses.length})</button>
+        <button style={tabStyle('pagos')} onClick={()=>{setActiveTab('pagos');setAdding(false);setValidatingReceipt(null);}}>💰 Pagos ({payments.length}){pendingReceipts.length > 0 && <span style={{marginLeft:'4px',background:'#f59e0b',color:'#000',borderRadius:'6px',padding:'1px 5px',fontSize:'9px',fontWeight:900}}>{pendingReceipts.length} pendientes</span>}</button>
+        <button style={tabStyle('extras')} onClick={()=>{setActiveTab('extras');setAdding(false);setValidatingReceipt(null);}}>⚡ Extras ({positiveCharges.length})</button>
+        <button style={tabStyle('descuentos')} onClick={()=>{setActiveTab('descuentos');setAdding(false);setValidatingReceipt(null);}}>🏷️ Descuentos ({discounts.length})</button>
+        <button style={tabStyle('gastos')} onClick={()=>{setActiveTab('gastos');setAdding(false);setValidatingReceipt(null);}}>📉 Gastos ({expenses.length})</button>
       </div>
 
       {/* === BOTÓN AÑADIR === */}
       {!adding && (
         <button onClick={()=>setAdding(true)} style={{
           width:'100%', marginBottom:'16px', padding:'13px',
-          background: activeTab==='cobros' ? C : activeTab==='extras' ? '#f59e0b' : activeTab==='descuentos' ? '#ec4899' : '#ef4444',
-          color: activeTab==='cobros' ? '#000' : '#fff',
+          background: activeTab==='pagos' ? C : activeTab==='extras' ? '#f59e0b' : activeTab==='descuentos' ? '#ec4899' : '#ef4444',
+          color: activeTab==='pagos' ? '#000' : '#fff',
           border:'none', borderRadius:'14px', fontWeight:900, cursor:'pointer', fontSize:'13px'
         }}>
-          + {activeTab==='cobros' ? 'REGISTRAR COBRO' : activeTab==='extras' ? 'AÑADIR CARGO EXTRA AL CLIENTE' : activeTab==='descuentos' ? 'AÑADIR DESCUENTO AL CLIENTE' : 'REGISTRAR GASTO'}
+          + {activeTab==='pagos' ? 'REGISTRAR PAGO MANUAL' : activeTab==='extras' ? 'AÑADIR CARGO EXTRA AL CLIENTE' : activeTab==='descuentos' ? 'AÑADIR DESCUENTO AL CLIENTE' : 'REGISTRAR GASTO'}
         </button>
       )}
 
-      {adding && activeTab==='cobros' && <PayForm />}
+      {adding && activeTab==='pagos' && <PayForm />}
       {adding && activeTab==='extras' && <ChargeForm />}
       {adding && activeTab==='descuentos' && <DiscountForm />}
       {adding && activeTab==='gastos' && <ExpForm />}
 
+      {/* === COMPROBANTES PENDIENTES (Pagos tab) === */}
+      {activeTab==='pagos' && pendingReceipts.length > 0 && !adding && (
+        <div style={{marginBottom:'16px'}}>
+          <div style={{fontSize:'10px',fontWeight:900,color:'#f59e0b',textTransform:'uppercase',letterSpacing:'0.1em',marginBottom:'10px',display:'flex',alignItems:'center',gap:'6px'}}>
+            <span style={{background:'#f59e0b22',border:'1px solid #f59e0b44',borderRadius:'8px',padding:'3px 8px'}}>🔔 {pendingReceipts.length} Comprobante{pendingReceipts.length>1?'s':''} Pendiente{pendingReceipts.length>1?'s':''} de Validar</span>
+          </div>
+          {pendingReceipts.map((receipt, idx) => {
+            const isValidating = validatingReceipt && validatingReceipt.url === receipt.url;
+            const isPdf = receipt.filename?.toLowerCase().endsWith('.pdf');
+            const fullUrl = receipt.url?.startsWith('http') ? receipt.url : `${SERVER}${receipt.url}`;
+            const dateStr = receipt.timestamp ? new Date(receipt.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
+            return (
+              <div key={idx} style={{background:'#f59e0b11',border:'1px solid #f59e0b33',borderRadius:'16px',padding:'14px',marginBottom:'10px'}}>
+                {/* Receipt preview row */}
+                <div style={{display:'flex',gap:'12px',alignItems:'flex-start',marginBottom: isValidating ? '14px' : '0'}}>
+                  {/* Thumbnail */}
+                  <a href={fullUrl} target="_blank" rel="noopener noreferrer" style={{flexShrink:0}}>
+                    {isPdf ? (
+                      <div style={{width:'56px',height:'56px',background:'#ef444422',border:'1px solid #ef444444',borderRadius:'10px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'22px'}}>📄</div>
+                    ) : (
+                      <img src={fullUrl} alt="Comprobante" style={{width:'56px',height:'56px',objectFit:'cover',borderRadius:'10px',border:'1px solid #f59e0b44',background:'#222'}} onError={e=>{e.target.style.display='none'}} />
+                    )}
+                  </a>
+                  {/* Info */}
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:'12px',fontWeight:900,color:'#fff',marginBottom:'2px',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{receipt.filename || 'comprobante'}</div>
+                    <div style={{fontSize:'11px',color:'#aaa',marginBottom:'6px'}}>Subido: {dateStr}</div>
+                    <div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
+                      <a href={fullUrl} target="_blank" rel="noopener noreferrer"
+                        style={{fontSize:'10px',fontWeight:900,color:'#3b82f6',background:'#3b82f622',border:'1px solid #3b82f644',padding:'3px 8px',borderRadius:'6px',textDecoration:'none'}}>
+                        👁 Ver
+                      </a>
+                      {!isValidating && (
+                        <button onClick={()=>setValidatingReceipt(receipt)}
+                          style={{fontSize:'10px',fontWeight:900,color:'#000',background:'#10b981',border:'none',padding:'3px 10px',borderRadius:'6px',cursor:'pointer'}}>
+                          ✓ Validar Pago
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Inline validation form */}
+                {isValidating && <ValidateForm receipt={receipt} onDone={()=>{setValidatingReceipt(null);if(onUpdate)onUpdate();}} />}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* === LISTA DE MOVIMIENTOS === */}
       <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
-        {activeTab==='cobros' && payments.length===0 && !adding && (
+        {activeTab==='pagos' && payments.length===0 && !adding && pendingReceipts.length === 0 && (
           <div style={{textAlign:'center',color:'#aaa',padding:'30px',border:'2px dashed #333',borderRadius:'20px'}}>
             <div style={{fontSize:'22px',marginBottom:'8px'}}>💰</div>
-            <div>Sin cobros registrados</div>
+            <div>Sin pagos registrados</div>
           </div>
         )}
-        {activeTab==='cobros' && payments.map(p => {
+        {activeTab==='pagos' && payments.map(p => {
           const receiptMatch = (p.notes || '').match(/\[COMPROBANTE:(.+?)\]/);
           const receiptUrl = receiptMatch ? receiptMatch[1] : '';
           const isVerifying = (p.notes||'').includes('[VERIFICANDO]');

@@ -145,6 +145,16 @@ router.post(
         timestamp: new Date().toISOString()
       });
 
+      // Also add to pending_receipts queue for admin to review and validate
+      if (!extrasObj.pending_receipts) {
+        extrasObj.pending_receipts = [];
+      }
+      extrasObj.pending_receipts.push({
+        url: relativeUrl,
+        filename: filename,
+        timestamp: new Date().toISOString()
+      });
+
       if (!extrasObj.logs) extrasObj.logs = [];
       extrasObj.logs.push({
         timestamp: new Date().toISOString(),
@@ -177,7 +187,75 @@ router.post(
   }
 );
 
-// ── Admin CRUD ──
+// ── Admin: Validate a pending client receipt → creates payment + updates booking ──
+router.post('/:id/validate-receipt', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { receiptUrl, receiptFilename, receiptTimestamp, amount, payment_date, payment_method, notes } = req.body;
+
+    // 1. Create the payment record linked to this receipt
+    const { error: payError } = await supabase
+      .from('payments')
+      .insert({
+        booking_id: id,
+        amount: parseFloat(amount) || 0,
+        payment_date: payment_date || new Date().toISOString().split('T')[0],
+        payment_method: payment_method || 'Transferencia',
+        notes: `[COMPROBANTE:${receiptUrl}] ${notes || ''}`.trim()
+      });
+
+    if (payError) throw payError;
+
+    // 2. Get current booking extras
+    const { data: currentBooking, error: fetchErr } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr || !currentBooking) throw new Error('Reserva no encontrada');
+
+    let extrasObj = {};
+    try {
+      extrasObj = typeof currentBooking.extras === 'string'
+        ? JSON.parse(currentBooking.extras)
+        : (currentBooking.extras || {});
+    } catch (e) { extrasObj = {}; }
+
+    // 3. Remove this receipt from pending_receipts
+    if (extrasObj.pending_receipts) {
+      extrasObj.pending_receipts = extrasObj.pending_receipts.filter(
+        r => r.url !== receiptUrl
+      );
+    }
+
+    // 4. Add system log
+    if (!extrasObj.logs) extrasObj.logs = [];
+    extrasObj.logs.push({
+      timestamp: new Date().toISOString(),
+      text: `Pago validado por admin: ${amount}€ vía ${payment_method || 'Transferencia'} — Comprobante: ${receiptFilename || receiptUrl}.`
+    });
+
+    // 5. Update booking: status → payment_received + clean extras
+    const { data: updatedBooking, error: updateErr } = await supabase
+      .from('bookings')
+      .update({
+        payment_status: 'payment_received',
+        extras: JSON.stringify(extrasObj)
+      })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (updateErr) throw updateErr;
+
+    res.json({ status: 'success', data: updatedBooking });
+  } catch (err) {
+    console.error('Error validating receipt:', err);
+    res.status(500).json({ status: 'error', message: 'Error al validar el comprobante.' });
+  }
+});
+
 
 router.get('/', requireAuth, async (req, res) => {
   try {
