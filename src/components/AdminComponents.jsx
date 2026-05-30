@@ -362,7 +362,6 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           payment_method: v.payment_method,
           notes: v.notes
         });
-        await addSystemLog(`Comprobante validado: ${v.amount}€ vía ${v.payment_method}.`);
         // Immediately remove from local state so UI updates without parent reload
         setPendingReceipts(prev => prev.filter(r => r.url !== receipt.url));
         await load();

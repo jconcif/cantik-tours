@@ -5,7 +5,8 @@ import { motion } from 'framer-motion';
 import {
   MessageCircle, Star, CheckCircle2, ShieldCheck, Info,
   Heart, Sun, Moon, Plane, Copy, ExternalLink,
-  Clock, MapPin, Coffee, Camera, Waves, Map, Activity, Upload
+  Clock, MapPin, Coffee, Camera, Waves, Map, Activity, Upload,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import { getItinerary, submitCheckin, uploadReceipt } from '../services/api';
 import { useTranslation } from 'react-i18next';
