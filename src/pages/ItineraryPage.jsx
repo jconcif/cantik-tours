@@ -490,35 +490,32 @@ export default function ItineraryPage() {
                 <div className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-1">
                   {en ? 'BOOKING CARD' : 'TARJETA DE RESERVA'}
                 </div>
-                <div className="text-white font-black text-xl sm:text-2xl tracking-tight uppercase truncate max-w-[150px] sm:max-w-[250px] mb-1">
+                <div className="text-white font-black text-xl sm:text-2xl tracking-tight uppercase leading-none mb-2" style={{ wordBreak: 'break-word' }}>
                   {booking.client_name}
                 </div>
-                {/* Reference directly under name */}
-                <div className="font-mono font-black text-[10px] sm:text-xs tracking-wider text-white bg-white/10 px-2 sm:px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10 inline-flex items-center gap-1.5">
-                  <span>{booking.reference ? (booking.reference.startsWith('CT-') ? booking.reference : `CT-${booking.reference}`) : `CT-${booking.id}`}</span>
-                  <span className="text-[8px] sm:text-[9px] text-white/70 uppercase">({dayNum} {monthStr})</span>
-                </div>
-              </div>
-              
-              {/* Navigation on the right */}
-              <div className="flex flex-col items-end gap-1">
-                <div className="flex items-center gap-1.5 sm:gap-2">
+                {/* Reference directly under name, alongside arrows */}
+                <div className="flex items-center gap-2">
+                  <div className="font-mono font-black text-[10px] sm:text-xs tracking-wider text-white bg-white/10 px-2 sm:px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10 inline-flex items-center gap-1.5">
+                    <span>{booking.reference ? (booking.reference.startsWith('CT-') ? booking.reference : `CT-${booking.reference}`) : `CT-${booking.id}`}</span>
+                    <span className="text-[8px] sm:text-[9px] text-white/70 uppercase">({dayNum} {monthStr})</span>
+                  </div>
+
                   {allRelatedData.length > 1 && (() => {
                     const prev = currentIndex > 0;
                     const next = currentIndex < allRelatedData.length - 1;
                     return (
-                      <>
-                        {prev ? (
-                          <button onClick={() => switchBooking(-1)} className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/10">
-                            <ChevronLeft size={16} />
+                      <div className="flex items-center gap-1">
+                        {prev && (
+                          <button onClick={() => switchBooking(-1)} className="text-white hover:bg-white/20 p-1 rounded-full transition-colors flex items-center justify-center bg-white/10 border border-white/10 backdrop-blur-sm">
+                            <ChevronLeft size={14} />
                           </button>
-                        ) : <div className="w-7 sm:w-8" />}
-                        {next ? (
-                          <button onClick={() => switchBooking(1)} className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/10">
-                            <ChevronRight size={16} />
+                        )}
+                        {next && (
+                          <button onClick={() => switchBooking(1)} className="text-white hover:bg-white/20 p-1 rounded-full transition-colors flex items-center justify-center bg-white/10 border border-white/10 backdrop-blur-sm">
+                            <ChevronRight size={14} />
                           </button>
-                        ) : <div className="w-7 sm:w-8" />}
-                      </>
+                        )}
+                      </div>
                     );
                   })()}
                 </div>
@@ -649,53 +646,39 @@ export default function ItineraryPage() {
 
             {activeTab === 'management' && (
               <motion.div key="management" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="p-6">
-                
-                {/* ── BOOKING PROGRESS & TIMELINE ──────────────────── */}
-                <button
-                  onClick={() => setShowStatusCard(!showStatusCard)}
-                  className={`w-full flex flex-row items-center justify-between gap-3 text-left focus:outline-none transition-all ${
-                    showStatusCard 
-                      ? 'mb-6 pb-6 border-b border-dashed border-gray-200 dark:border-white/10' 
-                      : ''
-                  }`}
-                >
-                  <div>
-                    <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
-                      {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
-                    </span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                      <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${text}`}>
-                        {status.label}
-                      </h3>
+                {/* ── SECTIONS WITHOUT ACCORDION ──────────────────── */}
+                <div className="space-y-8">
+                  
+                  {/* Official Status */}
+                  <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 border border-gray-100 dark:border-white/10">
+                    <div className="flex flex-row items-center justify-between gap-3">
+                      <div>
+                        <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
+                          {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
+                        </span>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
+                          <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${text}`}>
+                            {status.label}
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
+                          <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
+                            {en ? 'Action Required' : 'Acción Requerida'}
+                          </span>
+                        ) : (
+                          <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
+                            {en ? 'Completed ✓' : 'Completado ✓'}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
-                      <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
-                        {en ? 'Action Required' : 'Acción Requerida'}
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
-                        {en ? 'Completed ✓' : 'Completado ✓'}
-                      </span>
-                    )}
-                    <span className={`text-[9px] ${sub} transition-transform duration-300 ${showStatusCard ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
-                      ▼
-                    </span>
-                  </div>
-                </button>
 
-                {/* Checklist Content & Timeline */}
-                {showStatusCard && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="space-y-6"
-                  >
-                    
-                    {/* Finance Section */}
-                    <div>
+                  {/* Finance Section */}
+                  <div>
                       <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
                         {en ? 'Finance & Payments' : 'Finanzas y Pagos'}
                       </div>
@@ -860,8 +843,10 @@ export default function ItineraryPage() {
                   })}
                 </div>
               </div>
-            </motion.div>
-          )}
+              
+              {/* Official Timeline & History logs if needed could go here */}
+
+            </div>
           </motion.div>
         )}
         </div>
@@ -887,7 +872,7 @@ export default function ItineraryPage() {
           initial={{ opacity: 0 }} 
           animate={{ opacity: 1 }} 
           transition={{ delay: 0.5 }}
-          className={`rounded-[2rem] p-8 border ${card} flex flex-col items-center text-center gap-5`}
+          className={`mt-10 rounded-[2rem] p-8 border ${card} flex flex-col items-center text-center gap-5`}
         >
           <div className={`text-[8px] font-black uppercase tracking-[0.3em] text-primary`}>
             {en ? 'QUESTIONS OR CHANGES?' : '¿DUDAS O CAMBIOS?'}
