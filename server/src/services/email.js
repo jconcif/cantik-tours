@@ -19,7 +19,8 @@ const createTransporter = () => {
       auth: {
         user,
         pass
-      }
+      },
+      family: 4 // Forzar IPv4 ya que Render falla conectando a Hostinger por IPv6
     });
   }
 
