@@ -383,7 +383,7 @@ export const sendAdminAlert = async (booking) => {
 
   const mailOptions = {
     from: `"${fromName}" <${fromEmail}>`,
-    to: adminEmail,
+    to: adminEmail.split(',').map(e => e.trim()),
     subject: `🚨 NUEVA RESERVA: ${booking.client_name} - ${referenceCode}`,
     html
   };
@@ -510,7 +510,7 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
 
   const mailOptions = {
     from: `"${fromName}" <${fromEmail}>`,
-    to: adminEmail,
+    to: adminEmail.split(',').map(e => e.trim()),
     subject: `💵 COMPROBANTE SUBIDO: ${booking.client_name} - ${referenceCode}`,
     html
   };
