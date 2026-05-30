@@ -264,117 +264,46 @@ export const sendAdminAlert = async (booking) => {
         <meta charset="utf-8">
         <title>NUEVA RESERVA INGRESADA</title>
         <style>
-          body {
-            font-family: sans-serif;
-            background-color: #f3f4f6;
-            padding: 20px;
-            color: #1f2937;
-          }
-          .card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 600px;
-            margin: 0 auto;
-            border: 1px solid #e5e7eb;
-          }
-          h2 {
-            color: #111827;
-            margin-top: 0;
-            font-size: 18px;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 10px;
-          }
-          table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-          }
-          td {
-            padding: 8px 0;
-            font-size: 14px;
-          }
-          td.label {
-            color: #4b5563;
-            font-weight: bold;
-            width: 150px;
-          }
-          td.value {
-            color: #111827;
-          }
-          .alert-banner {
-            background-color: #13C8EC;
-            color: #ffffff;
-            font-weight: bold;
-            padding: 10px 15px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            text-align: center;
-          }
-          .btn {
-            display: inline-block;
-            background-color: #1f2937;
-            color: #ffffff !important;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 15px;
-          }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f3f4f6; padding: 20px; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+          .header { background-color: #0B0F19; padding: 30px; text-align: center; }
+          .logo { font-size: 22px; letter-spacing: 2px; color: #ffffff; font-weight: 900; text-transform: uppercase; }
+          .logo span { font-weight: 300; letter-spacing: 4px; color: #13C8EC; }
+          .subtitle { font-size: 10px; font-weight: 800; color: #13C8EC; text-transform: uppercase; letter-spacing: 3px; margin-top: 8px; }
+          .content { padding: 30px; }
+          .alert-banner { background-color: #13C8EC; color: #ffffff; font-weight: bold; padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 25px; text-align: center; letter-spacing: 1px; }
+          h2 { color: #111827; margin-top: 0; font-size: 18px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
+          table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+          td { padding: 10px 0; font-size: 14px; border-bottom: 1px solid #f3f4f6; }
+          td.label { color: #6b7280; font-weight: 600; width: 150px; }
+          td.value { color: #111827; font-weight: 500; }
+          .btn { display: inline-block; background-color: #111827; color: #ffffff !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; }
         </style>
       </head>
       <body>
-        <div class="card">
-          <div class="alert-banner">🚨 NUEVA RESERVA DESDE LA WEB PÚBLICA</div>
-          <h2>Detalles de la Reserva (${referenceCode})</h2>
-          <table>
-            <tr>
-              <td class="label">Referencia:</td>
-              <td class="value"><strong>${referenceCode}</strong></td>
-            </tr>
-            <tr>
-              <td class="label">Cliente:</td>
-              <td class="value">${booking.client_name}</td>
-            </tr>
-            <tr>
-              <td class="label">Email Cliente:</td>
-              <td class="value">${booking.extras?.client_email || booking.client_email || 'No provisto'}</td>
-            </tr>
-            <tr>
-              <td class="label">Teléfono:</td>
-              <td class="value">${booking.client_phone || 'No provisto'}</td>
-            </tr>
-            <tr>
-              <td class="label">Experiencia:</td>
-              <td class="value">${booking.tour_title}</td>
-            </tr>
-            <tr>
-              <td class="label">Fecha del Tour:</td>
-              <td class="value">${booking.booking_date}</td>
-            </tr>
-            <tr>
-              <td class="label">Pasajeros (Pax):</td>
-              <td class="value">${booking.pax} PAX</td>
-            </tr>
-            <tr>
-              <td class="label">Hotel Recogida:</td>
-              <td class="value">${booking.hotel || 'No provisto'}</td>
-            </tr>
-            <tr>
-              <td class="label">Plan / Servicio:</td>
-              <td class="value" style="text-transform: uppercase;">${booking.experience}</td>
-            </tr>
-            <tr>
-              <td class="label">Precio Total:</td>
-              <td class="value"><strong>${formatPrice(booking.total_price)}</strong></td>
-            </tr>
-          </table>
-          <div style="text-align: center;">
-            <a href="${adminBookingLink}" class="btn">Ver en el Panel</a>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CANTIK <span>TOURS</span></div>
+            <div class="subtitle">Admin Alerts</div>
+          </div>
+          <div class="content">
+            <div class="alert-banner">🚨 NUEVA RESERVA RECIBIDA</div>
+            <h2>Detalles de la Reserva (${referenceCode})</h2>
+            <table>
+              <tr><td class="label">Referencia:</td><td class="value"><strong>${referenceCode}</strong></td></tr>
+              <tr><td class="label">Cliente:</td><td class="value">${booking.client_name}</td></tr>
+              <tr><td class="label">Email Cliente:</td><td class="value">${booking.extras?.client_email || booking.client_email || 'No provisto'}</td></tr>
+              <tr><td class="label">Teléfono:</td><td class="value">${booking.client_phone || 'No provisto'}</td></tr>
+              <tr><td class="label">Experiencia:</td><td class="value">${booking.tour_title}</td></tr>
+              <tr><td class="label">Fecha del Tour:</td><td class="value">${booking.booking_date}</td></tr>
+              <tr><td class="label">Pasajeros:</td><td class="value">${booking.pax} PAX</td></tr>
+              <tr><td class="label">Hotel Recogida:</td><td class="value">${booking.hotel || 'No provisto'}</td></tr>
+              <tr><td class="label">Plan / Servicio:</td><td class="value" style="text-transform: uppercase;">${booking.experience}</td></tr>
+              <tr><td class="label">Precio Total:</td><td class="value" style="color:#00A8C5; font-weight:bold; font-size:16px;">${formatPrice(booking.total_price)}</td></tr>
+            </table>
+            <div style="text-align: center;">
+              <a href="${adminBookingLink}" class="btn">Abrir en el Panel Admin</a>
+            </div>
           </div>
         </div>
       </body>
@@ -429,79 +358,40 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
         <meta charset="utf-8">
         <title>NUEVO COMPROBANTE SUBIDO</title>
         <style>
-          body {
-            font-family: sans-serif;
-            background-color: #f3f4f6;
-            padding: 20px;
-            color: #1f2937;
-          }
-          .card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 600px;
-            margin: 0 auto;
-            border: 1px solid #e5e7eb;
-          }
-          h2 {
-            color: #111827;
-            margin-top: 0;
-            font-size: 18px;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 10px;
-          }
-          .alert-banner {
-            background-color: #10B981;
-            color: #ffffff;
-            font-weight: bold;
-            padding: 10px 15px;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            text-align: center;
-          }
-          .btn-primary {
-            display: inline-block;
-            background-color: #10B981;
-            color: #ffffff !important;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 10px;
-          }
-          .btn-secondary {
-            display: inline-block;
-            background-color: #1f2937;
-            color: #ffffff !important;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 10px;
-          }
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f3f4f6; padding: 20px; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+          .header { background-color: #0B0F19; padding: 30px; text-align: center; }
+          .logo { font-size: 22px; letter-spacing: 2px; color: #ffffff; font-weight: 900; text-transform: uppercase; }
+          .logo span { font-weight: 300; letter-spacing: 4px; color: #13C8EC; }
+          .subtitle { font-size: 10px; font-weight: 800; color: #13C8EC; text-transform: uppercase; letter-spacing: 3px; margin-top: 8px; }
+          .content { padding: 30px; }
+          .alert-banner { background-color: #10B981; color: #ffffff; font-weight: bold; padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 25px; text-align: center; letter-spacing: 1px; }
+          h2 { color: #111827; margin-top: 0; font-size: 18px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
+          ul { padding-left: 20px; margin: 15px 0 25px 0; color: #4b5563; }
+          li { margin-bottom: 8px; font-size: 14px; }
+          .btn-primary { display: inline-block; background-color: #10B981; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; }
+          .btn-secondary { display: inline-block; background-color: #111827; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; }
         </style>
       </head>
       <body>
-        <div class="card">
-          <div class="alert-banner">💵 NUEVO COMPROBANTE DE PAGO RECIBIDO</div>
-          <h2>Reserva: ${booking.client_name} (${referenceCode})</h2>
-          <p>El cliente ha subido su comprobante de pago a través de la web para verificación.</p>
-          <p><strong>Detalles de la Reserva:</strong></p>
-          <ul>
-            <li>Fecha del Tour: ${booking.booking_date}</li>
-            <li>Total: ${formatPrice(booking.total_price)}</li>
-            <li>Plan: ${booking.experience.toUpperCase()}</li>
-          </ul>
-          <div style="text-align: center; margin-top: 30px;">
-            <a href="${receiptFullUrl}" class="btn-primary" target="_blank">Ver Archivo del Comprobante</a>
-            <a href="${adminBookingLink}" class="btn-secondary">Ver Ficha en el Panel</a>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CANTIK <span>TOURS</span></div>
+            <div class="subtitle">Admin Alerts</div>
+          </div>
+          <div class="content">
+            <div class="alert-banner">💵 NUEVO COMPROBANTE DE PAGO</div>
+            <h2>Reserva: ${booking.client_name} (${referenceCode})</h2>
+            <p style="font-size:14px; line-height:1.6;">El cliente ha subido un nuevo comprobante de pago a través de la web. Revisa el archivo para verificar el pago y actualizar el estado de la reserva.</p>
+            <ul>
+              <li><strong>Fecha del Tour:</strong> ${booking.booking_date}</li>
+              <li><strong>Total a Pagar:</strong> ${formatPrice(booking.total_price)}</li>
+              <li><strong>Plan Elegido:</strong> <span style="text-transform:uppercase;">${booking.experience}</span></li>
+            </ul>
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="${receiptFullUrl}" class="btn-primary" target="_blank">Ver Comprobante</a>
+              <a href="${adminBookingLink}" class="btn-secondary">Abrir en el Panel Admin</a>
+            </div>
           </div>
         </div>
       </body>
