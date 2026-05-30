@@ -178,36 +178,73 @@ export default function ItineraryPage() {
     }
 
     setUploadingReceipt(true);
-    const reader = new FileReader();
 
-    reader.onload = async () => {
-      try {
-        const fileData = reader.result;
-        const res = await uploadReceipt(booking.id, {
-          filename: file.name,
-          fileData
+    const processFile = async (fileToProcess) => {
+      if (!fileToProcess.type.startsWith('image/')) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(fileToProcess);
         });
-
-        if (res.status === 'success' && res.data) {
-          setBooking(res.data);
-          alert(i18n.language.startsWith('en') ? 'Receipt uploaded successfully! We are verifying your payment.' : '¡Comprobante subido con éxito! Estamos verificando tu pago.');
-        } else {
-          throw new Error(res.message || 'Error uploading file');
-        }
-      } catch (err) {
-        console.error('Upload Error:', err);
-        alert(i18n.language.startsWith('en') ? 'Failed to upload receipt. Please try again.' : 'Error al subir el comprobante. Por favor, vuelve a intentarlo.');
-      } finally {
-        setUploadingReceipt(false);
       }
+
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let width = img.width;
+            let height = img.height;
+            const maxDimension = 1200;
+
+            if (width > height) {
+              if (width > maxDimension) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              }
+            } else {
+              if (height > maxDimension) {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            resolve(canvas.toDataURL('image/jpeg', 0.6));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(fileToProcess);
+      });
     };
 
-    reader.onerror = () => {
-      alert(i18n.language.startsWith('en') ? 'Failed to read file.' : 'Error al leer el archivo.');
+    try {
+      const fileData = await processFile(file);
+      const res = await uploadReceipt(booking.id, {
+        filename: file.name,
+        fileData
+      });
+
+      if (res.status === 'success' && res.data) {
+        setBooking(res.data);
+        alert(i18n.language.startsWith('en') ? 'Receipt uploaded successfully! We are verifying your payment.' : '¡Comprobante subido con éxito! Estamos verificando tu pago.');
+      } else {
+        throw new Error(res.message || 'Error uploading file');
+      }
+    } catch (err) {
+      console.error('Upload Error:', err);
+      alert(i18n.language.startsWith('en') ? 'Failed to upload receipt. Please try again.' : 'Error al subir el comprobante. Por favor, vuelve a intentarlo.');
+    } finally {
       setUploadingReceipt(false);
-    };
-
-    reader.readAsDataURL(file);
+    }
   };
 
   const dark = darkMode;
@@ -648,10 +685,9 @@ export default function ItineraryPage() {
               <motion.div key="management" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="p-6">
                 {/* ── SECTIONS WITHOUT ACCORDION ──────────────────── */}
                 <div className="space-y-8">
-                  
-                  {/* Official Status */}
-                  <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 border border-gray-100 dark:border-white/10">
-                    <div className="flex flex-row items-center justify-between gap-3">
+                  {/* Official Status & Timeline Combined Card */}
+                  <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 sm:p-6 border border-gray-100 dark:border-white/10">
+                    <div className="flex flex-row items-center justify-between gap-3 mb-6">
                       <div>
                         <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${sub}`}>
                           {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
@@ -675,176 +711,121 @@ export default function ItineraryPage() {
                         )}
                       </div>
                     </div>
+
+                    <div className="border-t border-dashed border-gray-200 dark:border-white/10 pt-6">
+                      <span className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                        {en ? 'Official Timeline & History' : 'Historial y Línea de Tiempo Oficial'}
+                      </span>
+
+                      <div className="mt-4 space-y-4 relative pl-2 pt-2">
+                        <div className={`absolute top-2 bottom-2 left-[15px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
+                        {[
+                          statusMap.requested, 
+                          statusMap.pending_payment, 
+                          statusMap.payment_received, 
+                          statusMap.reserved, 
+                          statusMap.confirmed,
+                          statusMap.in_progress,
+                          statusMap.completed
+                        ].map((st, i) => {
+                          const isPast = st.step <= currentStep;
+                          const isCurrent = st.step === currentStep;
+                          return (
+                            <div key={i} className="flex gap-4 relative z-10">
+                              <div className={`w-3.5 h-3.5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_10px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
+                                {isPast && !isCurrent && <CheckCircle2 size={6} className="text-white" />}
+                                {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
+                              </div>
+                              <div className="flex-1">
+                                <div className={`text-[9px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
+                                {isCurrent && <div className={`text-[10px] mt-0.5 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Finance Section */}
                   <div>
-                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
                         {en ? 'Finance & Payments' : 'Finanzas y Pagos'}
                       </div>
-                      <div className="space-y-4">
-                        {/* Step 1: Payment */}
-                        <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                          <div className="flex items-start gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
-                              {!isPaymentPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">1</div>}
+                      <div className="space-y-5">
+                        {/* Payment & Receipt Unified Card */}
+                        <div className={`p-5 rounded-2xl border transition-all ${isReceiptSentOrVerified || !isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm')}`}>
+                          <div className="flex items-start gap-4">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isReceiptSentOrVerified || !isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
+                              {isReceiptSentOrVerified || !isPaymentPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">1</div>}
                             </div>
-                            <div>
+                            <div className="flex-1">
                               <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                {en ? '1. Booking Payment' : '1. Pago de Reserva'}
+                                {en ? 'Payment & Receipt' : 'Pago de Reserva'}
                               </div>
-                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                              <div className={`text-[11px] font-medium leading-relaxed mt-1 ${sub}`}>
                                 {!isPaymentPending
                                   ? (en ? 'Booking fully paid!' : '¡Reserva totalmente pagada!')
-                                  : (en 
-                                      ? `Remaining balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount}` 
-                                      : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}`)}
+                                  : isReceiptSentOrVerified
+                                    ? (en ? 'Receipt sent, awaiting validation!' : '¡Comprobante enviado, esperando validación!')
+                                    : (en 
+                                        ? `Remaining balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Please pay and upload receipt.` 
+                                        : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Realiza el pago y sube tu comprobante.`)}
                               </div>
+                              
+                              {isPaymentPending && !isReceiptSentOrVerified && (
+                                <div className="mt-4 flex gap-3">
+                                  <button
+                                    onClick={() => setShowPaymentModal(true)}
+                                    className="inline-flex px-5 py-2.5 bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 text-[10px] font-black uppercase tracking-widest rounded-full transition-all"
+                                  >
+                                    {en ? 'See Bank Details & Upload' : 'Ver Datos y Subir Comprobante'}
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
-                          {isPaymentPending && (
-                            <button
-                              onClick={() => setShowPaymentModal(true)}
-                              className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
-                            >
-                              {en ? 'Pay by Transfer' : 'Pagar con Transferencia'}
-                            </button>
-                          )}
-                        </div>
-
-                        {/* Step 2: Send Receipt */}
-                        <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${isReceiptSentOrVerified ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                          <div className="flex items-start gap-3">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                              isReceiptSentOrVerified
-                                ? 'bg-emerald-500/20 text-emerald-500'
-                                : canUploadReceipt
-                                  ? 'bg-orange-500/20 text-orange-500'
-                                  : 'bg-gray-500/20 text-gray-400'
-                            }`}>
-                              {isReceiptSentOrVerified ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">2</div>}
-                            </div>
-                            <div>
-                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                {en ? '2. Send Payment Receipt' : '2. Enviar Comprobante'}
-                              </div>
-                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                                {isReceiptSentOrVerified
-                                  ? (en ? 'Receipt received and verified!' : '¡Comprobante verificado con éxito!')
-                                  : canUploadReceipt
-                                    ? (en
-                                        ? `Pending balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount} — upload proof of payment.`
-                                        : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount} — sube el comprobante de pago.`)
-                                    : (en ? 'Please send proof of payment once transferred.' : 'Envíanos el comprobante tras realizar el pago.')}
-                              </div>
-                            </div>
-                          </div>
-                          {canUploadReceipt && (
-                            <div className="w-full sm:w-auto flex flex-col items-stretch sm:items-end gap-2">
-                              <label className="px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90 text-center flex items-center justify-center gap-1.5 cursor-pointer select-none">
-                                {uploadingReceipt ? (
-                                  <>
-                                    <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    <span>{en ? 'Uploading...' : 'Subiendo...'}</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Upload size={12} />
-                                    <span>{en ? 'Upload Receipt' : 'Subir Comprobante'}</span>
-                                  </>
-                                )}
-                                <input
-                                  type="file"
-                                  accept="image/*,application/pdf"
-                                  className="hidden"
-                                  onChange={handleReceiptUpload}
-                                  disabled={uploadingReceipt}
-                                />
-                              </label>
-                              <a
-                                href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`text-[9px] font-bold uppercase tracking-wider text-center underline hover:text-primary transition-all ${sub}`}
-                              >
-                                {en ? 'Or send via WhatsApp' : 'O enviar por WhatsApp'}
-                              </a>
-                            </div>
-                          )}
                         </div>
                       </div>
                     </div>
 
                     {/* Check-in Section */}
-                    <div className="pt-2">
-                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                    <div className="pt-4">
+                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
                         {en ? 'Passengers' : 'Pasajeros'}
                       </div>
                       {/* Step 3: Check-in */}
-                      <div className={`p-4 rounded-xl border flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-100')}`}>
-                        <div className="flex items-start gap-3">
+                      <div className={`p-5 rounded-2xl border transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm')}`}>
+                        <div className="flex items-start gap-4">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isCheckinPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
                             {!isCheckinPending ? <CheckCircle2 size={16} /> : <div className="text-xs font-black">3</div>}
                           </div>
-                          <div>
+                          <div className="flex-1">
                             <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
                               {en ? '3. Passenger Check-in' : '3. Registro de Pasajeros'}
                             </div>
-                            <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                            <div className={`text-[11px] font-medium leading-relaxed mt-1 ${sub}`}>
                               {!isCheckinPending
                                 ? (en ? 'All passengers registered!' : '¡Todos los viajeros registrados!')
                                 : (en ? 'Please register passenger passports.' : 'Completa los datos y pasaportes de los viajeros.')}
                             </div>
+                            
+                            {isCheckinPending && (
+                              <div className="mt-4">
+                                <button
+                                  onClick={() => setShowCheckin(true)}
+                                  className="inline-flex px-5 py-2.5 bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 text-[10px] font-black uppercase tracking-widest rounded-full transition-all"
+                                >
+                                  {en ? 'Complete Check-in' : 'Hacer Check-in'}
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
-                        {isCheckinPending && (
-                          <button
-                            onClick={() => setShowCheckin(true)}
-                            className="w-full sm:w-auto px-4 py-2.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-md shadow-primary/10 hover:opacity-90"
-                          >
-                            {en ? 'Complete Check-in' : 'Hacer Check-in'}
-                          </button>
-                        )}
                       </div>
                     </div>
 
 
-              {/* Official Timeline */}
-              <div className="pt-6 border-t border-dashed border-gray-200 dark:border-white/10">
-                <span className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
-                  {en ? 'Official Timeline & History' : 'Historial y Línea de Tiempo Oficial'}
-                </span>
-
-                <div className="mt-4 space-y-4 relative pl-2 pt-2">
-                  <div className={`absolute top-2 bottom-2 left-[15px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
-                  {[
-                    statusMap.requested, 
-                    statusMap.pending_payment, 
-                    statusMap.payment_received, 
-                    statusMap.reserved, 
-                    statusMap.confirmed,
-                    statusMap.in_progress,
-                    statusMap.completed
-                  ].map((st, i) => {
-                    const isPast = st.step <= currentStep;
-                    const isCurrent = st.step === currentStep;
-                    return (
-                      <div key={i} className="flex gap-4 relative z-10">
-                        <div className={`w-3.5 h-3.5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_10px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
-                          {isPast && !isCurrent && <CheckCircle2 size={6} className="text-white" />}
-                          {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
-                        </div>
-                        <div className="flex-1">
-                          <div className={`text-[9px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
-                          {isCurrent && <div className={`text-[10px] mt-0.5 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-              
-              {/* Official Timeline & History logs if needed could go here */}
 
             </div>
           </motion.div>
@@ -1212,6 +1193,48 @@ export default function ItineraryPage() {
                   </div>
                 </>
               )}
+            </div>
+
+            {/* Upload Receipt Section Inside Modal */}
+            <div className={`pt-6 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200'} mt-6`}>
+              <div className="text-center mb-4">
+                <h4 className={`text-sm font-black uppercase tracking-widest ${text}`}>
+                  {en ? 'Step 2: Upload Receipt' : 'Paso 2: Subir Comprobante'}
+                </h4>
+                <p className={`text-[11px] mt-1 ${sub}`}>
+                  {en ? 'Once you complete the transfer, upload the screenshot.' : 'Una vez realizada la transferencia, sube el pantallazo.'}
+                </p>
+              </div>
+              <div className="flex flex-col items-center justify-center gap-4">
+                <label className="inline-flex px-6 py-3.5 bg-primary text-white hover:bg-primary/90 border border-primary/20 text-xs font-black uppercase tracking-widest rounded-full transition-all cursor-pointer select-none items-center gap-2 shadow-lg shadow-primary/20 w-full sm:w-auto justify-center">
+                  {uploadingReceipt ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                      <span>{en ? 'UPLOADING...' : 'SUBIENDO...'}</span>
+                    </>
+                  ) : (
+                    <>
+                      <Upload size={16} />
+                      <span>{en ? 'UPLOAD RECEIPT' : 'SUBIR COMPROBANTE'}</span>
+                    </>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    className="hidden"
+                    onChange={handleReceiptUpload}
+                    disabled={uploadingReceipt}
+                  />
+                </label>
+                <a
+                  href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`text-[10px] font-bold uppercase tracking-wider underline hover:text-primary transition-colors ${sub}`}
+                >
+                  {en ? 'Or send via WhatsApp' : 'O enviar por WhatsApp'}
+                </a>
+              </div>
             </div>
           </motion.div>
         </div>

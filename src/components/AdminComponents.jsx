@@ -743,7 +743,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           {pendingReceipts.map((receipt, idx) => {
             const isValidating = validatingReceipt && validatingReceipt.url === receipt.url;
             const isPdf = receipt.filename?.toLowerCase().endsWith('.pdf');
-            const fullUrl = receipt.url?.startsWith('http') ? receipt.url : `${BASE}${receipt.url}`;
+            const fullUrl = receipt.url?.startsWith('http') || receipt.url?.startsWith('data:') ? receipt.url : `${BASE}${receipt.url}`;
             const dateStr = receipt.timestamp ? new Date(receipt.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
             return (
               <div key={idx} style={{background:'#f59e0b11',border:'1px solid #f59e0b33',borderRadius:'16px',padding:'14px',marginBottom:'10px'}}>

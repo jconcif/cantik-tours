@@ -91,28 +91,9 @@ router.post(
       const { id } = req.params;
       const { filename, fileData } = req.body;
 
-      // Extract raw base64 data by removing any data URL scheme prefix
-      const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-      let base64Content = fileData;
-      if (matches && matches.length === 3) {
-        base64Content = matches[2];
-      }
-
-      const buffer = Buffer.from(base64Content, 'base64');
-      
-      // Setup file structure
-      const uploadDir = path.join(process.cwd(), 'uploads', 'receipts');
-      if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir, { recursive: true });
-      }
-
-      // Create unique filename to prevent overwrites
-      const cleanFilename = `${id}_${Date.now()}_${filename.replace(/[^a-zA-Z0-9.\-_]/g, '')}`;
-      const filePath = path.join(uploadDir, cleanFilename);
-
-      // Write file
-      fs.writeFileSync(filePath, buffer);
-      const relativeUrl = `/uploads/receipts/${cleanFilename}`;
+      // We will now store the Data URL (base64 string) directly in the database JSON column.
+      // This bypasses the need for an ephemeral local disk or external storage bucket for lightweight receipts.
+      const relativeUrl = fileData;
 
       // Get current booking to update its extras
       const { data: currentBooking, error: fetchErr } = await supabase
