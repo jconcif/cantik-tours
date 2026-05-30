@@ -1,44 +1,9 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Setup SMTP transporter
-// Uses environment variables if present, otherwise defaults to a mock transporter
-const createTransporter = () => {
-  const host = process.env.SMTP_HOST;
-  const port = process.env.SMTP_PORT;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
-
-  if (host && port && user && pass) {
-    return nodemailer.createTransport({
-      host,
-      port: parseInt(port),
-      secure: parseInt(port) === 465, // true for 465, false for other ports
-      auth: {
-        user,
-        pass
-      },
-      family: 4 // Forzar IPv4 ya que Render falla conectando a Hostinger por IPv6
-    });
-  }
-
-  // Fallback to mock log transport for development/local testing
-  console.warn('⚠️ SMTP credentials not fully configured. Email service will run in log-only mode.');
-  return {
-    sendMail: async (mailOptions) => {
-      console.log('✉️ [Mock Email Sent]:');
-      console.log(`From: ${mailOptions.from}`);
-      console.log(`To: ${mailOptions.to}`);
-      console.log(`Subject: ${mailOptions.subject}`);
-      console.log(`Body (Truncated): ${mailOptions.text || mailOptions.html?.substring(0, 300)}...`);
-      return { messageId: 'mock-id-' + Math.random().toString(36).substring(2, 9) };
-    }
-  };
-};
-
-const transporter = createTransporter();
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // Helper to format currency
 const formatPrice = (price) => {
@@ -424,9 +389,14 @@ export const sendAdminAlert = async (booking) => {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Admin alert email sent for reference ${referenceCode}. MessageId: ${info.messageId}`);
-    return info;
+    if (!resend) {
+      console.log('✉️ [Mock Admin Email Sent] (No RESEND_API_KEY)');
+      return;
+    }
+    const { data, error } = await resend.emails.send(mailOptions);
+    if (error) throw error;
+    console.log(`✅ Admin alert email sent for reference ${referenceCode}. Resend ID: ${data?.id}`);
+    return data;
   } catch (err) {
     console.error('❌ Error sending admin alert email:', err);
     throw err;
@@ -546,9 +516,14 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Admin receipt alert email sent for reference ${referenceCode}. MessageId: ${info.messageId}`);
-    return info;
+    if (!resend) {
+      console.log('✉️ [Mock Admin Receipt Email Sent] (No RESEND_API_KEY)');
+      return;
+    }
+    const { data, error } = await resend.emails.send(mailOptions);
+    if (error) throw error;
+    console.log(`✅ Admin receipt alert email sent for reference ${referenceCode}. Resend ID: ${data?.id}`);
+    return data;
   } catch (err) {
     console.error('❌ Error sending admin receipt alert email:', err);
     throw err;
