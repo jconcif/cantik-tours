@@ -263,9 +263,11 @@ export const sendClientConfirmation = async (booking) => {
   };
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ Client confirmation email sent for reference ${referenceCode}. MessageId: ${info.messageId}`);
-    return info;
+    // const info = await transporter.sendMail(mailOptions);
+    // console.log(`✅ Client confirmation email sent for reference ${referenceCode}. MessageId: ${info.messageId}`);
+    // return info;
+    console.log(`⚠️ Client confirmation email explicitly disabled for now for reference ${referenceCode}.`);
+    return { status: 'disabled_by_request' };
   } catch (err) {
     console.error('❌ Error sending client confirmation email:', err);
     throw err;

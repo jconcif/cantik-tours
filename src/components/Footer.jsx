@@ -70,6 +70,12 @@ const Footer = () => {
                                 +62 856 9153 3356 <span className="text-[10px] opacity-60">(ID / EN)</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="mailto:info@cantiktours.com" className="hover:text-primary transition-colors block leading-tight">
+                                <span className="block text-xs font-bold text-gray-400">Email:</span>
+                                info@cantiktours.com
+                            </a>
+                        </li>
                         <li className="pt-2 text-gray-400 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
                              Bali, Indonesia
                         </li>
