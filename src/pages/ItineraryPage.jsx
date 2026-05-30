@@ -430,47 +430,7 @@ export default function ItineraryPage() {
 
       <div className="max-w-2xl mx-auto px-4 pt-10 space-y-5">
 
-        {/* ── MULTI-DAY TABS ────────────────────────────── */}
-        {relatedBookings.length > 1 && (
-          <div className="flex overflow-x-auto gap-2 pb-2 hide-scrollbar">
-            {[...relatedBookings]
-              .sort((a, b) => {
-                const da = parseLocalDate(a.booking_date) || new Date(0);
-                const db = parseLocalDate(b.booking_date) || new Date(0);
-                return da.getTime() - db.getTime();
-              })
-              .map((rb) => {
-                const dObj = parseLocalDate(rb.booking_date);
-                const formattedTabDate = dObj ? dObj.toLocaleDateString(en ? 'en-US' : 'es-ES', { day: '2-digit', month: 'short' }) : '';
-                const refCode = `CT-${(rb.reference || String(rb.id)).replace('CT-', '')}`;
-                const isPast = dObj ? (() => {
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
-                  return dObj < today;
-                })() : false;
-                const isTabActive = rb.id === booking.id;
-                let tabClass = '';
-                if (isTabActive) {
-                  tabClass = isPast 
-                    ? 'bg-gray-600 text-white shadow-lg' 
-                    : 'bg-primary text-white shadow-lg shadow-primary/20';
-                } else {
-                  tabClass = isPast
-                    ? (dark ? 'bg-white/5 text-gray-600 hover:bg-white/10 opacity-50' : 'bg-gray-200 text-gray-400 hover:bg-gray-300 opacity-60')
-                    : (dark ? 'bg-white/5 text-gray-400 hover:bg-white/10' : 'bg-gray-200 text-gray-500 hover:bg-gray-300');
-                }
-                return (
-                  <button
-                    key={rb.id}
-                    onClick={() => navigate(`/booking?ref=${refCode}`)}
-                    className={`flex-shrink-0 px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${tabClass}`}
-                  >
-                    {refCode} {formattedTabDate ? `(${formattedTabDate})` : ''}
-                  </button>
-                );
-              })}
-          </div>
-        )}
+        {/* ── MULTI-DAY TABS: integrated inside the ticket header strip ────── */}
 
         {/* ── APP TABS (TICKET VS GESTION) ────────────────────────────── */}
         <div className="flex gap-2 mb-4 p-1 rounded-[1.5rem] bg-black/5 dark:bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/5">
@@ -511,6 +471,44 @@ export default function ItineraryPage() {
                   CT-{ref}
                 </div>
               </div>
+
+              {/* Multi-booking day selector — shown inside the header when there are related bookings */}
+              {relatedBookings.length > 1 && (
+                <div className="relative z-10 mt-5 flex gap-2 overflow-x-auto hide-scrollbar -mb-1">
+                  {[...relatedBookings]
+                    .sort((a, b) => {
+                      const da = parseLocalDate(a.booking_date) || new Date(0);
+                      const db = parseLocalDate(b.booking_date) || new Date(0);
+                      return da.getTime() - db.getTime();
+                    })
+                    .map((rb, idx) => {
+                      const dObj = parseLocalDate(rb.booking_date);
+                      const dayNum = dObj ? String(dObj.getDate()).padStart(2,'0') : '--';
+                      const monStr = dObj ? dObj.toLocaleDateString(en ? 'en-US' : 'es-ES', { month: 'short' }).toUpperCase() : '---';
+                      const refCode = `CT-${(rb.reference || String(rb.id)).replace('CT-', '')}`;
+                      const today = new Date(); today.setHours(0,0,0,0);
+                      const isPast = dObj ? dObj < today : false;
+                      const isActive = rb.id === booking.id;
+                      return (
+                        <button
+                          key={rb.id}
+                          onClick={() => navigate(`/booking?ref=${refCode}`)}
+                          className={`flex-shrink-0 flex flex-col items-center px-3 py-1.5 rounded-xl transition-all text-center ${
+                            isActive
+                              ? 'bg-white text-primary shadow-md'
+                              : isPast
+                                ? 'bg-white/10 text-white/40 hover:bg-white/20'
+                                : 'bg-white/20 text-white hover:bg-white/30'
+                          }`}
+                        >
+                          <span className="text-[16px] font-black leading-none">{dayNum}</span>
+                          <span className="text-[8px] font-black tracking-widest leading-tight mt-0.5">{monStr}</span>
+                          {isActive && <span className="mt-1 w-1 h-1 rounded-full bg-primary" />}
+                        </button>
+                      );
+                    })}
+                </div>
+              )}
             </div>
 
             {/* Fields */}

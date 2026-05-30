@@ -99,8 +99,17 @@ export default function AdminPanel() {
   const [annotationTexts, setAnnotationTexts] = useState({});
   const [reloading, setReloading] = useState(false);
 
+  // A booking needs validation only if it's in verifying_payment AND has unvalidated pending_receipts
+  const hasPendingReceipts = (b) => {
+    if (b.payment_status !== 'verifying_payment') return false;
+    try {
+      const ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+      return Array.isArray(ext.pending_receipts) && ext.pending_receipts.length > 0;
+    } catch(e) { return false; }
+  };
+
   const pendingValidationCount = useMemo(() => {
-    return bookings.filter(b => b.payment_status === 'verifying_payment').length;
+    return bookings.filter(b => hasPendingReceipts(b)).length;
   }, [bookings]);
 
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace('_', ' ');
@@ -953,7 +962,7 @@ export default function AdminPanel() {
                   <div style={{display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap', marginBottom:'2px'}}>
                     <div style={{fontWeight:900, fontSize: isMobile ? '14px' : '16px', color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{b.client_name}</div>
                     {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
-                    {b.payment_status === 'verifying_payment' && (
+                    {hasPendingReceipts(b) && (
                        <span 
                          onClick={(e) => {
                            e.stopPropagation();
