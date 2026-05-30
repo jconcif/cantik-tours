@@ -1103,39 +1103,7 @@ export default function AdminPanel() {
                       <Users size={16} /><span style={{fontSize:'11px'}}>Check-In Pax</span>
                     </button>
 
-                      {(() => {
-                        let ext = {};
-                        try {
-                          if (typeof b.extras === 'string' && b.extras !== '[object Object]') ext = JSON.parse(b.extras);
-                          else if (typeof b.extras === 'object' && b.extras !== null) ext = b.extras;
-                        } catch(e){}
-                        const receipts = ext.receipts || (ext.receipt_url ? [{ url: ext.receipt_url, filename: 'Comprobante', timestamp: b.updated_at }] : []);
-                        if (receipts.length > 0) {
-                          return receipts.map((r, rIdx) => {
-                            const fullReceiptUrl = r.url.startsWith('http') 
-                              ? r.url 
-                              : `https://cantik-tours.onrender.com${r.url}`;
-                            const displayLabel = receipts.length > 1 
-                              ? `Comprobante #${rIdx + 1}` 
-                              : 'Ver Comprobante';
-                            return (
-                              <a 
-                                key={rIdx}
-                                href={fullReceiptUrl} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                style={{...s.btn('#3b82f611','#3b82f6'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px', display:'inline-flex', alignItems:'center', textDecoration:'none', border:'1px solid rgba(59, 130, 246, 0.25)', borderRadius:'12px'}} 
-                                onClick={e=>e.stopPropagation()}
-                                title={receipts.length > 1 ? `Ver ${r.filename || `Comprobante #${rIdx + 1}`}` : 'Ver Comprobante de Pago'}
-                              >
-                                <ExternalLink size={16} />
-                                <span style={{fontSize:'11px'}}>{displayLabel}</span>
-                              </a>
-                            );
-                          });
-                        }
-                        return null;
-                      })()}
+                      {/* Comprobantes are now handled exclusively in the Finanzas modal */}
 
                     <button style={{...s.btn(C+'11',C), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); handleManagePayments(b)}} title="Finanzas">
                       <Wallet size={16} /><span style={{fontSize:'11px'}}>Finanzas</span>

@@ -51,6 +51,7 @@ export default function ItineraryPage() {
   const [paymentTab, setPaymentTab] = useState('eur');
   const [showChecklist, setShowChecklist] = useState(false);
   const [showStatusCard, setShowStatusCard] = useState(false);
+  const [activeTab, setActiveTab] = useState('ticket');
 
   useEffect(() => {
     if (!ref) { setError('Referencia no válida'); setLoading(false); return; }
@@ -471,8 +472,27 @@ export default function ItineraryPage() {
           </div>
         )}
 
-        {/* ── BOARDING PASS ─────────────────────────────── */}
-        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 100 }}>
+        {/* ── APP TABS (TICKET VS GESTION) ────────────────────────────── */}
+        <div className="flex gap-2 mb-4 p-1 rounded-[1.5rem] bg-black/5 dark:bg-white/5 backdrop-blur-md border border-black/5 dark:border-white/5">
+          <button 
+            onClick={() => setActiveTab('ticket')}
+            className={`flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'ticket' ? (dark ? 'bg-[#1a1a1a] shadow-sm text-primary' : 'bg-white shadow-sm text-primary') : (dark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700')}`}
+          >
+            {en ? 'My Ticket' : 'Mi Billete'}
+          </button>
+          <button 
+            onClick={() => setActiveTab('management')}
+            className={`flex-1 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${activeTab === 'management' ? (dark ? 'bg-[#1a1a1a] shadow-sm text-primary' : 'bg-white shadow-sm text-primary') : (dark ? 'text-gray-500 hover:text-gray-300' : 'text-gray-500 hover:text-gray-700')}`}
+          >
+            {en ? 'Management' : 'Gestión'}
+            {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) && (
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+            )}
+          </button>
+        </div>
+
+        {activeTab === 'ticket' && (
+          <motion.div key="ticket" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 100 }}>
 
           {/* Strip + fields */}
           <div className={`rounded-t-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50' : 'shadow-gray-300/80'}`}>
@@ -592,14 +612,14 @@ export default function ItineraryPage() {
 
           </div>
         </motion.div>
+        )}
 
-        {/* ── BOOKING PROGRESS & TIMELINE CARD ──────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className={`rounded-[2rem] border shadow-xl ${card} transition-all duration-300 ${showStatusCard ? 'p-6' : 'p-5 sm:p-6'}`}
-        >
+        {activeTab === 'management' && (
+        <motion.div key="management" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ type: 'spring', stiffness: 100 }} className="space-y-5">
+          {/* ── BOOKING PROGRESS & TIMELINE CARD ──────────────────── */}
+          <div
+            className={`rounded-[2rem] border shadow-xl ${card} transition-all duration-300 ${showStatusCard ? 'p-6' : 'p-5 sm:p-6'}`}
+          >
           {/* Header */}
           <button
             onClick={() => setShowStatusCard(!showStatusCard)}
@@ -799,10 +819,9 @@ export default function ItineraryPage() {
               </div>
             </motion.div>
           )}
+          </div>
         </motion.div>
-
-
-
+        )}
 
         {/* Post-tour review */}
         {isExpired && (
