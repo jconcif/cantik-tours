@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, useContext } from 're
 import * as api from '../services/api';
 import { login as apiLogin, logout, verifyToken } from '../services/api';
 import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor, DriverAssignModal, PassengerManagement } from '../components/AdminComponents';
+import { EmailSettings } from '../components/EmailSettings';
 import { 
   MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
   Globe, Sun, Moon, DollarSign, Euro, LogOut, LayoutDashboard,
@@ -22,8 +23,8 @@ const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',to
 const emptyDriver = {name:'',phone:'',car_model:''};
 const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
 const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
-const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup'];
-const TLABEL = {bookings:'Reservas',drivers:'Staff',reviews:'Reviews',coupons:'Cupones',calendar:'Calendario',stats:'Dashboard',followup:'Seguimiento'};
+const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup','settings'];
+const TLABEL = {bookings:'Reservas',drivers:'Staff',reviews:'Reviews',coupons:'Cupones',calendar:'Calendario',stats:'Dashboard',followup:'Seguimiento',settings:'Configuración'};
 const PAY_LABEL = {
   requested:          'Solicitud Recibida',
   pending_payment:    'Pago Pendiente',
@@ -1497,7 +1498,13 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {modal&&(
+        {tab==='settings'&&(
+          <EmailSettings />
+        )}
+
+      </div>
+
+      {modal&&(
           <Modal 
             title={
               modal.action === 'delete' 

@@ -187,3 +187,17 @@ export const deleteCharge   = (id) => del(`/api/charges/${id}`);
 
 // ── Admin: Stats ──────────────────────────────────────────────────────────────
 export const getStats       = () => get('/api/stats');
+
+export const getEmailSettings = async () => {
+  const r = await fetch(`${BASE}/api/settings/emails`, { headers: getAuthHeaders() });
+  if (!r.ok) throw new Error('Error fetching email settings');
+  return r.json();
+};
+
+export const updateEmailSettings = async (data) => {
+  const r = await fetch(`${BASE}/api/settings/emails`, {
+    method: 'POST', headers: getAuthHeaders(), body: JSON.stringify(data)
+  });
+  if (!r.ok) throw new Error('Error updating email settings');
+  return r.json();
+};

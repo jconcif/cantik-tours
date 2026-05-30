@@ -15,6 +15,7 @@ import chargeRoutes from './routes/charges.js';
 import availabilityRoutes from './routes/availability.js';
 import itineraryRoutes from './routes/itinerary.js';
 import statsRoutes from './routes/stats.js';
+import settingsRoutes from './routes/settings.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -88,6 +89,7 @@ app.use('/api/charges', chargeRoutes);
 app.use('/api/availability', availabilityRoutes);
 app.use('/api/itinerary', itineraryRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // ── Health check ──
 app.get('/api/health', (req, res) => {

@@ -1,5 +1,6 @@
 import { Resend } from 'resend';
 import dotenv from 'dotenv';
+import { emailSettings } from './settings.js';
 
 dotenv.config();
 
@@ -17,6 +18,11 @@ const formatPrice = (price) => {
  * Send Booking Confirmation Email to the Client
  */
 export const sendClientConfirmation = async (booking) => {
+  if (!emailSettings.sendOnBooking) {
+    console.log(`⚠️ Client confirmation email disabled in settings for reference ${booking.reference || booking.id}`);
+    return { status: 'disabled_in_settings' };
+  }
+
   const emailTo = booking.extras?.client_email || booking.client_email;
   if (!emailTo) {
     console.warn('⚠️ Cannot send client confirmation: client_email is missing.');
@@ -229,11 +235,14 @@ export const sendClientConfirmation = async (booking) => {
   };
 
   try {
-    // const info = await transporter.sendMail(mailOptions);
-    // console.log(`✅ Client confirmation email sent for reference ${referenceCode}. MessageId: ${info.messageId}`);
-    // return info;
-    console.log(`⚠️ Client confirmation email explicitly disabled for now for reference ${referenceCode}.`);
-    return { status: 'disabled_by_request' };
+    if (!resend) {
+      console.log('✉️ [Mock Client Email Sent] (No RESEND_API_KEY)');
+      return;
+    }
+    const { data, error } = await resend.emails.send(mailOptions);
+    if (error) throw error;
+    console.log(`✅ Client confirmation email sent for reference ${referenceCode}. Resend ID: ${data?.id}`);
+    return data;
   } catch (err) {
     console.error('❌ Error sending client confirmation email:', err);
     throw err;
@@ -244,6 +253,11 @@ export const sendClientConfirmation = async (booking) => {
  * Send Booking Alert Email to Admin
  */
 export const sendAdminAlert = async (booking) => {
+  if (!emailSettings.sendOnBooking) {
+    console.log(`⚠️ Admin alert email disabled in settings for reference ${booking.reference || booking.id}`);
+    return { status: 'disabled_in_settings' };
+  }
+
   const adminEmail = process.env.ADMIN_EMAIL;
   if (!adminEmail) {
     console.warn('⚠️ Cannot send admin alert: ADMIN_EMAIL is not configured in environment variables.');
@@ -252,7 +266,7 @@ export const sendAdminAlert = async (booking) => {
 
   const referenceCode = `CT-${(booking.reference || String(booking.id)).replace('CT-', '')}`;
   const frontendUrl = process.env.FRONTEND_URL || 'https://cantiktours.com';
-  const adminBookingLink = `${frontendUrl}/booking?ref=${referenceCode}`;
+  const adminGeneralLink = `${frontendUrl}/admin`;
 
   const fromName = 'Cantik Tours Alerts';
   const fromEmail = process.env.SMTP_USER || 'alertas@cantiktours.com';
@@ -277,7 +291,8 @@ export const sendAdminAlert = async (booking) => {
           td { padding: 10px 0; font-size: 14px; border-bottom: 1px solid #f3f4f6; }
           td.label { color: #6b7280; font-weight: 600; width: 150px; }
           td.value { color: #111827; font-weight: 500; }
-          .btn { display: inline-block; background-color: #111827; color: #ffffff !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; }
+          .btn { display: inline-block; background-color: #111827; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; }
+          .btn-outline { display: inline-block; background-color: #f3f4f6; color: #111827 !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; border: 1px solid #d1d5db; }
         </style>
       </head>
       <body>
@@ -287,7 +302,7 @@ export const sendAdminAlert = async (booking) => {
             <div class="subtitle">Admin Alerts</div>
           </div>
           <div class="content">
-            <div class="alert-banner">🚨 NUEVA RESERVA RECIBIDA</div>
+            <div class="alert-banner">NUEVA RESERVA RECIBIDA</div>
             <h2>Detalles de la Reserva (${referenceCode})</h2>
             <table>
               <tr><td class="label">Referencia:</td><td class="value"><strong>${referenceCode}</strong></td></tr>
@@ -301,8 +316,9 @@ export const sendAdminAlert = async (booking) => {
               <tr><td class="label">Plan / Servicio:</td><td class="value" style="text-transform: uppercase;">${booking.experience}</td></tr>
               <tr><td class="label">Precio Total:</td><td class="value" style="color:#00A8C5; font-weight:bold; font-size:16px;">${formatPrice(booking.total_price)}</td></tr>
             </table>
-            <div style="text-align: center;">
-              <a href="${adminBookingLink}" class="btn">Abrir en el Panel Admin</a>
+            <div style="text-align: center; margin-top: 25px;">
+              <a href="${adminGeneralLink}" class="btn-outline">Abrir Cantik Admin</a>
+              <a href="${adminBookingLink}" class="btn">Abrir Reserva CT</a>
             </div>
           </div>
         </div>
@@ -313,7 +329,7 @@ export const sendAdminAlert = async (booking) => {
   const mailOptions = {
     from: `"${fromName}" <${fromEmail}>`,
     to: adminEmail.split(',').map(e => e.trim()),
-    subject: `🚨 NUEVA RESERVA: ${booking.client_name} - ${referenceCode}`,
+    subject: `NUEVA RESERVA: ${booking.client_name} - ${referenceCode}`,
     html
   };
 
@@ -336,6 +352,11 @@ export const sendAdminAlert = async (booking) => {
  * Send Alert to Admin when a payment receipt is uploaded
  */
 export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
+  if (!emailSettings.sendOnPayment) {
+    console.log(`⚠️ Receipt alert email disabled in settings for reference ${booking.reference || booking.id}`);
+    return { status: 'disabled_in_settings' };
+  }
+
   const adminEmail = process.env.ADMIN_EMAIL;
   if (!adminEmail) {
     console.warn('⚠️ Cannot send receipt upload alert: ADMIN_EMAIL is not configured.');
@@ -344,8 +365,9 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
 
   const referenceCode = `CT-${(booking.reference || String(booking.id)).replace('CT-', '')}`;
   const serverUrl = process.env.API_URL || 'http://localhost:3001';
-  const receiptFullUrl = `${serverUrl}${receiptRelativeUrl}`;
+  const receiptFullUrl = receiptRelativeUrl.startsWith('data:') ? receiptRelativeUrl : `${serverUrl}${receiptRelativeUrl}`;
   const frontendUrl = process.env.FRONTEND_URL || 'https://cantiktours.com';
+  const adminGeneralLink = `${frontendUrl}/admin`;
   const adminBookingLink = `${frontendUrl}/booking?ref=${referenceCode}`;
 
   const fromName = 'Cantik Tours Alerts';
@@ -369,8 +391,9 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
           h2 { color: #111827; margin-top: 0; font-size: 18px; border-bottom: 2px solid #e5e7eb; padding-bottom: 10px; }
           ul { padding-left: 20px; margin: 15px 0 25px 0; color: #4b5563; }
           li { margin-bottom: 8px; font-size: 14px; }
-          .btn-primary { display: inline-block; background-color: #10B981; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; }
-          .btn-secondary { display: inline-block; background-color: #111827; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; }
+          .btn-primary { display: inline-block; background-color: #10B981; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; }
+          .btn-secondary { display: inline-block; background-color: #111827; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; }
+          .btn-outline { display: inline-block; background-color: #f3f4f6; color: #111827 !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 5px; border: 1px solid #d1d5db; }
         </style>
       </head>
       <body>
@@ -380,7 +403,7 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
             <div class="subtitle">Admin Alerts</div>
           </div>
           <div class="content">
-            <div class="alert-banner">💵 NUEVO COMPROBANTE DE PAGO</div>
+            <div class="alert-banner">NUEVO COMPROBANTE DE PAGO</div>
             <h2>Reserva: ${booking.client_name} (${referenceCode})</h2>
             <p style="font-size:14px; line-height:1.6;">El cliente ha subido un nuevo comprobante de pago a través de la web. Revisa el archivo para verificar el pago y actualizar el estado de la reserva.</p>
             <ul>
@@ -388,9 +411,14 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
               <li><strong>Total a Pagar:</strong> ${formatPrice(booking.total_price)}</li>
               <li><strong>Plan Elegido:</strong> <span style="text-transform:uppercase;">${booking.experience}</span></li>
             </ul>
+            
+            <div style="text-align: center; margin: 25px 0; background-color: #f9fafb; padding: 15px; border-radius: 8px; border: 1px dashed #d1d5db;">
+              <img src="${receiptFullUrl}" alt="Comprobante de Pago" style="max-width: 100%; border-radius: 8px; max-height: 500px; object-fit: contain;" />
+            </div>
+
             <div style="text-align: center; margin-top: 30px;">
-              <a href="${receiptFullUrl}" class="btn-primary" target="_blank">Ver Comprobante</a>
-              <a href="${adminBookingLink}" class="btn-secondary">Abrir en el Panel Admin</a>
+              <a href="${adminGeneralLink}" class="btn-outline">Abrir Cantik Admin</a>
+              <a href="${adminBookingLink}" class="btn-secondary">Abrir Reserva CT</a>
             </div>
           </div>
         </div>
@@ -401,7 +429,7 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
   const mailOptions = {
     from: `"${fromName}" <${fromEmail}>`,
     to: adminEmail.split(',').map(e => e.trim()),
-    subject: `💵 COMPROBANTE SUBIDO: ${booking.client_name} - ${referenceCode}`,
+    subject: `COMPROBANTE SUBIDO: ${booking.client_name} - ${referenceCode}`,
     html
   };
 
