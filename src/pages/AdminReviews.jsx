@@ -1502,9 +1502,7 @@ export default function AdminPanel() {
           <EmailSettings />
         )}
 
-      </div>
-
-      {modal&&(
+        {modal&&(
           <Modal 
             title={
               modal.action === 'delete' 
