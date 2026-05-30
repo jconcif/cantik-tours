@@ -1,9 +1,8 @@
 import React from 'react';
 import * as api from '../services/api';
+import { BASE } from '../services/api';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
-
-const SERVER = 'https://cantik-tours.onrender.com';
 
 const inputStyle = {padding:'10px 14px',borderRadius:'12px',border:'1px solid #333',fontSize:'14px',fontWeight:600,background:'#222',color:'#fff',width:'100%',boxSizing:'border-box',outline:'none'};
 const labelStyle = {fontSize:'10px',fontWeight:900,color:'#11BDDB',textTransform:'uppercase',letterSpacing:'0.05em'};
@@ -371,6 +370,19 @@ export const FinancialManagement = ({booking, onUpdate}) => {
       finally { setSaving(false); }
     };
 
+    const reject = async () => {
+      if (!window.confirm('¿Estás seguro de que deseas rechazar y eliminar este comprobante?')) return;
+      setSaving(true);
+      try {
+        await api.rejectReceipt(bookingId, { receiptUrl: receipt.url });
+        setPendingReceipts(prev => prev.filter(r => r.url !== receipt.url));
+        await load();
+        if (onUpdate) onUpdate();
+        onDone();
+      } catch (e) { alert(e.message); }
+      finally { setSaving(false); }
+    };
+
     return (
       <div style={{background:'#1a1a1a',border:'1px solid #10b98133',borderRadius:'12px',padding:'14px',marginTop:'4px'}}>
         <div style={{fontSize:'10px',fontWeight:900,color:'#10b981',textTransform:'uppercase',letterSpacing:'0.05em',marginBottom:'10px'}}>Confirmar Pago Recibido</div>
@@ -381,13 +393,17 @@ export const FinancialManagement = ({booking, onUpdate}) => {
             options={[{value:'Transferencia',label:'Transferencia'},{value:'Efectivo',label:'Efectivo'},{value:'PayPal',label:'PayPal'},{value:'Wise',label:'Wise'},{value:'Tarjeta',label:'Tarjeta'}]} />
           <div style={{gridColumn:'1/-1'}}><Input label="Notas (opcional)" value={v.notes} onChange={val=>setV({...v,notes:val})} placeholder="ID transacción, banco, etc." /></div>
         </div>
-        <div style={{display:'flex',gap:'8px'}}>
+        <div style={{display:'flex',gap:'8px',flexWrap:'wrap'}}>
           <button onClick={confirm} disabled={saving}
-            style={{flex:2,padding:'11px',background:'#10b981',color:'#fff',border:'none',borderRadius:'10px',fontWeight:900,cursor:saving?'wait':'pointer',fontSize:'13px'}}>
+            style={{flex:2,minWidth:'150px',padding:'11px',background:'#10b981',color:'#fff',border:'none',borderRadius:'10px',fontWeight:900,cursor:saving?'wait':'pointer',fontSize:'13px'}}>
             {saving ? 'Guardando...' : '✓ CONFIRMAR Y VALIDAR'}
           </button>
+          <button onClick={reject} disabled={saving}
+            style={{flex:1,minWidth:'120px',padding:'11px',background:'#ef444422',color:'#ef4444',border:'1px solid #ef444444',borderRadius:'10px',fontWeight:900,cursor:saving?'wait':'pointer',fontSize:'13px'}}>
+            {saving ? '...' : '🗑️ RECHAZAR'}
+          </button>
           <button onClick={()=>setValidatingReceipt(null)}
-            style={{flex:1,padding:'11px',background:'#333',color:'#ccc',border:'none',borderRadius:'10px',fontWeight:900,cursor:'pointer'}}>✕</button>
+            style={{padding:'11px 16px',background:'#333',color:'#ccc',border:'none',borderRadius:'10px',fontWeight:900,cursor:'pointer'}}>✕</button>
         </div>
       </div>
     );
@@ -727,7 +743,7 @@ export const FinancialManagement = ({booking, onUpdate}) => {
           {pendingReceipts.map((receipt, idx) => {
             const isValidating = validatingReceipt && validatingReceipt.url === receipt.url;
             const isPdf = receipt.filename?.toLowerCase().endsWith('.pdf');
-            const fullUrl = receipt.url?.startsWith('http') ? receipt.url : `${SERVER}${receipt.url}`;
+            const fullUrl = receipt.url?.startsWith('http') ? receipt.url : `${BASE}${receipt.url}`;
             const dateStr = receipt.timestamp ? new Date(receipt.timestamp).toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '';
             return (
               <div key={idx} style={{background:'#f59e0b11',border:'1px solid #f59e0b33',borderRadius:'16px',padding:'14px',marginBottom:'10px'}}>

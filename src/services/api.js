@@ -171,6 +171,9 @@ export const validateReceipt = (bookingId, { receiptUrl, receiptFilename, receip
     amount, payment_date, payment_method, notes, booking
   });
 
+export const rejectReceipt = (bookingId, { receiptUrl }) =>
+  post(`/api/bookings/${bookingId}/reject-receipt`, { receiptUrl });
+
 // ── Admin: Expenses ───────────────────────────────────────────────────────────
 export const getExpenses    = (bookingId) => get(`/api/expenses/${bookingId}`);
 export const addExpense     = (d) => post('/api/expenses', d);

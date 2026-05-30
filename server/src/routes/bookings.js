@@ -256,6 +256,60 @@ router.post('/:id/validate-receipt', requireAuth, async (req, res) => {
   }
 });
 
+// ── Admin: Reject a pending client receipt (delete from queue) ──
+router.post('/:id/reject-receipt', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { receiptUrl } = req.body;
+
+    const { data: currentBooking, error: fetchErr } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr || !currentBooking) throw new Error('Reserva no encontrada');
+
+    let extrasObj = {};
+    try {
+      extrasObj = typeof currentBooking.extras === 'string'
+        ? JSON.parse(currentBooking.extras)
+        : (currentBooking.extras || {});
+    } catch (e) { extrasObj = {}; }
+
+    // Remove from pending
+    if (extrasObj.pending_receipts) {
+      extrasObj.pending_receipts = extrasObj.pending_receipts.filter(r => r.url !== receiptUrl);
+    }
+
+    if (!extrasObj.logs) extrasObj.logs = [];
+    extrasObj.logs.push({
+      timestamp: new Date().toISOString(),
+      text: `Admin rechazó y eliminó un comprobante de pago subido (${receiptUrl}).`
+    });
+
+    const newStatus = (!extrasObj.pending_receipts || extrasObj.pending_receipts.length === 0) 
+      ? 'pending_payment' 
+      : 'verifying_payment';
+
+    const { data: updatedBooking, error: updateErr } = await supabase
+      .from('bookings')
+      .update({
+        payment_status: newStatus,
+        extras: JSON.stringify(extrasObj)
+      })
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (updateErr) throw updateErr;
+    res.json({ status: 'success', data: updatedBooking });
+  } catch (err) {
+    console.error('Error rejecting receipt:', err);
+    res.status(500).json({ status: 'error', message: 'Error al rechazar el comprobante.' });
+  }
+});
+
 
 router.get('/', requireAuth, async (req, res) => {
   try {

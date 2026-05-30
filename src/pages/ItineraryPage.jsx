@@ -54,26 +54,49 @@ export default function ItineraryPage() {
   const [showStatusCard, setShowStatusCard] = useState(false);
   const [activeTab, setActiveTab] = useState('ticket');
 
+  const [allRelatedData, setAllRelatedData] = useState([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   useEffect(() => {
     if (!ref) { setError('Referencia no válida'); setLoading(false); return; }
     const fetch_ = async () => {
       try {
         const data = await getItinerary(ref);
         if (data && data.status === 'success') {
-          setBooking(data.data);
-          if (data.related) setRelatedBookings(data.related);
-          if (data.payments) setPayments(data.payments);
-          if (data.charges) setCharges(data.charges);
+          // If there are related bookings, fetch all their details concurrently
+          let fullDataArray = [data];
+          if (data.related && data.related.length > 1) {
+            const otherRefs = data.related
+              .map(r => r.reference || String(r.id))
+              .map(r => r.replace(/^CT-/, ''))
+              .filter(r => r !== ref);
+            
+            if (otherRefs.length > 0) {
+              const otherPromises = otherRefs.map(r => getItinerary(r).catch(() => null));
+              const others = await Promise.all(otherPromises);
+              const validOthers = others.filter(o => o && o.status === 'success');
+              fullDataArray = [...fullDataArray, ...validOthers];
+              
+              // Sort the full array by booking date
+              fullDataArray.sort((a, b) => {
+                const dateA = parseLocalDate(a.data.booking_date) || new Date(0);
+                const dateB = parseLocalDate(b.data.booking_date) || new Date(0);
+                return dateA.getTime() - dateB.getTime();
+              });
+            }
+          }
           
-          let existingPax = [];
-          try {
-            const ext = typeof data.data.extras === 'string' ? JSON.parse(data.data.extras) : data.data.extras;
-            if (ext && ext.passengers) existingPax = ext.passengers;
-          } catch(e) {}
+          setAllRelatedData(fullDataArray);
           
-          const numPax = Math.max(1, Math.abs(parseInt(data.data.pax) || 1));
-          const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', age: '', emergency: '', medical: '' });
-          setCheckinData(initCheckin);
+          // Find the index of the currently requested ref in the sorted array
+          const initialIdx = fullDataArray.findIndex(d => {
+            const dRef = d.data.reference || String(d.data.id);
+            return dRef.replace(/^CT-/, '') === ref;
+          });
+          const safeIdx = initialIdx >= 0 ? initialIdx : 0;
+          setCurrentIndex(safeIdx);
+          
+          applyBookingData(fullDataArray[safeIdx]);
         }
         else setError('Reserva no encontrada');
       } catch { setError('Error al cargar'); }
@@ -81,6 +104,31 @@ export default function ItineraryPage() {
     };
     fetch_();
   }, [ref]);
+
+  const applyBookingData = (data) => {
+    setBooking(data.data);
+    if (data.related) setRelatedBookings(data.related);
+    if (data.payments) setPayments(data.payments);
+    if (data.charges) setCharges(data.charges);
+    
+    let existingPax = [];
+    try {
+      const ext = typeof data.data.extras === 'string' ? JSON.parse(data.data.extras) : data.data.extras;
+      if (ext && ext.passengers) existingPax = ext.passengers;
+    } catch(e) {}
+    
+    const numPax = Math.max(1, Math.abs(parseInt(data.data.pax) || 1));
+    const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', age: '', emergency: '', medical: '' });
+    setCheckinData(initCheckin);
+  };
+
+  const switchBooking = (direction) => {
+    const newIdx = currentIndex + direction;
+    if (newIdx >= 0 && newIdx < allRelatedData.length) {
+      setCurrentIndex(newIdx);
+      applyBookingData(allRelatedData[newIdx]);
+    }
+  };
 
   useEffect(() => {
     if (booking && !loading) {
@@ -442,41 +490,37 @@ export default function ItineraryPage() {
                 <div className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-1">
                   {en ? 'BOOKING CARD' : 'TARJETA DE RESERVA'}
                 </div>
-                <div className="text-white font-black text-xl sm:text-2xl tracking-tight uppercase truncate max-w-[150px] sm:max-w-[250px]">{booking.client_name}</div>
+                <div className="text-white font-black text-xl sm:text-2xl tracking-tight uppercase truncate max-w-[150px] sm:max-w-[250px] mb-1">
+                  {booking.client_name}
+                </div>
+                {/* Reference directly under name */}
+                <div className="font-mono font-black text-[10px] sm:text-xs tracking-wider text-white bg-white/10 px-2 sm:px-3 py-1 rounded-lg backdrop-blur-sm border border-white/10 inline-flex items-center gap-1.5">
+                  <span>{booking.reference ? (booking.reference.startsWith('CT-') ? booking.reference : `CT-${booking.reference}`) : `CT-${booking.id}`}</span>
+                  <span className="text-[8px] sm:text-[9px] text-white/70 uppercase">({dayNum} {monthStr})</span>
+                </div>
               </div>
               
-              {/* Navigation and Ref/Date on the right */}
+              {/* Navigation on the right */}
               <div className="flex flex-col items-end gap-1">
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                  {relatedBookings.length > 1 ? (() => {
-                    const sorted = [...relatedBookings].sort((a,b) => (parseLocalDate(a.booking_date)||new Date(0)).getTime() - (parseLocalDate(b.booking_date)||new Date(0)).getTime());
-                    const idx = sorted.findIndex(b => b.id === booking.id);
-                    const prev = idx > 0 ? sorted[idx - 1] : null;
-                    const next = idx !== -1 && idx < sorted.length - 1 ? sorted[idx + 1] : null;
+                  {allRelatedData.length > 1 && (() => {
+                    const prev = currentIndex > 0;
+                    const next = currentIndex < allRelatedData.length - 1;
                     return (
                       <>
                         {prev ? (
-                          <button onClick={() => navigate(`/booking?ref=CT-${(prev.reference || String(prev.id)).replace('CT-', '')}`)} className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/10">
+                          <button onClick={() => switchBooking(-1)} className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/10">
                             <ChevronLeft size={16} />
                           </button>
                         ) : <div className="w-7 sm:w-8" />}
-                        <div className="font-mono font-black text-[10px] sm:text-xs tracking-wider text-white bg-white/10 px-2 sm:px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/10 flex items-center gap-1.5">
-                          <span>CT-{ref}</span>
-                          <span className="text-[8px] sm:text-[9px] text-white/70 uppercase">({dayNum} {monthStr})</span>
-                        </div>
                         {next ? (
-                          <button onClick={() => navigate(`/booking?ref=CT-${(next.reference || String(next.id)).replace('CT-', '')}`)} className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/10">
+                          <button onClick={() => switchBooking(1)} className="text-white hover:bg-white/20 p-1.5 rounded-full transition-colors flex items-center justify-center bg-white/10">
                             <ChevronRight size={16} />
                           </button>
                         ) : <div className="w-7 sm:w-8" />}
                       </>
                     );
-                  })() : (
-                    <div className="font-mono font-black text-xs sm:text-sm tracking-wider text-white bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm border border-white/10 flex items-center gap-2">
-                      <span>CT-{ref}</span>
-                      <span className="text-[10px] text-white/70 uppercase">({dayNum} {monthStr})</span>
-                    </div>
-                  )}
+                  })()}
                 </div>
               </div>
             </div>
