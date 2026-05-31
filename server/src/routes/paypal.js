@@ -14,7 +14,7 @@ router.post('/capture', async (req, res) => {
     const { data: booking, error: bookingError } = await supabase
       .from('bookings')
       .select('*')
-      .eq('reference', bookingRef)
+      .or(`reference.eq.${bookingRef},id.eq.${bookingRef}`)
       .single();
 
     if (bookingError || !booking) {
