@@ -121,6 +121,23 @@ export const DriverAssignModal = ({data,drivers,onChange,bookings=[]}) => {
 
   const selectedDriverName = drivers.find(d => String(d.id) === String(data.driver_id))?.name || 'Este chofer';
 
+  const renderLanguages = (languagesStr) => {
+    if (!languagesStr) return null;
+    try {
+      if (languagesStr.startsWith('[')) {
+        const parsed = JSON.parse(languagesStr);
+        return (
+          <span style={{marginRight:'8px', display:'inline-flex', gap:'4px', flexWrap:'wrap', alignItems:'center'}}>
+            🗣️ {parsed.map((l, i) => (
+              <span key={i} style={{background:'#ffffff11', border:'1px solid #ffffff22', padding:'2px 6px', borderRadius:'6px', fontSize:'9px', fontWeight:900}}>{l.lang} <span style={{color:'#11BDDB', opacity:0.8}}>[{l.level}]</span></span>
+            ))}
+          </span>
+        );
+      }
+    } catch(e) {}
+    return <span style={{marginRight:'8px'}}>🗣️ {languagesStr}</span>;
+  };
+
   return (
     <div style={{display:'flex',flexDirection:'column',gap:'16px'}}>
       <div style={{background:'#1a1a1a', padding:'16px', borderRadius:'16px', border:'1px solid #333'}}>
@@ -138,7 +155,6 @@ export const DriverAssignModal = ({data,drivers,onChange,bookings=[]}) => {
           <div style={{fontWeight:900, fontSize:'13px', color:'#fff'}}>-- Sin Asignar --</div>
         </div>
         {drivers.map(d => {
-          // Check if this driver is busy on this date
           const isBusy = bookings.some(b => {
              if (b.id === data.id) return false;
              if (b.payment_status === 'cancelled') return false;
@@ -164,8 +180,8 @@ export const DriverAssignModal = ({data,drivers,onChange,bookings=[]}) => {
             >
               <div>
                 <div style={{fontWeight:900, fontSize:'14px', color:'#fff'}}>{d.name} <span style={{fontSize:'10px', color:'#888', fontWeight:400}}>({d.driver_code || 'Sin Código'})</span></div>
-                <div style={{fontSize:'11px', color:'#888', marginTop:'4px'}}>
-                   {d.languages && <span style={{marginRight:'8px'}}>🗣️ {d.languages}</span>}
+                <div style={{fontSize:'11px', color:'#888', marginTop:'4px', display:'flex', alignItems:'center'}}>
+                   {renderLanguages(d.languages)}
                    {d.vehicle_pax && <span>🚗 {d.vehicle_pax} PAX</span>}
                 </div>
               </div>
@@ -196,6 +212,64 @@ export const DriverAssignModal = ({data,drivers,onChange,bookings=[]}) => {
   );
 };
 
+const LanguageBuilder = ({ value, onChange }) => {
+  let langs = [];
+  try {
+    if (value && value.startsWith('[')) {
+      langs = JSON.parse(value);
+    } else if (value) {
+      langs = value.split(',').map(l => ({ lang: l.trim(), level: 'Intermedio' }));
+    }
+  } catch(e) {}
+
+  const addLang = () => {
+    const newLangs = [...langs, { lang: '', level: 'Intermedio' }];
+    onChange(JSON.stringify(newLangs));
+  };
+
+  const updateLang = (idx, field, val) => {
+    const newLangs = [...langs];
+    newLangs[idx][field] = val;
+    onChange(JSON.stringify(newLangs));
+  };
+
+  const removeLang = (idx) => {
+    const newLangs = langs.filter((_, i) => i !== idx);
+    onChange(JSON.stringify(newLangs));
+  };
+
+  return (
+    <div style={{display:'flex', flexDirection:'column', gap:'8px', background:'#1a1a1a', padding:'12px', borderRadius:'12px', border:'1px solid #333', gridColumn:'1 / -1'}}>
+      <label style={{fontSize:'12px', fontWeight:900, color:'#888', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+        IDIOMAS HABLADOS
+        <button type="button" onClick={addLang} style={{background:'#11BDDB22', color:'#11BDDB', border:'none', borderRadius:'6px', padding:'4px 8px', fontSize:'10px', fontWeight:900, cursor:'pointer'}}>+ Añadir Idioma</button>
+      </label>
+      {langs.length === 0 && <div style={{fontSize:'12px', color:'#555', textAlign:'center', padding:'10px 0'}}>Sin idiomas registrados</div>}
+      {langs.map((l, idx) => (
+        <div key={idx} style={{display:'flex', gap:'8px', alignItems:'center'}}>
+          <input 
+            value={l.lang} 
+            onChange={(e)=>updateLang(idx, 'lang', e.target.value)} 
+            placeholder="Ej. Español"
+            style={{flex:1, padding:'8px', borderRadius:'8px', background:'#222', border:'1px solid #444', color:'#fff', fontSize:'12px', outline:'none'}}
+          />
+          <select 
+            value={l.level}
+            onChange={(e)=>updateLang(idx, 'level', e.target.value)}
+            style={{padding:'8px', borderRadius:'8px', background:'#222', border:'1px solid #444', color:'#fff', fontSize:'12px', outline:'none', cursor:'pointer'}}
+          >
+            <option value="Básico">Básico (A1/A2)</option>
+            <option value="Intermedio">Intermedio (B1/B2)</option>
+            <option value="Avanzado">Avanzado (C1)</option>
+            <option value="Nativo">Nativo (C2)</option>
+          </select>
+          <button type="button" onClick={()=>removeLang(idx)} style={{background:'#ef444422', color:'#ef4444', border:'none', borderRadius:'8px', width:'32px', height:'32px', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontWeight:900}}>X</button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export const DriverForm = ({data,onChange}) => (
   <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
@@ -211,7 +285,7 @@ export const DriverForm = ({data,onChange}) => (
     </div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
       <Input label="Capacidad Pax" type="number" value={data.vehicle_pax} onChange={v=>onChange('vehicle_pax',v)} />
-      <Input label="Idiomas" value={data.languages} onChange={v=>onChange('languages',v)} placeholder="Ej: Español, Inglés" />
+      <LanguageBuilder value={data.languages} onChange={v=>onChange('languages',v)} />
     </div>
     <Input label="Cuenta Bancaria (Transferencias)" value={data.bank_account} onChange={v=>onChange('bank_account',v)} />
     <div style={{display:'flex', flexDirection:'column', gap:'4px'}}>

@@ -396,6 +396,22 @@ export default function AdminPanel() {
   const handleManagePayments = (b) => {
     setModal({type:'finance', action:'view', data:b});
   };
+  const renderLanguages = (languagesStr) => {
+    if (!languagesStr) return null;
+    try {
+      if (languagesStr.startsWith('[')) {
+        const parsed = JSON.parse(languagesStr);
+        return (
+          <span style={{marginRight:'8px', display:'inline-flex', gap:'4px', flexWrap:'wrap', alignItems:'center'}}>
+            🗣️ {parsed.map((l, i) => (
+              <span key={i} style={{background:'#ffffff11', border:'1px solid #ffffff22', padding:'2px 6px', borderRadius:'6px', fontSize:'9px', fontWeight:900}}>{l.lang} <span style={{color:'#11BDDB', opacity:0.8}}>[{l.level}]</span></span>
+            ))}
+          </span>
+        );
+      }
+    } catch(e) {}
+    return <span style={{marginRight:'8px'}}>🗣️ {languagesStr}</span>;
+  };
 
   const filter = (l) => {
     if (!l || !Array.isArray(l)) return [];
@@ -1179,6 +1195,9 @@ export default function AdminPanel() {
                 <div style={{color:'#666',fontSize:'12px'}}>
                   {d.phone && <span style={{marginRight:'8px'}}>📞 {d.phone}</span>}
                   {d.vehicle_brand_model && <span>🚗 {d.vehicle_brand_model} {d.vehicle_pax ? `(${d.vehicle_pax} PAX)` : ''}</span>}
+                </div>
+                <div style={{color:'#666',fontSize:'12px', marginTop:'4px'}}>
+                  {renderLanguages(d.languages)}
                 </div>
               </div>
               <div style={{display:'flex',gap:'6px'}}>
