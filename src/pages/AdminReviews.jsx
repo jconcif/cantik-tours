@@ -20,7 +20,7 @@ const parseLocalDate = (dateStr) => {
   return new Date(parts[0], parseInt(parts[1], 10) - 1, parts[2]);
 };
 const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en',reference:'',notes:''};
-const emptyDriver = {name:'',phone:'',car_model:''};
+const emptyDriver = {name:'',phone:'',zone:'',vehicle_brand_model:'',vehicle_year:'',vehicle_pax:'',bank_account:'',license_plate:'',languages:''};
 const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
 const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
 const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup','settings'];
@@ -1124,32 +1124,10 @@ export default function AdminPanel() {
                       <Car size={16} /><span style={{fontSize:'11px'}}>Chofer</span>
                     </button>
 
-                    {/* -- COMUNICACIÓN -- */}
-                    <a href={b.client_phone ? waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`) : '#'} target={b.client_phone ? "_blank" : "_self"} rel="noreferrer" onClick={e => { if (!b.client_phone) { e.preventDefault(); toast('Sin número', false); } e.stopPropagation(); }} style={{...s.btn(b.client_phone ? '#25D36611' : '#ffffff05', b.client_phone ? '#25D366' : '#666'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px', opacity: b.client_phone ? 1 : 0.5, pointerEvents: b.client_phone ? 'auto' : 'none'}}>
-                      <MessageCircle size={16} /><span style={{fontSize:'11px'}}>WhatsApp</span>
-                    </a>
-
-                    <button style={{...s.btn('#ffffff05','#fff'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); generateVoucher(b,drivers)}} title="Generar Voucher">
-                      <Ticket size={16} /><span style={{fontSize:'11px'}}>Voucher</span>
+                    {/* -- MÁS ACCIONES -- */}
+                    <button style={{...s.btn('#ffffff11','#fff'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); setModal({type:'more_actions', data:b})}} title="Más Acciones">
+                      <LayoutDashboard size={16} /><span style={{fontSize:'11px'}}>Más Acciones</span>
                     </button>
-
-                    <button style={{...s.btn('#ffffff05','#fff'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{ e.stopPropagation(); const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`; navigator.clipboard.writeText(`https://cantiktours.com/booking?ref=${ref}`); toast('Link público copiado ✓', true); }} title="Copiar Link Público">
-                      <ExternalLink size={16} /><span style={{fontSize:'11px'}}>Booking</span>
-                    </button>
-
-                    <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); copyReviewLink(b, 'es')}} title="Copiar Link y Enviar WhatsApp (Español)">
-                      <Star size={16} /><span style={{fontSize:'11px'}}>Review ES</span>
-                    </button>
-
-                    <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); copyReviewLink(b, 'en')}} title="Copiar Link y Enviar WhatsApp (Inglés)">
-                      <Star size={16} /><span style={{fontSize:'11px'}}>Review EN</span>
-                    </button>
-
-                    {/* -- ZONA DE PELIGRO -- */}
-                    <button style={{...s.btn('#ef444411','#ef4444'), height:'44px', padding:'0 12px', justifyContent:'flex-start', gap:'8px'}} onClick={e=>{e.stopPropagation(); del('booking',b.id)}}>
-                      <Trash2 size={16} /><span style={{fontSize:'11px'}}>Eliminar</span>
-                    </button>
-
                   </div>
                 </div>
               )}
@@ -1157,7 +1135,13 @@ export default function AdminPanel() {
           ))}
           {tab==='drivers'&&filter(drivers).map(d=>(
             <div key={d.id} style={s.card}>
-              <div><div style={{fontWeight:900}}>{d.name}</div><div style={{color:'#666',fontSize:'12px'}}>{d.car_model}</div></div>
+              <div>
+                <div style={{fontWeight:900}}>{d.name}</div>
+                <div style={{color:'#666',fontSize:'12px'}}>
+                  {d.phone && <span style={{marginRight:'8px'}}>📞 {d.phone}</span>}
+                  {d.vehicle_brand_model && <span>🚗 {d.vehicle_brand_model} {d.vehicle_pax ? `(${d.vehicle_pax} PAX)` : ''}</span>}
+                </div>
+              </div>
               <div style={{display:'flex',gap:'6px'}}>
                 <button style={{...s.btn('#ffffff15','#fff'), width:'36px', height:'36px', padding:0}} title="Editar" onClick={()=>openEdit('driver',d)}><Pencil size={16} /></button>
                 <button style={{...s.btn('#ef444422','#ef4444'), width:'36px', height:'36px', padding:0}} title="Eliminar" onClick={()=>del('driver',d.id)}><Trash2 size={16} /></button>
@@ -1517,12 +1501,14 @@ export default function AdminPanel() {
                         ? 'Gestionar Check-In Pasajeros'
                         : modal.type === 'assign_driver'
                           ? 'Asignar Chofer'
-                          : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
+                          : modal.type === 'more_actions'
+                            ? 'Más Acciones de Reserva'
+                            : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
             } 
             onClose={()=>setModal(null)} 
             onSave={save} 
             loading={loading} 
-            hideFooter={['finance', 'itinerary', 'logs', 'passengers'].includes(modal.type) || modal.action === 'delete'}
+            hideFooter={['finance', 'itinerary', 'logs', 'passengers', 'more_actions'].includes(modal.type) || modal.action === 'delete'}
           >
             {modal.action === 'delete' ? (
                <div style={{textAlign:'center', padding:'20px 0'}}>
@@ -1563,6 +1549,36 @@ export default function AdminPanel() {
                     onClose={() => setModal(null)}
                   />
                 )}
+                {modal.type==='more_actions' && (() => {
+                  const b = modal.data;
+                  return (
+                    <div style={{display:'flex', flexDirection:'column', gap:'12px'}}>
+                      <a href={b.client_phone ? waLink(b.client_phone, `¡Hola ${b.client_name}! Soy de Cantik Tours.`) : '#'} target={b.client_phone ? "_blank" : "_self"} rel="noreferrer" onClick={e => { if (!b.client_phone) { e.preventDefault(); toast('Sin número', false); } }} style={{...s.btn(b.client_phone ? '#25D36611' : '#ffffff05', b.client_phone ? '#25D366' : '#666'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', opacity: b.client_phone ? 1 : 0.5, pointerEvents: b.client_phone ? 'auto' : 'none', width:'100%'}}>
+                        <MessageCircle size={20} /><span style={{fontSize:'14px', fontWeight:600}}>WhatsApp</span>
+                      </a>
+
+                      <button style={{...s.btn('#ffffff05','#fff'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%'}} onClick={()=>{generateVoucher(b,drivers); setModal(null);}} title="Generar Voucher">
+                        <Ticket size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Voucher</span>
+                      </button>
+
+                      <button style={{...s.btn('#ffffff05','#fff'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%'}} onClick={()=>{ const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`; navigator.clipboard.writeText(`https://cantiktours.com/booking?ref=${ref}`); toast('Link público copiado ✓', true); setModal(null); }} title="Copiar Link Público">
+                        <ExternalLink size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Link de Booking Público</span>
+                      </button>
+
+                      <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%'}} onClick={()=>{copyReviewLink(b, 'es'); setModal(null);}} title="Copiar Link y Enviar WhatsApp (Español)">
+                        <Star size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Solicitar Review (ES)</span>
+                      </button>
+
+                      <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%'}} onClick={()=>{copyReviewLink(b, 'en'); setModal(null);}} title="Copiar Link y Enviar WhatsApp (Inglés)">
+                        <Star size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Solicitar Review (EN)</span>
+                      </button>
+
+                      <button style={{...s.btn('#ef444411','#ef4444'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%', marginTop:'16px'}} onClick={()=>{setModal({type:'booking', action:'delete', data:{id:b.id}});}}>
+                        <Trash2 size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Eliminar Reserva</span>
+                      </button>
+                    </div>
+                  );
+                })()}
                 {modal.type==='assign_driver' && <DriverAssignModal data={modal.data} drivers={drivers} onChange={setField} bookings={bookings} />}
                 {modal.type==='driver'&&<DriverForm data={modal.data} onChange={setField}/>}
                 {modal.type==='review'&&<ReviewForm data={modal.data} onChange={setField}/>}

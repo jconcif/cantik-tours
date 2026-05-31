@@ -152,7 +152,17 @@ export const DriverForm = ({data,onChange}) => (
   <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
     <Input label="Nombre" value={data.name} onChange={v=>onChange('name',v)} />
     <Input label="Teléfono" value={data.phone} onChange={v=>onChange('phone',v)} />
-    <Input label="Vehículo" value={data.car_model} onChange={v=>onChange('car_model',v)} />
+    <Input label="Zona donde vive" value={data.zone} onChange={v=>onChange('zone',v)} />
+    <Input label="Matrícula" value={data.license_plate} onChange={v=>onChange('license_plate',v)} />
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+      <Input label="Marca/Modelo" value={data.vehicle_brand_model} onChange={v=>onChange('vehicle_brand_model',v)} />
+      <Input label="Año" value={data.vehicle_year} onChange={v=>onChange('vehicle_year',v)} />
+    </div>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+      <Input label="Capacidad Pax" type="number" value={data.vehicle_pax} onChange={v=>onChange('vehicle_pax',v)} />
+      <Input label="Idiomas" value={data.languages} onChange={v=>onChange('languages',v)} placeholder="Ej: Español, Inglés" />
+    </div>
+    <Input label="Cuenta Bancaria (Transferencias)" value={data.bank_account} onChange={v=>onChange('bank_account',v)} />
   </div>
 );
 
