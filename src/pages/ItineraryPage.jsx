@@ -123,7 +123,7 @@ export default function ItineraryPage() {
         const data = await getItinerary(currentRef);
         if (data && data.status === 'success') {
           // Update the current view silently
-          applyBookingData(data);
+          applyBookingData(data, true);
           setAllRelatedData(prev => {
             const arr = [...prev];
             arr[currentIndex] = data;
@@ -138,21 +138,23 @@ export default function ItineraryPage() {
     return () => clearInterval(interval);
   }, [ref, allRelatedData, currentIndex]);
 
-  const applyBookingData = (data) => {
+  const applyBookingData = (data, isPolling = false) => {
     setBooking(data.data);
     if (data.related) setRelatedBookings(data.related);
     if (data.payments) setPayments(data.payments);
     if (data.charges) setCharges(data.charges);
     
-    let existingPax = [];
-    try {
-      const ext = typeof data.data.extras === 'string' ? JSON.parse(data.data.extras) : data.data.extras;
-      if (ext && ext.passengers) existingPax = ext.passengers;
-    } catch(e) {}
-    
-    const numPax = Math.max(1, Math.abs(parseInt(data.data.pax) || 1));
-    const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', age: '', emergency: '', medical: '' });
-    setCheckinData(initCheckin);
+    if (!isPolling) {
+      let existingPax = [];
+      try {
+        const ext = typeof data.data.extras === 'string' ? JSON.parse(data.data.extras) : data.data.extras;
+        if (ext && ext.passengers) existingPax = ext.passengers;
+      } catch(e) {}
+      
+      const numPax = Math.max(1, Math.abs(parseInt(data.data.pax) || 1));
+      const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', age: '', emergency: '', medical: '' });
+      setCheckinData(initCheckin);
+    }
   };
 
   const switchBooking = (direction) => {
