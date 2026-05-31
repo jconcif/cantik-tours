@@ -114,12 +114,12 @@ export const sendClientConfirmation = async (booking) => {
           .ticket-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 20px;
             font-size: 13px;
           }
           .ticket-row:last-child {
             margin-bottom: 0;
-            padding-top: 12px;
+            padding-top: 16px;
             border-top: 1px dashed #d1d5db;
           }
           .label {
@@ -162,6 +162,7 @@ export const sendClientConfirmation = async (booking) => {
             font-size: 11px;
             color: #777777;
             border-top: 1px solid #1a2629;
+            line-height: 1.8;
           }
           .footer a {
             color: #13C8EC;
@@ -176,7 +177,7 @@ export const sendClientConfirmation = async (booking) => {
             <div class="subtitle">¡Comienza tu aventura en Bali! 🌴</div>
           </div>
           <div class="content">
-            <h1>¡Tu Experiencia está Confirmada!</h1>
+            <h1>¡Tu Experiencia está casi lista!</h1>
             <p>Hola <strong>${booking.client_name}</strong>,</p>
             <p>¡Qué alegría que nos elijas para guiarte en esta aventura! Hemos recibido y registrado con éxito tu reserva. A continuación tienes todos los detalles importantes:</p>
             
@@ -191,7 +192,12 @@ export const sendClientConfirmation = async (booking) => {
               </div>
               <div class="ticket-row">
                 <span class="label">Plan / Servicio</span>
-                <span class="value" style="text-transform: uppercase;">${booking.experience}</span>
+                <span class="value" style="text-transform: uppercase;">${
+                  booking.experience === 'economy' ? 'S - Conductor Local (Inglés)' :
+                  booking.experience === 'comfort' ? 'M - Guía Profesional (Inglés)' :
+                  booking.experience === 'elite' ? 'L - Guía Profesional (Español)' :
+                  booking.experience
+                }</span>
               </div>
               <div class="ticket-row">
                 <span class="label">Fecha del Tour</span>
@@ -219,8 +225,8 @@ export const sendClientConfirmation = async (booking) => {
             </p>
           </div>
           <div class="footer">
-            <p style="margin: 0; color: #9CA3AF;">© ${new Date().getFullYear()} Cantik Tours. Todos los derechos reservados.</p>
-            <p style="margin: 5px 0 0 0; color: #6B7280;">¿Tienes dudas? Contáctanos a <a href="mailto:info@cantiktours.com">info@cantiktours.com</a></p>
+            Cantik Tours Bali © ${new Date().getFullYear()}<br>
+            Cualquier duda, contáctanos a <a href="mailto:hola@cantiktours.com">hola@cantiktours.com</a> o por WhatsApp al <a href="https://wa.me/34643532724">+34 643 53 27 24</a>.
           </div>
         </div>
       </body>

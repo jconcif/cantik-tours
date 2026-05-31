@@ -602,31 +602,45 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                                             
                                             {(showCoupon || appliedCoupon) && (
                                                 <div className="space-y-3 pt-2 border-t border-black/5 dark:border-white/5">
-                                                    <div className="flex gap-2">
-                                                        <input 
-                                                            type="text" 
-                                                            disabled={appliedCoupon}
-                                                            placeholder={i18n.language === 'en' ? 'Enter coupon code...' : 'Ingresa el código...'} 
-                                                            value={couponInput} 
-                                                            onChange={(e) => setCouponInput(e.target.value)} 
-                                                            className="flex-1 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-xs font-bold uppercase outline-none focus:border-primary/50 text-gray-800 dark:text-white"
-                                                        />
-                                                        <button 
-                                                            type="button" 
-                                                            onClick={appliedCoupon ? () => { setAppliedCoupon(null); setCouponInput(''); } : handleApplyCoupon}
-                                                            disabled={couponLoading || (!couponInput.trim() && !appliedCoupon)}
-                                                            className="px-4 py-2 bg-primary hover:bg-primary/95 text-white rounded-xl text-xs font-black transition-all active:scale-[0.98] disabled:opacity-50"
-                                                        >
-                                                            {couponLoading ? '...' : appliedCoupon ? (i18n.language === 'en' ? 'REMOVE' : 'QUITAR') : (i18n.language === 'en' ? 'APPLY' : 'APLICAR')}
-                                                        </button>
-                                                    </div>
-                                                    {couponError && <p className="text-[10px] text-red-500 font-bold">{couponError}</p>}
-                                                    {appliedCoupon && (
-                                                        <p className="text-[10px] text-green-500 font-bold">
-                                                            {i18n.language === 'en' 
-                                                                ? `Coupon "${appliedCoupon.code}" applied: -${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'} discount!` 
-                                                                : `¡Cupón "${appliedCoupon.code}" aplicado: -${appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'} de descuento!`}
-                                                        </p>
+                                                    {!appliedCoupon ? (
+                                                        <>
+                                                            <div className="flex gap-2">
+                                                                <input 
+                                                                    type="text" 
+                                                                    placeholder={i18n.language === 'en' ? 'Enter coupon code...' : 'Ingresa el código...'} 
+                                                                    value={couponInput} 
+                                                                    onChange={(e) => setCouponInput(e.target.value)} 
+                                                                    className="flex-1 bg-white dark:bg-black/20 border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 text-xs font-bold uppercase outline-none focus:border-primary/50 text-gray-800 dark:text-white"
+                                                                />
+                                                                <button 
+                                                                    type="button" 
+                                                                    onClick={handleApplyCoupon}
+                                                                    disabled={couponLoading || !couponInput.trim()}
+                                                                    className="px-4 py-2 bg-primary hover:bg-primary/95 text-white rounded-xl text-xs font-black transition-all active:scale-[0.98] disabled:opacity-50"
+                                                                >
+                                                                    {couponLoading ? '...' : (i18n.language === 'en' ? 'APPLY' : 'APLICAR')}
+                                                                </button>
+                                                            </div>
+                                                            {couponError && <p className="text-[10px] text-red-500 font-bold">{couponError}</p>}
+                                                        </>
+                                                    ) : (
+                                                        <div className="flex items-center justify-between bg-green-500/10 border border-green-500/20 rounded-xl px-4 py-3">
+                                                            <div>
+                                                                <p className="text-[10px] text-green-600 dark:text-green-400 font-black uppercase mb-0.5">
+                                                                    {i18n.language === 'en' ? 'Coupon Applied' : 'Cupón Aplicado'}
+                                                                </p>
+                                                                <p className="text-[11px] font-bold text-gray-800 dark:text-white">
+                                                                    {appliedCoupon.code} <span className="text-green-500 ml-1">(-{appliedCoupon.discount_type === 'percent' ? appliedCoupon.discount_value + '%' : appliedCoupon.discount_value + '€'})</span>
+                                                                </p>
+                                                            </div>
+                                                            <button 
+                                                                type="button"
+                                                                onClick={() => { setAppliedCoupon(null); setCouponInput(''); }}
+                                                                className="w-6 h-6 flex items-center justify-center rounded-full bg-red-500/10 text-red-500 hover:bg-red-500/20 transition-colors"
+                                                            >
+                                                                <X size={14} strokeWidth={3} />
+                                                            </button>
+                                                        </div>
                                                     )}
                                                 </div>
                                             )}
