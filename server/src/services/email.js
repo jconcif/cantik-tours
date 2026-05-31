@@ -273,6 +273,7 @@ export const sendAdminAlert = async (booking) => {
   const referenceCode = `CT-${(booking.reference || String(booking.id)).replace('CT-', '')}`;
   const frontendUrl = process.env.FRONTEND_URL || 'https://cantiktours.com';
   const adminGeneralLink = `${frontendUrl}/admin`;
+  const adminBookingLink = `${frontendUrl}/booking?ref=${referenceCode}`;
 
   const fromName = 'Cantik Tours Alerts';
   const fromEmail = process.env.SMTP_USER || 'alertas@cantiktours.com';
