@@ -16,6 +16,7 @@ import availabilityRoutes from './routes/availability.js';
 import itineraryRoutes from './routes/itinerary.js';
 import statsRoutes from './routes/stats.js';
 import settingsRoutes from './routes/settings.js';
+import paypalRoutes from './routes/paypal.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -90,6 +91,7 @@ app.use('/api/availability', availabilityRoutes);
 app.use('/api/itinerary', itineraryRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/paypal', paypalRoutes);
 
 // ── Health check ──
 app.get('/api/health', (req, res) => {

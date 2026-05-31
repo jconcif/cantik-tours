@@ -8,7 +8,8 @@ import {
   Clock, MapPin, Coffee, Camera, Waves, Map, Activity, Upload,
   ChevronLeft, ChevronRight, CreditCard, Users
 } from 'lucide-react';
-import { getItinerary, submitCheckin, uploadReceipt } from '../services/api';
+import { getItinerary, submitCheckin, uploadReceipt, capturePayPalPayment } from '../services/api';
+import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
 import { useCurrency } from '../context/CurrencyContext';
@@ -1130,41 +1131,100 @@ export default function ItineraryPage() {
                 >
                   {en ? 'USD Account' : 'Cuenta USD'}
                 </button>
+                <button
+                  onClick={() => setPaymentTab('paypal')}
+                  className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${paymentTab === 'paypal' ? 'bg-white dark:bg-[#2a2a2a] text-[#00457C] dark:text-[#0079C1] shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'}`}
+                >
+                  PayPal / Tarjeta
+                </button>
               </div>
 
-              {/* Bank Details */}
-              <div className="space-y-5 mb-10">
-                {[
-                  { label: en ? 'BENEFICIARY' : 'BENEFICIARIO', value: 'Javier Ignacio Contreras Cifuentes', id: 'name' },
-                  ...(paymentTab === 'eur' ? [
-                    { label: 'IBAN', value: 'BE97 9673 8690 2549', id: 'iban', mono: true },
-                    { label: 'SWIFT / BIC', value: 'TRWIBEB1XXX', id: 'bic', mono: true },
-                    { label: en ? 'BANK' : 'BANCO', value: 'Wise, Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium', id: 'bank', noCopy: true }
-                  ] : [
-                    { label: en ? 'ACCOUNT NO.' : 'CUENTA', value: '214247934891', id: 'acc', mono: true },
-                    { label: en ? 'ROUTING' : 'RUTEO', value: '101019628', id: 'route', mono: true },
-                    { label: 'SWIFT / BIC', value: 'TRWIUS35XXX', id: 'bic_us', mono: true },
-                    { label: en ? 'BANK' : 'BANCO', value: 'Wise US Inc, 108 W 13th St, Wilmington, DE, 19801, USA', id: 'bank_us', noCopy: true }
-                  ])
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start justify-between group">
-                    <div className="flex-1 pr-4">
-                      <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">{item.label}</div>
-                      <div className={`text-sm ${item.mono ? 'font-mono tracking-wider' : ''} font-bold ${text} ${item.noCopy ? 'leading-snug opacity-70 text-xs' : ''}`}>
-                        {item.value}
-                      </div>
-                    </div>
-                    {!item.noCopy && (
-                      <button 
-                        onClick={() => handleCopy(item.value, item.id)} 
-                        className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${copiedField === item.id ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-100 dark:bg-white/5 text-gray-400 hover:text-primary hover:bg-primary/10'}`}
-                      >
-                        {copiedField === item.id ? <CheckCircle2 size={14} /> : <Copy size={14} />}
-                      </button>
-                    )}
+              {/* Bank Details / PayPal */}
+              {paymentTab === 'paypal' ? (
+                <div className="mb-10 text-center">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
+                    {en ? 'PAY SECURELY VIA PAYPAL' : 'PAGO SEGURO CON PAYPAL'}
                   </div>
-                ))}
-              </div>
+                  <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: currency }}>
+                    <PayPalButtons 
+                      style={{ layout: "vertical", shape: "rect", color: "blue" }}
+                      createOrder={(data, actions) => {
+                        return actions.order.create({
+                          purchase_units: [{
+                            amount: {
+                              value: formatPrice(balance).amount.toString(),
+                              currency_code: currency
+                            },
+                            description: `Booking CT-${ref} - ${booking?.client_name}`
+                          }]
+                        });
+                      }}
+                      onApprove={async (data, actions) => {
+                        try {
+                          setUploadingReceipt(true); // Re-using loading state
+                          const details = await actions.order.capture();
+                          const res = await capturePayPalPayment({
+                            orderID: data.orderID,
+                            bookingRef: ref,
+                            amount: formatPrice(balance).amount,
+                            currency: currency,
+                            payerName: details.payer.name.given_name + ' ' + details.payer.name.surname,
+                            payerEmail: details.payer.email_address
+                          });
+                          if (res.status === 'success') {
+                            showToast(en ? 'Payment successful!' : '¡Pago exitoso!', 'success');
+                            setShowPaymentModal(false);
+                            // Refresh page data
+                            setTimeout(() => window.location.reload(), 1500);
+                          } else {
+                            throw new Error('Server returned error');
+                          }
+                        } catch (err) {
+                          showToast(en ? 'Error validating payment.' : 'Error al validar el pago.', 'error');
+                        } finally {
+                          setUploadingReceipt(false);
+                        }
+                      }}
+                    />
+                  </PayPalScriptProvider>
+                  <p className={`text-xs mt-4 ${sub}`}>
+                    {en ? 'You can pay with your PayPal account or safely with any credit/debit card.' : 'Puedes pagar con tu cuenta PayPal o de forma segura con cualquier tarjeta de crédito/débito.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-5 mb-10">
+                  {[
+                    { label: en ? 'BENEFICIARY' : 'BENEFICIARIO', value: 'Javier Ignacio Contreras Cifuentes', id: 'name' },
+                    ...(paymentTab === 'eur' ? [
+                      { label: 'IBAN', value: 'BE97 9673 8690 2549', id: 'iban', mono: true },
+                      { label: 'SWIFT / BIC', value: 'TRWIBEB1XXX', id: 'bic', mono: true },
+                      { label: en ? 'BANK' : 'BANCO', value: 'Wise, Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium', id: 'bank', noCopy: true }
+                    ] : [
+                      { label: en ? 'ACCOUNT NO.' : 'CUENTA', value: '214247934891', id: 'acc', mono: true },
+                      { label: en ? 'ROUTING' : 'RUTEO', value: '101019628', id: 'route', mono: true },
+                      { label: 'SWIFT / BIC', value: 'TRWIUS35XXX', id: 'bic_us', mono: true },
+                      { label: en ? 'BANK' : 'BANCO', value: 'Wise US Inc, 108 W 13th St, Wilmington, DE, 19801, USA', id: 'bank_us', noCopy: true }
+                    ])
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start justify-between group">
+                      <div className="flex-1 pr-4">
+                        <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">{item.label}</div>
+                        <div className={`text-sm ${item.mono ? 'font-mono tracking-wider' : ''} font-bold ${text} ${item.noCopy ? 'leading-snug opacity-70 text-xs' : ''}`}>
+                          {item.value}
+                        </div>
+                      </div>
+                      {!item.noCopy && (
+                        <button 
+                          onClick={() => handleCopy(item.value, item.id)} 
+                          className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${copiedField === item.id ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-100 dark:bg-white/5 text-gray-400 hover:text-primary hover:bg-primary/10'}`}
+                        >
+                          {copiedField === item.id ? <CheckCircle2 size={14} /> : <Copy size={14} />}
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Upload Section */}
               <div className={`pt-8 border-t ${dark ? 'border-white/10' : 'border-gray-100'}`}>

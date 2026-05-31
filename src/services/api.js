@@ -96,6 +96,8 @@ export const getItinerary      = (ref) => get(`/api/itinerary?ref=${encodeURICom
 export const submitCheckin     = (data) => post('/api/itinerary/checkin', data);
 export const uploadReceipt     = (bookingId, data) => post(`/api/bookings/${bookingId}/receipt`, data);
 
+export const capturePayPalPayment = (data) => post('/api/paypal/capture', data);
+
 export const getPublicReviews = async (tourId) => {
   try {
     const url = tourId ? `/api/reviews/public?tour_id=${encodeURIComponent(tourId)}` : '/api/reviews/public';
