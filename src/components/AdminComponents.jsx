@@ -247,12 +247,19 @@ const LanguageBuilder = ({ value, onChange }) => {
       {langs.length === 0 && <div style={{fontSize:'12px', color:'#555', textAlign:'center', padding:'10px 0'}}>Sin idiomas registrados</div>}
       {langs.map((l, idx) => (
         <div key={idx} style={{display:'flex', gap:'8px', alignItems:'center'}}>
-          <input 
+          <select 
             value={l.lang} 
             onChange={(e)=>updateLang(idx, 'lang', e.target.value)} 
-            placeholder="Ej. Español"
-            style={{flex:1, padding:'8px', borderRadius:'8px', background:'#222', border:'1px solid #444', color:'#fff', fontSize:'12px', outline:'none'}}
-          />
+            style={{flex:1, padding:'8px', borderRadius:'8px', background:'#222', border:'1px solid #444', color:'#fff', fontSize:'12px', outline:'none', cursor:'pointer'}}
+          >
+            <option value="" disabled>-- Idioma --</option>
+            <option value="Español">Español</option>
+            <option value="Inglés">Inglés</option>
+            <option value="Francés">Francés</option>
+            <option value="Alemán">Alemán</option>
+            <option value="Portugués">Portugués</option>
+            <option value="Indonesio">Indonesio</option>
+          </select>
           <select 
             value={l.level}
             onChange={(e)=>updateLang(idx, 'level', e.target.value)}
