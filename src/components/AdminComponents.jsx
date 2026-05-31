@@ -182,7 +182,8 @@ export const DriverAssignModal = ({data,drivers,onChange,bookings=[]}) => {
                 <div style={{fontWeight:900, fontSize:'14px', color:'#fff'}}>{d.name} <span style={{fontSize:'10px', color:'#888', fontWeight:400}}>({d.driver_code || 'Sin Código'})</span></div>
                 <div style={{fontSize:'11px', color:'#888', marginTop:'4px', display:'flex', alignItems:'center'}}>
                    {renderLanguages(d.languages)}
-                   {d.vehicle_pax && <span>🚗 {d.vehicle_pax} PAX</span>}
+                   {d.vehicle_brand_model && <span>🚗 {d.vehicle_brand_model} {d.vehicle_pax ? `(${d.vehicle_pax} PAX)` : ''}</span>}
+                   {!d.vehicle_brand_model && d.vehicle_pax && <span>🚗 {d.vehicle_pax} PAX</span>}
                 </div>
               </div>
               <div style={{
@@ -265,10 +266,10 @@ const LanguageBuilder = ({ value, onChange }) => {
             onChange={(e)=>updateLang(idx, 'level', e.target.value)}
             style={{padding:'8px', borderRadius:'8px', background:'#222', border:'1px solid #444', color:'#fff', fontSize:'12px', outline:'none', cursor:'pointer'}}
           >
-            <option value="Básico">Básico (A1/A2)</option>
-            <option value="Intermedio">Intermedio (B1/B2)</option>
-            <option value="Avanzado">Avanzado (C1)</option>
-            <option value="Nativo">Nativo (C2)</option>
+            <option value="Básico">Básico</option>
+            <option value="Intermedio">Intermedio</option>
+            <option value="Avanzado">Avanzado</option>
+            <option value="Nativo">Nativo</option>
           </select>
           <button type="button" onClick={()=>removeLang(idx)} style={{background:'#ef444422', color:'#ef4444', border:'none', borderRadius:'8px', width:'32px', height:'32px', display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', fontWeight:900}}>X</button>
         </div>
