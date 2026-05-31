@@ -18,7 +18,7 @@ const formatPrice = (price) => {
  * Send Booking Confirmation Email to the Client
  */
 export const sendClientConfirmation = async (booking) => {
-  if (!globalSettings.sendToClient) {
+  if (!globalSettings.sendClientOnBooking) {
     console.log(`⚠️ Client confirmation email disabled in settings for reference ${booking.reference || booking.id}`);
     return { status: 'disabled_in_settings' };
   }
@@ -253,7 +253,7 @@ export const sendClientConfirmation = async (booking) => {
  * Send Booking Alert Email to Admin
  */
 export const sendAdminAlert = async (booking) => {
-  if (!globalSettings.sendToAdmin) {
+  if (!globalSettings.sendAdminOnBooking) {
     console.log(`⚠️ Admin alert email disabled in settings for reference ${booking.reference || booking.id}`);
     return { status: 'disabled_in_settings' };
   }
@@ -352,7 +352,7 @@ export const sendAdminAlert = async (booking) => {
  * Send Alert to Admin when a payment receipt is uploaded
  */
 export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
-  if (!globalSettings.sendToAdmin) {
+  if (!globalSettings.sendAdminOnPayment) {
     console.log(`⚠️ Receipt alert email disabled in settings for reference ${booking.reference || booking.id}`);
     return { status: 'disabled_in_settings' };
   }

@@ -1,17 +1,21 @@
 export const globalSettings = {
-  sendToAdmin: true,
-  sendToClient: true,
+  sendClientOnBooking: true,
+  sendAdminOnBooking: true,
+  sendAdminOnPayment: true,
   exchangeRate: 1.08 // Default rate
 };
 
 export const getGlobalSettings = () => globalSettings;
 
 export const updateGlobalSettings = (settings) => {
-  if (typeof settings.sendToAdmin === 'boolean') {
-    globalSettings.sendToAdmin = settings.sendToAdmin;
+  if (typeof settings.sendClientOnBooking === 'boolean') {
+    globalSettings.sendClientOnBooking = settings.sendClientOnBooking;
   }
-  if (typeof settings.sendToClient === 'boolean') {
-    globalSettings.sendToClient = settings.sendToClient;
+  if (typeof settings.sendAdminOnBooking === 'boolean') {
+    globalSettings.sendAdminOnBooking = settings.sendAdminOnBooking;
+  }
+  if (typeof settings.sendAdminOnPayment === 'boolean') {
+    globalSettings.sendAdminOnPayment = settings.sendAdminOnPayment;
   }
   if (typeof settings.exchangeRate === 'number') {
     globalSettings.exchangeRate = settings.exchangeRate;
