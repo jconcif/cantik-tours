@@ -1,15 +1,16 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
-import { getEmailSettings, updateEmailSettings } from '../services/settings.js';
+import { getGlobalSettings, updateGlobalSettings } from '../services/settings.js';
 
 const router = Router();
 
-router.get('/emails', requireAuth, (req, res) => {
-  res.json({ status: 'success', data: getEmailSettings() });
+// Public endpoint so the frontend can fetch the exchange rate
+router.get('/global', (req, res) => {
+  res.json({ status: 'success', data: getGlobalSettings() });
 });
 
-router.post('/emails', requireAuth, (req, res) => {
-  const updated = updateEmailSettings(req.body);
+router.post('/global', requireAuth, (req, res) => {
+  const updated = updateGlobalSettings(req.body);
   res.json({ status: 'success', data: updated });
 });
 

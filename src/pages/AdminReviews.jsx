@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback, useContext } from 're
 import * as api from '../services/api';
 import { login as apiLogin, logout, verifyToken } from '../services/api';
 import { BookingForm, DriverForm, ReviewForm, CouponForm, Modal, FinancialManagement, ItineraryEditor, DriverAssignModal, PassengerManagement } from '../components/AdminComponents';
-import { EmailSettings } from '../components/EmailSettings';
+import { GlobalSettings } from '../components/GlobalSettings';
 import { 
   MessageCircle, Ticket, Star, Pencil, MapPin, Wallet, Trash2, 
   Globe, Sun, Moon, DollarSign, Euro, LogOut, LayoutDashboard,
@@ -1499,7 +1499,7 @@ export default function AdminPanel() {
         )}
 
         {tab==='settings'&&(
-          <EmailSettings />
+          <GlobalSettings />
         )}
 
         {modal&&(

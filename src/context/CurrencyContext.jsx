@@ -1,14 +1,23 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getGlobalSettings } from '../services/api';
 
 const CurrencyContext = createContext();
-
-// Fixed rate — update manually each quarter
-const EUR_TO_USD = 1.18;
 
 export const CurrencyProvider = ({ children }) => {
     const [currency, setCurrency] = useState(() => {
         return localStorage.getItem('currency') || 'EUR';
     });
+    
+    // Default fallback rate, will be updated via API
+    const [exchangeRate, setExchangeRate] = useState(1.08);
+
+    useEffect(() => {
+        getGlobalSettings().then(res => {
+            if (res.data && res.data.exchangeRate) {
+                setExchangeRate(res.data.exchangeRate);
+            }
+        }).catch(err => console.error('Failed to fetch exchange rate', err));
+    }, []);
 
     const toggleCurrency = () => {
         const next = currency === 'EUR' ? 'USD' : 'EUR';
@@ -18,7 +27,7 @@ export const CurrencyProvider = ({ children }) => {
 
     const formatPrice = (eurPrice) => {
         if (currency === 'USD') {
-            return { symbol: '$', amount: Math.round(eurPrice * EUR_TO_USD) };
+            return { symbol: '$', amount: Math.round(eurPrice * exchangeRate) };
         }
         return { symbol: '€', amount: eurPrice };
     };
