@@ -279,7 +279,7 @@ export const sendAdminAlert = async (booking) => {
 
   const referenceCode = `CT-${(booking.reference || String(booking.id)).replace('CT-', '')}`;
   const frontendUrl = process.env.FRONTEND_URL || 'https://cantiktours.com';
-  const adminGeneralLink = `${frontendUrl}/admin`;
+  const adminGeneralLink = `${frontendUrl}/es/cantik-admin`;
   const adminBookingLink = `${frontendUrl}/booking?ref=${referenceCode}`;
 
   const fromName = 'Cantik Tours Alerts';
@@ -386,7 +386,7 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
   const serverUrl = process.env.API_URL || 'http://localhost:3001';
   const receiptFullUrl = receiptRelativeUrl.startsWith('data:') ? receiptRelativeUrl : `${serverUrl}${receiptRelativeUrl}`;
   const frontendUrl = process.env.FRONTEND_URL || 'https://cantiktours.com';
-  const adminGeneralLink = `${frontendUrl}/admin`;
+  const adminGeneralLink = `${frontendUrl}/es/cantik-admin`;
   const adminBookingLink = `${frontendUrl}/booking?ref=${referenceCode}`;
 
   const fromName = 'Cantik Tours Alerts';
