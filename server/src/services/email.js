@@ -94,7 +94,6 @@ export const sendClientConfirmation = async (booking) => {
           h1 {
             font-size: 20px;
             font-weight: 900;
-            text-transform: uppercase;
             letter-spacing: 1px;
             margin-top: 0;
             color: #0B0F19;
@@ -128,14 +127,20 @@ export const sendClientConfirmation = async (booking) => {
             color: #777777;
             text-transform: uppercase;
             letter-spacing: 1px;
+            width: 45%;
+            vertical-align: top;
           }
           .value {
             font-weight: 800;
             color: #0B0F19;
+            text-align: right;
+            vertical-align: top;
           }
           .value-primary {
             font-weight: 900;
             color: #00A8C5;
+            text-align: right;
+            vertical-align: top;
           }
           .btn-container {
             text-align: center;
@@ -182,35 +187,37 @@ export const sendClientConfirmation = async (booking) => {
             <p>¡Qué alegría que nos elijas para guiarte en esta aventura! Hemos recibido y registrado con éxito tu reserva. A continuación tienes todos los detalles importantes:</p>
             
             <div class="ticket-card">
-              <div class="ticket-row">
-                <span class="label">Código de Reserva</span>
-                <span class="value" style="font-family: monospace; font-size: 15px; color: #13C8EC;">${referenceCode}</span>
-              </div>
-              <div class="ticket-row">
-                <span class="label">Experiencia</span>
-                <span class="value">${booking.tour_title}</span>
-              </div>
-              <div class="ticket-row">
-                <span class="label">Plan / Servicio</span>
-                <span class="value" style="text-transform: uppercase;">${
-                  booking.experience === 'economy' ? 'S - Conductor Local (Inglés)' :
-                  booking.experience === 'comfort' ? 'M - Guía Profesional (Inglés)' :
-                  booking.experience === 'elite' ? 'L - Guía Profesional (Español)' :
-                  booking.experience
-                }</span>
-              </div>
-              <div class="ticket-row">
-                <span class="label">Fecha del Tour</span>
-                <span class="value">${booking.booking_date}</span>
-              </div>
-              <div class="ticket-row">
-                <span class="label">Pasajeros</span>
-                <span class="value">${booking.pax} PAX</span>
-              </div>
-              <div class="ticket-row">
-                <span class="label">Total</span>
-                <span class="value-primary">${formatPrice(booking.total_price)}</span>
-              </div>
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td class="label" style="padding-bottom: 22px;">Código de Reserva</td>
+                  <td class="value" style="padding-bottom: 22px; font-family: monospace; font-size: 15px; color: #13C8EC;">${referenceCode}</td>
+                </tr>
+                <tr>
+                  <td class="label" style="padding-bottom: 22px;">Experiencia</td>
+                  <td class="value" style="padding-bottom: 22px;">${booking.tour_title}</td>
+                </tr>
+                <tr>
+                  <td class="label" style="padding-bottom: 22px;">Plan / Servicio</td>
+                  <td class="value" style="padding-bottom: 22px;">${
+                    booking.experience === 'economy' ? 'S - Conductor Local (Inglés)' :
+                    booking.experience === 'comfort' ? 'M - Guía Profesional (Inglés)' :
+                    booking.experience === 'elite' ? 'L - Guía Profesional (Español)' :
+                    booking.experience
+                  }</td>
+                </tr>
+                <tr>
+                  <td class="label" style="padding-bottom: 22px;">Fecha del Tour</td>
+                  <td class="value" style="padding-bottom: 22px;">${booking.booking_date}</td>
+                </tr>
+                <tr>
+                  <td class="label" style="padding-bottom: 22px;">Pasajeros</td>
+                  <td class="value" style="padding-bottom: 22px;">${booking.pax} PAX</td>
+                </tr>
+                <tr>
+                  <td class="label" style="padding-top: 18px; border-top: 1px dashed #d1d5db;">Total</td>
+                  <td class="value-primary" style="padding-top: 18px; border-top: 1px dashed #d1d5db;">${formatPrice(booking.total_price)}</td>
+                </tr>
+              </table>
             </div>
 
             <p>Para ver tu itinerario detallado, subir tu comprobante de pago o completar el registro de viajeros (check-in), haz clic en el siguiente enlace de acceso personalizado:</p>
@@ -226,7 +233,7 @@ export const sendClientConfirmation = async (booking) => {
           </div>
           <div class="footer">
             Cantik Tours Bali © ${new Date().getFullYear()}<br>
-            Cualquier duda, contáctanos a <a href="mailto:hola@cantiktours.com">hola@cantiktours.com</a> o por WhatsApp al <a href="https://wa.me/34643532724">+34 643 53 27 24</a>.
+            Cualquier duda, contáctanos a <a href="mailto:info@cantiktours.com">info@cantiktours.com</a> o por WhatsApp al <a href="https://wa.me/34643532724">+34 643 53 27 24</a>.
           </div>
         </div>
       </body>
@@ -320,7 +327,12 @@ export const sendAdminAlert = async (booking) => {
               <tr><td class="label">Fecha del Tour:</td><td class="value">${booking.booking_date}</td></tr>
               <tr><td class="label">Pasajeros:</td><td class="value">${booking.pax} PAX</td></tr>
               <tr><td class="label">Hotel Recogida:</td><td class="value">${booking.hotel || 'No provisto'}</td></tr>
-              <tr><td class="label">Plan / Servicio:</td><td class="value" style="text-transform: uppercase;">${booking.experience}</td></tr>
+              <tr><td class="label">Plan / Servicio:</td><td class="value">${
+                booking.experience === 'economy' ? 'S - Conductor Local (Inglés)' :
+                booking.experience === 'comfort' ? 'M - Guía Profesional (Inglés)' :
+                booking.experience === 'elite' ? 'L - Guía Profesional (Español)' :
+                booking.experience
+              }</td></tr>
               <tr><td class="label">Precio Total:</td><td class="value" style="color:#00A8C5; font-weight:bold; font-size:16px;">${formatPrice(booking.total_price)}</td></tr>
             </table>
             <div style="text-align: center; margin-top: 25px;">
@@ -416,7 +428,12 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
             <ul>
               <li><strong>Fecha del Tour:</strong> ${booking.booking_date}</li>
               <li><strong>Total a Pagar:</strong> ${formatPrice(booking.total_price)}</li>
-              <li><strong>Plan Elegido:</strong> <span style="text-transform:uppercase;">${booking.experience}</span></li>
+              <li><strong>Plan Elegido:</strong> <span>${
+                booking.experience === 'economy' ? 'S - Conductor Local (Inglés)' :
+                booking.experience === 'comfort' ? 'M - Guía Profesional (Inglés)' :
+                booking.experience === 'elite' ? 'L - Guía Profesional (Español)' :
+                booking.experience
+              }</span></li>
             </ul>
             
             <div style="text-align: center; margin: 25px 0; background-color: #f9fafb; padding: 15px; border-radius: 8px; border: 1px dashed #d1d5db;">
