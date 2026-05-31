@@ -20,7 +20,7 @@ const parseLocalDate = (dateStr) => {
   return new Date(parts[0], parseInt(parts[1], 10) - 1, parts[2]);
 };
 const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',tour_title:'',total_price:'',deposit_amount:'',pax:2,payment_status:'requested',driver_id:'',experience:'driver_en',reference:'',notes:''};
-const emptyDriver = {name:'',phone:'',zone:'',vehicle_brand_model:'',vehicle_year:'',vehicle_pax:'',bank_account:'',license_plate:'',languages:''};
+const emptyDriver = {name:'',phone:'',zone:'',vehicle_brand_model:'',vehicle_year:'',vehicle_pax:'',bank_account:'',license_plate:'',languages:'',driver_code:'',notes:''};
 const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
 const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
 const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup','settings'];
@@ -87,6 +87,9 @@ export default function AdminPanel() {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [sortBy, setSortBy] = useState('tour_date_desc');
   const [driverFilter, setDriverFilter] = useState('ALL');
+  const [driverLangSearch, setDriverLangSearch] = useState('');
+  const [driverPaxSearch, setDriverPaxSearch] = useState('');
+
   const [showFilters, setShowFilters] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [modal, setModal] = useState(null);
@@ -408,6 +411,15 @@ export default function AdminPanel() {
         } else {
           result = result.filter(x => String(x.driver_id) === driverFilter);
         }
+      }
+    }
+    
+    if (tab === 'drivers') {
+      if (driverLangSearch) {
+        result = result.filter(x => (x.languages || '').toLowerCase().includes(driverLangSearch.toLowerCase()));
+      }
+      if (driverPaxSearch) {
+        result = result.filter(x => (x.vehicle_pax || 0) >= parseInt(driverPaxSearch, 10));
       }
     }
     
@@ -843,7 +855,7 @@ export default function AdminPanel() {
           <div style={{display:'flex', gap:'12px', marginBottom:'16px', flexWrap:'wrap', alignItems:'center'}}>
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'1 1 200px', padding:'12px', borderRadius:'14px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', minWidth:'150px'}}/>
             
-            {tab==='bookings' && (
+            {['bookings', 'drivers'].includes(tab) && (
               <button 
                 onClick={() => setShowFilters(!showFilters)} 
                 style={{
@@ -873,7 +885,7 @@ export default function AdminPanel() {
             </div>
           </div>
 
-          {tab==='bookings' && showFilters && (
+          {['bookings', 'drivers'].includes(tab) && showFilters && (
             <div style={{
               display:'flex', 
               gap:'12px', 
@@ -884,7 +896,9 @@ export default function AdminPanel() {
               borderRadius:'18px', 
               border:`1px solid ${theme.border}`
             }}>
-              {/* Selector de Orden */}
+              {tab === 'bookings' && (
+                <>
+                  {/* Selector de Orden */}
               <div style={{display:'flex', flexDirection:'column', gap:'6px', flex:'1 1 200px'}}>
                 <label style={{fontSize:'10px', fontWeight:900, color:'#888', textTransform:'uppercase'}}>Ordenar por</label>
                 <select 
@@ -950,6 +964,31 @@ export default function AdminPanel() {
                   })}
                 </div>
               </div>
+              </>
+              )}
+              {tab === 'drivers' && (
+                <>
+                  <div style={{display:'flex', flexDirection:'column', gap:'6px', flex:'1 1 200px'}}>
+                    <label style={{fontSize:'10px', fontWeight:900, color:'#888', textTransform:'uppercase'}}>Idioma Requerido</label>
+                    <input 
+                      value={driverLangSearch} 
+                      onChange={e=>setDriverLangSearch(e.target.value)} 
+                      placeholder="Ej: Español, Inglés..."
+                      style={{padding:'12px', borderRadius:'12px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', outline:'none', width:'100%'}}
+                    />
+                  </div>
+                  <div style={{display:'flex', flexDirection:'column', gap:'6px', flex:'1 1 200px'}}>
+                    <label style={{fontSize:'10px', fontWeight:900, color:'#888', textTransform:'uppercase'}}>Capacidad Mínima (PAX)</label>
+                    <input 
+                      type="number"
+                      value={driverPaxSearch} 
+                      onChange={e=>setDriverPaxSearch(e.target.value)} 
+                      placeholder="Ej: 4"
+                      style={{padding:'12px', borderRadius:'12px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', outline:'none', width:'100%'}}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           )}
           {tab==='bookings'&&filter(bookings).map(b=>(
@@ -1143,6 +1182,7 @@ export default function AdminPanel() {
                 </div>
               </div>
               <div style={{display:'flex',gap:'6px'}}>
+                <button style={{...s.btn('#ffffff15','#fff'), height:'36px', padding:'0 12px', fontSize:'11px', gap:'6px'}} title="Historial" onClick={()=>setModal({type:'driver_history', data:d})}><Clipboard size={14} /> Historial</button>
                 <button style={{...s.btn('#ffffff15','#fff'), width:'36px', height:'36px', padding:0}} title="Editar" onClick={()=>openEdit('driver',d)}><Pencil size={16} /></button>
                 <button style={{...s.btn('#ef444422','#ef4444'), width:'36px', height:'36px', padding:0}} title="Eliminar" onClick={()=>del('driver',d.id)}><Trash2 size={16} /></button>
               </div>
@@ -1503,12 +1543,14 @@ export default function AdminPanel() {
                           ? 'Asignar Chofer'
                           : modal.type === 'more_actions'
                             ? 'Más Acciones de Reserva'
-                            : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
+                            : modal.type === 'driver_history'
+                              ? 'Historial de Chofer'
+                              : `${modal.action==='create'?'Nuevo':'Editar'} ${TLABEL[modal.type] || modal.type}`
             } 
             onClose={()=>setModal(null)} 
             onSave={save} 
             loading={loading} 
-            hideFooter={['finance', 'itinerary', 'logs', 'passengers', 'more_actions'].includes(modal.type) || modal.action === 'delete'}
+            hideFooter={['finance', 'itinerary', 'logs', 'passengers', 'more_actions', 'driver_history'].includes(modal.type) || modal.action === 'delete'}
           >
             {modal.action === 'delete' ? (
                <div style={{textAlign:'center', padding:'20px 0'}}>
@@ -1576,6 +1618,30 @@ export default function AdminPanel() {
                       <button style={{...s.btn('#ef444411','#ef4444'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%', marginTop:'16px'}} onClick={()=>{setModal({type:'booking', action:'delete', data:{id:b.id}});}}>
                         <Trash2 size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Eliminar Reserva</span>
                       </button>
+                    </div>
+                  );
+                })()}
+                {modal.type==='driver_history' && (() => {
+                  const drv = modal.data;
+                  const driverBookings = bookings.filter(b => b.driver_id === drv.id).sort((a,b)=>new Date(b.booking_date)-new Date(a.booking_date));
+                  return (
+                    <div style={{display:'flex', flexDirection:'column', gap:'12px', maxHeight:'60vh', overflowY:'auto'}}>
+                      <h4 style={{fontSize:'16px', fontWeight:900, marginBottom:'8px', color:C}}>Viajes Asignados a {drv.name}</h4>
+                      {driverBookings.length === 0 ? (
+                        <p style={{color:'#666', fontSize:'13px', textAlign:'center', padding:'20px 0'}}>No tiene viajes registrados.</p>
+                      ) : (
+                        driverBookings.map(b => (
+                          <div key={b.id} style={{padding:'12px', background:'#ffffff05', border:`1px solid #ffffff11`, borderRadius:'12px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+                            <div>
+                              <div style={{fontWeight:900, fontSize:'14px'}}>{new Date(b.booking_date).toLocaleDateString()} - {b.tour_title}</div>
+                              <div style={{fontSize:'12px', color:'#888'}}>Cliente: {b.client_name} • Pax: {b.pax} • Estado: {b.payment_status}</div>
+                            </div>
+                            <div style={{fontWeight:900, color:C}}>
+                              Ref: {b.reference || b.id.substring(0,4)}
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   );
                 })()}

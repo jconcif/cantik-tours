@@ -335,7 +335,20 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                             </div>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="p-8 max-h-[80vh] overflow-y-auto custom-scrollbar overflow-x-hidden">
+                        <form onSubmit={handleSubmit} className="relative p-8 max-h-[80vh] overflow-y-auto custom-scrollbar overflow-x-hidden">
+                            <AnimatePresence>
+                                {isSubmitting && (
+                                    <motion.div initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}} className="absolute inset-0 z-50 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md flex flex-col items-center justify-center text-center p-8">
+                                        <Loader2 size={56} className="animate-spin text-primary mb-6" />
+                                        <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-3">
+                                            {i18n.language === 'en' ? 'Preparing your Experience...' : 'Preparando tu Experiencia...'}
+                                        </h3>
+                                        <p className="text-sm font-bold text-gray-500 dark:text-gray-400 leading-relaxed max-w-[80%] mx-auto">
+                                            {i18n.language === 'en' ? 'Saving your booking. You will be redirected to your live ticket momentarily.' : 'Guardando tu reserva. Serás redirigido a tu boleto en un momento.'}
+                                        </p>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                             <AnimatePresence mode="wait">
                                 {step === 1 && isUbudStops && (
                                     <motion.div key="step1-stops" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-6">

@@ -129,18 +129,66 @@ export const DriverAssignModal = ({data,drivers,onChange,bookings=[]}) => {
         <div style={{fontSize:'12px', color:'#11BDDB', marginTop:'4px'}}>📅 Fecha: {data.booking_date}</div>
       </div>
 
-      <Select 
-        label="Seleccionar Chofer" 
-        value={data.driver_id} 
-        onChange={v=>onChange('driver_id',v)} 
-        options={[{value:'',label:'-- Sin Asignar --'},...drivers.map(d=>({value:d.id,label:d.name}))]} 
-      />
+      <div style={{display:'flex', flexDirection:'column', gap:'8px', maxHeight:'300px', overflowY:'auto', paddingRight:'4px'}}>
+        <label style={{fontSize:'12px', fontWeight:900, color:'#666'}}>Seleccionar Chofer</label>
+        <div 
+          onClick={()=>onChange('driver_id','')} 
+          style={{padding:'12px', borderRadius:'12px', border:!data.driver_id ? '2px solid #11BDDB' : '1px solid #333', background:!data.driver_id ? '#11BDDB11' : '#1a1a1a', cursor:'pointer'}}
+        >
+          <div style={{fontWeight:900, fontSize:'13px', color:'#fff'}}>-- Sin Asignar --</div>
+        </div>
+        {drivers.map(d => {
+          // Check if this driver is busy on this date
+          const isBusy = bookings.some(b => {
+             if (b.id === data.id) return false;
+             if (b.payment_status === 'cancelled') return false;
+             if (!b.driver_id || !b.booking_date) return false;
+             return String(b.driver_id) === String(d.id) && b.booking_date.split('T')[0] === data.booking_date.split('T')[0];
+          });
+          const isSelected = String(data.driver_id) === String(d.id);
+
+          return (
+            <div 
+              key={d.id}
+              onClick={()=>onChange('driver_id', d.id)}
+              style={{
+                padding:'12px', 
+                borderRadius:'12px', 
+                border:isSelected ? '2px solid #11BDDB' : '1px solid #333', 
+                background:isSelected ? '#11BDDB11' : '#1a1a1a',
+                cursor:'pointer',
+                display:'flex',
+                justifyContent:'space-between',
+                alignItems:'center'
+              }}
+            >
+              <div>
+                <div style={{fontWeight:900, fontSize:'14px', color:'#fff'}}>{d.name} <span style={{fontSize:'10px', color:'#888', fontWeight:400}}>({d.driver_code || 'Sin Código'})</span></div>
+                <div style={{fontSize:'11px', color:'#888', marginTop:'4px'}}>
+                   {d.languages && <span style={{marginRight:'8px'}}>🗣️ {d.languages}</span>}
+                   {d.vehicle_pax && <span>🚗 {d.vehicle_pax} PAX</span>}
+                </div>
+              </div>
+              <div style={{
+                padding:'4px 8px',
+                borderRadius:'8px',
+                fontSize:'10px',
+                fontWeight:900,
+                background:isBusy ? '#ef444422' : '#10b98122',
+                color:isBusy ? '#ef4444' : '#10b981'
+              }}>
+                {isBusy ? 'OCUPADO' : 'DISPONIBLE'}
+              </div>
+            </div>
+          )
+        })}
+      </div>
 
       {conflict && (
         <div style={{background:'#ef444415', color:'#ef4444', border:'1px solid #ef444444', padding:'16px', borderRadius:'16px', fontSize:'12px', fontWeight:900, display:'flex', gap:'10px', alignItems:'center'}}>
           <span style={{fontSize:'16px'}}>⚠️</span>
           <span>
-            ¡Alerta de Chofer Duplicado! {selectedDriverName} ya está asignado(a) a la reserva de <strong>{conflict.client_name}</strong> ({conflict.tour_title}) para la misma fecha ({conflict.booking_date.split('T')[0]}).
+            ¡Alerta! {selectedDriverName} ya está asignado(a) a la reserva de <strong>{conflict.client_name}</strong> ({conflict.tour_title}) para esta misma fecha.
           </span>
         </div>
       )}
@@ -150,7 +198,10 @@ export const DriverAssignModal = ({data,drivers,onChange,bookings=[]}) => {
 
 export const DriverForm = ({data,onChange}) => (
   <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
-    <Input label="Nombre" value={data.name} onChange={v=>onChange('name',v)} />
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
+      <Input label="Código" value={data.driver_code} onChange={v=>onChange('driver_code',v)} placeholder="Ej: CT-01" />
+      <Input label="Nombre" value={data.name} onChange={v=>onChange('name',v)} />
+    </div>
     <Input label="Teléfono" value={data.phone} onChange={v=>onChange('phone',v)} />
     <Input label="Zona donde vive" value={data.zone} onChange={v=>onChange('zone',v)} />
     <Input label="Matrícula" value={data.license_plate} onChange={v=>onChange('license_plate',v)} />
@@ -163,6 +214,10 @@ export const DriverForm = ({data,onChange}) => (
       <Input label="Idiomas" value={data.languages} onChange={v=>onChange('languages',v)} placeholder="Ej: Español, Inglés" />
     </div>
     <Input label="Cuenta Bancaria (Transferencias)" value={data.bank_account} onChange={v=>onChange('bank_account',v)} />
+    <div style={{display:'flex', flexDirection:'column', gap:'4px'}}>
+      <label style={{fontSize:'12px', fontWeight:900, color:'#666'}}>Notas del Chofer</label>
+      <textarea value={data.notes || ''} onChange={e=>onChange('notes',e.target.value)} style={{background:'#ffffff11', border:'1px solid #ffffff22', color:'#fff', padding:'12px', borderRadius:'12px', minHeight:'80px', outline:'none', resize:'vertical'}} placeholder="Detalles, historial, comportamiento..." />
+    </div>
   </div>
 );
 
