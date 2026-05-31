@@ -237,61 +237,33 @@ const Navbar = () => {
                             ))}
                         </div>
 
-                        {/* Settings row — fixed at bottom */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.35, duration: 0.3 }}
-                            className="flex-shrink-0 px-6 pb-12 bg-gray-50/50 dark:bg-white/[0.02] border-t border-black/5 dark:border-white/10 pt-6"
+                            className="flex-shrink-0 px-6 pb-12 pt-6 flex justify-center items-center gap-3 border-t border-black/5 dark:border-white/10"
                         >
-                            <div className="flex gap-2">
-                                {/* Language */}
-                                <div className="flex flex-1 gap-1 bg-gray-100 dark:bg-white/5 rounded-2xl p-1.5">
-                                    {['es', 'en'].map((lang) => (
-                                        <button
-                                            key={lang}
-                                            onClick={() => {
-                                                i18n.changeLanguage(lang);
-                                                let newPath = location.pathname;
-                                                if (newPath.startsWith('/es/') || newPath === '/es') newPath = newPath.replace(/^\/es/, `/${lang}`);
-                                                else if (newPath.startsWith('/en/') || newPath === '/en') newPath = newPath.replace(/^\/en/, `/${lang}`);
-                                                else newPath = `/${lang}${newPath.startsWith('/') ? newPath : `/${newPath}`}`;
-                                                navigate(newPath + location.search);
-                                            }}
-                                            className={`flex-1 py-3 rounded-xl text-xs font-black uppercase transition-all ${i18n.language.startsWith(lang)
-                                                ? 'bg-white dark:bg-gray-800 text-primary shadow-sm'
-                                                : 'text-gray-400 dark:text-gray-500'
-                                                }`}
-                                        >
-                                            {lang === 'es' ? '🇪🇸 ES' : '🇬🇧 EN'}
-                                        </button>
-                                    ))}
-                                </div>
+                            <button
+                                onClick={toggleLanguage}
+                                className="h-12 px-5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-gray-900 dark:text-white active:scale-95"
+                            >
+                                <Globe size={16} className="mr-2" />
+                                {i18n.language.startsWith('es') ? 'ESPAÑOL' : 'ENGLISH'}
+                            </button>
 
-                                {/* Currency */}
-                                <div className="flex flex-1 gap-1 bg-gray-100 dark:bg-white/5 rounded-2xl p-1.5">
-                                    {['EUR', 'USD'].map((cur) => (
-                                        <button
-                                            key={cur}
-                                            onClick={() => { if (currency !== cur) toggleCurrency(); }}
-                                            className={`flex-1 py-3 rounded-xl text-xs font-black transition-all ${currency === cur
-                                                ? 'bg-white dark:bg-gray-800 text-primary shadow-sm'
-                                                : 'text-gray-400 dark:text-gray-500'
-                                                }`}
-                                        >
-                                            {cur === 'EUR' ? '€ EUR' : '$ USD'}
-                                        </button>
-                                    ))}
-                                </div>
+                            <button
+                                onClick={toggleCurrency}
+                                className="h-12 px-5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-gray-900 dark:text-white active:scale-95"
+                            >
+                                {currency === 'EUR' ? '€ EUR' : '$ USD'}
+                            </button>
 
-                                {/* Dark mode */}
-                                <button
-                                    onClick={toggleDarkMode}
-                                    className="w-14 flex items-center justify-center bg-gray-100 dark:bg-white/5 rounded-2xl text-gray-500 dark:text-gray-400"
-                                >
-                                    {isDark ? <Sun size={18} /> : <Moon size={18} />}
-                                </button>
-                            </div>
+                            <button
+                                onClick={toggleDarkMode}
+                                className="w-12 h-12 rounded-2xl flex items-center justify-center bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-gray-900 dark:text-white active:scale-95"
+                            >
+                                {isDark ? <Sun size={18} /> : <Moon size={18} />}
+                            </button>
                         </motion.div>
 
                     </motion.div>
