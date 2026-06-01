@@ -11,11 +11,16 @@ router.post('/capture', async (req, res) => {
     }
 
     // 1. Obtener la reserva original
-    const { data: booking, error: bookingError } = await supabase
-      .from('bookings')
-      .select('*')
-      .or(`reference.eq.${bookingRef},id.eq.${bookingRef}`)
-      .single();
+    let query = supabase.from('bookings').select('*');
+    // Ensure we don't pass strings with letters to id.eq to prevent PostgREST crashes
+    const cleanRef = bookingRef.replace(/^CT-?/i, '').replace(/^0+/, '');
+    
+    if (/^\d+$/.test(cleanRef)) {
+      query = query.or(`reference.eq.${cleanRef},id.eq.${cleanRef}`);
+    } else {
+      query = query.eq('reference', bookingRef);
+    }
+    const { data: booking, error: bookingError } = await query.single();
 
     if (bookingError || !booking) {
       throw new Error('Booking not found');
