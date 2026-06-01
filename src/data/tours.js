@@ -1266,12 +1266,12 @@ export const tours = [
         reviews: 0
     },
     {
-        id: "tour-prueba",
-        slug: "tour-prueba",
+        id: "tour-test",
+        slug: "tour-test",
         isHidden: true,
-        image: "/uluwatu/uluwatu-temple.webp",
-        title: "Tour de Prueba 1 USD",
-        title_en: "1 USD Bali Test Tour",
+        image: "https://placehold.co/800x600/f3f4f6/a1a1aa?text=No+Image",
+        title: "Tour Test",
+        title_en: "Tour Test",
         price: 1,
         pricing: {
             economy: 1,
