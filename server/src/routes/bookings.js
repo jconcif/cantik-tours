@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { supabase } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
 import { validateBody, sanitize } from '../middleware/validate.js';
-import { sendClientConfirmation, sendAdminAlert, sendReceiptUploadedAlert } from '../services/email.js';
+import { sendClientConfirmation, sendAdminAlert, sendReceiptUploadedAlert, sendPaymentConfirmedEmail } from '../services/email.js';
 import fs from 'fs';
 import path from 'path';
 
