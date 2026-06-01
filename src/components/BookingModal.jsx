@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Calendar, Users, MapPin, MessageCircle, Ticket, Star, Heart, ArrowRight, ArrowLeft, ShieldCheck, User, Phone, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+const formatCT = (val) => 'CT-' + String(val).replace(/^CT-?/i, '').padStart(4, '0');
 import { useNavigate } from 'react-router-dom';
 import { useCurrency } from '../context/CurrencyContext';
 import DatePicker from 'react-datepicker';
@@ -661,13 +662,14 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
 
                                         <div className="space-y-4 pt-1">
 
-                                            {/* Texto explicativo */}
-                                            <p className="text-[12px] font-bold text-gray-500 dark:text-gray-400 leading-relaxed text-center">
-                                                {i18n.language === 'en'
-                                                    ? <>Click <span className="text-gray-800 dark:text-white font-black">"CONFIRM BOOKING"</span> to register your request. You will be redirected to your live Booking Page where you can see the payment instructions and passenger forms.</>
-                                                    : <>Haz clic en <span className="text-gray-800 dark:text-white font-black">"CONFIRMAR RESERVA"</span> para registrar tu solicitud. Serás redirigido a la Ficha de Reserva en vivo, donde podrás ver las instrucciones de pago y registrar los datos de los pasajeros.</>
-                                                }
-                                            </p>
+                                            <div className="text-center bg-gray-50 dark:bg-white/5 rounded-2xl p-4 border border-gray-100 dark:border-white/10 mb-4">
+                                                <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">
+                                                    {i18n.language === 'en' ? 'Almost there!' : '¡Ya casi estamos!'}
+                                                </p>
+                                                <p className="text-[11px] font-bold text-gray-800 dark:text-gray-300 leading-snug">
+                                                    {i18n.language === 'en' ? 'Click confirm to view your live booking dashboard and securely process your payment.' : 'Haz clic en confirmar para ver tu ficha de reserva y pagar de forma segura.'}
+                                                </p>
+                                            </div>
 
                                             {/* CTA Confirm Booking */}
                                             <button type="button" disabled={isSubmitting} onClick={handleConfirmBooking} className={`w-full py-5 rounded-[2rem] bg-primary text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20 active:scale-[0.98] relative overflow-hidden group ${isSubmitting ? 'opacity-80 cursor-not-allowed' : 'hover:opacity-95'}`}>

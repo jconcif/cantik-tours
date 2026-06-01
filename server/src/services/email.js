@@ -453,7 +453,7 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
   const mailOptions = {
     from: `"${fromName}" <${fromEmail}>`,
     to: adminEmail.split(',').map(e => e.trim()),
-    subject: `COMPROBANTE SUBIDO: ${booking.client_name} - ${referenceCode}`,
+    subject: `🧾 Comprobante de Pago Recibido: ${booking.client_name} - ${referenceCode}`,
     html
   };
 

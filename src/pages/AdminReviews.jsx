@@ -11,6 +11,8 @@ import {
 import { useCurrency } from '../context/CurrencyContext';
 import { useDarkMode } from '../context/DarkModeContext';
 
+const formatCT = (val) => 'CT-' + String(val).replace(/^CT-?/i, '').padStart(4, '0');
+
 const C = '#11BDDB';
 
 const parseLocalDate = (dateStr) => {
@@ -67,7 +69,7 @@ const EXP_LABEL = {
 
 const generateVoucher = (b, drivers) => {
   const drv = drivers.find(d => d.id == b.driver_id);
-  const refCode = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
+  const refCode = b.reference ? (b.reference) : String(b.id);
   const bookingUrl = `https://cantiktours.com/booking?ref=${refCode}`;
   const w = window.open('', '_blank');
   w.document.write(`<html><head><title>Voucher Cantik - ${b.client_name}</title><style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');body{font-family:'Inter',sans-serif;margin:0;padding:0;background:#f0f2f5;color:#1a1a1a}.ticket{max-width:800px;margin:40px auto;background:#fff;border-radius:32px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.1)}.header{background:#11BDDB;padding:40px;color:#fff;display:flex;justify-content:space-between;align-items:center}.logo{font-size:32px;font-weight:900}.status-badge{background:rgba(255,255,255,0.2);padding:8px 16px;border-radius:99px;font-size:12px;font-weight:900;text-transform:uppercase}.content{padding:40px;display:grid;grid-template-columns:2fr 1fr;gap:40px}.main-info{border-right:2px dashed #f0f2f5;padding-right:40px}.label{font-size:10px;font-weight:900;color:#11BDDB;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px}.value{font-size:18px;font-weight:700;margin-bottom:24px}.tour-title{font-size:28px;font-weight:900;margin-bottom:32px;color:#11BDDB}.side-info{display:flex;flex-direction:column;align-items:center;text-align:center}.qr-box{background:#f9fafb;padding:20px;border-radius:24px;margin-bottom:16px;border:1px solid #eee}.qr-box img{width:120px;height:120px}.detail-link{display:inline-block;margin-top:12px;padding:8px 16px;background:#11BDDB;color:#fff;text-decoration:none;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:0.5px}.footer-strip{background:#1a1a1a;color:#fff;padding:30px 40px;display:flex;justify-content:space-between;align-items:center}@media print{.no-print{display:none}.ticket{margin:0;border-radius:0;box-shadow:none}}</style></head><body><div class="ticket"><div class="header"><div class="logo">CantikTours</div><div class="status-badge">Voucher de Reserva</div></div><div class="content"><div class="main-info"><div class="label">Tour</div><div class="tour-title">${b.tour_title}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:20px"><div><div class="label">Cliente</div><div class="value">${b.client_name}</div></div><div><div class="label">Fecha</div><div class="value">${parseLocalDate(b.booking_date).toLocaleDateString()}</div></div><div><div class="label">Hotel</div><div class="value">${b.hotel}</div></div><div><div class="label">Chofer</div><div class="value">${drv?drv.name:'Por confirmar'}</div></div></div></div><div class="side-info"><div class="qr-box"><img src="${`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(bookingUrl)}`}"/></div><div class="label">Detalle de tu Reserva</div><div style="font-size:12px;color:#666">Pax: ${b.pax} · ${refCode}</div><a href="${bookingUrl}" target="_blank" class="detail-link no-print">Ver Estado y Pagos →</a></div></div><div class="footer-strip"><div><div style="font-weight:700">¡Disfruta tu viaje!</div><div style="font-size:11px;color:#666">ES/EN: +34 642 51 77 87</div><div style="font-size:10px;color:#666">ID/EN: +62 856 9153 3356</div></div><div style="text-align:right"><div style="font-size:11px;color:#666">cantiktours.com</div></div></div></div><button onclick="window.print()" style="position:fixed;bottom:20px;right:20px;padding:16px 32px;background:#11BDDB;color:#fff;border:none;border-radius:16px;font-weight:900;cursor:pointer" class="no-print">IMPRIMIR</button></body></html>`);
@@ -502,7 +504,7 @@ export default function AdminPanel() {
   };
 
   const copyReviewLink = (b, lang = 'es') => {
-    const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
+    const ref = b.reference ? (b.reference) : String(b.id);
     const dName = b.driver_name || (b.drivers ? b.drivers.name : '');
     const link = `https://cantiktours.com/reviews?ref=${ref}&name=${encodeURIComponent(b.client_name || '')}&tour=${encodeURIComponent(b.tour_id || '')}&driver=${encodeURIComponent(dName)}`;
     navigator.clipboard.writeText(link);
@@ -596,7 +598,7 @@ export default function AdminPanel() {
     const logs = Array.isArray(ext.logs) ? ext.logs : [];
     
     let text = `*BITÁCORA DE OPERACIONES*\n`;
-    text += `*Ref:* CT-${(b.reference || String(b.id)).replace('CT-', '')}\n`;
+    text += `*Ref:* ${formatCT(b.reference || b.id)}\n`;
     text += `*Cliente:* ${b.client_name}\n`;
     text += `*Tour:* ${b.tour_title}\n\n`;
     
@@ -1018,7 +1020,7 @@ export default function AdminPanel() {
                 <div style={{flex:1, minWidth:0}}>
                   <div style={{display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap', marginBottom:'2px'}}>
                     <div style={{fontWeight:900, fontSize: isMobile ? '14px' : '16px', color:'#fff', whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis'}}>{b.client_name}</div>
-                    {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>CT-{b.reference.replace('CT-', '')}</span>}
+                    {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>{formatCT(b.reference || b.id)}</span>}
                     {hasPendingReceipts(b) && (
                        <span 
                          onClick={(e) => {
@@ -1212,9 +1214,9 @@ export default function AdminPanel() {
               <div style={{flex:1}}>
                 <div style={{display:'flex', gap:'8px', alignItems:'center', marginBottom:'4px', flexWrap:'wrap'}}>
                   <div style={{fontWeight:900}}>{r.nombre} {'★'.repeat(Math.max(1, Math.min(5, Math.round(Number(r.puntuacion)) || 5)))}</div>
-                  {r.tour_id && String(r.tour_id).includes('[CT-') && (
+                  {r.tour_id && String(r.tour_id).match(/\[\d+\]/) && (
                     <button style={s.tag(C)} onClick={() => {
-                        const id = r.tour_id && String(r.tour_id).match(/\[CT-(\d+)\]/)?.[1];
+                        const id = r.tour_id && String(r.tour_id).match(/\[(\d+)\]/)?.[1];
                         if(id) {
                            const b = bookings.find(x => x.id == id);
                            if(b) openEdit('booking', b);
@@ -1526,7 +1528,7 @@ export default function AdminPanel() {
             <h3>Seguimiento Post-Venta</h3>
             {recent.length===0&&<p style={{textAlign:'center',color:'#666'}}>No hay tours recientes.</p>}
             {recent.map(b=>{
-              const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`;
+              const ref = b.reference ? (b.reference) : String(b.id);
               const link = `https://cantiktours.com/reviews?ref=${ref}`;
               return (
                 <div key={b.id} style={{...s.card, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -1622,8 +1624,12 @@ export default function AdminPanel() {
                         <Ticket size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Voucher</span>
                       </button>
 
-                      <button style={{...s.btn('#ffffff05','#fff'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%'}} onClick={()=>{ const ref = b.reference ? (b.reference.startsWith('CT-') ? b.reference : `CT-${b.reference}`) : `CT-${b.id}`; navigator.clipboard.writeText(`https://cantiktours.com/booking?ref=${ref}`); toast('Link público copiado ✓', true); setModal(null); }} title="Copiar Link Público">
-                        <ExternalLink size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Link de Booking Público</span>
+                      <button style={{...s.btn('#ffffff05','#fff'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%'}} onClick={()=>{ const ref = b.reference ? (b.reference) : String(b.id); navigator.clipboard.writeText(`https://cantiktours.com/booking?ref=${formatCT(ref)}`); toast('Link copiado ✓', true); setModal(null); }} title="Copiar Link Público">
+                        <ExternalLink size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Copiar Link de Reserva</span>
+                      </button>
+
+                      <button style={{...s.btn('#ffffff05','#fff'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%'}} onClick={()=>{ const ref = b.reference ? (b.reference) : String(b.id); window.open(`https://cantiktours.com/booking?ref=${formatCT(ref)}`, '_blank'); setModal(null); }} title="Abrir Ficha Pública">
+                        <ExternalLink size={20} /><span style={{fontSize:'14px', fontWeight:600}}>Abrir Ficha en Pestaña Nueva</span>
                       </button>
 
                       <button style={{...s.btn('#f59e0b11','#f59e0b'), height:'48px', padding:'0 16px', justifyContent:'flex-start', gap:'12px', width:'100%'}} onClick={()=>{copyReviewLink(b, 'es'); setModal(null);}} title="Copiar Link y Enviar WhatsApp (Español)">
