@@ -30,9 +30,8 @@ router.post('/capture', async (req, res) => {
     const paymentData = {
       booking_id: booking.id,
       amount: amount,
-      method: 'PayPal',
-      status: 'verified',
-      payment_date: new Date().toISOString(),
+      payment_method: 'PayPal',
+      payment_date: new Date().toISOString().split('T')[0],
       notes: `PayPal Order ID: ${orderID}. Payer: ${payerName} (${payerEmail})`
     };
 
