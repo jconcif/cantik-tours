@@ -5,6 +5,7 @@ const settingsFile = path.resolve(process.cwd(), 'settings.json');
 
 export let globalSettings = {
   sendClientOnBooking: true,
+  sendClientConfirmation: true,
   sendAdminOnBooking: true,
   sendAdminOnPayment: true,
   exchangeRate: 1.08 // Default rate
@@ -42,6 +43,10 @@ export const updateGlobalSettings = (settings) => {
   }
   if (typeof settings.sendAdminOnPayment === 'boolean') {
     globalSettings.sendAdminOnPayment = settings.sendAdminOnPayment;
+    changed = true;
+  }
+  if (typeof settings.sendClientConfirmation === 'boolean') {
+    globalSettings.sendClientConfirmation = settings.sendClientConfirmation;
     changed = true;
   }
   if (typeof settings.exchangeRate === 'number') {

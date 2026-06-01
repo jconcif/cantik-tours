@@ -609,7 +609,7 @@ export const sendPaymentConfirmedEmail = async (booking) => {
   const html = isEn ? htmlEn : htmlEs;
 
   const mailOptions = {
-    from: \`"\${fromName}" <\${fromEmail}>\`,
+    from: `"${fromName}" <${fromEmail}>`,
     to: clientEmail,
     subject: subject,
     html: html
@@ -622,7 +622,7 @@ export const sendPaymentConfirmedEmail = async (booking) => {
     }
     const { data, error } = await resend.emails.send(mailOptions);
     if (error) throw error;
-    console.log(\`✅ Client confirmation email sent for reference \${referenceCode}. Resend ID: \${data?.id}\`);
+    console.log(`✅ Client confirmation email sent for reference ${referenceCode}. Resend ID: ${data?.id}`);
     return data;
   } catch (err) {
     console.error('❌ Error sending client confirmation email:', err);

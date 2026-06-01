@@ -5,6 +5,7 @@ import { Mail, DollarSign } from 'lucide-react';
 export const GlobalSettings = () => {
   const [settings, setSettings] = useState({ 
     sendClientOnBooking: true, 
+    sendClientConfirmation: true,
     sendAdminOnBooking: true,
     sendAdminOnPayment: true,
     exchangeRate: 1.08 
@@ -17,6 +18,7 @@ export const GlobalSettings = () => {
       if (res.data) {
         setSettings({
           sendClientOnBooking: res.data.sendClientOnBooking ?? true,
+          sendClientConfirmation: res.data.sendClientConfirmation ?? true,
           sendAdminOnBooking: res.data.sendAdminOnBooking ?? true,
           sendAdminOnPayment: res.data.sendAdminOnPayment ?? true,
           exchangeRate: res.data.exchangeRate ?? 1.08
@@ -67,10 +69,19 @@ export const GlobalSettings = () => {
         
         <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#222', padding:'16px', borderRadius:'16px', marginBottom:'12px', border:'1px solid #444'}}>
           <div>
-            <div style={{fontWeight:900, fontSize:'14px'}}>Enviar confirmación al CLIENTE tras agendar la reserva</div>
+            <div style={{fontWeight:900, fontSize:'14px'}}>Enviar email al CLIENTE tras agendar la reserva</div>
           </div>
           <button onClick={() => toggle('sendClientOnBooking')} disabled={saving} style={{background: settings.sendClientOnBooking ? '#10b981' : '#444', border:'none', borderRadius:'20px', width:'50px', height:'28px', position:'relative', cursor:'pointer', transition:'all 0.3s', opacity: saving ? 0.5 : 1}}>
             <div style={{background:'#fff', borderRadius:'50%', width:'22px', height:'22px', position:'absolute', top:'3px', left: settings.sendClientOnBooking ? '25px' : '3px', transition:'all 0.3s'}}/>
+          </button>
+        </div>
+
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', background:'#222', padding:'16px', borderRadius:'16px', marginBottom:'12px', border:'1px solid #444'}}>
+          <div>
+            <div style={{fontWeight:900, fontSize:'14px'}}>Enviar email al CLIENTE tras confirmar su pago (PayPal o Transferencia)</div>
+          </div>
+          <button onClick={() => toggle('sendClientConfirmation')} disabled={saving} style={{background: settings.sendClientConfirmation ? '#10b981' : '#444', border:'none', borderRadius:'20px', width:'50px', height:'28px', position:'relative', cursor:'pointer', transition:'all 0.3s', opacity: saving ? 0.5 : 1}}>
+            <div style={{background:'#fff', borderRadius:'50%', width:'22px', height:'22px', position:'absolute', top:'3px', left: settings.sendClientConfirmation ? '25px' : '3px', transition:'all 0.3s'}}/>
           </button>
         </div>
 
