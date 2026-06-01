@@ -472,3 +472,159 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
   }
 };
 
+
+/**
+ * Send email to client when payment is confirmed (payment_received)
+ */
+export const sendPaymentConfirmedEmail = async (booking) => {
+  if (globalSettings.sendClientConfirmation === false) {
+    console.log(`⚠️ Client confirmation email disabled in settings for reference ${booking.reference || booking.id}`);
+    return { status: 'disabled_in_settings' };
+  }
+
+  const clientEmail = booking.extras?.client_email || booking.client_email;
+  if (!clientEmail) {
+    console.warn('⚠️ Cannot send payment confirmed email: client_email is missing.');
+    return;
+  }
+
+  const referenceCode = `CT-${(booking.reference || String(booking.id)).replace('CT-', '')}`;
+  const locale = booking.extras?.locale || booking.locale || 'es';
+  const isEn = locale.toLowerCase().includes('en');
+
+  const frontendUrl = process.env.FRONTEND_URL || 'https://cantiktours.com';
+  const dashboardLink = `${frontendUrl}/booking?ref=${referenceCode}`;
+
+  const fromName = 'Cantik Tours';
+  const fromEmail = process.env.SMTP_USER || 'no-reply@cantiktours.com';
+
+  const amountStr = booking.total_price 
+    ? (booking.currency === 'USD' ? `$${booking.total_price} USD` : `€${booking.total_price} EUR`) 
+    : 'Total Registrado';
+
+  const subject = isEn 
+    ? `Payment Confirmed! Your booking with Cantik Tours is secured 🌴`
+    : `¡Pago Confirmado! Tu reserva con Cantik Tours está asegurada 🌴`;
+
+  const htmlEs = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb; padding: 20px; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+          .header { background-color: #0B0F19; padding: 30px; text-align: center; }
+          .logo { font-size: 22px; letter-spacing: 2px; color: #ffffff; font-weight: 900; text-transform: uppercase; }
+          .logo span { font-weight: 300; letter-spacing: 4px; color: #13C8EC; }
+          .content { padding: 30px; }
+          .btn-primary { display: inline-block; background-color: #10B981; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; }
+          h2 { color: #111827; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CANTIK <span>TOURS</span></div>
+          </div>
+          <div class="content">
+            <h2>¡Hola ${booking.client_name.split(' ')[0]}!</h2>
+            <p>¡Buenas noticias! Hemos recibido y validado tu pago exitosamente.</p>
+            <p>Tu reserva <strong>${referenceCode}</strong> está ahora 100% confirmada.</p>
+            
+            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin:0 0 10px 0;"><strong>Detalles del Pago:</strong></p>
+              <ul style="margin:0; padding-left: 20px;">
+                <li><strong>Monto recibido:</strong> ${amountStr}</li>
+                <li><strong>Estado:</strong> Completado ✅</li>
+              </ul>
+            </div>
+
+            <h3>¿Qué sigue?</h3>
+            <p>Puedes revisar todos los detalles de tu itinerario actualizado, la información de tu guía y descargar los comprobantes directamente en tu Ficha de Reserva en vivo:</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${dashboardLink}" class="btn-primary">Ver Ficha de Reserva Aquí</a>
+            </div>
+
+            <p>Nos emociona mucho ser parte de tu aventura en Bali. Recuerda que si tienes alguna pregunta, puedes responder a este correo o contactarnos por WhatsApp.</p>
+            <br/>
+            <p>¡Nos vemos pronto! 🌺<br/><strong>El equipo de Cantik Tours</strong></p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  const htmlEn = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb; padding: 20px; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+          .header { background-color: #0B0F19; padding: 30px; text-align: center; }
+          .logo { font-size: 22px; letter-spacing: 2px; color: #ffffff; font-weight: 900; text-transform: uppercase; }
+          .logo span { font-weight: 300; letter-spacing: 4px; color: #13C8EC; }
+          .content { padding: 30px; }
+          .btn-primary { display: inline-block; background-color: #10B981; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-top: 15px; }
+          h2 { color: #111827; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CANTIK <span>TOURS</span></div>
+          </div>
+          <div class="content">
+            <h2>Hi ${booking.client_name.split(' ')[0]}!</h2>
+            <p>Great news! We have successfully received and validated your payment.</p>
+            <p>Your booking <strong>${referenceCode}</strong> is now 100% confirmed.</p>
+            
+            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+              <p style="margin:0 0 10px 0;"><strong>Payment Details:</strong></p>
+              <ul style="margin:0; padding-left: 20px;">
+                <li><strong>Amount received:</strong> ${amountStr}</li>
+                <li><strong>Status:</strong> Completed ✅</li>
+              </ul>
+            </div>
+
+            <h3>What's next?</h3>
+            <p>You can review all the details of your updated itinerary, your guide's information, and download your receipts directly from your Live Booking Dashboard:</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${dashboardLink}" class="btn-primary">View Booking Dashboard Here</a>
+            </div>
+
+            <p>We are thrilled to be part of your adventure in Bali. If you have any questions, feel free to reply to this email or reach out via WhatsApp.</p>
+            <br/>
+            <p>See you in Bali! 🌺<br/><strong>The Cantik Tours Team</strong></p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  const html = isEn ? htmlEn : htmlEs;
+
+  const mailOptions = {
+    from: \`"\${fromName}" <\${fromEmail}>\`,
+    to: clientEmail,
+    subject: subject,
+    html: html
+  };
+
+  try {
+    if (!resend) {
+      console.log('✉️ [Mock Client Confirmation Email Sent] (No RESEND_API_KEY)');
+      return;
+    }
+    const { data, error } = await resend.emails.send(mailOptions);
+    if (error) throw error;
+    console.log(\`✅ Client confirmation email sent for reference \${referenceCode}. Resend ID: \${data?.id}\`);
+    return data;
+  } catch (err) {
+    console.error('❌ Error sending client confirmation email:', err);
+  }
+};

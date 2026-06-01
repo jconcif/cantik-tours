@@ -349,6 +349,9 @@ router.put('/:id', requireAuth, async (req, res) => {
       updateData.extras = JSON.stringify(updateData.extras);
     }
     
+    // Fetch old to compare payment_status
+    const { data: oldBooking } = await supabase.from('bookings').select('payment_status').eq('id', id).single();
+
     const { data, error } = await supabase
       .from('bookings')
       .update(updateData)
@@ -357,6 +360,11 @@ router.put('/:id', requireAuth, async (req, res) => {
       .single();
 
     if (error) throw error;
+
+    if (oldBooking?.payment_status !== 'payment_received' && data.payment_status === 'payment_received') {
+      sendPaymentConfirmedEmail(data).catch(err => console.error('Error enviando email Confirmacion:', err));
+    }
+
     res.json({ status: 'success', data });
   } catch (err) {
     console.error('Update Booking Error:', err);

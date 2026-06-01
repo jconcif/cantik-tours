@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { supabase } from '../db.js';
+import { sendPaymentConfirmedEmail } from '../services/email.js';
 
 const router = Router();
 
@@ -44,12 +45,18 @@ router.post('/capture', async (req, res) => {
     if (paymentError) throw paymentError;
 
     // 3. Actualizar la reserva a payment_received (si no estaba en un estado final)
-    const { error: updateError } = await supabase
+    const { data: updatedBooking, error: updateError } = await supabase
       .from('bookings')
       .update({ payment_status: 'payment_received' })
-      .eq('id', booking.id);
+      .eq('id', booking.id)
+      .select()
+      .single();
 
     if (updateError) throw updateError;
+
+    if (booking.payment_status !== 'payment_received' && updatedBooking) {
+      sendPaymentConfirmedEmail(updatedBooking).catch(err => console.error('Error enviando email PayPal:', err));
+    }
 
     res.json({ status: 'success', data: payment });
   } catch (err) {
