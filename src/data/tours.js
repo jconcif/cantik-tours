@@ -1265,5 +1265,64 @@ export const tours = [
         rating: 5.0,
         reviews: 0
     },
+    {
+        id: "tour-prueba",
+        slug: "tour-prueba",
+        isHidden: true,
+        image: "/uluwatu/uluwatu-temple.webp",
+        title: "Tour de Prueba 1 USD",
+        title_en: "1 USD Bali Test Tour",
+        price: 1,
+        pricing: {
+            economy: 1,
+            comfort: 2,
+            elite: 3,
+            extraPaxStartThreshold: 5,
+            economyExtraPaxFee: 1,
+            comfortExtraPaxFee: 1,
+            eliteExtraPaxFee: 1
+        },
+        duration: "1 hora",
+        duration_en: "1 hour",
+        tag: "Bali Test",
+        tag_en: "Bali Test",
+        color: "bg-primary",
+        description: "Tour de prueba para transacciones reales de 1 dólar. Este es un entorno de prueba para validar el flujo completo de reservas y pasarela de pagos.",
+        description_en: "Live payment testing environment for real 1 USD transactions. This tour allows us to validate the booking flow, PayPal checkout, and automated email dispatch.",
+        itinerary: [
+            {
+                type: 'pickup',
+                duration: "08:00",
+                activity: "Recogida en el Hotel",
+                activity_en: "Hotel Pick-up",
+                desc: "Recogida simulada desde el lobby de tu hotel en Bali.",
+                desc_en: "Simulated pick-up from your hotel lobby in Bali to test the booking schedule."
+            },
+            {
+                type: 'activity',
+                duration: "09:00",
+                activity: "Prueba de Pasarela",
+                activity_en: "Payment Gateway Test",
+                desc: "Procesamiento de 1 USD a través de PayPal o Tarjeta.",
+                desc_en: "Processing of a real 1 USD transaction via PayPal or Credit Card."
+            },
+            {
+                type: 'dropoff',
+                duration: "10:00",
+                activity: "Fin de la Prueba",
+                activity_en: "End of Test",
+                desc: "Recepción de correos automáticos de confirmación.",
+                desc_en: "Reception of automated confirmation emails to validate the communication system."
+            }
+        ],
+        location: "Uluwatu, Bali",
+        category: ["Test", "Tour"],
+        included: ["Flujo de Reserva", "Pago Real", "Correos Automáticos"],
+        included_en: ["Booking Flow", "Real Payment", "Automated Emails"],
+        not_included: ["Guía Físico", "Transporte Real"],
+        not_included_en: ["Physical Guide", "Actual Transportation"],
+        rating: 5.0,
+        reviews: 42
+    }
 
 ];

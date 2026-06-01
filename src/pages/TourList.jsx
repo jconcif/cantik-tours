@@ -29,7 +29,7 @@ const TourList = () => {
                 (Array.isArray(tour.category) ? tour.category.includes(activeCategory) : tour.category === activeCategory);
             const isNotTransfer = !tour.isTransfer;
 
-            return matchesSearch && matchesCategory && isNotTransfer;
+            return matchesSearch && matchesCategory && isNotTransfer && !tour.isHidden;
         });
 
     return (
