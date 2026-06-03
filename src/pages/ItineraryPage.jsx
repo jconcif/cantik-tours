@@ -89,17 +89,19 @@ export default function ItineraryPage() {
   const finalTotal = parseFloat(booking?.total_price || 0) + extraCharges;
   const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
   const balance = finalTotal - totalPaid;
-  const hasPendingPayment = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status);
+  const hasPendingPayment = booking ? (balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status)) : false;
   const isCheckinPending = checkinData.some(p => !p.name || !p.passport);
-  const effectiveStatus = (booking.payment_status === 'verifying_payment')
-    ? 'verifying_payment'
-    : (balance <= 0.01 && ['requested', 'pending_payment'].includes(booking.payment_status))
-      ? 'payment_received'
-      : (booking.payment_status === 'requested' && !transitionedToPending)
-        ? 'requested'
-        : hasPendingPayment 
-          ? 'pending_payment' 
-          : booking.payment_status;
+  const effectiveStatus = !booking
+    ? 'requested'
+    : (booking.payment_status === 'verifying_payment')
+      ? 'verifying_payment'
+      : (balance <= 0.01 && ['requested', 'pending_payment'].includes(booking.payment_status))
+        ? 'payment_received'
+        : (booking.payment_status === 'requested' && !transitionedToPending)
+          ? 'requested'
+          : hasPendingPayment 
+            ? 'pending_payment' 
+            : booking.payment_status;
 
   const hasShownNotification = useRef(false);
 
@@ -991,15 +993,16 @@ export default function ItineraryPage() {
                     </AnimatePresence>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                {/* Perforated divider to separate ticket from management section */}
-                <div className="relative h-8 flex items-center z-20">
-                  <div className="absolute left-0 -translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
-                  <div className="absolute right-0 translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
-                  <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
-                </div>
+        <div className="h-6" />
 
-                <div className={`p-6 sm:p-8 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-b-[2.5rem]`}>
+        {/* ── BOOKING MANAGEMENT CONTAINER ────────────────────────── */}
+        <div className={`rounded-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50 bg-[#1a1a1a]' : 'shadow-gray-300/80 bg-white'}`}>
+          <div className="relative overflow-hidden">
+            <div>
+              <div className={`p-6 sm:p-8 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-[2.5rem]`}>
                   {/* Header de Gestión con el icono animado */}
                   <div className="mb-6 pb-6 border-b border-gray-150 dark:border-white/5">
                     <div className="flex items-center gap-3 mb-3">
@@ -1426,6 +1429,7 @@ export default function ItineraryPage() {
                 </div>
               </div>
             </div>
+          </div>
         <div className="h-6" />
 
       </div>
