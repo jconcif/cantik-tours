@@ -1335,7 +1335,7 @@ export default function ItineraryPage() {
                           {[
                             statusMap.requested, 
                             statusMap.pending_payment, 
-                            statusMap.payment_received, 
+                            (effectiveStatus === 'verifying_payment' ? statusMap.verifying_payment : statusMap.payment_received), 
                             statusMap.reserved, 
                             statusMap.confirmed,
                             statusMap.in_progress,
