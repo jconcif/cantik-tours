@@ -852,7 +852,7 @@ export default function ItineraryPage() {
           {/* Header strip (always visible) */}
           <div className="bg-primary px-6 sm:px-8 py-9 relative overflow-hidden">
             <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg,white 0,white 1px,transparent 0,transparent 50%)', backgroundSize: '8px 8px' }} />
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="relative z-10 flex items-center justify-between gap-4">
               <div>
                 <div className="text-[9px] font-black text-white/60 uppercase tracking-[0.3em] mb-1">
                   {en ? 'BOOKING CARD' : 'TARJETA DE RESERVA'}
@@ -879,6 +879,13 @@ export default function ItineraryPage() {
                     </button>
                   )}
                 </div>
+              </div>
+
+              {/* Status tag in the header */}
+              <div className="flex-shrink-0">
+                <span className="inline-block px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-white/20 text-white border border-white/25 backdrop-blur-md shadow-sm">
+                  {status.label}
+                </span>
               </div>
             </div>
           </div>
