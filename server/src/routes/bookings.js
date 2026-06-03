@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { supabase } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
 import { validateBody, sanitize } from '../middleware/validate.js';
-import { sendClientConfirmation, sendAdminAlert, sendReceiptUploadedAlert, sendPaymentConfirmedEmail } from '../services/email.js';
+import { sendClientConfirmation, sendAdminAlert, sendReceiptUploadedAlert, sendPaymentConfirmedEmail, sendTourConfirmedEmail, sendTourCompletedEmail } from '../services/email.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -363,6 +363,12 @@ router.put('/:id', requireAuth, async (req, res) => {
 
     if (oldBooking?.payment_status !== 'payment_received' && data.payment_status === 'payment_received') {
       sendPaymentConfirmedEmail(data).catch(err => console.error('Error enviando email Confirmacion:', err));
+    }
+    if (oldBooking?.payment_status !== 'confirmed' && data.payment_status === 'confirmed') {
+      sendTourConfirmedEmail(data).catch(err => console.error('Error enviando email Tour Confirmado:', err));
+    }
+    if (oldBooking?.payment_status !== 'completed' && data.payment_status === 'completed') {
+      sendTourCompletedEmail(data).catch(err => console.error('Error enviando email Tour Finalizado:', err));
     }
 
     res.json({ status: 'success', data });

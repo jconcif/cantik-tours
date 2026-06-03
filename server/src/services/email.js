@@ -628,3 +628,282 @@ export const sendPaymentConfirmedEmail = async (booking) => {
     console.error('❌ Error sending client confirmation email:', err);
   }
 };
+
+/**
+ * Send Tour Confirmed Email to client (includes Bali Guide link)
+ */
+export const sendTourConfirmedEmail = async (booking) => {
+  const clientEmail = booking.extras?.client_email || booking.client_email;
+  if (!clientEmail) {
+    console.warn('⚠️ Cannot send tour confirmed email: client_email is missing.');
+    return;
+  }
+
+  const referenceCode = `CT-${(booking.reference || String(booking.id)).replace('CT-', '')}`;
+  const locale = booking.extras?.locale || booking.locale || 'es';
+  const isEn = locale.toLowerCase().includes('en');
+
+  const frontendUrl = process.env.FRONTEND_URL || 'https://cantiktours.com';
+  const dashboardLink = `${frontendUrl}/booking?ref=${referenceCode}`;
+  const guideLink = `${frontendUrl}/${isEn ? 'en' : 'es'}/guia-bali`;
+
+  const fromName = 'Cantik Tours';
+  const fromEmail = process.env.SMTP_USER || 'reservas@cantiktours.com';
+
+  const subject = isEn 
+    ? `Your Tour is Confirmed! Prepare for Bali 🌴`
+    : `¡Tu Tour está Confirmado! Prepárate para Bali 🌴`;
+
+  const htmlEs = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb; padding: 20px; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+          .header { background-color: #0B0F19; padding: 30px; text-align: center; }
+          .logo { font-size: 22px; letter-spacing: 2px; color: #ffffff; font-weight: 900; text-transform: uppercase; }
+          .logo span { font-weight: 300; letter-spacing: 4px; color: #13C8EC; }
+          .content { padding: 30px; }
+          .btn-primary { display: inline-block; background-color: #13C8EC; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 10px; }
+          .btn-outline { display: inline-block; background-color: #f3f4f6; color: #1f2937 !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 10px; border: 1px solid #d1d5db; }
+          h2 { color: #111827; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CANTIK <span>TOURS</span></div>
+          </div>
+          <div class="content">
+            <h2>¡Hola ${booking.client_name.split(' ')[0]}!</h2>
+            <p>¡Todo listo para tu aventura! Queremos confirmarte que tu tour <strong>${booking.tour_title}</strong> ya se encuentra 100% confirmado y garantizado.</p>
+            <p>Tu código de reserva es: <strong>${referenceCode}</strong></p>
+            
+            <div style="background-color: #F6F8F8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #eef2f2;">
+              <p style="margin:0 0 10px 0;"><strong>Resumen del Tour:</strong></p>
+              <ul style="margin:0; padding-left: 20px; font-size: 14px; line-height: 1.6;">
+                <li><strong>Fecha del Tour:</strong> ${booking.booking_date}</li>
+                <li><strong>Pasajeros:</strong> ${booking.pax} PAX</li>
+                <li><strong>Hotel Recogida:</strong> ${booking.hotel || 'No provisto'}</li>
+              </ul>
+            </div>
+
+            <p>Para ayudarte a preparar tu viaje, hemos diseñado una <strong>Guía de Bali</strong> muy especial con recomendaciones de transporte, templos, cambio de divisa, internet y más. ¡Puedes descargarla o verla aquí!</p>
+
+            <div style="text-align: center; margin: 35px 0;">
+              <a href="${dashboardLink}" class="btn-primary">Ver Ficha de Reserva</a>
+              <a href="${guideLink}" class="btn-outline">Ver Guía de Bali 🌴</a>
+            </div>
+
+            <p>Cualquier pregunta que tengas sobre horarios o recogidas, escríbenos directamente por WhatsApp.</p>
+            <br/>
+            <p>¡Disfruta mucho de la isla de los dioses! 🌺<br/><strong>El equipo de Cantik Tours</strong></p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  const htmlEn = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb; padding: 20px; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+          .header { background-color: #0B0F19; padding: 30px; text-align: center; }
+          .logo { font-size: 22px; letter-spacing: 2px; color: #ffffff; font-weight: 900; text-transform: uppercase; }
+          .logo span { font-weight: 300; letter-spacing: 4px; color: #13C8EC; }
+          .content { padding: 30px; }
+          .btn-primary { display: inline-block; background-color: #13C8EC; color: #ffffff !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 10px; }
+          .btn-outline { display: inline-block; background-color: #f3f4f6; color: #1f2937 !important; padding: 14px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 10px; border: 1px solid #d1d5db; }
+          h2 { color: #111827; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CANTIK <span>TOURS</span></div>
+          </div>
+          <div class="content">
+            <h2>Hi ${booking.client_name.split(' ')[0]}!</h2>
+            <p>Everything is set for your adventure! We want to confirm that your tour <strong>${booking.tour_title}</strong> is now 100% confirmed and guaranteed.</p>
+            <p>Your booking code is: <strong>${referenceCode}</strong></p>
+            
+            <div style="background-color: #F6F8F8; padding: 20px; border-radius: 12px; margin: 20px 0; border: 1px solid #eef2f2;">
+              <p style="margin:0 0 10px 0;"><strong>Tour Summary:</strong></p>
+              <ul style="margin:0; padding-left: 20px; font-size: 14px; line-height: 1.6;">
+                <li><strong>Tour Date:</strong> ${booking.booking_date}</li>
+                <li><strong>Guests:</strong> ${booking.pax} PAX</li>
+                <li><strong>Hotel Pickup:</strong> ${booking.hotel || 'Not provided'}</li>
+              </ul>
+            </div>
+
+            <p>To help you prepare for your trip, we have created a very special <strong>Bali Guide</strong> with recommendations about transport, temples, exchange rates, internet, and more. Check it out here!</p>
+
+            <div style="text-align: center; margin: 35px 0;">
+              <a href="${dashboardLink}" class="btn-primary">View Booking Details</a>
+              <a href="${guideLink}" class="btn-outline">View Bali Guide 🌴</a>
+            </div>
+
+            <p>Should you have any questions regarding schedules or pickups, feel free to contact us via WhatsApp.</p>
+            <br/>
+            <p>Enjoy the Island of Gods! 🌺<br/><strong>The Cantik Tours Team</strong></p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  const html = isEn ? htmlEn : htmlEs;
+
+  const mailOptions = {
+    from: `"${fromName}" <${fromEmail}>`,
+    to: clientEmail,
+    subject: subject,
+    html: html
+  };
+
+  try {
+    if (!resend) {
+      console.log('✉️ [Mock Client Tour Confirmed Email Sent] (No RESEND_API_KEY)');
+      return;
+    }
+    const { data, error } = await resend.emails.send(mailOptions);
+    if (error) throw error;
+    console.log(`✅ Tour confirmed email sent for reference ${referenceCode}. Resend ID: ${data?.id}`);
+    return data;
+  } catch (err) {
+    console.error('❌ Error sending tour confirmed email:', err);
+  }
+};
+
+/**
+ * Send Tour Completed Email to client (requests a review)
+ */
+export const sendTourCompletedEmail = async (booking) => {
+  const clientEmail = booking.extras?.client_email || booking.client_email;
+  if (!clientEmail) {
+    console.warn('⚠️ Cannot send tour completed email: client_email is missing.');
+    return;
+  }
+
+  const referenceCode = `CT-${(booking.reference || String(booking.id)).replace('CT-', '')}`;
+  const locale = booking.extras?.locale || booking.locale || 'es';
+  const isEn = locale.toLowerCase().includes('en');
+
+  const frontendUrl = process.env.FRONTEND_URL || 'https://cantiktours.com';
+  const reviewLink = `${frontendUrl}/${isEn ? 'en' : 'es'}/reviews`;
+
+  const fromName = 'Cantik Tours';
+  const fromEmail = process.env.SMTP_USER || 'reservas@cantiktours.com';
+
+  const subject = isEn 
+    ? `Thank you for traveling with us! Share your Bali experience 🌺`
+    : `¡Gracias por viajar con nosotros! Comparte tu experiencia en Bali 🌺`;
+
+  const htmlEs = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb; padding: 20px; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+          .header { background-color: #0B0F19; padding: 30px; text-align: center; }
+          .logo { font-size: 22px; letter-spacing: 2px; color: #ffffff; font-weight: 900; text-transform: uppercase; }
+          .logo span { font-weight: 300; letter-spacing: 4px; color: #13C8EC; }
+          .content { padding: 30px; text-align: center; }
+          .btn-primary { display: inline-block; background-color: #13C8EC; color: #ffffff !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; }
+          h2 { color: #111827; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CANTIK <span>TOURS</span></div>
+          </div>
+          <div class="content">
+            <h2>¡Muchas gracias por viajar con Cantik Tours!</h2>
+            <p>Hola ${booking.client_name.split(' ')[0]},</p>
+            <p>Esperamos que hayas tenido una experiencia inolvidable en Bali y que guardes recuerdos hermosos de tu aventura.</p>
+            <p>Tu opinión es sumamente valiosa para nosotros y ayuda a futuros viajeros a descubrir Bali a su propio ritmo. ¿Nos dedicarías 1 minuto para dejarnos una reseña?</p>
+
+            <div>
+              <a href="${reviewLink}" class="btn-primary">Dejar una Reseña ⭐</a>
+            </div>
+
+            <p style="margin-top: 25px; font-size: 13px; color: #6b7280;">¡Gracias de nuevo por tu confianza y esperamos volver a guiarte pronto en tu próximo viaje!</p>
+            <br/>
+            <p>Suksma (Gracias en Balinés) 🌺<br/><strong>El equipo de Cantik Tours</strong></p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  const htmlEn = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f9fafb; padding: 20px; color: #1f2937; }
+          .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e5e7eb; }
+          .header { background-color: #0B0F19; padding: 30px; text-align: center; }
+          .logo { font-size: 22px; letter-spacing: 2px; color: #ffffff; font-weight: 900; text-transform: uppercase; }
+          .logo span { font-weight: 300; letter-spacing: 4px; color: #13C8EC; }
+          .content { padding: 30px; text-align: center; }
+          .btn-primary { display: inline-block; background-color: #13C8EC; color: #ffffff !important; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; }
+          h2 { color: #111827; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">CANTIK <span>TOURS</span></div>
+          </div>
+          <div class="content">
+            <h2>Thank you for traveling with Cantik Tours!</h2>
+            <p>Hi ${booking.client_name.split(' ')[0]},</p>
+            <p>We hope you had an unforgettable experience in Bali and take home beautiful memories of your adventure.</p>
+            <p>Your feedback is incredibly valuable to us and helps future travelers discover Bali at their own pace. Would you take 1 minute to leave us a review?</p>
+
+            <div>
+              <a href="${reviewLink}" class="btn-primary">Leave a Review ⭐</a>
+            </div>
+
+            <p style="margin-top: 25px; font-size: 13px; color: #6b7280;">Thank you again for your trust and we hope to guide you again soon on your next trip!</p>
+            <br/>
+            <p>Suksma (Thank you in Balinese) 🌺<br/><strong>The Cantik Tours Team</strong></p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+
+  const html = isEn ? htmlEn : htmlEs;
+
+  const mailOptions = {
+    from: `"${fromName}" <${fromEmail}>`,
+    to: clientEmail,
+    subject: subject,
+    html: html
+  };
+
+  try {
+    if (!resend) {
+      console.log('✉️ [Mock Client Tour Completed Email Sent] (No RESEND_API_KEY)');
+      return;
+    }
+    const { data, error } = await resend.emails.send(mailOptions);
+    if (error) throw error;
+    console.log(`✅ Tour completed email sent for reference ${referenceCode}. Resend ID: ${data?.id}`);
+    return data;
+  } catch (err) {
+    console.error('❌ Error sending tour completed email:', err);
+  }
+};
