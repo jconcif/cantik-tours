@@ -788,7 +788,7 @@ export default function ItineraryPage() {
 
       {/* Simulated Push Notification Banner */}
       <AnimatePresence>
-        {pushNotification && (
+        {false && pushNotification && (
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -1009,7 +1009,7 @@ export default function ItineraryPage() {
 
         {/* Next step notification alert (dismissible) between cards */}
         <AnimatePresence>
-          {showNextStepAlert && nextStepText && (
+          {false && showNextStepAlert && nextStepText && (
             <motion.div
               initial={{ opacity: 0, y: -10, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -1830,7 +1830,7 @@ export default function ItineraryPage() {
 
       {/* Floating Status Alert */}
       <AnimatePresence>
-        {showStatusAlert && (
+        {false && showStatusAlert && (
           <motion.div
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
