@@ -66,6 +66,7 @@ export default function ItineraryPage() {
   const [showSupportMenu, setShowSupportMenu] = useState(false);
   const [pushNotification, setPushNotification] = useState(null);
   const [globalSettings, setGlobalSettings] = useState(null);
+  const [showTimelineDetails, setShowTimelineDetails] = useState(false);
 
   useEffect(() => {
     getGlobalSettings().then(res => {
@@ -104,6 +105,7 @@ export default function ItineraryPage() {
             : booking.payment_status;
 
   const hasShownNotification = useRef(false);
+  const managementRef = useRef(null);
 
   useEffect(() => {
     if (booking && !loading && !hasShownNotification.current && globalSettings) {
@@ -878,7 +880,12 @@ export default function ItineraryPage() {
               </div>
 
               {/* Status tag in the header */}
-              <div className="flex-shrink-0 flex items-center gap-2">
+              <button 
+                onClick={() => {
+                  managementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95 transition-all outline-none"
+              >
                 <span className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white border ${dark ? 'border-white/10' : 'border-gray-250'} shadow-md relative overflow-hidden`}>
                   <span className="relative flex h-2 w-2">
                     <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusAlert.dot}`} />
@@ -886,7 +893,7 @@ export default function ItineraryPage() {
                   </span>
                   <span className={statusAlert.text}>{statusAlert.label}</span>
                 </span>
-              </div>
+              </button>
             </div>
           </div>
 
@@ -999,7 +1006,7 @@ export default function ItineraryPage() {
         <div className="h-6" />
 
         {/* ── BOOKING MANAGEMENT CONTAINER ────────────────────────── */}
-        <div className={`rounded-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50 bg-[#1a1a1a]' : 'shadow-gray-300/80 bg-white'}`}>
+        <div ref={managementRef} className={`rounded-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50 bg-[#1a1a1a]' : 'shadow-gray-300/80 bg-white'}`}>
           <div className="relative overflow-hidden">
             <div>
               <div className={`p-6 sm:p-8 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-[2.5rem]`}>
@@ -1021,7 +1028,7 @@ export default function ItineraryPage() {
                         <span>{en ? 'Booking Progress' : 'Progreso de Reserva'}</span>
                         <span className="font-black">{getProgressPercentage()}%</span>
                       </div>
-                      <div className={`h-1.5 w-full rounded-full overflow-hidden ${dark ? 'bg-white/10' : 'bg-gray-100'}`}>
+                      <div className={`h-1.5 w-full rounded-full overflow-hidden ${dark ? 'bg-white/10' : 'bg-gray-100'} mb-4`}>
                         <motion.div 
                           initial={{ width: 0 }}
                           animate={{ width: `${getProgressPercentage()}%` }}
@@ -1029,6 +1036,100 @@ export default function ItineraryPage() {
                           className="h-full bg-primary rounded-full"
                         />
                       </div>
+                      
+                      {/* Toggle Button for Timeline Details */}
+                      <div className="flex justify-center mt-3 mb-3">
+                        <button
+                          onClick={() => setShowTimelineDetails(!showTimelineDetails)}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[8.5px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/5 hover:bg-white/5 text-gray-400' : 'border-gray-150 hover:bg-gray-50 text-gray-500'} cursor-pointer hover:scale-105 active:scale-95`}
+                        >
+                          <span>{showTimelineDetails ? (en ? 'Hide details' : 'Ocultar detalles') : (en ? 'Show progress details' : 'Ver detalles de progreso')}</span>
+                          <span className="transition-transform duration-250" style={{ transform: showTimelineDetails ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block' }}>▾</span>
+                        </button>
+                      </div>
+
+                      {/* Integrated Booking Timeline Steps */}
+                      <AnimatePresence initial={false}>
+                        {showTimelineDetails && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.35, ease: 'easeInOut' }}
+                            style={{ overflow: 'hidden' }}
+                            className={`mb-4 rounded-2xl p-5 ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}
+                          >
+                            <div className="space-y-5 relative pl-1">
+                              {/* Background full timeline line (gray) */}
+                              <div className={`absolute top-2 bottom-2 left-[7px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-200'} z-0`} />
+                              {/* Highlighted active timeline line (primary color) */}
+                              <motion.div 
+                                initial={{ height: 0 }}
+                                animate={{ height: `${Math.min(100, Math.max(0, ((currentStep - 1) / 6) * 100))}%` }}
+                                transition={{ duration: 0.8, ease: 'easeOut' }}
+                                className="absolute top-2 left-[7px] w-0.5 bg-primary z-0 origin-top"
+                              />
+                              
+                              {[
+                                statusMap.requested, 
+                                statusMap.pending_payment, 
+                                (effectiveStatus === 'verifying_payment' ? statusMap.verifying_payment : statusMap.payment_received), 
+                                statusMap.reserved, 
+                                statusMap.confirmed,
+                                statusMap.in_progress,
+                                statusMap.completed
+                              ].map((st, i) => {
+                                const isPast = st.step < currentStep;
+                                const isCurrent = st.step === currentStep;
+                                
+                                const stepTime = getStepTimestamp(st.step);
+                                const stepTimeStr = stepTime ? formatStepDate(stepTime) : '';
+                                
+                                return (
+                                  <div key={i} className="flex gap-3 relative z-10">
+                                    <div className="flex flex-col items-center justify-start pt-0.5">
+                                      {isPast ? (
+                                        <div className="w-4 h-4 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center shadow-sm">
+                                          <CheckCircle2 size={8} className="stroke-[3]" />
+                                        </div>
+                                      ) : isCurrent ? (
+                                        <div className="relative flex h-4 w-4 items-center justify-center">
+                                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-30" />
+                                          <div className="relative w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center shadow-md">
+                                            <div className="w-1 h-1 bg-white rounded-full" />
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className={`w-3.5 h-3.5 rounded-full border-2 ${dark ? 'bg-[#1a1a1a] border-white/10' : 'bg-gray-50 border-gray-200'} flex items-center justify-center`} />
+                                      )}
+                                    </div>
+                                    
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center justify-between gap-3">
+                                        <span className={`text-[9px] font-black uppercase tracking-wider ${
+                                          isCurrent ? 'text-primary' : isPast ? text : 'text-gray-400 dark:text-gray-600'
+                                        }`}>
+                                          {st.label}
+                                        </span>
+                                        {stepTimeStr && (
+                                          <span className={`text-[7.5px] font-bold uppercase tracking-tighter ${sub}`}>
+                                            {stepTimeStr}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {isCurrent && (
+                                        <p className={`text-[9.5px] font-semibold mt-0.5 leading-relaxed ${dark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                          {st.desc}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                       
                       {/* Next step indicator under progress bar */}
                       {(function() {
@@ -1219,7 +1320,7 @@ export default function ItineraryPage() {
                           <div className="mt-6">
                             <button
                               onClick={() => setShowPaymentModal(true)}
-                              className="w-full py-4 bg-primary text-white hover:opacity-90 font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                              className="w-full py-4 bg-primary text-white hover:opacity-90 font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 animate-pulse"
                             >
                               <CreditCard size={14} />
                               {en ? 'Pay Booking Securely' : 'Pagar Reserva Ahora'}
@@ -1309,7 +1410,7 @@ export default function ItineraryPage() {
                                   className={`inline-flex px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all border ${
                                     hasPendingPayment
                                       ? 'bg-transparent text-gray-400 border-gray-300 dark:border-white/10 hover:border-primary hover:text-primary'
-                                      : 'bg-primary text-white border-primary hover:opacity-90 shadow-md shadow-primary/10'
+                                      : 'bg-primary text-white border-primary hover:opacity-90 shadow-md shadow-primary/10 animate-pulse'
                                   }`}
                                 >
                                   {en ? 'Complete Check-in' : 'Hacer Check-in'}
@@ -1342,88 +1443,7 @@ export default function ItineraryPage() {
                       </div>
                     )}
 
-                    {/* Línea de tiempo (Timeline) Oficial (Mejoras 4 y 5) */}
-                    <div>
-                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
-                        {en ? 'BOOKING PROCESS TIMELINE' : 'LÍNEA DE TIEMPO DE LA RESERVA'}
-                      </div>
-                      <div className={`rounded-3xl p-6 shadow-sm ${dark ? "bg-[#111] border border-white/5" : "bg-gray-50 border border-gray-100"}`}>
-                        <div className="space-y-6 relative pl-2">
-                          {/* Línea vertical de fondo */}
-                          <div className={`absolute top-2.5 bottom-2.5 left-[15px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
-                          
-                          {[
-                            statusMap.requested, 
-                            statusMap.pending_payment, 
-                            (effectiveStatus === 'verifying_payment' ? statusMap.verifying_payment : statusMap.payment_received), 
-                            statusMap.reserved, 
-                            statusMap.confirmed,
-                            statusMap.in_progress,
-                            statusMap.completed
-                          ].map((st, i) => {
-                            const isPast = st.step < currentStep;
-                            const isCurrent = st.step === currentStep;
-                            const isFuture = st.step > currentStep;
-                            
-                            const stepTime = getStepTimestamp(st.step);
-                            const stepTimeStr = stepTime ? formatStepDate(stepTime) : '';
-                            
-                            return (
-                              <div key={i} className="flex gap-4 relative z-10">
-                                {/* Nodo Indicador */}
-                                <div className="flex flex-col items-center justify-start pt-0.5">
-                                  {isPast ? (
-                                    <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center shadow-sm">
-                                      <CheckCircle2 size={10} className="stroke-[3]" />
-                                    </div>
-                                  ) : isCurrent ? (
-                                    <div className="relative flex h-5 w-5 items-center justify-center">
-                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-30" />
-                                      <div className="relative w-4 h-4 rounded-full bg-primary flex items-center justify-center shadow-md">
-                                        <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <div className={`w-4 h-4 rounded-full border-2 ${dark ? 'bg-[#111] border-white/10' : 'bg-gray-50 border-gray-200'} flex items-center justify-center`} />
-                                  )}
-                                </div>
-                                
-                                {/* Descripción de cada paso */}
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between gap-4">
-                                    <span className={`text-[10px] font-black uppercase tracking-wider ${
-                                      isCurrent ? 'text-primary' : isPast ? text : 'text-gray-400 dark:text-gray-600'
-                                    }`}>
-                                      {st.label}
-                                    </span>
-                                    {stepTimeStr && (
-                                      <span className={`text-[8px] font-bold uppercase tracking-tighter ${sub}`}>
-                                        {stepTimeStr}
-                                      </span>
-                                    )}
-                                  </div>
-                                  {isCurrent && (
-                                    <p className={`text-[10px] font-semibold mt-1 leading-relaxed ${dark ? 'text-gray-300' : 'text-gray-600'}`}>
-                                      {st.desc}
-                                    </p>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        
-                        {/* Última actualización */}
-                        {getLastUpdateStr() && (
-                          <div className={`mt-6 pt-5 border-t border-dashed ${dark ? 'border-white/5' : 'border-gray-200/80'} text-center`}>
-                            <span className={`text-[9px] font-black uppercase tracking-widest text-gray-400`}>
-                              {en ? 'Last Update (Bali Time): ' : 'Última actualización (Hora de Bali): '}
-                              <span className={`${text}`}>{getLastUpdateStr()}</span>
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+
 
                   </div>
                 </div>
