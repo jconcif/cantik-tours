@@ -226,7 +226,22 @@ export default function AdminPanel() {
       const [y, m, d] = b.booking_date.split('T')[0].split('-').map(Number);
       const tourDay = new Date(y, m - 1, d);
       const newStatus = tourDay.getTime() === today.getTime() ? 'in_progress' : 'completed';
-      return api.updateBooking({ id: b.id, payment_status: newStatus });
+      
+      let ext = {};
+      try {
+        ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+      } catch(e) {}
+      if (!ext.logs) ext.logs = [];
+      
+      const oldStatusLabel = PAY_LABEL[b.payment_status] || b.payment_status;
+      const newStatusLabel = PAY_LABEL[newStatus] || newStatus;
+      
+      ext.logs.push({
+        timestamp: new Date().toISOString(),
+        text: `Estado cambiado automáticamente de "${oldStatusLabel}" a "${newStatusLabel}" por fecha`
+      });
+
+      return api.updateBooking({ ...b, payment_status: newStatus, extras: JSON.stringify(ext) });
     }));
     await reload();
   };

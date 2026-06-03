@@ -977,6 +977,39 @@ export default function ItineraryPage() {
               </div>
             </div>
 
+        {/* Next step notification alert (dismissible) between cards */}
+        <AnimatePresence>
+          {showNextStepAlert && nextStepText && (
+            <motion.div
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.25 }}
+              className={`p-4 rounded-[1.5rem] flex items-center justify-between gap-4 border shadow-md relative backdrop-blur-xl ${
+                dark 
+                  ? 'bg-[#141414] text-gray-300 border-white/5 shadow-black/10' 
+                  : 'bg-white text-gray-700 border-gray-150 shadow-gray-250/20'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <span className="relative flex h-2 w-2 flex-shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                </span>
+                <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider leading-snug">
+                  {nextStepText}
+                </span>
+              </div>
+              <button
+                onClick={() => setShowNextStepAlert(false)}
+                className={`text-gray-400 hover:text-gray-600 dark:hover:text-white flex-shrink-0 text-xs w-6 h-6 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-pointer`}
+              >
+                ✕
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <div className="h-6" />
 
         {/* ── BOOKING MANAGEMENT CONTAINER ────────────────────────── */}
@@ -1011,48 +1044,7 @@ export default function ItineraryPage() {
                         />
                       </div>
                       
-                      {/* Next step indicator under progress bar */}
-                      {(function() {
-                        let nextStepText = '';
-                        if (effectiveStatus === 'pending_payment' || effectiveStatus === 'payment_sent' || effectiveStatus === 'requested') {
-                          nextStepText = en 
-                            ? 'Next Step: 💸 Make the payment to secure your booking.' 
-                            : 'Próximo paso: 💸 Realizar pago para asegurar tu plaza.';
-                        } else if ((effectiveStatus === 'payment_received' || effectiveStatus === 'payment_confirmed') && isCheckinPending) {
-                          nextStepText = en 
-                            ? 'Next Step: 🪪 Complete traveler details in the form below.' 
-                            : 'Próximo paso: 🪪 Completar datos de viajeros.';
-                        } else if (effectiveStatus === 'verifying_payment') {
-                          nextStepText = en 
-                            ? 'Next Step: 🔍 Waiting for payment verification by our team.' 
-                            : 'Próximo paso: 🔍 Esperar validación del pago por nuestro equipo.';
-                        } else if (effectiveStatus === 'confirmed' || effectiveStatus === 'reserved') {
-                          nextStepText = en 
-                            ? 'Next Step: 🚗 Wait for professional driver coordination.' 
-                            : 'Próximo paso: 🚗 Esperar asignación y detalles del chofer.';
-                        } else if (effectiveStatus === 'in_progress') {
-                          nextStepText = en 
-                            ? 'Next Step: 🎒 Enjoy your unforgettable experience in Bali!' 
-                            : 'Próximo paso: 🎒 ¡Disfrutar de tu experiencia inolvidable en Bali!';
-                        } else if (effectiveStatus === 'completed') {
-                          nextStepText = en 
-                            ? 'Next Step: ⭐ Share your feedback with a review!' 
-                            : 'Próximo paso: ⭐ Compartir tu experiencia con una reseña!';
-                        }
-                        
-                        if (!nextStepText) return null;
-                        return (
-                          <div className={`mt-3 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider flex items-center gap-2 ${dark ? 'bg-white/5 text-gray-300 border-white/5' : 'bg-gray-50 text-gray-700 border-gray-150'} border`}>
-                            <span className="relative flex h-1.5 w-1.5">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
-                            </span>
-                            <span>{nextStepText}</span>
-                          </div>
-                        );
-                      })()}
-                      
-                      {/* Toggle Button for Timeline Details (Now under Next Step) */}
+                      {/* Toggle Button for Timeline Details (Now under progress bar directly) */}
                       <div className="flex justify-start mt-4 mb-3">
                         <button
                           onClick={() => setShowTimelineDetails(!showTimelineDetails)}
@@ -1514,11 +1506,7 @@ export default function ItineraryPage() {
               ))}
             </div>
 
-            <div className={`mt-4 p-4 rounded-xl border text-[10px] font-bold text-center ${dark ? 'bg-white/5 border-white/5 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600'}`}>
-              ⚠️ {en 
-                ? 'It is recommended for each passenger to have their own travel insurance.' 
-                : 'Se sugiere que cada pasajero cuente con su propio seguro de viaje.'}
-            </div>
+
 
             <button
               onClick={handleCheckinSubmit}
@@ -1804,10 +1792,10 @@ export default function ItineraryPage() {
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: toast.show ? 1 : 0, y: toast.show ? 0 : 50 }}
-        className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-full shadow-2xl z-[200] flex items-center gap-3 pointer-events-none transition-all duration-300 ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`}
+        className={`fixed bottom-6 left-1/2 -translate-x-1/2 w-[90vw] max-w-sm px-6 py-3 rounded-2xl md:rounded-full shadow-2xl z-[200] flex items-center justify-center gap-3 pointer-events-none transition-all duration-300 ${toast.type === 'error' ? 'bg-red-500 text-white' : 'bg-emerald-500 text-white'}`}
       >
-        {toast.type === 'error' ? <Info size={16} /> : <CheckCircle2 size={16} />}
-        <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{toast.message}</span>
+        {toast.type === 'error' ? <Info size={16} className="flex-shrink-0" /> : <CheckCircle2 size={16} className="flex-shrink-0" />}
+        <span className="text-[10px] font-black uppercase tracking-widest text-center leading-normal">{toast.message}</span>
       </motion.div>
 
       {/* Floating Status Alert */}
