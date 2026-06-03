@@ -220,7 +220,7 @@ export const sendClientConfirmation = async (booking) => {
               </table>
             </div>
 
-            <p>Para ver tu itinerario detallado, subir tu comprobante de pago o completar el registro de viajeros (check-in), haz clic en el siguiente enlace de acceso personalizado:</p>
+            <p>Para ver tu itinerario detallado día a día, realizar el pago de tus servicios o completar el registro obligatorio de viajeros (check-in), accede a tu portal privado haciendo clic en el siguiente enlace:</p>
             
             <div class="btn-container">
               <a href="${bookingLink}" class="btn">Acceder a Mi Reserva</a>

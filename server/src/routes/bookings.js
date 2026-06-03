@@ -381,13 +381,55 @@ router.put('/:id', requireAuth, async (req, res) => {
 router.delete('/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    // Also delete related payments, expenses, charges
-    await supabase.from('payments').delete().eq('booking_id', id);
-    await supabase.from('expenses').delete().eq('booking_id', id);
-    await supabase.from('charges').delete().eq('booking_id', id);
-    const { error } = await supabase.from('bookings').delete().eq('id', id);
-    if (error) throw error;
-    res.json({ status: 'success' });
+    const force = req.query.force === 'true';
+
+    if (force) {
+      // Also delete related payments, expenses, charges
+      await supabase.from('payments').delete().eq('booking_id', id);
+      await supabase.from('expenses').delete().eq('booking_id', id);
+      await supabase.from('charges').delete().eq('booking_id', id);
+      const { error } = await supabase.from('bookings').delete().eq('id', id);
+      if (error) throw error;
+      return res.json({ status: 'success', message: 'Reserva eliminada definitivamente' });
+    }
+
+    // Soft delete logic: retrieve current booking, parse extras, set is_deleted = true
+    const { data: currentBooking, error: fetchErr } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (fetchErr || !currentBooking) {
+      return res.status(444).json({ status: 'error', message: 'Reserva no encontrada' });
+    }
+
+    let extrasObj = {};
+    try {
+      extrasObj = typeof currentBooking.extras === 'string'
+        ? JSON.parse(currentBooking.extras)
+        : (currentBooking.extras || {});
+    } catch (e) {
+      extrasObj = {};
+    }
+
+    extrasObj.is_deleted = true;
+    if (!extrasObj.logs) extrasObj.logs = [];
+    extrasObj.logs.push({
+      timestamp: new Date().toISOString(),
+      text: 'Reserva enviada a la papelera.'
+    });
+
+    const { error: updateErr } = await supabase
+      .from('bookings')
+      .update({
+        extras: JSON.stringify(extrasObj)
+      })
+      .eq('id', id);
+
+    if (updateErr) throw updateErr;
+
+    res.json({ status: 'success', message: 'Reserva movida a la papelera' });
   } catch (err) {
     res.status(500).json({ status: 'error', message: err.message });
   }

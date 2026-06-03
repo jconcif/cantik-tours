@@ -25,8 +25,8 @@ const emptyBooking = {client_name:'',client_phone:'',booking_date:'',hotel:'',to
 const emptyDriver = {name:'',phone:'',zone:'',vehicle_brand_model:'',vehicle_year:'',vehicle_pax:'',bank_account:'',license_plate:'',languages:'',driver_code:'',notes:''};
 const emptyReview = {nombre:'',comentario:'',comentario_en:'',puntuacion:5,aprobado:0};
 const emptyCoupon = {code:'',discount_type:'percent',discount_value:10,max_uses:0,active:1};
-const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup','settings'];
-const TLABEL = {bookings:'Reservas',drivers:'Staff',reviews:'Reviews',coupons:'Cupones',calendar:'Calendario',stats:'Dashboard',followup:'Seguimiento',settings:'Configuración'};
+const TABS = ['bookings','drivers','reviews','coupons','calendar','stats','followup','trash','settings'];
+const TLABEL = {bookings:'Reservas',drivers:'Staff',reviews:'Reviews',coupons:'Cupones',calendar:'Calendario',stats:'Dashboard',followup:'Seguimiento',trash:'Papelera 🗑️',settings:'Configuración'};
 const PAY_LABEL = {
   requested:          'Solicitud Recibida',
   pending_payment:    'Pago Pendiente',
@@ -362,18 +362,44 @@ export default function AdminPanel() {
     } catch (e) { toast(e.message, false); } finally { setLoading(false); }
   };
 
-  const del = async (type, id, confirmed = false) => {
+  const del = async (type, id, confirmed = false, force = false) => {
     if (!confirmed) {
-      setModal({ type, action: 'delete', data: { id } });
+      setModal({ type, action: 'delete', data: { id, force } });
       return;
     }
     setLoading(true);
     try {
-      await api[`delete${type[0].toUpperCase() + type.slice(1)}`](id);
+      if (type === 'booking') {
+        await api.deleteBooking(id, force);
+      } else {
+        await api[`delete${type[0].toUpperCase() + type.slice(1)}`](id);
+      }
       setModal(null);
       await reload();
       toast('Eliminado');
     } catch (e) { toast(e.message, false); } finally { setLoading(false); }
+  };
+
+  const restoreBooking = async (b) => {
+    setLoading(true);
+    try {
+      let ext = {};
+      try {
+        if (typeof b.extras === 'string') ext = JSON.parse(b.extras);
+        else if (typeof b.extras === 'object') ext = b.extras || {};
+      } catch(e){}
+      
+      ext.is_deleted = false;
+      if (!ext.logs) ext.logs = [];
+      ext.logs.push({
+        timestamp: new Date().toISOString(),
+        text: 'Reserva restaurada de la papelera.'
+      });
+      
+      await api.updateBooking({ ...b, extras: JSON.stringify(ext) });
+      await reload();
+      toast('Reserva restaurada ↩️');
+    } catch(e) { toast(e.message, false); } finally { setLoading(false); }
   };
 
   const setField=(k,v)=>setModal(m=>({...m,data:{...m.data,[k]:v}}));
@@ -419,7 +445,14 @@ export default function AdminPanel() {
     if (!l || !Array.isArray(l)) return [];
     let result = l;
     if (tab === 'bookings') {
-      result = result.filter(x => x.payment_status !== 'blocked');
+      result = result.filter(x => {
+        let ext = {};
+        try {
+          if (typeof x.extras === 'string') ext = JSON.parse(x.extras);
+          else if (typeof x.extras === 'object') ext = x.extras || {};
+        } catch(e){}
+        return !ext.is_deleted && x.payment_status !== 'blocked';
+      });
       if (statusFilter !== 'ALL') {
         result = result.filter(x => String(x.payment_status).toUpperCase() === statusFilter);
       }
@@ -430,6 +463,17 @@ export default function AdminPanel() {
           result = result.filter(x => String(x.driver_id) === driverFilter);
         }
       }
+    }
+
+    if (tab === 'trash') {
+      result = result.filter(x => {
+        let ext = {};
+        try {
+          if (typeof x.extras === 'string') ext = JSON.parse(x.extras);
+          else if (typeof x.extras === 'object') ext = x.extras || {};
+        } catch(e){}
+        return ext.is_deleted === true;
+      });
     }
     
     if (tab === 'drivers') {
@@ -452,7 +496,7 @@ export default function AdminPanel() {
     });
 
     // Ordenamiento por fecha del tour o creación
-    if (tab === 'bookings') {
+    if (tab === 'bookings' || tab === 'trash') {
       result = [...result].sort((a, b) => {
         if (sortBy === 'tour_date_desc') {
           return new Date(b.booking_date || 0) - new Date(a.booking_date || 0);
@@ -1190,6 +1234,36 @@ export default function AdminPanel() {
               )}
             </div>
           ))}
+          {tab==='trash'&&filter(bookings).map(b=>(
+            <div key={b.id} style={{...s.card, padding:'20px', display:'flex', gap:'16px', alignItems:'center', border:'1px solid #ffffff05'}}>
+              <div style={{flex:1, minWidth:0}}>
+                <div style={{display:'flex', gap:'8px', alignItems:'center', marginBottom:'4px', flexWrap:'wrap'}}>
+                  <div style={{fontWeight:900, color:'#fff', fontSize:'15px'}}>{b.client_name}</div>
+                  {b.reference && <span style={{fontSize:'9px', background:C+'22', padding:'1px 6px', borderRadius:'4px', fontWeight:900, color:C}}>{formatCT(b.reference || b.id)}</span>}
+                </div>
+                <div style={{fontSize:'12px', color:C, fontWeight:700}}>{b.tour_title}</div>
+                <div style={{fontSize:'11px', color:'#777', marginTop:'4px'}}>
+                  📅 Fecha Tour: {parseLocalDate(b.booking_date).toLocaleDateString()} • 👥 Pax: {b.pax} PAX • 💰 {b.total_price}€
+                </div>
+              </div>
+              <div style={{display:'flex', gap:'8px', flexShrink:0}}>
+                <button 
+                  style={{...s.btn('#10b98122', '#10b981'), height:'36px', padding:'0 12px', fontSize:'11px', gap:'6px', cursor:'pointer'}} 
+                  onClick={(e) => { e.stopPropagation(); restoreBooking(b); }}
+                  title="Restaurar Reserva"
+                >
+                  Restaurar ↩️
+                </button>
+                <button 
+                  style={{...s.btn('#ef444422', '#ef4444'), height:'36px', padding:'0 12px', fontSize:'11px', gap:'6px', cursor:'pointer'}} 
+                  onClick={(e) => { e.stopPropagation(); del('booking', b.id, false, true); }}
+                  title="Eliminar Definitivamente"
+                >
+                  Eliminar Definitivamente 🗑️
+                </button>
+              </div>
+            </div>
+          ))}
           {tab==='drivers'&&filter(drivers).map(d=>(
             <div key={d.id} style={s.card}>
               <div>
@@ -1578,12 +1652,16 @@ export default function AdminPanel() {
                   <div style={{fontSize:'48px', marginBottom:'16px'}}>⚠️</div>
                   <h3 style={{marginBottom:'12px', fontSize:'18px'}}>¿Estás seguro?</h3>
                   <p style={{color:'#aaa', marginBottom:'24px', fontSize:'14px', lineHeight:'1.5'}}>
-                    Esta acción no se puede deshacer. Se eliminará permanentemente {modal.type === 'booking' ? 'la reserva y todo su historial de pagos y gastos' : 'este registro'}.
+                    {modal.type === 'booking' ? (
+                      modal.data.force 
+                        ? 'Esta acción NO se puede deshacer. Se eliminará PERMANENTEMENTE la reserva de la base de datos con todo su historial de pagos y cargos.'
+                        : 'La reserva se moverá a la Papelera de Reciclaje. Podrás recuperarla o eliminarla definitivamente más tarde.'
+                    ) : 'Esta acción no se puede deshacer. Se eliminará permanentemente este registro.'}
                   </p>
                   <div style={{display:'flex', gap:'12px'}}>
                     <button style={{flex:1, background:'#ffffff15', color:'#fff', padding:'12px', borderRadius:'12px', fontWeight:900, border:'none'}} onClick={()=>setModal(null)}>Cancelar</button>
-                    <button style={{flex:1, background:'#ef4444', color:'#fff', padding:'12px', borderRadius:'12px', fontWeight:900, border:'none'}} onClick={()=>del(modal.type, modal.data.id, true)}>
-                      {loading ? 'Eliminando...' : 'Sí, eliminar'}
+                    <button style={{flex:1, background:'#ef4444', color:'#fff', padding:'12px', borderRadius:'12px', fontWeight:900, border:'none'}} onClick={()=>del(modal.type, modal.data.id, true, modal.data.force)}>
+                      {loading ? 'Eliminando...' : modal.type === 'booking' && !modal.data.force ? 'Mover a Papelera' : 'Sí, eliminar'}
                     </button>
                   </div>
                </div>

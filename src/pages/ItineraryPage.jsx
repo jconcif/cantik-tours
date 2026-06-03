@@ -958,35 +958,40 @@ export default function ItineraryPage() {
                       </div>
                     </button>
 
-                    {showItinerary && finalItinerary.length > 0 && (
-                      <motion.div 
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-6 space-y-6 relative pt-5 border-t border-dashed border-gray-200 dark:border-white/10"
-                      >
-                        {/* Connector line */}
-                        <div className={`absolute top-6 bottom-4 left-[0.875rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+                    <AnimatePresence>
+                      {showItinerary && finalItinerary.length > 0 && (
+                        <motion.div 
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3, ease: 'easeInOut' }}
+                          style={{ overflow: 'hidden' }}
+                          className="mt-6 space-y-6 relative pt-5 border-t border-dashed border-gray-200 dark:border-white/10"
+                        >
+                          {/* Connector line */}
+                          <div className={`absolute top-6 bottom-4 left-[0.875rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
 
-                        {finalItinerary.map((item, idx) => (
-                          <div key={idx} className="flex gap-4 relative">
-                            <div className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
-                              {getActivityIcon(item.type)}
-                            </div>
-                            <div className="flex-1 pt-0.5">
-                              <div className="flex items-center justify-between gap-4">
-                                  <h4 className="text-[10px] font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
-                                {item.duration && (
-                                  <div className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter ${sub}`}>
-                                    <Clock size={8} />
-                                    {en ? (item.duration_en || item.duration) : item.duration}
-                                  </div>
-                                )}
+                          {finalItinerary.map((item, idx) => (
+                            <div key={idx} className="flex gap-4 relative">
+                              <div className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
+                                {getActivityIcon(item.type)}
+                              </div>
+                              <div className="flex-1 pt-0.5">
+                                <div className="flex items-center justify-between gap-4">
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
+                                  {item.duration && (
+                                    <div className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter ${sub}`}>
+                                      <Clock size={8} />
+                                      {en ? (item.duration_en || item.duration) : item.duration}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        ))}
-                      </motion.div>
-                    )}
+                          ))}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </motion.div>
               ) : (

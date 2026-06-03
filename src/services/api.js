@@ -140,7 +140,7 @@ export const validateCoupon    = (code) => get(`/api/coupons/validate/${encodeUR
 export const getBookings    = () => get('/api/bookings');
 export const createBooking  = (d) => post('/api/bookings', d);
 export const updateBooking  = (d) => put(`/api/bookings/${d.id}`, d);
-export const deleteBooking  = (id) => del(`/api/bookings/${id}`);
+export const deleteBooking  = (id, force = false) => del(`/api/bookings/${id}${force ? '?force=true' : ''}`);
 
 // ── Admin: Drivers ────────────────────────────────────────────────────────────
 export const getDrivers     = () => get('/api/drivers');

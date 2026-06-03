@@ -664,7 +664,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
 
                                             <div className="text-center mb-4 px-4">
                                                 <p className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-snug">
-                                                    {i18n.language === 'en' ? 'Click confirm to process your booking and pay securely.' : 'Haz clic en confirmar para procesar tu reserva y pagar de forma segura.'}
+                                                    {i18n.language === 'en' ? 'Click confirm booking to process the request.' : 'Haz clic en confirmar reserva para procesar la solicitud.'}
                                                 </p>
                                             </div>
 
