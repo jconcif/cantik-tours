@@ -33,7 +33,7 @@ const PAY_LABEL = {
   payment_sent:       'Pago Pendiente',
   payment_confirmed:  'Pago Confirmado',
   payment_received:   'Pago Confirmado',
-  verifying_payment:  'Pago Confirmado',
+  verifying_payment:  'Validar Pago 🔔',
   reserved:           'Ratificando Disponibilidad',
   confirmed:          'Tour Confirmado',
   in_progress:        'Tour en Curso',
@@ -48,7 +48,7 @@ const PAY_COLOR = {
   payment_sent:       '#f97316',
   payment_confirmed:  '#11BDDB',
   payment_received:   '#11BDDB',
-  verifying_payment:  '#11BDDB',
+  verifying_payment:  '#f59e0b',
   reserved:           '#11BDDB',
   confirmed:          '#10b981',
   in_progress:        '#8b5cf6',
@@ -228,6 +228,7 @@ export default function AdminPanel() {
       const newStatus = tourDay.getTime() === today.getTime() ? 'in_progress' : 'completed';
       return api.updateBooking({ id: b.id, payment_status: newStatus });
     }));
+    await reload();
   };
 
   const load = useCallback(async () => {
@@ -254,7 +255,7 @@ export default function AdminPanel() {
       setDetailedStats(s.data);
       setAuthed(true);
       // Auto-transition by date — runs silently after auth
-      autoUpdateStatuses(bList);
+      await autoUpdateStatuses(bList);
     } catch (e) {
       setAuthed(false);
       toast(e.message, false);

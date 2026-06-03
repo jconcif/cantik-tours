@@ -883,18 +883,18 @@ export default function ItineraryPage() {
             </div>
           </div>
 
-          {/* ── PREMIUM TAB SWITCH SELECTOR UNDER CALIPSO ──────────── */}
-          <div className={`px-8 pt-5 pb-5 flex justify-center border-b ${dark ? 'bg-[#151515] border-white/5' : 'bg-gray-50/75 border-gray-100'}`}>
-            <div className={`flex p-1 rounded-2xl ${dark ? 'bg-black/20 border border-white/5' : 'bg-gray-200/40'} relative max-w-xs w-full`}>
+          {/* ── PREMIUM TAB SELECTOR UNDER CALIPSO ──────────── */}
+          <div className={`px-8 flex justify-center border-b ${dark ? 'bg-[#151515] border-white/5' : 'bg-gray-50/75 border-gray-100'}`}>
+            <div className="flex gap-8 relative max-w-xs w-full justify-center">
               <button
                 onClick={() => setActiveTab('ticket')}
-                className={`flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all relative z-10 ${activeTab === 'ticket' ? 'text-primary' : 'text-gray-500'}`}
+                className={`py-4 text-[10px] font-black uppercase tracking-widest transition-all relative z-10 border-b-2 ${activeTab === 'ticket' ? 'text-primary border-primary' : 'text-gray-500 border-transparent'}`}
               >
-                {en ? 'My Ticket' : 'Mi Billete'}
+                {en ? 'My Ticket' : 'TICKET'}
               </button>
               <button
                 onClick={() => setActiveTab('gestion')}
-                className={`flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all relative z-10 flex items-center justify-center gap-1.5 ${activeTab === 'gestion' ? 'text-primary' : 'text-gray-500'}`}
+                className={`py-4 text-[10px] font-black uppercase tracking-widest transition-all relative z-10 flex items-center justify-center gap-1.5 border-b-2 ${activeTab === 'gestion' ? 'text-primary border-primary' : 'text-gray-500 border-transparent'}`}
               >
                 <span>{en ? 'Management' : 'Gestión'}</span>
                 {(hasPendingPayment || isCheckinPending) && (
@@ -904,16 +904,6 @@ export default function ItineraryPage() {
                   </span>
                 )}
               </button>
-              
-              {/* Sliding Pill Background Indicator */}
-              <motion.div
-                className={`absolute top-1 bottom-1 rounded-xl shadow-sm ${dark ? 'bg-[#1e1e1e]' : 'bg-white'}`}
-                animate={{
-                  left: activeTab === 'ticket' ? '4px' : '50%',
-                  width: 'calc(50% - 6px)'
-                }}
-                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-              />
             </div>
           </div>
 
