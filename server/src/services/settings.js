@@ -4,7 +4,7 @@ import { supabase } from '../db.js';
 
 const settingsFile = path.resolve(process.cwd(), 'settings.json');
 
-export let globalSettings = {
+export const globalSettings = {
   sendClientOnBooking: true,
   sendClientConfirmation: true,
   sendAdminOnBooking: true,
@@ -18,7 +18,7 @@ try {
   if (fs.existsSync(settingsFile)) {
     const data = fs.readFileSync(settingsFile, 'utf8');
     const parsed = JSON.parse(data);
-    globalSettings = { ...globalSettings, ...parsed };
+    Object.assign(globalSettings, parsed);
   }
 } catch (err) {
   console.error('Error loading settings.json:', err);
@@ -30,7 +30,7 @@ try {
   if (error) {
     console.warn('⚠️ Supabase settings table not ready or error:', error.message);
   } else if (data && data.value) {
-    globalSettings = { ...globalSettings, ...data.value };
+    Object.assign(globalSettings, data.value);
     console.log('✅ Global settings loaded successfully from Supabase.');
   }
 } catch (err) {
