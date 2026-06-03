@@ -461,9 +461,15 @@ export default function ItineraryPage() {
   const isReceiptSentOrVerified = !hasPendingPayment && ['verifying_payment', 'payment_received', 'payment_confirmed', 'reserved', 'confirmed', 'in_progress', 'completed'].includes(booking.payment_status);
   // Show upload button whenever there's a pending balance
   const canUploadReceipt = hasPendingPayment;
-  const isCheckinPending = checkinData.some(p => !p.name || !p.passport);
   // If there's a pending balance, always show PAGO PENDIENTE regardless of payment_status
-  const effectiveStatus = hasPendingPayment ? 'pending_payment' : booking.payment_status;
+  // EXCEPT if the status is verifying_payment or has already been paid (balance <= 0.01)
+  const effectiveStatus = (booking.payment_status === 'verifying_payment')
+    ? 'verifying_payment'
+    : (balance <= 0.01 && ['requested', 'pending_payment'].includes(booking.payment_status))
+      ? 'payment_received'
+      : hasPendingPayment 
+        ? 'pending_payment' 
+        : booking.payment_status;
   const status = statusMap[effectiveStatus] || statusMap.requested;
 
   const fichaUrl = `https://cantiktours.com/booking?ref=${formatCT(ref)}`;
