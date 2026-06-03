@@ -427,7 +427,7 @@ export default function ItineraryPage() {
     payment_sent:     { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'Please complete the payment to secure your spot.' : 'Realiza el pago para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
     payment_received: { step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
     payment_confirmed:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
-    verifying_payment:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
+    verifying_payment:{ step: 3, label: en ? 'VERIFYING PAYMENT'          : 'VERIFICANDO PAGO',               desc: en ? 'Receipt received. Waiting for validation.' : 'Comprobante recibido. En espera de validación.', color: 'text-amber-400',     bg_: 'bg-amber-400/10' },
     reserved:         { step: 4, label: en ? 'CONFIRMING AVAILABILITY'    : 'RATIFICANDO DISPONIBILIDAD',    desc: en ? 'Coordinating details with the team in Bali.' : 'Coordinando detalles con el equipo en Bali.', color: 'text-primary',     bg_: 'bg-primary/10' },
     confirmed:        { step: 5, label: en ? 'TOUR CONFIRMED'             : 'TOUR CONFIRMADO',               desc: en ? 'All set! Booking 100% guaranteed.' : '¡Todo listo! Reserva 100% garantizada.', color: 'text-emerald-400', bg_: 'bg-emerald-400/10' },
     in_progress:      { step: 6, label: en ? 'TOUR IN PROGRESS'           : 'TOUR EN CURSO',                 desc: en ? 'Your tour is underway! Enjoy every moment in Bali.' : '¡Tu tour está en marcha! Disfruta cada momento en Bali.', color: 'text-primary',     bg_: 'bg-primary/10' },
@@ -744,11 +744,11 @@ export default function ItineraryPage() {
       <AnimatePresence>
         {pushNotification && (
           <motion.div
-            initial={{ opacity: 0, y: -50, scale: 0.95 }}
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
-            className="fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white dark:bg-[#1c1c1e] text-gray-900 dark:text-white p-4 rounded-2xl shadow-2xl border border-gray-150 dark:border-white/10 z-[300] flex gap-3.5"
+            className="fixed bottom-24 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white dark:bg-[#1c1c1e] text-gray-900 dark:text-white p-4 rounded-2xl shadow-2xl border border-gray-150 dark:border-white/10 z-[300] flex gap-3.5"
           >
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 text-white font-black text-xs tracking-wider">
               CT
