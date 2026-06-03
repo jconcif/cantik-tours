@@ -8,7 +8,7 @@ import {
   Clock, MapPin, Coffee, Camera, Waves, Map, Activity, Upload,
   ChevronLeft, ChevronRight, CreditCard, Users
 } from 'lucide-react';
-import { getItinerary, submitCheckin, uploadReceipt, capturePayPalPayment } from '../services/api';
+import { getItinerary, submitCheckin, uploadReceipt, capturePayPalPayment, getGlobalSettings } from '../services/api';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
@@ -65,6 +65,13 @@ export default function ItineraryPage() {
   const [activeTab, setActiveTab] = useState('ticket');
   const [showSupportMenu, setShowSupportMenu] = useState(false);
   const [pushNotification, setPushNotification] = useState(null);
+  const [globalSettings, setGlobalSettings] = useState(null);
+
+  useEffect(() => {
+    getGlobalSettings().then(res => {
+      if (res.data) setGlobalSettings(res.data);
+    }).catch(err => console.error(err));
+  }, []);
 
   const en = i18n.language === 'en';
   const extraCharges = charges.reduce((sum, c) => sum + Number(c.amount || 0), 0);
@@ -75,9 +82,16 @@ export default function ItineraryPage() {
   const hasShownNotification = useRef(false);
 
   useEffect(() => {
-    if (booking && !loading && !hasShownNotification.current) {
+    if (booking && !loading && !hasShownNotification.current && globalSettings) {
       const pushTimer = setTimeout(() => {
-        if (booking.drivers) {
+        const notifications = globalSettings.notifications || {};
+        
+        // Event triggers mapped from configuration matrix
+        const showDriverAssigned = notifications.confirmado?.notificacion !== false;
+        const showConfirmed = notifications.confirmado?.notificacion !== false || notifications.pago_validado?.notificacion !== false;
+        const showPendingPayment = notifications.pago_pendiente?.notificacion !== false;
+
+        if (booking.drivers && showDriverAssigned) {
           setPushNotification({
             title: en ? 'Driver Assigned 🚗' : 'Chofer Asignado 🚗',
             body: en 
@@ -85,7 +99,7 @@ export default function ItineraryPage() {
               : `Tu chofer ${booking.drivers.name} (${booking.drivers.car_model || 'Vehículo Premium'}) ha sido asignado a tu reserva.`
           });
           hasShownNotification.current = true;
-        } else if (booking.payment_status === 'confirmed' || booking.payment_status === 'payment_confirmed') {
+        } else if ((booking.payment_status === 'confirmed' || booking.payment_status === 'payment_confirmed') && showConfirmed) {
           setPushNotification({
             title: en ? 'Booking Confirmed ✓' : 'Reserva Confirmada ✓',
             body: en 
@@ -93,7 +107,7 @@ export default function ItineraryPage() {
               : 'Tu reserva está activa y todos los pagos han sido validados con éxito.'
           });
           hasShownNotification.current = true;
-        } else if (balance > 0.01) {
+        } else if (balance > 0.01 && showPendingPayment) {
           setPushNotification({
             title: en ? 'Pending Payment ⚠️' : 'Pago Pendiente ⚠️',
             body: en 
@@ -105,7 +119,7 @@ export default function ItineraryPage() {
       }, 4000);
       return () => clearTimeout(pushTimer);
     }
-  }, [booking, loading, en, balance]);
+  }, [booking, loading, en, balance, globalSettings]);
 
   useEffect(() => {
     if (pushNotification) {

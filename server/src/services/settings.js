@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { supabase } from '../db.js';
 
 const settingsFile = path.resolve(process.cwd(), 'settings.json');
 
@@ -8,9 +9,11 @@ export let globalSettings = {
   sendClientConfirmation: true,
   sendAdminOnBooking: true,
   sendAdminOnPayment: true,
-  exchangeRate: 1.08 // Default rate
+  exchangeRate: 1.08, // Default rate
+  notifications: {}   // Grid configurations
 };
 
+// Load local configuration as fallback/initial seed
 try {
   if (fs.existsSync(settingsFile)) {
     const data = fs.readFileSync(settingsFile, 'utf8');
@@ -21,11 +24,40 @@ try {
   console.error('Error loading settings.json:', err);
 }
 
-const saveSettings = () => {
+// Load from Supabase with top-level await
+try {
+  const { data, error } = await supabase.from('settings').select('*').eq('key', 'global').maybeSingle();
+  if (error) {
+    console.warn('⚠️ Supabase settings table not ready or error:', error.message);
+  } else if (data && data.value) {
+    globalSettings = { ...globalSettings, ...data.value };
+    console.log('✅ Global settings loaded successfully from Supabase.');
+  }
+} catch (err) {
+  console.error('⚠️ Failed to load settings from Supabase (using local/default values):', err.message);
+}
+
+const saveSettings = async () => {
+  // Save local file
   try {
     fs.writeFileSync(settingsFile, JSON.stringify(globalSettings, null, 2), 'utf8');
   } catch (err) {
     console.error('Error saving settings.json:', err);
+  }
+
+  // Save to Supabase
+  try {
+    const { error } = await supabase.from('settings').upsert({
+      key: 'global',
+      value: globalSettings
+    });
+    if (error) {
+      console.error('⚠️ Failed to save settings to Supabase:', error.message);
+    } else {
+      console.log('✅ Settings saved to Supabase successfully.');
+    }
+  } catch (err) {
+    console.error('⚠️ Failed to save settings to Supabase (exception):', err.message);
   }
 };
 
@@ -49,8 +81,18 @@ export const updateGlobalSettings = (settings) => {
     globalSettings.sendClientConfirmation = settings.sendClientConfirmation;
     changed = true;
   }
-  if (typeof settings.exchangeRate === 'number') {
-    globalSettings.exchangeRate = settings.exchangeRate;
+  
+  // Accept string numbers or floats for exchange rate
+  if (settings.exchangeRate !== undefined) {
+    const parsed = parseFloat(settings.exchangeRate);
+    if (!isNaN(parsed) && parsed > 0) {
+      globalSettings.exchangeRate = parsed;
+      changed = true;
+    }
+  }
+
+  if (settings.notifications && typeof settings.notifications === 'object') {
+    globalSettings.notifications = { ...globalSettings.notifications, ...settings.notifications };
     changed = true;
   }
   
@@ -59,3 +101,4 @@ export const updateGlobalSettings = (settings) => {
   }
   return globalSettings;
 };
+

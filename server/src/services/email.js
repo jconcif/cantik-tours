@@ -4,6 +4,13 @@ import { globalSettings } from './settings.js';
 
 dotenv.config();
 
+const shouldSend = (eventKey, target, legacyFlag) => {
+  if (globalSettings.notifications && globalSettings.notifications[eventKey]) {
+    return globalSettings.notifications[eventKey][target] === true;
+  }
+  return legacyFlag;
+};
+
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 // Helper to format currency
@@ -18,7 +25,7 @@ const formatPrice = (price) => {
  * Send Booking Confirmation Email to the Client
  */
 export const sendClientConfirmation = async (booking) => {
-  if (!globalSettings.sendClientOnBooking) {
+  if (!shouldSend('nueva_reserva', 'cliente', globalSettings.sendClientOnBooking)) {
     console.log(`⚠️ Client confirmation email disabled in settings for reference ${booking.reference || booking.id}`);
     return { status: 'disabled_in_settings' };
   }
@@ -266,7 +273,7 @@ export const sendClientConfirmation = async (booking) => {
  * Send Booking Alert Email to Admin
  */
 export const sendAdminAlert = async (booking) => {
-  if (!globalSettings.sendAdminOnBooking) {
+  if (!shouldSend('nueva_reserva', 'admin', globalSettings.sendAdminOnBooking)) {
     console.log(`⚠️ Admin alert email disabled in settings for reference ${booking.reference || booking.id}`);
     return { status: 'disabled_in_settings' };
   }
@@ -371,7 +378,7 @@ export const sendAdminAlert = async (booking) => {
  * Send Alert to Admin when a payment receipt is uploaded
  */
 export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
-  if (!globalSettings.sendAdminOnPayment) {
+  if (!shouldSend('pago_ingresado', 'admin', globalSettings.sendAdminOnPayment)) {
     console.log(`⚠️ Receipt alert email disabled in settings for reference ${booking.reference || booking.id}`);
     return { status: 'disabled_in_settings' };
   }
@@ -477,7 +484,7 @@ export const sendReceiptUploadedAlert = async (booking, receiptRelativeUrl) => {
  * Send email to client when payment is confirmed (payment_received)
  */
 export const sendPaymentConfirmedEmail = async (booking) => {
-  if (globalSettings.sendClientConfirmation === false) {
+  if (!shouldSend('pago_validado', 'cliente', globalSettings.sendClientConfirmation)) {
     console.log(`⚠️ Client confirmation email disabled in settings for reference ${booking.reference || booking.id}`);
     return { status: 'disabled_in_settings' };
   }
@@ -633,6 +640,11 @@ export const sendPaymentConfirmedEmail = async (booking) => {
  * Send Tour Confirmed Email to client (includes Bali Guide link)
  */
 export const sendTourConfirmedEmail = async (booking) => {
+  if (!shouldSend('confirmado', 'cliente', true)) {
+    console.log(`⚠️ Tour confirmed email disabled in settings for reference ${booking.reference || booking.id}`);
+    return { status: 'disabled_in_settings' };
+  }
+
   const clientEmail = booking.extras?.client_email || booking.client_email;
   if (!clientEmail) {
     console.warn('⚠️ Cannot send tour confirmed email: client_email is missing.');
@@ -785,6 +797,11 @@ export const sendTourConfirmedEmail = async (booking) => {
  * Send Tour Completed Email to client (requests a review)
  */
 export const sendTourCompletedEmail = async (booking) => {
+  if (!shouldSend('finalizado', 'cliente', true)) {
+    console.log(`⚠️ Tour completed email disabled in settings for reference ${booking.reference || booking.id}`);
+    return { status: 'disabled_in_settings' };
+  }
+
   const clientEmail = booking.extras?.client_email || booking.client_email;
   if (!clientEmail) {
     console.warn('⚠️ Cannot send tour completed email: client_email is missing.');
