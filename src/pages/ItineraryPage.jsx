@@ -829,16 +829,6 @@ export default function ItineraryPage() {
           >
             {dark ? <Sun size={12} /> : <Moon size={12} />}
           </button>
-
-          <div className={`w-px h-4 mx-1 ${dark ? 'bg-white/10' : 'bg-gray-200'}`} />
-
-          <button
-            onClick={handleCopyLink}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-full border text-[9px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/10 text-gray-400 hover:border-white/20' : 'border-gray-300 text-gray-500'}`}
-          >
-            {copied ? <CheckCircle2 size={12} className="text-emerald-400" /> : <Copy size={12} />}
-            <span className="hidden sm:inline">{copied ? (en ? 'Copied!' : '¡Copiado!') : (en ? 'Share' : 'Copiar')}</span>
-          </button>
         </div>
       </div>
 
@@ -929,7 +919,7 @@ export default function ItineraryPage() {
                   </div>
 
                   {/* Stub (Detailed Itinerary) */}
-                  <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6 rounded-b-[2.5rem] transition-all duration-300`}>
+                  <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 pt-6 pb-10 rounded-b-[2.5rem] transition-all duration-300`}>
                     <button
                       onClick={() => setShowItinerary(!showItinerary)}
                       className="w-full flex items-center justify-between text-left focus:outline-none"
@@ -1063,7 +1053,7 @@ export default function ItineraryPage() {
                       })()}
                       
                       {/* Toggle Button for Timeline Details (Now under Next Step) */}
-                      <div className="flex justify-center mt-4 mb-3">
+                      <div className="flex justify-start mt-4 mb-3">
                         <button
                           onClick={() => setShowTimelineDetails(!showTimelineDetails)}
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[8.5px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/5 hover:bg-white/5 text-gray-400' : 'border-gray-150 hover:bg-gray-50 text-gray-500'} cursor-pointer hover:scale-105 active:scale-95`}
@@ -1376,10 +1366,10 @@ export default function ItineraryPage() {
                             </div>
                             <div className="flex-1">
                               <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                {en ? 'Passenger Passport Data' : 'Datos y Pasaportes de Viajeros'}
+                                {en ? 'Passenger Check-In' : 'Check in Viajeros'}
                               </div>
                               <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                                {en ? 'Please register passenger details.' : 'Completa los datos de todos los viajeros.'}
+                                {en ? 'Please complete passenger details.' : 'Completa los datos de todos los pasajeros.'}
                               </div>
                               
                               {hasPendingPayment && (
