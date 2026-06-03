@@ -878,22 +878,6 @@ export default function ItineraryPage() {
                   )}
                 </div>
               </div>
-
-              {/* Status tag in the header */}
-              <button 
-                onClick={() => {
-                  managementRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-                className="flex-shrink-0 flex items-center gap-2 cursor-pointer hover:scale-105 active:scale-95 transition-all outline-none"
-              >
-                <span className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white border ${dark ? 'border-white/10' : 'border-gray-250'} shadow-md relative overflow-hidden`}>
-                  <span className="relative flex h-2 w-2">
-                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusAlert.dot}`} />
-                    <span className={`relative inline-flex rounded-full h-2 w-2 ${statusAlert.dot}`} />
-                  </span>
-                  <span className={statusAlert.text}>{statusAlert.label}</span>
-                </span>
-              </button>
             </div>
           </div>
 
@@ -1037,100 +1021,6 @@ export default function ItineraryPage() {
                         />
                       </div>
                       
-                      {/* Toggle Button for Timeline Details */}
-                      <div className="flex justify-center mt-3 mb-3">
-                        <button
-                          onClick={() => setShowTimelineDetails(!showTimelineDetails)}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[8.5px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/5 hover:bg-white/5 text-gray-400' : 'border-gray-150 hover:bg-gray-50 text-gray-500'} cursor-pointer hover:scale-105 active:scale-95`}
-                        >
-                          <span>{showTimelineDetails ? (en ? 'Hide details' : 'Ocultar detalles') : (en ? 'Show progress details' : 'Ver detalles de progreso')}</span>
-                          <span className="transition-transform duration-250" style={{ transform: showTimelineDetails ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block' }}>▾</span>
-                        </button>
-                      </div>
-
-                      {/* Integrated Booking Timeline Steps */}
-                      <AnimatePresence initial={false}>
-                        {showTimelineDetails && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.35, ease: 'easeInOut' }}
-                            style={{ overflow: 'hidden' }}
-                            className={`mb-4 rounded-2xl p-5 ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}
-                          >
-                            <div className="space-y-5 relative pl-1">
-                              {/* Background full timeline line (gray) */}
-                              <div className={`absolute top-2 bottom-2 left-[7px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-200'} z-0`} />
-                              {/* Highlighted active timeline line (primary color) */}
-                              <motion.div 
-                                initial={{ height: 0 }}
-                                animate={{ height: `${Math.min(100, Math.max(0, ((currentStep - 1) / 6) * 100))}%` }}
-                                transition={{ duration: 0.8, ease: 'easeOut' }}
-                                className="absolute top-2 left-[7px] w-0.5 bg-primary z-0 origin-top"
-                              />
-                              
-                              {[
-                                statusMap.requested, 
-                                statusMap.pending_payment, 
-                                (effectiveStatus === 'verifying_payment' ? statusMap.verifying_payment : statusMap.payment_received), 
-                                statusMap.reserved, 
-                                statusMap.confirmed,
-                                statusMap.in_progress,
-                                statusMap.completed
-                              ].map((st, i) => {
-                                const isPast = st.step < currentStep;
-                                const isCurrent = st.step === currentStep;
-                                
-                                const stepTime = getStepTimestamp(st.step);
-                                const stepTimeStr = stepTime ? formatStepDate(stepTime) : '';
-                                
-                                return (
-                                  <div key={i} className="flex gap-3 relative z-10">
-                                    <div className="flex flex-col items-center justify-start pt-0.5">
-                                      {isPast ? (
-                                        <div className="w-4 h-4 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center shadow-sm">
-                                          <CheckCircle2 size={8} className="stroke-[3]" />
-                                        </div>
-                                      ) : isCurrent ? (
-                                        <div className="relative flex h-4 w-4 items-center justify-center">
-                                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-30" />
-                                          <div className="relative w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center shadow-md">
-                                            <div className="w-1 h-1 bg-white rounded-full" />
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div className={`w-3.5 h-3.5 rounded-full border-2 ${dark ? 'bg-[#1a1a1a] border-white/10' : 'bg-gray-50 border-gray-200'} flex items-center justify-center`} />
-                                      )}
-                                    </div>
-                                    
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center justify-between gap-3">
-                                        <span className={`text-[9px] font-black uppercase tracking-wider ${
-                                          isCurrent ? 'text-primary' : isPast ? text : 'text-gray-400 dark:text-gray-600'
-                                        }`}>
-                                          {st.label}
-                                        </span>
-                                        {stepTimeStr && (
-                                          <span className={`text-[7.5px] font-bold uppercase tracking-tighter ${sub}`}>
-                                            {stepTimeStr}
-                                          </span>
-                                        )}
-                                      </div>
-                                      {isCurrent && (
-                                        <p className={`text-[9.5px] font-semibold mt-0.5 leading-relaxed ${dark ? 'text-gray-300' : 'text-gray-600'}`}>
-                                          {st.desc}
-                                        </p>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                      
                       {/* Next step indicator under progress bar */}
                       {(function() {
                         let nextStepText = '';
@@ -1171,6 +1061,100 @@ export default function ItineraryPage() {
                           </div>
                         );
                       })()}
+                      
+                      {/* Toggle Button for Timeline Details (Now under Next Step) */}
+                      <div className="flex justify-center mt-4 mb-3">
+                        <button
+                          onClick={() => setShowTimelineDetails(!showTimelineDetails)}
+                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[8.5px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/5 hover:bg-white/5 text-gray-400' : 'border-gray-150 hover:bg-gray-50 text-gray-500'} cursor-pointer hover:scale-105 active:scale-95`}
+                        >
+                          <span>{showTimelineDetails ? (en ? 'Hide details' : 'Ocultar detalles') : (en ? 'Show progress details' : 'Ver detalles de progreso')}</span>
+                          <span className="transition-transform duration-250" style={{ transform: showTimelineDetails ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block' }}>▾</span>
+                        </button>
+                      </div>
+
+                      {/* Integrated Booking Timeline Steps */}
+                      <AnimatePresence initial={false}>
+                        {showTimelineDetails && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.35, ease: 'easeInOut' }}
+                            style={{ overflow: 'hidden' }}
+                            className={`mb-4 rounded-2xl p-5 ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}
+                          >
+                            <div className="space-y-5 relative pl-1">
+                              {[
+                                statusMap.requested, 
+                                statusMap.pending_payment, 
+                                (effectiveStatus === 'verifying_payment' ? statusMap.verifying_payment : statusMap.payment_received), 
+                                statusMap.reserved, 
+                                statusMap.confirmed,
+                                statusMap.in_progress,
+                                statusMap.completed
+                              ].map((st, i) => {
+                                const isPast = st.step < currentStep;
+                                const isCurrent = st.step === currentStep;
+                                
+                                const stepTime = getStepTimestamp(st.step);
+                                const stepTimeStr = stepTime ? formatStepDate(stepTime) : '';
+                                
+                                return (
+                                  <div key={i} className="flex gap-3 relative z-10">
+                                    <div className="flex flex-col items-center justify-start pt-0.5">
+                                      <div className="relative z-10">
+                                        {isPast ? (
+                                          <div className="w-4 h-4 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center shadow-sm">
+                                            <CheckCircle2 size={8} className="stroke-[3]" />
+                                          </div>
+                                        ) : isCurrent ? (
+                                          <div className="relative flex h-4 w-4 items-center justify-center">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-30" />
+                                            <div className="relative w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center shadow-md">
+                                              <div className="w-1 h-1 bg-white rounded-full" />
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <div className={`w-3.5 h-3.5 rounded-full border-2 ${dark ? 'bg-[#1a1a1a] border-white/10' : 'bg-gray-50 border-gray-200'} flex items-center justify-center`} />
+                                        )}
+                                      </div>
+                                      
+                                      {i < 6 && (
+                                        <div 
+                                          className={`absolute top-4 bottom-[-20px] left-[7px] w-0.5 ${
+                                            st.step < currentStep ? 'bg-primary' : (dark ? 'bg-white/5' : 'bg-gray-200')
+                                          } z-0`}
+                                        />
+                                      )}
+                                    </div>
+                                    
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center justify-between gap-3">
+                                        <span className={`text-[9px] font-black uppercase tracking-wider ${
+                                          isCurrent ? 'text-primary' : isPast ? text : 'text-gray-400 dark:text-gray-600'
+                                        }`}>
+                                          {st.label}
+                                        </span>
+                                        {stepTimeStr && (
+                                          <span className={`text-[7.5px] font-bold uppercase tracking-tighter ${sub}`}>
+                                            {stepTimeStr}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {isCurrent && (
+                                        <p className={`text-[9.5px] font-semibold mt-0.5 leading-relaxed ${dark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                          {st.desc}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
 
