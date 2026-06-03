@@ -110,6 +110,7 @@ export default function AdminPanel() {
     if (b.payment_status !== 'verifying_payment') return false;
     try {
       const ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+      if (ext.is_deleted === true) return false;
       return Array.isArray(ext.pending_receipts) && ext.pending_receipts.length > 0;
     } catch(e) { return false; }
   };
