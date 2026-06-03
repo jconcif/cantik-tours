@@ -23,6 +23,7 @@ try {
 async function upload() {
     const client = new ftp.Client();
     client.ftp.verbose = true;
+    client.ftp.timeout = 120000;
     try {
         if (!process.env.FTP_USERNAME || !process.env.FTP_PASSWORD) {
             throw new Error("❌ Faltan las credenciales FTP (FTP_USERNAME o FTP_PASSWORD) en las variables de entorno.");
@@ -51,9 +52,25 @@ async function upload() {
         }
         
         console.log("📤 Subiendo archivos de dist...");
-        await client.uploadFromDir(path.join(__dirname, "../dist"));
         
-        console.log("✅ ¡Subida completada con éxito!");
+        // Subir archivos individuales de la raíz de dist
+        const rootFiles = ["index.html", "sitemap.xml", "robots.txt", ".htaccess", "favicon.png", "apple-touch-icon.png"];
+        for (const file of rootFiles) {
+            try {
+                await client.uploadFrom(path.join(__dirname, "../dist", file), file);
+                console.log(`✅ Subido: ${file}`);
+            } catch (err) {
+                console.warn(`⚠️ No se pudo subir ${file}:`, err.message);
+            }
+        }
+        
+        // Subir la carpeta de assets
+        console.log("📤 Subiendo carpeta de assets...");
+        await client.ensureDir("assets");
+        await client.uploadFromDir(path.join(__dirname, "../dist/assets"));
+        await client.cd("..");
+        
+        console.log("✅ ¡Subida completada con éxito (omitido directorio de imágenes estáticas)!");
     } catch (err) {
         console.error("❌ Error en la subida:", err);
         process.exit(1);
