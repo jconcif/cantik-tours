@@ -1182,15 +1182,15 @@ export default function AdminPanel() {
                   </div>
                 </div>
                 <div style={{textAlign:'right', flexShrink:0}}>
-                   <div style={{fontSize:'16px', fontWeight:900, color:C}}>
-                     {(() => {
-                       let ext = {};
-                       try { ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {}); } catch(e){}
-                       return Number(b.total_price || 0) + Number(ext.total_charges || 0);
-                     })()}€
-                   </div>
-                   <div style={{fontSize:'9px', fontWeight:700, color:'#555'}}>{b.pax} PAX</div>
-                </div>
+                    <div style={{fontSize:'16px', fontWeight:900, color:C}}>
+                      {(() => {
+                        const total = Number(b.total_price || 0) + Number(b.total_charges || 0);
+                        const paid = Number(b.total_paid || 0);
+                        return (total - paid).toFixed(2).replace(/\.00$/, '');
+                      })()}€
+                    </div>
+                    <div style={{fontSize:'9px', fontWeight:700, color:'#555'}}>{b.pax} PAX</div>
+                 </div>
               </div>
 
               {/* DETALLES OCULTOS: Se expanden al hacer clic */}
