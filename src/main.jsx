@@ -7,6 +7,8 @@ import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+console.log("%c🚀 Cantik Tours Web Version:", "color: #11BDDB; font-weight: bold; font-size: 14px;", __BUILD_DATE__);
+
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')).render(

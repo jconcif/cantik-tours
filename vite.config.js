@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
     plugins: [react()],
     base: '/',
+    define: {
+        __BUILD_DATE__: JSON.stringify(new Date().toLocaleString('es-ES', { timeZone: 'America/Santiago' })),
+    },
     build: {
         rollupOptions: {
             output: {

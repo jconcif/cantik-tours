@@ -2,6 +2,7 @@ import React from 'react';
 import * as api from '../services/api';
 import { BASE } from '../services/api';
 import { useTranslation } from 'react-i18next';
+const formatCT = (val) => 'CT-' + String(val).replace(/^CT-?/i, '').padStart(4, '0');
 import { tours } from '../data/tours';
 
 export const openDataUrl = (e, url) => {
@@ -77,7 +78,7 @@ export const BookingForm = ({data,onChange}) => {
   return (
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(240px, 1fr))',gap:'12px'}}>
       {/* Identity & Core Info */}
-      <Input label="Código Referencia (ID)" value={data.reference || `CT-${data.id}`} onChange={()=>{}} readOnly />
+      <Input label="Código Referencia (ID)" value={formatCT(data.reference || data.id)} onChange={()=>{}} readOnly />
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
         <Input label="Fecha Tour" value={data.booking_date} onChange={v=>onChange('booking_date',v)} type="date" />
         <Input label="Hora Recogida" value={data.pickup_time} onChange={v=>onChange('pickup_time',v)} type="time" />
@@ -281,7 +282,7 @@ const LanguageBuilder = ({ value, onChange }) => {
 export const DriverForm = ({data,onChange}) => (
   <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px'}}>
-      <Input label="Código" value={data.driver_code} onChange={v=>onChange('driver_code',v)} placeholder="Ej: CT-01" />
+      <Input label="Código" value={data.driver_code} onChange={v=>onChange('driver_code',v)} placeholder="Ej: 01" />
       <Input label="Nombre" value={data.name} onChange={v=>onChange('name',v)} />
     </div>
     <Input label="Teléfono" value={data.phone} onChange={v=>onChange('phone',v)} />

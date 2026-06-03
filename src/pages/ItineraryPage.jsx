@@ -1,7 +1,7 @@
 import LocalLink from '../components/LocalLink';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageCircle, Star, CheckCircle2, ShieldCheck, Info,
   Heart, Sun, Moon, Plane, Copy, ExternalLink,
@@ -31,7 +31,8 @@ export default function ItineraryPage() {
   const { i18n } = useTranslation();
   const { currency, toggleCurrency, formatPrice } = useCurrency();
   const rawRef = searchParams.get('ref') || '';
-  const ref = rawRef.replace(/^CT-/, '');
+  const ref = rawRef.replace(/^CT-?/i, '').replace(/^0+/, '');
+  const formatCT = (val) => 'CT-' + String(val).replace(/^CT-?/i, '').padStart(4, '0');
   const navigate = useNavigate();
   const location = useLocation();
   const [booking, setBooking] = useState(null);
@@ -56,10 +57,71 @@ export default function ItineraryPage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [uploadingReceipt, setUploadingReceipt] = useState(false);
   const [copiedField, setCopiedField] = useState('');
-  const [paymentTab, setPaymentTab] = useState('eur');
+  const [paymentTab, setPaymentTab] = useState('paypal');
+  const [showBankTransfer, setShowBankTransfer] = useState(false);
   const [showChecklist, setShowChecklist] = useState(false);
   const [showStatusCard, setShowStatusCard] = useState(false);
+  const [showStatusAlert, setShowStatusAlert] = useState(false);
   const [activeTab, setActiveTab] = useState('ticket');
+  const [showSupportMenu, setShowSupportMenu] = useState(false);
+  const [pushNotification, setPushNotification] = useState(null);
+
+  const en = i18n.language === 'en';
+  const extraCharges = charges.reduce((sum, c) => sum + Number(c.amount || 0), 0);
+  const finalTotal = parseFloat(booking?.total_price || 0) + extraCharges;
+  const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+  const balance = finalTotal - totalPaid;
+
+  const hasShownNotification = useRef(false);
+
+  useEffect(() => {
+    if (booking && !loading && !hasShownNotification.current) {
+      const pushTimer = setTimeout(() => {
+        if (booking.drivers) {
+          setPushNotification({
+            title: en ? 'Driver Assigned 🚗' : 'Chofer Asignado 🚗',
+            body: en 
+              ? `Your driver ${booking.drivers.name} (${booking.drivers.car_model || 'Premium Car'}) has been assigned to your booking.`
+              : `Tu chofer ${booking.drivers.name} (${booking.drivers.car_model || 'Vehículo Premium'}) ha sido asignado a tu reserva.`
+          });
+          hasShownNotification.current = true;
+        } else if (booking.payment_status === 'confirmed' || booking.payment_status === 'payment_confirmed') {
+          setPushNotification({
+            title: en ? 'Booking Confirmed ✓' : 'Reserva Confirmada ✓',
+            body: en 
+              ? 'Your booking is active and all payments are successfully validated.' 
+              : 'Tu reserva está activa y todos los pagos han sido validados con éxito.'
+          });
+          hasShownNotification.current = true;
+        } else if (balance > 0.01) {
+          setPushNotification({
+            title: en ? 'Pending Payment ⚠️' : 'Pago Pendiente ⚠️',
+            body: en 
+              ? `There is a pending balance of ${formatPrice(balance).symbol}${formatPrice(balance).amount} for your tour.` 
+              : `Tienes un saldo pendiente de ${formatPrice(balance).symbol}${formatPrice(balance).amount} para tu tour.`
+          });
+          hasShownNotification.current = true;
+        }
+      }, 4000);
+      return () => clearTimeout(pushTimer);
+    }
+  }, [booking, loading, en, balance]);
+
+  useEffect(() => {
+    if (pushNotification) {
+      const dismissTimer = setTimeout(() => {
+        setPushNotification(null);
+      }, 7000);
+      return () => clearTimeout(dismissTimer);
+    }
+  }, [pushNotification]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowStatusAlert(false);
+    }, 8000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const [allRelatedData, setAllRelatedData] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -142,8 +204,17 @@ export default function ItineraryPage() {
   const applyBookingData = (data, isPolling = false) => {
     setBooking(data.data);
     if (data.related) setRelatedBookings(data.related);
-    if (data.payments) setPayments(data.payments);
-    if (data.charges) setCharges(data.charges);
+    
+    const currentPayments = data.payments || [];
+    const currentCharges = data.charges || [];
+    setPayments(currentPayments);
+    setCharges(currentCharges);
+    
+    const extraCharges = currentCharges.reduce((sum, c) => sum + Number(c.amount), 0);
+    const finalTotal = parseFloat(data.data.total_price || 0) + extraCharges;
+    const totalPaid = currentPayments.reduce((sum, p) => sum + Number(p.amount), 0);
+    const balance = finalTotal - totalPaid;
+    const hasPending = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(data.data.payment_status);
     
     if (!isPolling) {
       let existingPax = [];
@@ -155,6 +226,7 @@ export default function ItineraryPage() {
       const numPax = Math.max(1, Math.abs(parseInt(data.data.pax) || 1));
       const initCheckin = Array(numPax).fill(0).map((_, i) => existingPax[i] || { name: '', passport: '', age: '', emergency: '', medical: '' });
       setCheckinData(initCheckin);
+      
     }
   };
 
@@ -189,6 +261,8 @@ export default function ItineraryPage() {
       document.body.style.overflow = 'unset';
     };
   }, [showPaymentModal, showCheckin]);
+
+
 
   const handleCheckinSubmit = async () => {
     const missing = checkinData.some(p => !(p.name || '').trim() || !(p.passport || '').trim());
@@ -324,7 +398,6 @@ export default function ItineraryPage() {
   // ── Date ────────────────────────────────────────────────────
   const tourDate = parseLocalDate(booking.booking_date);
   const isExpired = tourDate ? tourDate < new Date() : false;
-  const en = i18n.language === 'en';
 
   const dateStr = tourDate
     ? tourDate.toLocaleDateString(en ? 'en-US' : 'es-ES', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' })
@@ -336,8 +409,8 @@ export default function ItineraryPage() {
   // ── 5-step status flow ──────────────────────────────────────────
   const statusMap = {
     requested:        { step: 1, label: en ? 'REQUEST RECEIVED'          : 'SOLICITUD RECIBIDA',            desc: en ? 'Request received. Proceed to payment to reserve.' : 'Solicitud recibida. Procede al pago para reservar.', color: 'text-amber-400',   bg_: 'bg-amber-400/10' },
-    pending_payment:  { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'Waiting for transfer receipt to secure your spot.' : 'Esperando comprobante de transferencia para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
-    payment_sent:     { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'Waiting for transfer receipt to secure your spot.' : 'Esperando comprobante de transferencia para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
+    pending_payment:  { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'Please complete the payment to secure your spot.' : 'Realiza el pago para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
+    payment_sent:     { step: 2, label: en ? 'PAYMENT PENDING'            : 'PAGO PENDIENTE',                desc: en ? 'Please complete the payment to secure your spot.' : 'Realiza el pago para asegurar tu plaza.', color: 'text-orange-400',  bg_: 'bg-orange-400/10' },
     payment_received: { step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
     payment_confirmed:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
     verifying_payment:{ step: 3, label: en ? 'PAYMENT CONFIRMED'          : 'PAGO CONFIRMADO',               desc: en ? 'Receipt received. Payment validated.' : 'Comprobante recibido. Pago validado.', color: 'text-primary',     bg_: 'bg-primary/10' },
@@ -365,13 +438,8 @@ export default function ItineraryPage() {
       : 'L - GUIA PROFESIONAL (ESPAÑOL)';
   const expColor = '#11BDDB';
 
-  const extraCharges = charges.reduce((sum, c) => sum + Number(c.amount), 0);
-  const finalTotal = parseFloat(booking.total_price || 0) + extraCharges;
   const priceData = formatPrice(finalTotal);
   const priceVal = `${priceData.symbol}${priceData.amount}`;
-
-  const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount), 0);
-  const balance = finalTotal - totalPaid;
   const hasPendingPayment = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status);
   
   const isPaymentPending = hasPendingPayment;
@@ -384,15 +452,20 @@ export default function ItineraryPage() {
   const effectiveStatus = hasPendingPayment ? 'pending_payment' : booking.payment_status;
   const status = statusMap[effectiveStatus] || statusMap.requested;
 
-  const fichaUrl = `https://cantiktours.com/booking?ref=CT-${ref}`;
+  const fichaUrl = `https://cantiktours.com/booking?ref=${formatCT(ref)}`;
+
+  const whatsappPhone = en ? '6285691533356' : '34642517787';
   const supportMsg = encodeURIComponent(
-    `Hola Cantik Tours! Necesito ayuda con mi solicitud CT-${ref}.\n\nFicha: ${fichaUrl}`
+    en 
+      ? `Hello Cantik Tours!\nI need help with my booking.\n${fichaUrl}`
+      : `Hola Cantik Tours!\nNecesito ayuda con mi reserva.\n${fichaUrl}`
   );
+  const whatsappLink = `https://wa.me/${whatsappPhone}?text=${supportMsg}`;
 
   const receiptMsg = encodeURIComponent(
     en
-      ? `Hello Cantik Tours! I have completed the bank transfer of ${formatPrice(balance).symbol}${formatPrice(balance).amount} for my booking CT-${ref}. Here is my payment receipt:\n\nLink: ${fichaUrl}`
-      : `¡Hola Cantik Tours! He realizado la transferencia bancaria por ${formatPrice(balance).symbol}${formatPrice(balance).amount}, para mi reserva CT-${ref}. Aquí os comparto el comprobante de pago:\n\nFicha: ${fichaUrl}`
+      ? `Hello Cantik Tours! I have completed the bank transfer of ${formatPrice(balance).symbol}${formatPrice(balance).amount} for my booking ${ref}. Here is my payment receipt:\n\nLink: ${fichaUrl}`
+      : `¡Hola Cantik Tours! He realizado la transferencia bancaria por ${formatPrice(balance).symbol}${formatPrice(balance).amount}, para mi reserva ${ref}. Aquí os comparto el comprobante de pago:\n\nFicha: ${fichaUrl}`
   );
 
   const handleCopy = (txt, fieldName) => {
@@ -415,22 +488,161 @@ export default function ItineraryPage() {
 
   const currentStep = status.step;
 
+  const getStatusAlertStyles = () => {
+    switch (effectiveStatus) {
+      case 'pending_payment':
+      case 'payment_sent':
+      case 'requested':
+        return {
+          bg: dark ? 'bg-orange-500/10 border-orange-500/30' : 'bg-orange-50 border-orange-200',
+          text: 'text-orange-500',
+          dot: 'bg-orange-500',
+          label: en ? 'Payment Pending' : 'Pago Pendiente',
+          desc: en ? 'Please make the payment to secure your booking.' : 'Realiza el pago para asegurar tu plaza.'
+        };
+      case 'verifying_payment':
+      case 'payment_received':
+      case 'payment_confirmed':
+      case 'reserved':
+        return {
+          bg: dark ? 'bg-sky-500/10 border-sky-500/30' : 'bg-sky-50 border-sky-200',
+          text: 'text-sky-500',
+          dot: 'bg-sky-500',
+          label: en ? 'Confirming Availability' : 'Ratificando Disponibilidad',
+          desc: en ? 'We are verifying the final details.' : 'Estamos verificando los últimos detalles.'
+        };
+      case 'confirmed':
+        return {
+          bg: dark ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-emerald-50 border-emerald-200',
+          text: 'text-emerald-500',
+          dot: 'bg-emerald-500',
+          label: en ? 'Booking Guaranteed' : 'Reserva Confirmada',
+          desc: en ? 'Booking 100% guaranteed.' : 'Reserva 100% garantizada.'
+        };
+      case 'in_progress':
+        return {
+          bg: dark ? 'bg-primary/10 border-primary/30' : 'bg-cyan-50 border-cyan-200',
+          text: 'text-primary',
+          dot: 'bg-primary',
+          label: en ? 'Tour in Progress' : 'Tour en Curso',
+          desc: en ? 'Your tour is underway! Enjoy Bali.' : '¡Tu tour está en marcha! Disfruta de Bali.'
+        };
+      case 'completed':
+        return {
+          bg: dark ? 'bg-gray-500/10 border-gray-500/30' : 'bg-gray-50 border-gray-200',
+          text: 'text-gray-500',
+          dot: 'bg-gray-500',
+          label: en ? 'Tour Completed' : 'Tour Finalizado',
+          desc: en ? 'Tour completed. Thank you!' : 'Tour finalizado. ¡Gracias!'
+        };
+      default:
+        return {
+          bg: dark ? 'bg-gray-500/10 border-gray-500/30' : 'bg-gray-50 border-gray-200',
+          text: 'text-gray-500',
+          dot: 'bg-gray-500',
+          label: en ? 'Status Pending' : 'Estado Pendiente',
+          desc: en ? 'We are processing your booking.' : 'Estamos procesando tu reserva.'
+        };
+    }
+  };
+
+  const statusAlert = getStatusAlertStyles();
+
   const handleCopyLink = () => {
     navigator.clipboard.writeText(fichaUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Full lifecycle steps
-  const steps = [
-    { done: status.step >= 1, text: en ? 'Request received'                  : 'Solicitud recibida' },
-    { done: status.step >= 2, text: en ? 'Payment pending'                   : 'Pago pendiente' },
-    { done: status.step >= 3, text: en ? 'Payment confirmed'                 : 'Pago confirmado' },
-    { done: status.step >= 4, text: en ? 'Confirming availability'           : 'Ratificando disponibilidad con el equipo local' },
-    { done: status.step >= 5, text: en ? 'Tour confirmed — See you in Bali!' : 'Tour confirmado — ¡Nos vemos en Bali!' },
-    { done: status.step >= 6, text: en ? 'Tour in progress'                  : 'Tour en curso' },
-    { done: status.step >= 7, text: en ? 'Completed — Thank you!'            : 'Finalizado — ¡Gracias!' },
-  ];
+  // ── Helper Functions for dynamic status, progress and timeline ──
+  const getProgressPercentage = () => {
+    if (booking.payment_status === 'completed') return 100;
+    if (booking.payment_status === 'in_progress') return 100;
+    if (booking.payment_status === 'confirmed') return 100;
+    
+    let progress = 25; // Solicitud recibida
+    if (!hasPendingPayment) {
+      progress = 75; // Pago verificado
+      if (['reserved', 'payment_received', 'payment_confirmed'].includes(booking.payment_status)) {
+        progress = 85; // Ratificando disponibilidad
+      }
+    } else {
+      if (!isCheckinPending) {
+        progress = 50; // Check-in completado pero pago pendiente
+      }
+    }
+    
+    if (progress >= 75 && !isCheckinPending) {
+      progress = 90; // Pago verificado + check-in completado
+    }
+    
+    return progress;
+  };
+
+  const getStepTimestamp = (stepNum) => {
+    try {
+      const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {});
+      const logs = ext.logs || [];
+      
+      if (stepNum === 1) return booking.created_at;
+      if (stepNum === 2) return booking.created_at;
+      if (stepNum === 3) {
+        if (payments && payments.length > 0) {
+          const dates = payments.map(p => p.created_at || p.payment_date).filter(Boolean);
+          if (dates.length > 0) return dates[dates.length - 1];
+        }
+        const log = logs.find(l => l.text?.toLowerCase().includes('pago validado') || l.text?.toLowerCase().includes('comprobante de pago subido'));
+        if (log) return log.timestamp;
+      }
+      if (stepNum === 4) {
+        const log = logs.find(l => l.text?.toLowerCase().includes('reserved') || l.text?.toLowerCase().includes('disponibilidad'));
+        if (log) return log.timestamp;
+      }
+      if (stepNum === 5) {
+        const log = logs.find(l => l.text?.toLowerCase().includes('confirmed') || l.text?.toLowerCase().includes('chofer') || l.text?.toLowerCase().includes('driver'));
+        if (log) return log.timestamp;
+      }
+      if (stepNum === 6) {
+        const log = logs.find(l => l.text?.toLowerCase().includes('en curso') || l.text?.toLowerCase().includes('in progress'));
+        if (log) return log.timestamp;
+      }
+      if (stepNum === 7) {
+        const log = logs.find(l => l.text?.toLowerCase().includes('finalizado') || l.text?.toLowerCase().includes('completed'));
+        if (log) return log.timestamp;
+      }
+    } catch(e) {}
+    return null;
+  };
+
+  const formatStepDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '';
+    
+    const day = date.getDate();
+    const monthsEs = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const monthsEn = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = en ? monthsEn[date.getMonth()] : monthsEs[date.getMonth()];
+    
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return en ? `${month} ${day} · ${hours}:${minutes}` : `${day} ${month} · ${hours}:${minutes}`;
+  };
+
+  const getLastUpdateStr = () => {
+    try {
+      const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {});
+      const logs = ext.logs || [];
+      if (logs.length > 0) {
+        return formatStepDate(logs[logs.length - 1].timestamp);
+      }
+      if (booking.created_at) {
+        return formatStepDate(booking.created_at);
+      }
+    } catch(e) {}
+    return '';
+  };
 
   // ── Resolved Itinerary ───────────────────────────────────────
   const tourData = tours.find(t => t.id === booking.tour_id) || tours.find(t => t.title === booking.tour_title);
@@ -505,7 +717,38 @@ export default function ItineraryPage() {
   };
 
   return (
-    <div className={`min-h-screen ${bg} ${text} font-sans pb-24 overflow-x-hidden transition-colors duration-300`}>
+    <div className={`min-h-screen ${bg} ${text} font-sans overflow-x-hidden transition-colors duration-300 flex flex-col`}>
+
+      {/* Simulated Push Notification Banner */}
+      <AnimatePresence>
+        {pushNotification && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            className="fixed top-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-white dark:bg-[#1c1c1e] text-gray-900 dark:text-white p-4 rounded-2xl shadow-2xl border border-gray-150 dark:border-white/10 z-[300] flex gap-3.5"
+          >
+            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center flex-shrink-0 text-white font-black text-xs tracking-wider">
+              CT
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex justify-between items-center mb-1">
+                <span className="text-[9px] font-black tracking-widest text-primary uppercase">CANTIK TOURS</span>
+                <span className="text-[8px] font-bold text-gray-400">{en ? 'now' : 'ahora'}</span>
+              </div>
+              <h4 className="text-[11px] font-black uppercase tracking-wider">{pushNotification.title}</h4>
+              <p className="text-[10px] font-bold text-gray-400 leading-relaxed mt-0.5">{pushNotification.body}</p>
+            </div>
+            <button 
+              onClick={() => setPushNotification(null)}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-white flex-shrink-0 text-xs self-start w-5 h-5 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Navbar */}
       <div className={`sticky top-0 z-50 px-6 py-4 flex items-center justify-between backdrop-blur-xl border-b ${dark ? 'bg-[#0a0a0a]/80 border-white/5' : 'bg-white/80 border-gray-200'}`}>
@@ -562,13 +805,13 @@ export default function ItineraryPage() {
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pt-10 space-y-5">
+      <div className="max-w-2xl mx-auto px-4 pt-5 space-y-5 flex-1 w-full">
 
         {/* ── UNIFIED TICKET CONTAINER ────────────────────────────── */}
         <div className={`rounded-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50 bg-[#1a1a1a]' : 'shadow-gray-300/80 bg-white'}`}>
 
           {/* Header strip (always visible) */}
-          <div className="bg-primary px-6 sm:px-8 py-7 relative overflow-hidden">
+          <div className="bg-primary px-6 sm:px-8 py-9 relative overflow-hidden">
             <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'repeating-linear-gradient(45deg,white 0,white 1px,transparent 0,transparent 50%)', backgroundSize: '8px 8px' }} />
             <div className="relative z-10 flex items-center justify-between">
               <div>
@@ -587,7 +830,7 @@ export default function ItineraryPage() {
                   )}
                   
                   <div className="font-mono font-black text-base sm:text-lg tracking-widest text-white flex items-center gap-2 px-1">
-                    <span>{booking.reference ? (booking.reference.startsWith('CT-') ? booking.reference : `CT-${booking.reference}`) : `CT-${booking.id}`}</span>
+                    <span>{formatCT(booking.reference || booking.id)}</span>
                     <span className="text-[10px] sm:text-xs text-white/80 uppercase tracking-widest font-bold bg-white/10 px-2 py-0.5 rounded-md">({dayNum} {monthStr})</span>
                   </div>
 
@@ -601,160 +844,468 @@ export default function ItineraryPage() {
             </div>
           </div>
 
-          {/* APP TABS (TICKET VS GESTION) inside the container */}
-          <div className={`flex border-b ${dark ? 'border-white/5 bg-black/20' : 'border-gray-100 bg-gray-50'}`}>
-            <button 
-              onClick={() => setActiveTab('ticket')}
-              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'ticket' ? (dark ? 'text-primary bg-white/5 shadow-[inset_0_-2px_0_0_#11BDDB]' : 'text-primary bg-white shadow-[inset_0_-2px_0_0_#11BDDB]') : (dark ? 'text-gray-500 hover:text-gray-300 hover:bg-white/5' : 'text-gray-500 hover:text-gray-700 hover:bg-white')}`}
-            >
-              {en ? 'My Ticket' : 'Mi Billete'}
-            </button>
-            <button 
-              onClick={() => setActiveTab('management')}
-              className={`flex-1 py-4 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${activeTab === 'management' ? (dark ? 'text-primary bg-white/5 shadow-[inset_0_-2px_0_0_#11BDDB]' : 'text-primary bg-white shadow-[inset_0_-2px_0_0_#11BDDB]') : (dark ? 'text-gray-500 hover:text-gray-300 hover:bg-white/5' : 'text-gray-500 hover:text-gray-700 hover:bg-white')}`}
-            >
-              {en ? 'Management' : 'Gestión'}
-              {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) && (
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-              )}
-            </button>
+          {/* ── PREMIUM TAB SWITCH SELECTOR UNDER CALIPSO ──────────── */}
+          <div className={`px-8 pt-5 pb-5 flex justify-center border-b ${dark ? 'bg-[#151515] border-white/5' : 'bg-gray-50/75 border-gray-100'}`}>
+            <div className={`flex p-1 rounded-2xl ${dark ? 'bg-black/20 border border-white/5' : 'bg-gray-200/40'} relative max-w-xs w-full`}>
+              <button
+                onClick={() => setActiveTab('ticket')}
+                className={`flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all relative z-10 ${activeTab === 'ticket' ? 'text-primary' : 'text-gray-500'}`}
+              >
+                {en ? 'My Ticket' : 'Mi Billete'}
+              </button>
+              <button
+                onClick={() => setActiveTab('gestion')}
+                className={`flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-xl transition-all relative z-10 flex items-center justify-center gap-1.5 ${activeTab === 'gestion' ? 'text-primary' : 'text-gray-500'}`}
+              >
+                <span>{en ? 'Management' : 'Gestión'}</span>
+                {(hasPendingPayment || isCheckinPending) && (
+                  <span className="relative flex h-1.5 w-1.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500" />
+                  </span>
+                )}
+              </button>
+              
+              {/* Sliding Pill Background Indicator */}
+              <motion.div
+                className={`absolute top-1 bottom-1 rounded-xl shadow-sm ${dark ? 'bg-[#1e1e1e]' : 'bg-white'}`}
+                animate={{
+                  left: activeTab === 'ticket' ? '4px' : '50%',
+                  width: 'calc(50% - 6px)'
+                }}
+                transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+              />
+            </div>
           </div>
 
-          <div className="relative">
-            {activeTab === 'ticket' && (
-              <motion.div key="ticket" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-                {/* Fields */}
-                <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6`}>
-                  <div className="grid className='grid-cols-3 gap-x-4 gap-y-5'" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1.25rem 1rem' }}>
-                    {[
-                      { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
-                      { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
-                      { label: priceLabel,                  val: priceVal, style: { color: '#11BDDB' } },
-                      { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
-                      { label: en ? 'START TIME' : 'Hora Inicio', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
-                      { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
-                    ].map((f, i) => (
-                      <div key={i}>
-                        <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
-                        <div className={`font-black text-sm ${text} truncate`} style={f.style}>{f.val}</div>
+          <div className="relative overflow-hidden">
+            <AnimatePresence mode="wait">
+              {activeTab === 'ticket' ? (
+                <motion.div
+                  key="ticket-pane"
+                  initial={{ x: -30, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: 30, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: 'easeInOut' }}
+                >
+                  {/* Fields */}
+                  <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6`}>
+                    <div className="grid className='grid-cols-3 gap-x-4 gap-y-5'" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1.25rem 1rem' }}>
+                      {[
+                        { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
+                        { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
+                        { 
+                          label: en ? 'STATUS' : 'ESTADO', 
+                          val: statusAlert.label, 
+                          style: { color: effectiveStatus === 'pending_payment' || effectiveStatus === 'payment_sent' || effectiveStatus === 'requested' ? '#f97316' : '#10b981' } 
+                        },
+                        { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
+                        { label: en ? 'START TIME' : 'Hora Inicio', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
+                        { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
+                      ].map((f, i) => (
+                        <div key={i}>
+                          <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
+                          <div className={`font-black text-sm ${text} truncate`} style={f.style}>{f.val}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex flex-col gap-4`}>
+                      <div>
+                        <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
+                          {en ? 'TOUR' : 'EXPERIENCIA'}
+                        </div>
+                        <div className={`font-black text-sm ${text} uppercase tracking-tight`}>
+                          {booking.tour_title}
+                        </div>
                       </div>
-                    ))}
+
+                      <div>
+                        <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
+                          {en ? 'SERVICE' : 'SERVICIO'}
+                        </div>
+                        <div className="font-black text-[10px] uppercase tracking-widest" style={{ color: expColor }}>
+                          {expName}
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex flex-col gap-4`}>
-                    <div>
-                      <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
-                        {en ? 'TOUR' : 'EXPERIENCIA'}
-                      </div>
-                      <div className={`font-black text-sm ${text} uppercase tracking-tight`}>
-                        {booking.tour_title}
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>
-                        {en ? 'SERVICE' : 'SERVICIO'}
-                      </div>
-                      <div className="font-black text-[10px] uppercase tracking-widest" style={{ color: expColor }}>
-                        {expName}
-                      </div>
-                    </div>
+                  {/* Perforated divider exactly on the transition from fields to itinerary stub */}
+                  <div className="relative h-8 flex items-center z-20">
+                    <div className="absolute left-0 -translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
+                    <div className="absolute right-0 translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
+                    <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
                   </div>
-                </div>
 
-                {/* Perforated divider */}
-                <div className={`relative h-8 flex items-center -translate-y-2 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'}`}>
-                  <div className="absolute left-0 -translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
-                  <div className="absolute right-0 translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
-                  <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
-                </div>
-
-                {/* Stub (Detailed Itinerary) */}
-                <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6 rounded-b-[2.5rem] transition-all duration-300`}>
-                  <button
-                    onClick={() => setShowItinerary(!showItinerary)}
-                    className="w-full flex items-center justify-between text-left focus:outline-none"
-                  >
-                    <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
-                      <Map className="text-primary" size={12} />
-                      {en ? 'DETAILED ITINERARY' : 'ITINERARIO DETALLADO'}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
-                        {en ? 'Your Route' : 'Tu Ruta'}
-                      </span>
-                      <span className={`text-[9px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
-                        ▼
-                      </span>
-                    </div>
-                  </button>
-
-                  {showItinerary && finalItinerary.length > 0 && (
-                    <motion.div 
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      className="mt-6 space-y-6 relative pt-5 border-t border-dashed border-gray-200 dark:border-white/10"
+                  {/* Stub (Detailed Itinerary) */}
+                  <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6 rounded-b-[2.5rem] transition-all duration-300`}>
+                    <button
+                      onClick={() => setShowItinerary(!showItinerary)}
+                      className="w-full flex items-center justify-between text-left focus:outline-none"
                     >
-                      {/* Connector line */}
-                      <div className={`absolute top-6 bottom-4 left-[0.875rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+                      <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
+                        <Map className="text-primary" size={12} />
+                        {en ? 'DETAILED ITINERARY' : 'ITINERARIO DETALLADO'}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
+                          {en ? 'Your Route' : 'Tu Ruta'}
+                        </span>
+                        <span className={`text-[9px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                          ▼
+                        </span>
+                      </div>
+                    </button>
 
-                      {finalItinerary.map((item, idx) => (
-                        <div key={idx} className="flex gap-4 relative">
-                          <div className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
-                            {getActivityIcon(item.type)}
+                    {showItinerary && finalItinerary.length > 0 && (
+                      <motion.div 
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        className="mt-6 space-y-6 relative pt-5 border-t border-dashed border-gray-200 dark:border-white/10"
+                      >
+                        {/* Connector line */}
+                        <div className={`absolute top-6 bottom-4 left-[0.875rem] w-px border-l border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+
+                        {finalItinerary.map((item, idx) => (
+                          <div key={idx} className="flex gap-4 relative">
+                            <div className={`w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center z-10 transition-colors shadow-sm ${dark ? 'bg-[#1a1a1a] border border-white/5' : 'bg-white border border-gray-100'}`}>
+                              {getActivityIcon(item.type)}
+                            </div>
+                            <div className="flex-1 pt-0.5">
+                              <div className="flex items-center justify-between gap-4">
+                                  <h4 className="text-[10px] font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
+                                {item.duration && (
+                                  <div className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter ${sub}`}>
+                                    <Clock size={8} />
+                                    {en ? (item.duration_en || item.duration) : item.duration}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <div className="flex-1 pt-0.5">
-                            <div className="flex items-center justify-between gap-4">
-                              <h4 className="text-[10px] font-black uppercase tracking-widest">{en ? (item.activity_en || item.activity) : item.activity}</h4>
-                              {item.duration && (
-                                <div className={`flex items-center gap-1 text-[8px] font-black uppercase tracking-tighter ${sub}`}>
-                                  <Clock size={8} />
-                                  {en ? (item.duration_en || item.duration) : item.duration}
+                        ))}
+                      </motion.div>
+                    )}
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="gestion-pane"
+                  initial={{ x: 30, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -30, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: 'easeInOut' }}
+                  className={`p-6 sm:p-8 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-b-[2.5rem]`}
+                >
+                  {/* Header de Gestión con el icono animado */}
+                  <div className="mb-6 pb-6 border-b border-gray-150 dark:border-white/5">
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500" />
+                      </span>
+                      <h3 className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                        {en ? 'Booking Management' : 'Gestión de Reserva'}
+                      </h3>
+                    </div>
+                    
+                    {/* Barra de progreso de reserva */}
+                    <div className="mt-3 mb-2 w-full">
+                      <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest mb-1 opacity-70">
+                        <span>{en ? 'Booking Progress' : 'Progreso de Reserva'}</span>
+                        <span className="font-black">{getProgressPercentage()}%</span>
+                      </div>
+                      <div className={`h-1.5 w-full rounded-full overflow-hidden ${dark ? 'bg-white/10' : 'bg-gray-100'}`}>
+                        <motion.div 
+                          initial={{ width: 0 }}
+                          animate={{ width: `${getProgressPercentage()}%` }}
+                          transition={{ duration: 0.8, ease: 'easeOut' }}
+                          className="h-full bg-primary rounded-full"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-8">
+                    {/* Panel Operativo Contextual (Mejora 6) */}
+                    {(function() {
+                      if (effectiveStatus === 'confirmed' && !isCheckinPending) {
+                        return (
+                          <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50'}`}>
+                            <div className="flex items-start gap-4">
+                              <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center flex-shrink-0">
+                                <CheckCircle2 size={16} />
+                              </div>
+                              <div className="flex-1">
+                                <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                                  {en ? 'Booking Guaranteed ✓' : 'Reserva Garantizada ✓'}
                                 </div>
-                              )}
+                                <div className={`text-[11px] font-bold mt-1.5 leading-relaxed ${sub}`}>
+                                  {en 
+                                    ? 'All set! Your professional driver will pick you up at your hotel at the scheduled time.' 
+                                    : '¡Todo listo! Tu chofer profesional te recogerá en tu hotel a la hora acordada.'}
+                                </div>
+                                
+                                {booking.drivers && (
+                                  <div className={`mt-4 p-4 rounded-xl border ${dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-200'} text-xs`}>
+                                    <div className={`text-[9px] font-black uppercase tracking-widest text-primary mb-2`}>
+                                      {en ? 'ASSIGNED DRIVER' : 'CHOFER ASIGNADO'}
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-3 font-bold">
+                                      <div>
+                                        <div className="text-[8px] text-gray-400 uppercase">{en ? 'NAME' : 'NOMBRE'}</div>
+                                        <div className={text}>{booking.drivers.name}</div>
+                                      </div>
+                                      {booking.drivers.car_model && (
+                                        <div>
+                                          <div className="text-[8px] text-gray-400 uppercase">{en ? 'VEHICLE' : 'VEHÍCULO'}</div>
+                                          <div className={text}>{booking.drivers.car_model}</div>
+                                        </div>
+                                      )}
+                                    </div>
+                                    {booking.drivers.phone && (
+                                      <a 
+                                        href={`https://wa.me/${booking.drivers.phone.replace(/[^0-9]/g, '')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="mt-3 inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-500 hover:opacity-80"
+                                      >
+                                        <MessageCircle size={10} />
+                                        {en ? 'Contact Driver via WhatsApp' : 'Contactar Chofer por WhatsApp'}
+                                      </a>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      if (effectiveStatus === 'in_progress') {
+                        return (
+                          <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-primary/5 border-primary/10' : 'bg-cyan-50/20 border-primary/15'}`}>
+                            <div className="flex items-start gap-4">
+                              <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0">
+                                <Activity size={16} />
+                              </div>
+                              <div className="flex-1">
+                                <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                                  {en ? 'Tour in Progress' : 'Tour en Curso'}
+                                </div>
+                                <div className={`text-[11px] font-bold mt-1 leading-relaxed ${sub}`}>
+                                  {en 
+                                    ? 'Your Bali experience is underway! Please contact your driver or our support team for any immediate assistance.' 
+                                    : '¡Tu experiencia en Bali está en marcha! Si necesitas asistencia operativa inmediata, contacta con tu chofer o soporte.'}
+                                </div>
+                                {booking.drivers && (
+                                  <div className="mt-4 flex gap-2">
+                                    {booking.drivers.phone && (
+                                      <a 
+                                        href={`https://wa.me/${booking.drivers.phone.replace(/[^0-9]/g, '')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="px-4 py-2 bg-emerald-500 text-white rounded-full text-[9px] font-black uppercase tracking-wider flex items-center gap-1 hover:opacity-90 shadow-md shadow-emerald-500/10"
+                                      >
+                                        <MessageCircle size={10} />
+                                        {en ? 'Driver WhatsApp' : 'WhatsApp Chofer'}
+                                      </a>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      if (effectiveStatus === 'completed') {
+                        return (
+                          <div className={`p-6 rounded-3xl border transition-all ${dark ? 'bg-[#181818] border-white/5 shadow-md shadow-black/10' : 'bg-white border-gray-200 shadow-sm'}`}>
+                            <div className="flex flex-col items-center text-center">
+                              <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
+                                <Star size={24} className="fill-primary/20" />
+                              </div>
+                              <h4 className={`text-sm font-black uppercase tracking-wider ${text}`}>
+                                {en ? 'How was your experience?' : '¿Qué tal fue tu experiencia?'}
+                              </h4>
+                              <p className={`text-[11px] font-bold mt-1.5 leading-relaxed max-w-sm ${sub}`}>
+                                {en 
+                                  ? 'We hope you had a magical time. Leaving a review helps other travelers and supports our local guides!' 
+                                  : 'Esperamos que haya sido un día mágico. ¡Dejar una reseña ayuda a otros viajeros y apoya a nuestros guías locales!'}
+                              </p>
+                              <div className="mt-4">
+                                <Link
+                                  to={`/${en ? 'en' : 'es'}/reviews`}
+                                  className="inline-flex px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 shadow-lg shadow-primary/10"
+                                >
+                                  {en ? 'Leave a Review' : 'Dejar Reseña'}
+                                </Link>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                      
+                      return null;
+                    })()}
+
+                    {/* Bloque de Pago / Finanzas (Mejoras 2 y 3) */}
+                    <div>
+                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                        {en ? 'FINANCES & PAYMENTS' : 'FINANZAS Y PAGOS'}
+                      </div>
+                      {hasPendingPayment ? (
+                        <div className={`p-6 rounded-3xl border-2 transition-all shadow-md ${dark ? 'bg-[#181818] border-primary/30' : 'bg-cyan-50/20 border-primary/20'}`}>
+                          <div className="flex flex-col items-center text-center justify-center gap-2">
+                            <div>
+                              <div className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400 mb-1">
+                                {en ? 'PENDING AMOUNT' : 'IMPORTE PENDIENTE'}
+                              </div>
+                              <div className={`text-3xl sm:text-4xl font-black ${text} tracking-tight`}>
+                                <span className="text-xl sm:text-2xl opacity-50 mr-1">{formatPrice(balance).symbol}</span>
+                                {formatPrice(balance).amount}
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="mt-6">
+                            <button
+                              onClick={() => setShowPaymentModal(true)}
+                              className="w-full py-4 bg-primary text-white hover:opacity-90 font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                            >
+                              <CreditCard size={14} />
+                              {en ? 'Pay Booking Securely' : 'Pagar Reserva Ahora'}
+                            </button>
+                            
+                            {/* Trust Seal */}
+                            <div className="mt-3 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-500">
+                              <ShieldCheck size={12} />
+                              <span>{en ? '100% Secure Booking' : 'Reserva 100% Segura'}</span>
+                            </div>
+                          </div>
+                          
+                          {/* ¿Qué ocurre después? Section (Mejora 3) */}
+                          <div className={`mt-6 pt-5 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200/80'} text-[11px]`}>
+                            <div className={`font-black uppercase tracking-wider mb-2.5 ${text}`}>
+                              {en ? 'What happens next?' : '¿Qué ocurre después?'}
+                            </div>
+                            <ul className="space-y-1.5 font-bold text-gray-400">
+                              <li className="flex items-center gap-2">
+                                <span className="text-emerald-500">✓</span>
+                                {en ? 'We will validate your payment receipt in less than 12 hours' : 'Validaremos tu comprobante en menos de 12 horas'}
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <span className="text-emerald-500">✓</span>
+                                {en ? 'We will confirm local availability' : 'Confirmaremos disponibilidad'}
+                              </li>
+                              <li className="flex items-center gap-2">
+                                <span className="text-emerald-500">✓</span>
+                                {en ? 'We will update this booking automatically' : 'Actualizaremos esta reserva automáticamente'}
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50'}`}>
+                          <div className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center flex-shrink-0">
+                              <CheckCircle2 size={16} />
+                            </div>
+                            <div>
+                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                                {en ? 'Payment Completed ✓' : 'Pago Completado ✓'}
+                              </div>
+                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                                {en ? 'No pending balance for this tour.' : 'No tienes ningún pago pendiente para este tour.'}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      ))}
-                    </motion.div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'management' && (
-              <motion.div key="management" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }} className="p-6">
-                {/* ── SECTIONS WITHOUT ACCORDION ──────────────────── */}
-                <div className="space-y-8">
-                  {/* Official Status */}
-                  <div>
-                    <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
-                      {en ? 'OFFICIAL STATUS' : 'ESTADO DE LA RESERVA'}
+                      )}
                     </div>
-                    <div className="bg-gray-50 dark:bg-white/5 rounded-2xl p-5 sm:p-6 border border-gray-100 dark:border-white/10 shadow-sm">
-                      <div className="flex flex-row items-center justify-between gap-3">
-                        <div className="flex items-center gap-2">
-                          <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${status.step >= 5 ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
-                          <h3 className={`text-xs sm:text-sm font-black uppercase tracking-widest ${text}`}>
-                            {status.label}
-                          </h3>
+
+                    {/* Registro de Pasajeros / Check-in (Mejora 7) */}
+                    {isCheckinPending ? (
+                      <div>
+                        <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                          {en ? 'PASSENGER CHECK-IN' : 'REGISTRO DE PASAJEROS'}
                         </div>
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          {(isPaymentPending || isCheckinPending || !isReceiptSentOrVerified) ? (
-                            <span className="px-2 py-1 rounded bg-amber-500/20 text-amber-500 text-[8px] font-black uppercase tracking-widest animate-pulse">
-                              {en ? 'Action Required' : 'Acción Requerida'}
-                            </span>
-                          ) : (
-                            <span className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-500 text-[8px] font-black uppercase tracking-widest">
-                              {en ? 'Completed ✓' : 'Completado ✓'}
-                            </span>
-                          )}
+                        <div className={`p-5 rounded-2xl border transition-all ${
+                          hasPendingPayment 
+                            ? (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200/80 shadow-sm')
+                            : (dark ? 'bg-[#181818] border-primary/30' : 'bg-cyan-50/20 border-primary/20')
+                        }`}>
+                          <div className="flex items-start gap-4">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                              hasPendingPayment ? 'bg-gray-500/20 text-gray-500' : 'bg-amber-500/20 text-amber-500'
+                            }`}>
+                              <Users size={16} />
+                            </div>
+                            <div className="flex-1">
+                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                                {en ? 'Passenger Passport Data' : 'Datos y Pasaportes de Viajeros'}
+                              </div>
+                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                                {en ? 'Please register passenger details.' : 'Completa los datos de todos los viajeros.'}
+                              </div>
+                              
+                              {hasPendingPayment && (
+                                <p className="text-[10px] font-bold text-amber-500 mt-2">
+                                  {en ? 'Puedes completarlo ahora o después del pago.' : 'Puedes completarlo ahora o después del pago.'}
+                                </p>
+                              )}
+                              
+                              <div className="mt-4">
+                                <button
+                                  onClick={() => setShowCheckin(true)}
+                                  className={`inline-flex px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all border ${
+                                    hasPendingPayment
+                                      ? 'bg-transparent text-gray-400 border-gray-300 dark:border-white/10 hover:border-primary hover:text-primary'
+                                      : 'bg-primary text-white border-primary hover:opacity-90 shadow-md shadow-primary/10'
+                                  }`}
+                                >
+                                  {en ? 'Complete Check-in' : 'Hacer Check-in'}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
+                    ) : (
+                      <div>
+                        <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                          {en ? 'PASSENGER CHECK-IN' : 'REGISTRO DE PASAJEROS'}
+                        </div>
+                        <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50'}`}>
+                          <div className="flex items-center gap-4">
+                            <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center flex-shrink-0">
+                              <CheckCircle2 size={16} />
+                            </div>
+                            <div>
+                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                                {en ? 'Check-in Completed ✓' : 'Check-in Completado ✓'}
+                              </div>
+                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                                {en ? 'All passengers registered successfully.' : 'Todos los pasajeros han sido registrados correctamente.'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
-                      <div className="border-t border-dashed border-gray-200 dark:border-white/10 pt-6 mt-6">
-                        <div className="space-y-4 relative pl-2 pt-2">
-                          <div className={`absolute top-2 bottom-2 left-[15px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
+                    {/* Línea de tiempo (Timeline) Oficial (Mejoras 4 y 5) */}
+                    <div>
+                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
+                        {en ? 'BOOKING PROCESS TIMELINE' : 'LÍNEA DE TIEMPO DE LA RESERVA'}
+                      </div>
+                      <div className={`rounded-3xl p-6 shadow-sm ${dark ? "bg-[#111] border border-white/5" : "bg-gray-50 border border-gray-100"}`}>
+                        <div className="space-y-6 relative pl-2">
+                          {/* Línea vertical de fondo */}
+                          <div className={`absolute top-2.5 bottom-2.5 left-[15px] w-0.5 ${dark ? 'bg-white/5' : 'bg-gray-100'} z-0`} />
+                          
                           {[
                             statusMap.requested, 
                             statusMap.pending_payment, 
@@ -764,184 +1315,83 @@ export default function ItineraryPage() {
                             statusMap.in_progress,
                             statusMap.completed
                           ].map((st, i) => {
-                            const isPast = st.step <= currentStep;
+                            const isPast = st.step < currentStep;
                             const isCurrent = st.step === currentStep;
+                            const isFuture = st.step > currentStep;
+                            
+                            const stepTime = getStepTimestamp(st.step);
+                            const stepTimeStr = stepTime ? formatStepDate(stepTime) : '';
+                            
                             return (
                               <div key={i} className="flex gap-4 relative z-10">
-                                <div className={`w-3.5 h-3.5 rounded-full mt-0.5 flex-shrink-0 flex items-center justify-center transition-all duration-500 ${isCurrent ? 'bg-primary shadow-[0_0_10px_rgba(17,189,219,0.4)]' : (isPast ? 'bg-primary/40' : (dark ? 'bg-white/5' : 'bg-gray-100'))}`}>
-                                  {isPast && !isCurrent && <CheckCircle2 size={6} className="text-white" />}
-                                  {isCurrent && <div className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
+                                {/* Nodo Indicador */}
+                                <div className="flex flex-col items-center justify-start pt-0.5">
+                                  {isPast ? (
+                                    <div className="w-5 h-5 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center shadow-sm">
+                                      <CheckCircle2 size={10} className="stroke-[3]" />
+                                    </div>
+                                  ) : isCurrent ? (
+                                    <div className="relative flex h-5 w-5 items-center justify-center">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-30" />
+                                      <div className="relative w-4 h-4 rounded-full bg-primary flex items-center justify-center shadow-md">
+                                        <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className={`w-4 h-4 rounded-full border-2 ${dark ? 'bg-[#111] border-white/10' : 'bg-gray-50 border-gray-200'} flex items-center justify-center`} />
+                                  )}
                                 </div>
+                                
+                                {/* Descripción de cada paso */}
                                 <div className="flex-1">
-                                  <div className={`text-[9px] font-black uppercase tracking-widest ${isCurrent ? 'text-primary' : isPast ? text : sub}`}>{st.label}</div>
-                                  {isCurrent && <div className={`text-[10px] mt-0.5 leading-relaxed font-medium ${text}`}>{st.desc}</div>}
+                                  <div className="flex items-center justify-between gap-4">
+                                    <span className={`text-[10px] font-black uppercase tracking-wider ${
+                                      isCurrent ? 'text-primary' : isPast ? text : 'text-gray-400 dark:text-gray-600'
+                                    }`}>
+                                      {st.label}
+                                    </span>
+                                    {stepTimeStr && (
+                                      <span className={`text-[8px] font-bold uppercase tracking-tighter ${sub}`}>
+                                        {stepTimeStr}
+                                      </span>
+                                    )}
+                                  </div>
+                                  {isCurrent && (
+                                    <p className={`text-[10px] font-semibold mt-1 leading-relaxed ${dark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                      {st.desc}
+                                    </p>
+                                  )}
                                 </div>
                               </div>
-                            )
+                            );
                           })}
                         </div>
+                        
+                        {/* Última actualización */}
+                        {getLastUpdateStr() && (
+                          <div className={`mt-6 pt-5 border-t border-dashed ${dark ? 'border-white/5' : 'border-gray-200/80'} text-center`}>
+                            <span className={`text-[9px] font-black uppercase tracking-widest text-gray-400`}>
+                              {en ? 'Last Update (Bali Time): ' : 'Última actualización (Hora de Bali): '}
+                              <span className={`${text}`}>{getLastUpdateStr()}</span>
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
+
                   </div>
-
-                  {/* Finance Section */}
-                  {(!['payment_confirmed', 'reserved', 'confirmed', 'in_progress', 'completed'].includes(booking?.payment_status)) && (
-                    <div className="mb-8">
-                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
-                        {en ? 'Finance & Payments' : 'Finanzas y Pagos'}
-                      </div>
-                      <div className="space-y-5">
-                        {/* Payment & Receipt Unified Card */}
-                        <div className={`p-5 rounded-2xl border transition-all ${isReceiptSentOrVerified || !isPaymentPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm')}`}>
-                          <div className="flex items-start gap-4">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isReceiptSentOrVerified || !isPaymentPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-orange-500/20 text-orange-500'}`}>
-                              {isReceiptSentOrVerified || !isPaymentPending ? <CheckCircle2 size={16} /> : <CreditCard size={14} />}
-                            </div>
-                            <div className="flex-1">
-                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                {en ? 'Payment & Receipt' : 'Pago de Reserva'}
-                              </div>
-                              <div className={`text-[11px] font-medium leading-relaxed mt-1 ${sub}`}>
-                                {!isPaymentPending
-                                  ? (en ? 'Booking fully paid!' : '¡Reserva totalmente pagada!')
-                                  : isReceiptSentOrVerified
-                                    ? (en ? 'Receipt sent, awaiting validation!' : '¡Comprobante enviado, esperando validación!')
-                                    : (en 
-                                        ? `Remaining balance: ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Please pay and upload receipt.` 
-                                        : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Realiza el pago y sube tu comprobante.`)}
-                              </div>
-                              
-                              {isPaymentPending && !isReceiptSentOrVerified && (
-                                <div className="mt-4 flex gap-3">
-                                  <button
-                                    onClick={() => setShowPaymentModal(true)}
-                                    className="inline-flex px-5 py-2.5 bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 text-[10px] font-black uppercase tracking-widest rounded-full transition-all"
-                                  >
-                                    {en ? 'See Bank Details & Upload' : 'Ver Datos y Subir Comprobante'}
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                    {/* Check-in Section */}
-                    {isCheckinPending && (
-                    <div className="mb-8">
-                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-5 block`}>
-                        {en ? 'Passengers' : 'Pasajeros'}
-                      </div>
-                      {/* Step 3: Check-in */}
-                      <div className={`p-5 rounded-2xl border transition-all ${!isCheckinPending ? (dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50') : (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200 shadow-sm')}`}>
-                        <div className="flex items-start gap-4">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${!isCheckinPending ? 'bg-emerald-500/20 text-emerald-500' : 'bg-amber-500/20 text-amber-500'}`}>
-                            {!isCheckinPending ? <CheckCircle2 size={16} /> : <Users size={16} />}
-                          </div>
-                          <div className="flex-1">
-                            <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                              {en ? 'Passenger Check-in' : 'Registro de Pasajeros'}
-                            </div>
-                            <div className={`text-[11px] font-medium leading-relaxed mt-1 ${sub}`}>
-                              {!isCheckinPending
-                                ? (en ? 'All passengers registered!' : '¡Todos los viajeros registrados!')
-                                : (en ? 'Please register passenger passports.' : 'Completa los datos y pasaportes de los viajeros.')}
-                            </div>
-                            
-                            {isCheckinPending && (
-                              <div className="mt-4">
-                                <button
-                                  onClick={() => setShowCheckin(true)}
-                                  className="inline-flex px-5 py-2.5 bg-primary/10 text-primary hover:bg-primary hover:text-white border border-primary/20 text-[10px] font-black uppercase tracking-widest rounded-full transition-all"
-                                >
-                                  {en ? 'Complete Check-in' : 'Hacer Check-in'}
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    )}
-
-            </div>
-          </motion.div>
-        )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
+        <div className="h-6" />
+
       </div>
-        {/* ── SUPPORT / WHATSAPP ─────────────────────── */}
-        <motion.div 
-          id="support-section"
-          initial={{ opacity: 0 }} 
-          animate={{ opacity: 1 }} 
-          transition={{ delay: 0.5 }}
-          className={`mt-10 rounded-[2rem] p-8 border ${card} flex flex-col items-center text-center gap-5`}
-        >
-          <div className={`text-[8px] font-black uppercase tracking-[0.3em] text-primary`}>
-            {en ? 'QUESTIONS OR CHANGES?' : '¿DUDAS O CAMBIOS?'}
-          </div>
-          <p className={`text-sm font-black leading-relaxed ${text} max-w-xs`}>
-            {en
-              ? 'Talk to us, we reply within minutes.'
-              : 'Habla con nosotros, te respondemos en minutos.'}
-          </p>
-          <div className="w-full flex flex-row gap-2">
-            {en ? (
-              <>
-                {/* English (Primary) */}
-                <a 
-                  href={`https://wa.me/6285691533356?text=${encodeURIComponent(`Hello Cantik Tours! I need help with my booking CT-${ref}.\n\nLink: ${fichaUrl}`)}`} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="flex-1 py-3 px-3 rounded-xl bg-[#25D366] text-white font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-[#1fb355] transition-all shadow-lg shadow-[#25D366]/20"
-                >
-                  <MessageCircle size={14} />
-                  English (EN)
-                </a>
-                {/* Spanish (Secondary) */}
-                <a 
-                  href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className={`flex-1 py-3 px-3 rounded-xl border font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all ${dark ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20' : 'border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400'}`}
-                >
-                  <MessageCircle size={14} />
-                  Español (ES)
-                </a>
-              </>
-            ) : (
-              <>
-                {/* Spanish (Primary) */}
-                <a 
-                  href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${supportMsg}`} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className="flex-1 py-3 px-3 rounded-xl bg-[#25D366] text-white font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 hover:bg-[#1fb355] transition-all shadow-lg shadow-[#25D366]/20"
-                >
-                  <MessageCircle size={14} />
-                  Español (ES)
-                </a>
-                {/* English (Secondary) */}
-                <a 
-                  href={`https://wa.me/6285691533356?text=${encodeURIComponent(`Hello Cantik Tours! I need help with my booking CT-${ref}.\n\nLink: ${fichaUrl}`)}`} 
-                  target="_blank" 
-                  rel="noreferrer"
-                  className={`flex-1 py-3 px-3 rounded-xl border font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all ${dark ? 'border-white/10 text-gray-400 hover:bg-white/5 hover:border-white/20' : 'border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400'}`}
-                >
-                  <MessageCircle size={14} />
-                  English (EN)
-                </a>
-              </>
-            )}
-          </div>
-        </motion.div>
 
-        {/* Footer */}
-        <div className="pt-4 text-center opacity-20">
-          <LocalLink to="/" className={`text-[8px] font-black uppercase tracking-[1em] ${text}`}>CANTIKTOURS.COM</LocalLink>
-        </div>
+      {/* Footer */}
+      <div className="pt-8 pb-12 text-center opacity-20 mt-auto">
+        <LocalLink to="/" className={`text-[8px] font-black uppercase tracking-[1em] ${text}`}>CANTIKTOURS.COM</LocalLink>
       </div>
 
       {/* ── CHECK-IN MODAL ─────────────────────────────── */}
@@ -1006,24 +1456,6 @@ export default function ItineraryPage() {
                     </div>
                     <div>
                       <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
-                        {en ? 'Age' : 'Edad'}
-                      </label>
-                      <input
-                        type="number"
-                        min="0"
-                        max="120"
-                        value={pax.age}
-                        onChange={(e) => {
-                          const nd = [...checkinData];
-                          nd[idx] = { ...nd[idx], age: e.target.value };
-                          setCheckinData(nd);
-                        }}
-                        className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
-                        placeholder="Ej: 35"
-                      />
-                    </div>
-                    <div>
-                      <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
                         {en ? 'Emergency Contact' : 'Contacto de Emergencia'}
                       </label>
                       <input
@@ -1038,31 +1470,21 @@ export default function ItineraryPage() {
                         placeholder="Ej: María Pérez +34..."
                       />
                     </div>
-                    <div>
-                      <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
-                        {en ? 'Medical conditions / Allergies' : 'Alergias o condiciones médicas'}
-                      </label>
-                      <input
-                        type="text"
-                        value={pax.medical}
-                        onChange={(e) => {
-                          const nd = [...checkinData];
-                          nd[idx] = { ...nd[idx], medical: e.target.value };
-                          setCheckinData(nd);
-                        }}
-                        className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
-                        placeholder={en ? 'Leave blank if none' : 'Dejar en blanco si ninguna'}
-                      />
-                    </div>
                   </div>
                 </div>
               ))}
             </div>
 
+            <div className={`mt-4 p-4 rounded-xl border text-[10px] font-bold text-center ${dark ? 'bg-white/5 border-white/5 text-gray-400' : 'bg-gray-50 border-gray-200 text-gray-600'}`}>
+              ⚠️ {en 
+                ? 'It is recommended for each passenger to have their own travel insurance.' 
+                : 'Se sugiere que cada pasajero cuente con su propio seguro de viaje.'}
+            </div>
+
             <button
               onClick={handleCheckinSubmit}
               disabled={submittingCheckin}
-              className="w-full mt-6 py-4 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="w-full mt-4 py-4 rounded-2xl bg-primary text-white font-black text-xs uppercase tracking-widest hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {submittingCheckin ? (en ? 'SAVING...' : 'GUARDANDO...') : (en ? 'SAVE CHECK-IN' : 'GUARDAR CHECK-IN')}
             </button>
@@ -1103,9 +1525,9 @@ export default function ItineraryPage() {
                 <div className="inline-flex flex-col items-center">
                   <div className={`flex items-center gap-3 pl-5 pr-2 py-1.5 rounded-full border ${dark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
                     <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">REF:</span>
-                    <span className={`text-sm font-mono font-black tracking-widest ${text}`}>CT-{ref}</span>
+                    <span className={`text-sm font-mono font-black tracking-widest ${text}`}>{formatCT(ref)}</span>
                     <button
-                      onClick={() => handleCopy(`CT-${ref}`, 'ref')}
+                      onClick={() => handleCopy(formatCT(ref), 'ref')}
                       className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${copiedField === 'ref' ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-white/10 text-gray-500 hover:text-primary shadow-sm'}`}
                     >
                       {copiedField === 'ref' ? <CheckCircle2 size={14} /> : <Copy size={14} />}
@@ -1117,155 +1539,222 @@ export default function ItineraryPage() {
                 </div>
               </div>
 
-              {/* Pill Tabs */}
-              <div className={`flex p-1 rounded-2xl mb-8 ${dark ? 'bg-white/5' : 'bg-gray-100'}`}>
-                <button
-                  onClick={() => setPaymentTab('eur')}
-                  className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${paymentTab === 'eur' ? 'bg-white dark:bg-[#2a2a2a] text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'}`}
-                >
-                  {en ? 'EUR Account' : 'Cuenta EUR'}
-                </button>
-                <button
-                  onClick={() => setPaymentTab('usd')}
-                  className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${paymentTab === 'usd' ? 'bg-white dark:bg-[#2a2a2a] text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'}`}
-                >
-                  {en ? 'USD Account' : 'Cuenta USD'}
-                </button>
-                <button
-                  onClick={() => setPaymentTab('paypal')}
-                  className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${paymentTab === 'paypal' ? 'bg-white dark:bg-[#2a2a2a] text-[#00457C] dark:text-[#0079C1] shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'}`}
-                >
-                  PayPal / Tarjeta
-                </button>
-              </div>
-
-              {/* Bank Details / PayPal */}
-              {paymentTab === 'paypal' ? (
-                <div className="mb-10 text-center">
-                  <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
-                    {en ? 'PAY SECURELY VIA PAYPAL' : 'PAGO SEGURO CON PAYPAL'}
-                  </div>
-                  <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: currency }}>
-                    <PayPalButtons 
-                      style={{ layout: "vertical", shape: "rect", color: "blue" }}
-                      createOrder={(data, actions) => {
-                        return actions.order.create({
-                          purchase_units: [{
-                            amount: {
-                              value: formatPrice(balance).amount.toString(),
-                              currency_code: currency
-                            },
-                            description: `Booking CT-${ref} - ${booking?.client_name}`
-                          }]
-                        });
-                      }}
-                      onApprove={async (data, actions) => {
-                        try {
-                          setUploadingReceipt(true); // Re-using loading state
-                          const details = await actions.order.capture();
-                          const res = await capturePayPalPayment({
-                            orderID: data.orderID,
-                            bookingRef: ref,
-                            amount: formatPrice(balance).amount,
-                            currency: currency,
-                            payerName: details.payer.name.given_name + ' ' + details.payer.name.surname,
-                            payerEmail: details.payer.email_address
-                          });
-                          if (res.status === 'success') {
-                            showToast(en ? 'Payment successful!' : '¡Pago exitoso!', 'success');
-                            setShowPaymentModal(false);
-                            // Refresh page data
-                            setTimeout(() => window.location.reload(), 1500);
-                          } else {
-                            throw new Error('Server returned error');
-                          }
-                        } catch (err) {
-                          showToast(en ? 'Error validating payment.' : 'Error al validar el pago.', 'error');
-                        } finally {
-                          setUploadingReceipt(false);
-                        }
-                      }}
-                    />
-                  </PayPalScriptProvider>
-                  <p className={`text-xs mt-4 ${sub}`}>
-                    {en ? 'You can pay with your PayPal account or safely with any credit/debit card.' : 'Puedes pagar con tu cuenta PayPal o de forma segura con cualquier tarjeta de crédito/débito.'}
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-5 mb-10">
-                  {[
-                    { label: en ? 'BENEFICIARY' : 'BENEFICIARIO', value: 'Javier Ignacio Contreras Cifuentes', id: 'name' },
-                    ...(paymentTab === 'eur' ? [
-                      { label: 'IBAN', value: 'BE97 9673 8690 2549', id: 'iban', mono: true },
-                      { label: 'SWIFT / BIC', value: 'TRWIBEB1XXX', id: 'bic', mono: true },
-                      { label: en ? 'BANK' : 'BANCO', value: 'Wise, Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium', id: 'bank', noCopy: true }
-                    ] : [
-                      { label: en ? 'ACCOUNT NO.' : 'CUENTA', value: '214247934891', id: 'acc', mono: true },
-                      { label: en ? 'ROUTING' : 'RUTEO', value: '101019628', id: 'route', mono: true },
-                      { label: 'SWIFT / BIC', value: 'TRWIUS35XXX', id: 'bic_us', mono: true },
-                      { label: en ? 'BANK' : 'BANCO', value: 'Wise US Inc, 108 W 13th St, Wilmington, DE, 19801, USA', id: 'bank_us', noCopy: true }
-                    ])
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex items-start justify-between group">
-                      <div className="flex-1 pr-4">
-                        <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">{item.label}</div>
-                        <div className={`text-sm ${item.mono ? 'font-mono tracking-wider' : ''} font-bold ${text} ${item.noCopy ? 'leading-snug opacity-70 text-xs' : ''}`}>
-                          {item.value}
+              
+              
+              {/* Slide Animation Container */}
+              <div className="relative overflow-hidden w-full" style={{ minHeight: '300px' }}>
+                <AnimatePresence mode="wait">
+                  {!showBankTransfer ? (
+                    <motion.div
+                      key="paypal-slide"
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -20, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {/* PayPal Default Section */}
+                      <div className="mb-8 text-center mt-2">
+                        <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
+                          {en ? 'PAY SECURELY WITH CARD (NO LOGIN REQUIRED) OR PAYPAL' : 'PAGO SEGURO CON TARJETA (SIN LOGIN) O PAYPAL'}
                         </div>
+                        <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: currency }}>
+                          <PayPalButtons 
+                            style={{ layout: "vertical", shape: "rect", color: "blue" }}
+                            createOrder={(data, actions) => {
+                              return actions.order.create({
+                                purchase_units: [{
+                                  amount: {
+                                    value: formatPrice(balance).amount.toString(),
+                                    currency_code: currency
+                                  },
+                                  description: `Booking ${formatCT(ref)} - ${booking?.client_name}`
+                                }]
+                              });
+                            }}
+                            onApprove={async (data, actions) => {
+                              try {
+                                setUploadingReceipt(true);
+                                const details = await actions.order.capture();
+                                const res = await capturePayPalPayment({
+                                  orderID: data.orderID,
+                                  bookingRef: ref,
+                                  amount: formatPrice(balance).amount,
+                                  currency: currency,
+                                  payerName: details.payer.name.given_name + ' ' + details.payer.name.surname,
+                                  payerEmail: details.payer.email_address
+                                });
+                                if (res.status === 'success') {
+                                  showToast(en ? 'Payment successful!' : '¡Pago exitoso!', 'success');
+                                  setShowPaymentModal(false);
+                                  setTimeout(() => window.location.reload(), 1500);
+                                } else {
+                                  throw new Error('Server returned error');
+                                }
+                              } catch (err) {
+                                showToast(en ? 'Error validating payment.' : 'Error al validar el pago.', 'error');
+                              } finally {
+                                setUploadingReceipt(false);
+                              }
+                            }}
+                          />
+                        </PayPalScriptProvider>
+                        <p className={`text-[11px] mt-4 ${sub}`}>
+                          {en ? 'You can pay with your PayPal account or safely with any credit/debit card.' : 'Puedes pagar con tu cuenta PayPal o de forma segura con cualquier tarjeta de crédito/débito.'}
+                        </p>
                       </div>
-                      {!item.noCopy && (
-                        <button 
-                          onClick={() => handleCopy(item.value, item.id)} 
-                          className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${copiedField === item.id ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-100 dark:bg-white/5 text-gray-400 hover:text-primary hover:bg-primary/10'}`}
-                        >
-                          {copiedField === item.id ? <CheckCircle2 size={14} /> : <Copy size={14} />}
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
 
-              {/* Upload Section */}
-              <div className={`pt-8 border-t ${dark ? 'border-white/10' : 'border-gray-100'}`}>
-                <div className="text-center mb-6">
-                  <h4 className={`text-xs font-black uppercase tracking-widest ${text}`}>
-                    {en ? 'UPLOAD RECEIPT' : 'SUBIR COMPROBANTE'}
-                  </h4>
-                </div>
-                
-                <div className="flex flex-col items-center justify-center gap-4">
-                  <label className="relative overflow-hidden group cursor-pointer flex w-full justify-center items-center gap-3 px-8 py-5 bg-primary text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-[0.98]">
-                    {uploadingReceipt ? (
-                      <>
-                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        <span>{en ? 'UPLOADING...' : 'SUBIENDO...'}</span>
-                      </>
-                    ) : (
-                      <>
-                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
-                      <Upload size={18} />
-                      <span>{en ? 'SELECT IMAGE' : 'SELECCIONAR IMAGEN'}</span>
-                      </>
-                    )}
-                    <input
-                      type="file"
-                      accept="image/*,application/pdf"
-                      className="hidden"
-                      onChange={handleReceiptUpload}
-                      disabled={uploadingReceipt}
-                    />
-                  </label>
-                  <a
-                    href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`text-[9px] font-black uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-2 ${sub}`}
-                  >
-                    <span>{en ? 'Or send via WhatsApp' : 'O envíalo por WhatsApp'}</span>
-                    <ExternalLink size={10} />
-                  </a>
-                </div>
+                      <div className={`pt-6 border-t ${dark ? 'border-white/10' : 'border-gray-100'}`}>
+                        <button 
+                          onClick={() => setShowBankTransfer(true)}
+                          className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-all hover:-translate-y-0.5 ${dark ? 'border-white/10 hover:bg-white/5 bg-[#1a1a1a]' : 'border-gray-200 hover:bg-gray-50 bg-gray-50'}`}
+                        >
+                          <div className="flex items-center gap-3">
+                             <span className={`w-8 h-8 rounded-full flex items-center justify-center ${dark ? 'bg-white/5' : 'bg-white shadow-sm'}`}>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                             </span>
+                             <span className={`text-xs font-black uppercase tracking-widest ${text}`}>
+                                {en ? 'Pay by Bank Transfer' : 'Pago por Transferencia Bancaria'}
+                             </span>
+                          </div>
+                          <div>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                          </div>
+                        </button>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    
+                    <motion.div
+                      key="transfer-slide"
+                      initial={{ x: 20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: 20, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="mt-2">
+                        
+                        {/* Step 1 */}
+                        <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}>
+                          <h3 className={`text-xs font-black uppercase tracking-widest text-primary mb-6 text-center`}>
+                            {en ? 'Step 1: Make the Transfer' : 'Paso 1: Haz la transferencia'}
+                          </h3>
+                          
+                          {/* Pill Tabs for EUR / USD inside bank transfer */}
+                          <div className={`flex p-1 rounded-2xl mb-8 ${dark ? 'bg-white/5' : 'bg-gray-100'}`}>
+                              <button
+                                onClick={() => setPaymentTab('eur')}
+                                className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${paymentTab === 'eur' ? 'bg-white dark:bg-[#2a2a2a] text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'}`}
+                              >
+                                {en ? 'EUR Account' : 'Cuenta EUR'}
+                              </button>
+                              <button
+                                onClick={() => setPaymentTab('usd')}
+                                className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${paymentTab === 'usd' ? 'bg-white dark:bg-[#2a2a2a] text-primary shadow-sm' : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-white'}`}
+                              >
+                                {en ? 'USD Account' : 'Cuenta USD'}
+                              </button>
+                          </div>
+
+                          <div className="space-y-5 mb-10">
+                            {[
+                              { label: en ? 'BENEFICIARY' : 'BENEFICIARIO', value: 'Javier Ignacio Contreras Cifuentes', id: 'name' },
+                              ...(paymentTab === 'eur' || paymentTab === 'paypal' ? [ // Fallback if tab is paypal
+                                { label: 'IBAN', value: 'BE97 9673 8690 2549', id: 'iban', mono: true },
+                                { label: 'SWIFT / BIC', value: 'TRWIBEB1XXX', id: 'bic', mono: true },
+                                { label: en ? 'BANK' : 'BANCO', value: 'Wise, Rue du Trône 100, 3rd floor, Brussels, 1050, Belgium', id: 'bank', noCopy: true }
+                              ] : [
+                                { label: en ? 'ACCOUNT NO.' : 'CUENTA', value: '214247934891', id: 'acc', mono: true },
+                                { label: en ? 'ROUTING' : 'RUTEO', value: '101019628', id: 'route', mono: true },
+                                { label: 'SWIFT / BIC', value: 'TRWIUS35XXX', id: 'bic_us', mono: true },
+                                { label: en ? 'BANK' : 'BANCO', value: 'Wise US Inc, 108 W 13th St, Wilmington, DE, 19801, USA', id: 'bank_us', noCopy: true }
+                              ])
+                            ].map((item, idx) => (
+                              <div key={idx} className="flex items-start justify-between group">
+                                <div className="flex-1 pr-4">
+                                  <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-1">{item.label}</div>
+                                  <div className={`text-sm ${item.mono ? 'font-mono tracking-wider' : ''} font-bold ${text} ${item.noCopy ? 'leading-snug opacity-70 text-xs' : ''}`}>
+                                    {item.value}
+                                  </div>
+                                </div>
+                                {!item.noCopy && (
+                                  <button 
+                                    onClick={() => handleCopy(item.value, item.id)} 
+                                    className={`mt-1 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors ${copiedField === item.id ? 'bg-emerald-500/10 text-emerald-500' : 'bg-gray-100 dark:bg-white/5 text-gray-400 hover:text-primary hover:bg-primary/10'}`}
+                                  >
+                                    {copiedField === item.id ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>}
+                                  </button>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+
+                        {/* Step 2 */}
+                        <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className={`pt-8 border-t ${dark ? 'border-white/10' : 'border-gray-100'}`}>
+                          <div className="text-center mb-6">
+                            <h4 className={`text-xs font-black uppercase tracking-widest text-primary`}>
+                              {en ? 'Step 2: Upload Receipt' : 'Paso 2: Subir comprobante'}
+                            </h4>
+                          </div>
+                          
+                          <div className="flex flex-col items-center justify-center gap-4">
+                            <label className="relative overflow-hidden group cursor-pointer flex w-full justify-center items-center gap-3 px-8 py-5 bg-primary text-white font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-xl shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-[0.98]">
+                              {uploadingReceipt ? (
+                                <>
+                                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                  <span>{en ? 'UPLOADING...' : 'SUBIENDO...'}</span>
+                                </>
+                              ) : (
+                                <>
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                                <span>{en ? 'SELECT IMAGE' : 'SELECCIONAR IMAGEN'}</span>
+                                </>
+                              )}
+                              <input
+                                type="file"
+                                accept="image/*,application/pdf"
+                                className="hidden"
+                                onChange={handleReceiptUpload}
+                                disabled={uploadingReceipt}
+                              />
+                            </label>
+                            <a
+                              href={`https://wa.me/${SUPPORT_PHONE_ES}?text=${receiptMsg}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className={`text-[9px] font-black uppercase tracking-widest hover:text-primary transition-colors flex items-center gap-2 ${sub}`}
+                            >
+                              <span>{en ? 'Or send via WhatsApp' : 'O envíalo por WhatsApp'}</span>
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                            </a>
+                          </div>
+                        </motion.div>
+
+                        {/* Back Button */}
+                        <motion.div initial={{ y: 10, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className={`pt-8 mt-8 border-t ${dark ? 'border-white/10' : 'border-gray-100'}`}>
+                          <button 
+                            onClick={() => setShowBankTransfer(false)}
+                            className={`w-full flex items-center justify-between p-4 rounded-2xl border transition-all hover:-translate-y-0.5 ${dark ? 'border-white/10 hover:bg-white/5 bg-[#1a1a1a]' : 'border-gray-200 hover:bg-gray-50 bg-gray-50'}`}
+                          >
+                            <div className="flex items-center gap-3">
+                               <span className={`w-8 h-8 rounded-full flex items-center justify-center ${dark ? 'bg-white/5' : 'bg-white shadow-sm'}`}>
+                                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                               </span>
+                               <span className={`text-xs font-black uppercase tracking-widest ${text}`}>
+                                  {en ? 'Back to Card Payment' : 'Volver a Pago con tarjeta'}
+                               </span>
+                            </div>
+                            <div className="opacity-50">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            </div>
+                          </button>
+                        </motion.div>
+
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </motion.div>
@@ -1280,6 +1769,113 @@ export default function ItineraryPage() {
       >
         {toast.type === 'error' ? <Info size={16} /> : <CheckCircle2 size={16} />}
         <span className="text-[10px] font-black uppercase tracking-widest whitespace-nowrap">{toast.message}</span>
+      </motion.div>
+
+      {/* Floating Status Alert */}
+      <AnimatePresence>
+        {showStatusAlert && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.3 }}
+            className="fixed bottom-24 right-6 left-6 md:left-auto md:w-96 z-[150]"
+          >
+            {(function() {
+              let alertDesc = statusAlert.desc;
+              if (booking.drivers) {
+                alertDesc += en ? ` Assigned Driver: ${booking.drivers.name}.` : ` Chofer asignado: ${booking.drivers.name}.`;
+              }
+              if (booking.selected_stops) {
+                alertDesc += en ? ` Itinerary customized.` : ` Itinerario personalizado.`;
+              }
+
+              return (
+                <div className={`p-4 rounded-2xl border shadow-xl flex items-start gap-4 relative backdrop-blur-xl ${dark ? 'bg-[#141414]/95 border-white/10 text-white' : 'bg-white/95 border-gray-200/80 text-gray-900'} transition-all duration-300`}>
+                  <div className="relative flex h-3 w-3 flex-shrink-0 mt-1">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusAlert.dot}`} />
+                    <span className={`relative inline-flex rounded-full h-3 w-3 ${statusAlert.dot}`} />
+                  </div>
+                  <div className="flex-1 pr-6">
+                    <h4 className={`text-xs font-black uppercase tracking-wider ${statusAlert.text}`}>
+                      {statusAlert.label}
+                    </h4>
+                    <p className={`text-[11px] font-bold mt-1 leading-relaxed ${dark ? 'text-gray-300' : 'text-gray-700'}`}>
+                      {alertDesc}
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => setShowStatusAlert(false)}
+                    className={`absolute top-3 right-3 w-6 h-6 flex items-center justify-center rounded-full text-xs transition-colors ${dark ? 'hover:bg-white/10 text-gray-400 hover:text-white' : 'hover:bg-gray-100 text-gray-500 hover:text-gray-900'}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })()}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* Floating Support WhatsApp Button with Language Selector */}
+      <motion.div 
+        initial={{ opacity: 0, scale: 0, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ delay: 1.5, duration: 0.5, type: 'spring', stiffness: 260, damping: 20 }}
+        className="fixed bottom-6 right-6 z-[160]"
+      >
+        <AnimatePresence>
+          {showSupportMenu && (
+            <motion.div
+              initial={{ opacity: 0, y: 15, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className={`absolute bottom-14 right-0 mb-2 w-52 rounded-2xl p-3 border shadow-2xl backdrop-blur-xl ${dark ? 'bg-[#141414]/95 border-white/10 text-white' : 'bg-white/95 border-gray-200 text-gray-900'}`}
+            >
+              <div className="text-[8px] font-black uppercase tracking-widest text-gray-400 mb-2.5 px-2">
+                {en ? 'Need assistance?' : '¿Necesitas ayuda?'}
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <a
+                  href={`https://wa.me/34642517787?text=${encodeURIComponent(
+                    `Hola Cantik Tours!\nNecesito ayuda con mi reserva.\n${fichaUrl}`
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setShowSupportMenu(false)}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-primary hover:text-white transition-colors ${dark ? 'text-gray-300' : 'text-gray-700'}`}
+                >
+                  <span className="text-sm">🇪🇸</span> Español (ES)
+                </a>
+                <a
+                  href={`https://wa.me/6285691533356?text=${encodeURIComponent(
+                    `Hello Cantik Tours!\nI need help with my booking.\n${fichaUrl}`
+                  )}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={() => setShowSupportMenu(false)}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-primary hover:text-white transition-colors ${dark ? 'text-gray-300' : 'text-gray-700'}`}
+                >
+                  <span className="text-sm">🇬🇧</span> English (EN)
+                </a>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <button
+          onClick={() => setShowSupportMenu(!showSupportMenu)}
+          aria-label={en ? 'Contact Support' : 'Contactar Soporte'}
+          className="bg-[#25D366] text-white p-4 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+        >
+          {showSupportMenu ? (
+            <span className="font-sans text-sm font-black w-6 h-6 flex items-center justify-center">✕</span>
+          ) : (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+              <path fillRule="evenodd" clipRule="evenodd" d="M18.403 5.633A8.919 8.919 0 0 0 12.053 3c-4.948 0-8.976 4.027-8.978 8.977 0 1.582.413 3.126 1.198 4.488L3 21.116l4.759-1.249a8.981 8.981 0 0 0 4.29 1.093h.004c4.947 0 8.975-4.027 8.977-8.977a8.926 8.926 0 0 0-2.627-6.35m-6.35 13.812h-.003a7.446 7.446 0 0 1-3.798-1.041l-.272-.162-2.824.741.753-2.753-.177-.282a7.448 7.448 0 0 1-1.141-3.971c.002-4.114 3.349-7.461 7.465-7.461 1.993 0 3.866.778 5.275 2.188a7.419 7.419 0 0 1 2.183 5.279c-.002 4.114-3.349 7.462-7.461 7.462m4.093-5.589c-.225-.113-1.327-.655-1.533-.73-.205-.075-.354-.112-.504.112-.149.224-.579.73-.709.88-.131.149-.261.169-.486.056-.224-.113-.953-.351-1.815-1.12-.669-.598-1.12-1.335-1.251-1.56-.131-.224-.014-.345.098-.458.101-.101.224-.262.336-.393.112-.131.149-.224.224-.374.075-.149.037-.28-.019-.393-.056-.113-.504-1.214-.69-1.663-.181-.435-.366-.377-.504-.383-.131-.006-.28-.006-.429-.006-.149 0-.392.056-.598.28-.205.224-.784.766-.784 1.869 0 1.102.803 2.167.915 2.317.112.15 1.581 2.415 3.832 3.387.536.231.954.369 1.279.473.536.171 1.024.147 1.409.089.429-.064 1.327-.542 1.514-1.066.187-.524.187-.973.131-1.067-.056-.094-.206-.15-.43-.262" />
+            </svg>
+          )}
+        </button>
       </motion.div>
     </div>
   );
