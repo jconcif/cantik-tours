@@ -73,6 +73,17 @@ export default function ItineraryPage() {
     }).catch(err => console.error(err));
   }, []);
 
+  const [transitionedToPending, setTransitionedToPending] = useState(false);
+
+  useEffect(() => {
+    if (booking && booking.payment_status === 'requested') {
+      const timer = setTimeout(() => {
+        setTransitionedToPending(true);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [booking]);
+
   const en = i18n.language === 'en';
   const extraCharges = charges.reduce((sum, c) => sum + Number(c.amount || 0), 0);
   const finalTotal = parseFloat(booking?.total_price || 0) + extraCharges;
@@ -468,13 +479,16 @@ export default function ItineraryPage() {
   const isCheckinPending = checkinData.some(p => !p.name || !p.passport);
   // If there's a pending balance, always show PAGO PENDIENTE regardless of payment_status
   // EXCEPT if the status is verifying_payment or has already been paid (balance <= 0.01)
+  // or if the booking is brand new (requested) and has not transitioned to pending yet.
   const effectiveStatus = (booking.payment_status === 'verifying_payment')
     ? 'verifying_payment'
     : (balance <= 0.01 && ['requested', 'pending_payment'].includes(booking.payment_status))
       ? 'payment_received'
-      : hasPendingPayment 
-        ? 'pending_payment' 
-        : booking.payment_status;
+      : (booking.payment_status === 'requested' && !transitionedToPending)
+        ? 'requested'
+        : hasPendingPayment 
+          ? 'pending_payment' 
+          : booking.payment_status;
   const status = statusMap[effectiveStatus] || statusMap.requested;
 
   const fichaUrl = `https://cantiktours.com/booking?ref=${formatCT(ref)}`;
