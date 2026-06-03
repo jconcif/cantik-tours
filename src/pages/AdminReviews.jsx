@@ -913,7 +913,7 @@ export default function AdminPanel() {
           </div>
         )}
 
-        {['bookings','drivers','reviews','coupons'].includes(tab) && <>
+        {['bookings','drivers','reviews','coupons','trash'].includes(tab) && <>
           <div style={{display:'flex', gap:'12px', marginBottom:'16px', flexWrap:'wrap', alignItems:'center'}}>
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Buscar..." style={{flex:'1 1 200px', padding:'12px', borderRadius:'14px', background:theme.card, border:`1px solid ${theme.border}`, color:theme.text, fontSize:'13px', minWidth:'150px'}}/>
             
@@ -942,7 +942,7 @@ export default function AdminPanel() {
               >
                 <RefreshCcw size={16} className={reloading ? "animate-spin" : ""} />
               </button>
-              <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])} title="Nuevo"><Plus size={16} /></button>
+              {tab !== 'trash' && <button style={{...s.btn(C), flexShrink:0}} onClick={()=>openNew({bookings:'booking',drivers:'driver',reviews:'review',coupons:'coupon'}[tab])} title="Nuevo"><Plus size={16} /></button>}
               {tab==='bookings'&&<button style={{...s.btn('#10b981'), flexShrink:0}} onClick={exportCSV} title="Exportar CSV"><Download size={16} /></button>}
             </div>
           </div>

@@ -493,7 +493,7 @@ export default function ItineraryPage() {
 
   const fichaUrl = `https://cantiktours.com/booking?ref=${formatCT(ref)}`;
 
-  const whatsappPhone = en ? '6285691533356' : '34642517787';
+  const whatsappPhone = SUPPORT_PHONE_ES;
   const supportMsg = encodeURIComponent(
     en 
       ? `Hello Cantik Tours!\nI need help with my booking.\n${fichaUrl}`

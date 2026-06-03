@@ -25,6 +25,19 @@ router.get('/', async (req, res) => {
     if (bError) throw bError;
     if (!booking) return res.status(404).json({ status: 'error', message: 'Reserva no encontrada' });
 
+    // Check if soft-deleted
+    let extrasObj = {};
+    try {
+      if (typeof booking.extras === 'string' && booking.extras.trim().startsWith('{')) {
+        extrasObj = JSON.parse(booking.extras);
+      } else if (typeof booking.extras === 'object' && booking.extras !== null) {
+        extrasObj = booking.extras;
+      }
+    } catch(e) {}
+    if (extrasObj.is_deleted === true) {
+      return res.status(404).json({ status: 'error', message: 'Reserva no encontrada' });
+    }
+
     // 2. Fetch related data in parallel
     const [paymentsRes, chargesRes, driverRes] = await Promise.all([
       supabase.from('payments').select('*').eq('booking_id', booking.id),
@@ -36,11 +49,21 @@ router.get('/', async (req, res) => {
     let relatedBookings = [];
     if (booking.client_phone) {
       const { data: rb } = await supabase.from('bookings')
-        .select('id, reference, booking_date, tour_title')
+        .select('id, reference, booking_date, tour_title, extras')
         .eq('client_phone', booking.client_phone)
         .order('booking_date', { ascending: true });
       if (rb) {
-        relatedBookings = rb;
+        relatedBookings = rb.filter(x => {
+          let ext = {};
+          try {
+            if (typeof x.extras === 'string' && x.extras.trim().startsWith('{')) {
+              ext = JSON.parse(x.extras);
+            } else if (typeof x.extras === 'object' && x.extras !== null) {
+              ext = x.extras;
+            }
+          } catch(e){}
+          return ext.is_deleted !== true;
+        });
       }
     }
 
