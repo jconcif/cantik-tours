@@ -890,61 +890,24 @@ export default function ItineraryPage() {
             </div>
           </div>
 
-          {/* ── PREMIUM TAB SELECTOR UNDER CALIPSO ──────────── */}
-          <div className={`px-8 flex justify-center border-b ${dark ? 'bg-[#151515] border-white/5' : 'bg-gray-50/75 border-gray-100'}`}>
-            <div className="flex gap-8 relative max-w-xs w-full justify-center">
-              <button
-                onClick={() => setActiveTab('ticket')}
-                className={`py-4 text-[10px] font-black uppercase tracking-widest transition-all relative z-10 border-b-2 ${activeTab === 'ticket' ? 'text-primary border-primary' : 'text-gray-500 border-transparent'}`}
-              >
-                {en ? 'My Ticket' : 'TICKET'}
-              </button>
-              <button
-                onClick={() => setActiveTab('gestion')}
-                className={`py-4 text-[10px] font-black uppercase tracking-widest transition-all relative z-10 flex items-center justify-center gap-1.5 border-b-2 ${activeTab === 'gestion' ? 'text-primary border-primary' : 'text-gray-500 border-transparent'}`}
-              >
-                <span>{en ? 'Management' : 'Gestión'}</span>
-                {(hasPendingPayment || isCheckinPending) && (
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-orange-500" />
-                  </span>
-                )}
-              </button>
-            </div>
-          </div>
-
           <div className="relative overflow-hidden">
-            <AnimatePresence mode="wait">
-              {activeTab === 'ticket' ? (
-                <motion.div
-                  key="ticket-pane"
-                  initial={{ x: -30, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: 30, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: 'easeInOut' }}
-                >
-                  {/* Fields */}
-                  <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6`}>
-                    <div className="grid className='grid-cols-3 gap-x-4 gap-y-5'" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1.25rem 1rem' }}>
-                      {[
-                        { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
-                        { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
-                        { 
-                          label: en ? 'STATUS' : 'ESTADO', 
-                          val: statusAlert.label, 
-                          style: { color: effectiveStatus === 'pending_payment' || effectiveStatus === 'payment_sent' || effectiveStatus === 'requested' ? '#f97316' : '#10b981' } 
-                        },
-                        { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
-                        { label: en ? 'START TIME' : 'Hora Inicio', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
-                        { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
-                      ].map((f, i) => (
-                        <div key={i}>
-                          <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
-                          <div className={`font-black text-sm ${text} truncate`} style={f.style}>{f.val}</div>
-                        </div>
-                      ))}
+            <div>
+              {/* Fields */}
+              <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 py-6`}>
+                <div className="grid className='grid-cols-3 gap-x-4 gap-y-5'" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1.25rem 1rem' }}>
+                  {[
+                    { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
+                    { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
+                    { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
+                    { label: en ? 'START TIME' : 'Hora Inicio', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
+                    { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
+                  ].map((f, i) => (
+                    <div key={i}>
+                      <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
+                      <div className={`font-black text-sm ${text} truncate`} style={f.style}>{f.val}</div>
                     </div>
+                  ))}
+                </div>
 
                     <div className={`mt-5 pt-5 border-t ${dark ? 'border-white/5' : 'border-gray-100'} flex flex-col gap-4`}>
                       <div>
@@ -1029,16 +992,16 @@ export default function ItineraryPage() {
                       )}
                     </AnimatePresence>
                   </div>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="gestion-pane"
-                  initial={{ x: 30, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -30, opacity: 0 }}
-                  transition={{ duration: 0.25, ease: 'easeInOut' }}
-                  className={`p-6 sm:p-8 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-b-[2.5rem]`}
-                >
+                </div>
+
+                {/* Perforated divider to separate ticket from management section */}
+                <div className="relative h-8 flex items-center z-20">
+                  <div className="absolute left-0 -translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
+                  <div className="absolute right-0 translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
+                  <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+                </div>
+
+                <div className={`p-6 sm:p-8 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-b-[2.5rem]`}>
                   {/* Header de Gestión con el icono animado */}
                   <div className="mb-6 pb-6 border-b border-gray-150 dark:border-white/5">
                     <div className="flex items-center gap-3 mb-3">
@@ -1421,11 +1384,9 @@ export default function ItineraryPage() {
                     </div>
 
                   </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+                </div>
+              </div>
+            </div>
         <div className="h-6" />
 
       </div>
