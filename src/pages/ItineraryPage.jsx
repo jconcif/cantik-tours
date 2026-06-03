@@ -67,6 +67,7 @@ export default function ItineraryPage() {
   const [pushNotification, setPushNotification] = useState(null);
   const [globalSettings, setGlobalSettings] = useState(null);
   const [showTimelineDetails, setShowTimelineDetails] = useState(false);
+  const [showNextStepAlert, setShowNextStepAlert] = useState(true);
 
   useEffect(() => {
     getGlobalSettings().then(res => {
@@ -103,6 +104,35 @@ export default function ItineraryPage() {
           : hasPendingPayment 
             ? 'pending_payment' 
             : booking.payment_status;
+
+  let nextStepText = '';
+  if (booking) {
+    if (effectiveStatus === 'pending_payment' || effectiveStatus === 'payment_sent' || effectiveStatus === 'requested') {
+      nextStepText = en 
+        ? 'Next Step: 💸 Make the payment to secure your booking.' 
+        : 'Próximo paso: 💸 Realizar pago para asegurar tu plaza.';
+    } else if ((effectiveStatus === 'payment_received' || effectiveStatus === 'payment_confirmed') && isCheckinPending) {
+      nextStepText = en 
+        ? 'Next Step: 🪪 Complete traveler details in the form below.' 
+        : 'Próximo paso: 🪪 Completar datos de viajeros.';
+    } else if (effectiveStatus === 'verifying_payment') {
+      nextStepText = en 
+        ? 'Next Step: 🔍 Waiting for payment verification by our team.' 
+        : 'Próximo paso: 🔍 Esperar validación del pago por nuestro equipo.';
+    } else if (effectiveStatus === 'confirmed' || effectiveStatus === 'reserved') {
+      nextStepText = en 
+        ? 'Next Step: 🚗 Wait for professional driver coordination.' 
+        : 'Próximo paso: 🚗 Esperar asignación y detalles del chofer.';
+    } else if (effectiveStatus === 'in_progress') {
+      nextStepText = en 
+        ? 'Next Step: 🎒 Enjoy your unforgettable experience in Bali!' 
+        : 'Próximo paso: 🎒 ¡Disfrutar de tu experiencia inolvidable en Bali!';
+    } else if (effectiveStatus === 'completed') {
+      nextStepText = en 
+        ? 'Next Step: ⭐ Share your feedback with a review!' 
+        : 'Próximo paso: ⭐ Compartir tu experiencia con una reseña!';
+    }
+  }
 
   const hasShownNotification = useRef(false);
   const managementRef = useRef(null);
