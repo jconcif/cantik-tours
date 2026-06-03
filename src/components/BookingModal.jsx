@@ -307,7 +307,15 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         setIsSubmitting(true);
         const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
         
-        await saveBookingToDB(instantId); 
+        const res = await saveBookingToDB(instantId); 
+        if (!res) {
+            alert(i18n.language === 'en' 
+                ? 'Error saving your booking. Please try again.' 
+                : 'Error al procesar tu reserva. Por favor, inténtalo de nuevo.');
+            setIsSubmitting(false);
+            return;
+        }
+
         trackEvent('Conversion', 'Web Booking Request', tourTitle);
         trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
         

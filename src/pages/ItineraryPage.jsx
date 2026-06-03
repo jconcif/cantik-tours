@@ -402,8 +402,12 @@ export default function ItineraryPage() {
     <div className={`min-h-screen ${bg} ${text} flex flex-col items-center justify-center p-6 text-center`}>
       <div className="bg-red-500/10 p-10 rounded-[2.5rem] border border-red-500/20 mb-8 max-w-md">
         <Info size={48} className="text-red-500 mx-auto mb-6" />
-        <h2 className="text-2xl font-black mb-3">{error || 'Reserva no encontrada'}</h2>
-        <p className="text-gray-400 font-bold leading-relaxed">Verifica el enlace recibido por WhatsApp.</p>
+        <h2 className="text-2xl font-black mb-3">{error || (en ? 'Booking not found' : 'Reserva no encontrada')}</h2>
+        <p className="text-gray-400 font-bold leading-relaxed">
+          {en 
+            ? 'We could not load your booking details. Please verify the link received or try again in a few moments.'
+            : 'No hemos podido cargar los detalles de tu reserva. Verifica el enlace recibido o vuelve a intentarlo en unos instantes.'}
+        </p>
       </div>
       <LocalLink to="/" className="bg-primary text-white px-10 py-5 rounded-[2rem] font-black shadow-xl shadow-primary/20 uppercase tracking-widest text-xs">Volver al Inicio</LocalLink>
     </div>
