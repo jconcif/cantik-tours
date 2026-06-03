@@ -89,6 +89,17 @@ export default function ItineraryPage() {
   const finalTotal = parseFloat(booking?.total_price || 0) + extraCharges;
   const totalPaid = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
   const balance = finalTotal - totalPaid;
+  const hasPendingPayment = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status);
+  const isCheckinPending = checkinData.some(p => !p.name || !p.passport);
+  const effectiveStatus = (booking.payment_status === 'verifying_payment')
+    ? 'verifying_payment'
+    : (balance <= 0.01 && ['requested', 'pending_payment'].includes(booking.payment_status))
+      ? 'payment_received'
+      : (booking.payment_status === 'requested' && !transitionedToPending)
+        ? 'requested'
+        : hasPendingPayment 
+          ? 'pending_payment' 
+          : booking.payment_status;
 
   const hasShownNotification = useRef(false);
 
@@ -478,26 +489,11 @@ export default function ItineraryPage() {
 
   const priceData = formatPrice(finalTotal);
   const priceVal = `${priceData.symbol}${priceData.amount}`;
-  const hasPendingPayment = balance > 0.01 && !['cancelled', 'completed', 'refunded'].includes(booking.payment_status);
-  
   const isPaymentPending = hasPendingPayment;
   // Receipt is considered verified only when there's no pending balance and status is confirmed/received
   const isReceiptSentOrVerified = !hasPendingPayment && ['verifying_payment', 'payment_received', 'payment_confirmed', 'reserved', 'confirmed', 'in_progress', 'completed'].includes(booking.payment_status);
   // Show upload button whenever there's a pending balance
   const canUploadReceipt = hasPendingPayment;
-  const isCheckinPending = checkinData.some(p => !p.name || !p.passport);
-  // If there's a pending balance, always show PAGO PENDIENTE regardless of payment_status
-  // EXCEPT if the status is verifying_payment or has already been paid (balance <= 0.01)
-  // or if the booking is brand new (requested) and has not transitioned to pending yet.
-  const effectiveStatus = (booking.payment_status === 'verifying_payment')
-    ? 'verifying_payment'
-    : (balance <= 0.01 && ['requested', 'pending_payment'].includes(booking.payment_status))
-      ? 'payment_received'
-      : (booking.payment_status === 'requested' && !transitionedToPending)
-        ? 'requested'
-        : hasPendingPayment 
-          ? 'pending_payment' 
-          : booking.payment_status;
   const status = statusMap[effectiveStatus] || statusMap.requested;
 
   const fichaUrl = `https://cantiktours.com/booking?ref=${formatCT(ref)}`;
