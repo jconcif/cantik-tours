@@ -102,35 +102,44 @@ export default function ItineraryPage() {
         const showConfirmed = notifications.confirmado?.notificacion !== false || notifications.pago_validado?.notificacion !== false;
         const showPendingPayment = notifications.pago_pendiente?.notificacion !== false;
 
-        if (booking.drivers && showDriverAssigned) {
+        // Custom notification flow matching the user's specific request
+        if ((effectiveStatus === 'payment_received' || effectiveStatus === 'payment_confirmed') && isCheckinPending) {
+          setPushNotification({
+            title: en ? 'Payment Received! 💳' : '¡Pago Recibido Correctamente! 💳',
+            body: en 
+              ? 'Next step: 🪪 Complete traveler details in the form below.' 
+              : 'Próximo paso: 🪪 Completar datos de viajeros.'
+          });
+          hasShownNotification.current = true;
+        } else if (booking.drivers && showDriverAssigned) {
           setPushNotification({
             title: en ? 'Driver Assigned 🚗' : 'Chofer Asignado 🚗',
             body: en 
-              ? `Your driver ${booking.drivers.name} (${booking.drivers.car_model || 'Premium Car'}) has been assigned to your booking.`
-              : `Tu chofer ${booking.drivers.name} (${booking.drivers.car_model || 'Vehículo Premium'}) ha sido asignado a tu reserva.`
+              ? `Your driver ${booking.drivers.name} has been assigned. Next step: 🎒 Enjoy your tour!`
+              : `Tu chofer ${booking.drivers.name} ha sido asignado. Próximo paso: 🎒 ¡Disfrutar de tu tour!`
           });
           hasShownNotification.current = true;
         } else if ((booking.payment_status === 'confirmed' || booking.payment_status === 'payment_confirmed') && showConfirmed) {
           setPushNotification({
             title: en ? 'Booking Confirmed ✓' : 'Reserva Confirmada ✓',
             body: en 
-              ? 'Your booking is active and all payments are successfully validated.' 
-              : 'Tu reserva está activa y todos los pagos han sido validados con éxito.'
+              ? 'Your booking is active and all payments are successfully validated. Next step: 🚗 Coordinator details.' 
+              : 'Tu reserva está activa y todos los pagos han sido validados con éxito. Próximo paso: 🚗 El chofer coordinará la recogida.'
           });
           hasShownNotification.current = true;
         } else if (balance > 0.01 && showPendingPayment) {
           setPushNotification({
-            title: en ? 'Pending Payment ⚠️' : 'Pago Pendiente ⚠️',
+            title: en ? 'Request Received 🌴' : '¡Solicitud Recibida! 🌴',
             body: en 
-              ? `There is a pending balance of ${formatPrice(balance).symbol}${formatPrice(balance).amount} for your tour.` 
-              : `Tienes un saldo pendiente de ${formatPrice(balance).symbol}${formatPrice(balance).amount} para tu tour.`
+              ? `Pending: ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Next step: 💸 Make payment to secure your booking.` 
+              : `Saldo pendiente: ${formatPrice(balance).symbol}${formatPrice(balance).amount}. Próximo paso: 💸 Realizar pago para asegurar tu plaza.`
           });
           hasShownNotification.current = true;
         }
-      }, 4000);
+      }, 2000);
       return () => clearTimeout(pushTimer);
     }
-  }, [booking, loading, en, balance, globalSettings]);
+  }, [booking, loading, en, balance, globalSettings, effectiveStatus, isCheckinPending]);
 
   useEffect(() => {
     if (pushNotification) {
@@ -596,26 +605,15 @@ export default function ItineraryPage() {
   // ── Helper Functions for dynamic status, progress and timeline ──
   const getProgressPercentage = () => {
     if (booking.payment_status === 'completed') return 100;
-    if (booking.payment_status === 'in_progress') return 100;
-    if (booking.payment_status === 'confirmed') return 100;
-    
-    let progress = 25; // Solicitud recibida
-    if (!hasPendingPayment) {
-      progress = 75; // Pago verificado
-      if (['reserved', 'payment_received', 'payment_confirmed'].includes(booking.payment_status)) {
-        progress = 85; // Ratificando disponibilidad
-      }
-    } else {
-      if (!isCheckinPending) {
-        progress = 50; // Check-in completado pero pago pendiente
-      }
+    if (booking.payment_status === 'in_progress') return 95;
+    if (booking.payment_status === 'confirmed') return 85;
+    if (['reserved', 'payment_received', 'payment_confirmed'].includes(booking.payment_status)) {
+      return 70;
     }
-    
-    if (progress >= 75 && !isCheckinPending) {
-      progress = 90; // Pago verificado + check-in completado
-    }
-    
-    return progress;
+    if (booking.payment_status === 'verifying_payment') return 50;
+    if (!hasPendingPayment) return 70;
+    if (!isCheckinPending) return 30;
+    return 15;
   };
 
   const getStepTimestamp = (stepNum) => {
@@ -882,9 +880,13 @@ export default function ItineraryPage() {
               </div>
 
               {/* Status tag in the header */}
-              <div className="flex-shrink-0">
-                <span className="inline-block px-3 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-widest bg-white/20 text-white border border-white/25 backdrop-blur-md shadow-sm">
-                  {status.label}
+              <div className="flex-shrink-0 flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-white dark:bg-[#1a1a1a] text-gray-900 dark:text-white border ${dark ? 'border-white/10' : 'border-gray-250'} shadow-md relative overflow-hidden`}>
+                  <span className="relative flex h-2 w-2">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusAlert.dot}`} />
+                    <span className={`relative inline-flex rounded-full h-2 w-2 ${statusAlert.dot}`} />
+                  </span>
+                  <span className={statusAlert.text}>{statusAlert.label}</span>
                 </span>
               </div>
             </div>
@@ -1028,6 +1030,47 @@ export default function ItineraryPage() {
                           className="h-full bg-primary rounded-full"
                         />
                       </div>
+                      
+                      {/* Next step indicator under progress bar */}
+                      {(function() {
+                        let nextStepText = '';
+                        if (effectiveStatus === 'pending_payment' || effectiveStatus === 'payment_sent' || effectiveStatus === 'requested') {
+                          nextStepText = en 
+                            ? 'Next Step: 💸 Make the payment to secure your booking.' 
+                            : 'Próximo paso: 💸 Realizar pago para asegurar tu plaza.';
+                        } else if ((effectiveStatus === 'payment_received' || effectiveStatus === 'payment_confirmed') && isCheckinPending) {
+                          nextStepText = en 
+                            ? 'Next Step: 🪪 Complete traveler details in the form below.' 
+                            : 'Próximo paso: 🪪 Completar datos de viajeros.';
+                        } else if (effectiveStatus === 'verifying_payment') {
+                          nextStepText = en 
+                            ? 'Next Step: 🔍 Waiting for payment verification by our team.' 
+                            : 'Próximo paso: 🔍 Esperar validación del pago por nuestro equipo.';
+                        } else if (effectiveStatus === 'confirmed' || effectiveStatus === 'reserved') {
+                          nextStepText = en 
+                            ? 'Next Step: 🚗 Wait for professional driver coordination.' 
+                            : 'Próximo paso: 🚗 Esperar asignación y detalles del chofer.';
+                        } else if (effectiveStatus === 'in_progress') {
+                          nextStepText = en 
+                            ? 'Next Step: 🎒 Enjoy your unforgettable experience in Bali!' 
+                            : 'Próximo paso: 🎒 ¡Disfrutar de tu experiencia inolvidable en Bali!';
+                        } else if (effectiveStatus === 'completed') {
+                          nextStepText = en 
+                            ? 'Next Step: ⭐ Share your feedback with a review!' 
+                            : 'Próximo paso: ⭐ Compartir tu experiencia con una reseña!';
+                        }
+                        
+                        if (!nextStepText) return null;
+                        return (
+                          <div className={`mt-3 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-wider flex items-center gap-2 ${dark ? 'bg-white/5 text-gray-300 border-white/5' : 'bg-gray-50 text-gray-700 border-gray-150'} border`}>
+                            <span className="relative flex h-1.5 w-1.5">
+                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
+                            </span>
+                            <span>{nextStepText}</span>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
 
