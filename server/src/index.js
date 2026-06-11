@@ -109,9 +109,12 @@ app.use((err, req, res, next) => {
   res.status(500).json({ status: 'error', message: 'Error interno del servidor' });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Cantik Tours API running on port ${PORT}`);
-  console.log(`📍 Health: http://localhost:${PORT}/api/health`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Cantik Tours API running on port ${PORT}`);
+    console.log(`📍 Health: http://localhost:${PORT}/api/health`);
+  });
+}
 
-// Force restart for env load
+export default app;
+
