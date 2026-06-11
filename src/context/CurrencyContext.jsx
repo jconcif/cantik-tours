@@ -27,9 +27,9 @@ export const CurrencyProvider = ({ children }) => {
 
     const formatPrice = (eurPrice) => {
         if (currency === 'USD') {
-            return { symbol: '$', amount: Math.round(eurPrice * exchangeRate) };
+            return { symbol: '$', amount: Number(Math.round(eurPrice * exchangeRate)).toFixed(2) };
         }
-        return { symbol: '€', amount: eurPrice };
+        return { symbol: '€', amount: Number(eurPrice).toFixed(2) };
     };
 
     return (
