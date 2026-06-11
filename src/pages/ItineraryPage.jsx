@@ -1312,25 +1312,13 @@ export default function ItineraryPage() {
                           
                           <div className="space-y-3.5 font-medium">
                             <div className="flex gap-2.5">
-                              <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                               <div>
                                 <span className={`font-bold block ${text}`}>
-                                  {en ? '100% Encrypted & Secure Payment' : 'Pago 100% Cifrado y Seguro'}
+                                  {en ? 'Card or PayPal Payment' : 'Pago con Tarjeta o PayPal'}
                                 </span>
                                 <span className="text-gray-400">
-                                  {en ? 'Your transaction is processed under strict SSL security standards.' : 'Tu transacción se procesa bajo estrictos estándares de seguridad SSL.'}
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="flex gap-2.5">
-                              <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                              <div>
-                                <span className={`font-bold block ${text}`}>
-                                  {en ? 'Instant Validation (Card or PayPal)' : 'Validación al Instante (Tarjeta o PayPal)'}
-                                </span>
-                                <span className="text-gray-400">
-                                  {en ? 'If you choose Card or PayPal, your booking is confirmed automatically.' : 'Si eliges tarjeta o PayPal, el pago y tu reserva se confirmarán automáticamente en el acto.'}
+                                  {en ? 'Confirmation is immediate through the payment platform.' : 'La confirmación es inmediata a través de la plataforma de pago.'}
                                 </span>
                               </div>
                             </div>
@@ -1339,22 +1327,34 @@ export default function ItineraryPage() {
                               <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                               <div>
                                 <span className={`font-bold block ${text}`}>
-                                  {en ? 'Manual Verification (Bank Transfer)' : 'Verificación de Transferencias'}
+                                  {en ? 'Bank Transfers' : 'Transferencias Bancarias'}
                                 </span>
                                 <span className="text-gray-400">
-                                  {en ? 'Upload your receipt and we will validate it as soon as possible (usually in less than 12h, considering time zone differences with Bali).' : 'Sube tu comprobante de transferencia y lo validaremos lo antes posible (normalmente en pocas horas, considerando la diferencia horaria con Bali).'}
+                                  {en ? 'Send your receipt after making the payment. We will validate it shortly; keep in mind there might be time zone differences depending on your location.' : 'Envía tu comprobante tras realizar el pago. Lo validaremos a la brevedad; recuerda que puede haber diferencias de zona horaria según donde te encuentres.'}
                                 </span>
                               </div>
                             </div>
 
                             <div className="flex gap-2.5">
-                              <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                              <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                               <div>
                                 <span className={`font-bold block ${text}`}>
-                                  {en ? 'Confirmation & Assistance' : 'Confirmación y Asistencia Directa'}
+                                  {en ? 'Your Booking' : 'Tu Reserva'}
                                 </span>
                                 <span className="text-gray-400">
-                                  {en ? 'This page updates in real-time. We will also contact you on WhatsApp to coordinate your driver, guide, and tour details.' : 'Esta página se actualiza automáticamente. Adicionalmente, te contactaremos por WhatsApp para coordinar los detalles finales de tu conductor, guía y horarios.'}
+                                  {en ? 'This page will update automatically with all your travel details.' : 'Esta página se actualizará automáticamente con todos los detalles de tu viaje.'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2.5">
+                              <MessageCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                              <div>
+                                <span className={`font-bold block ${text}`}>
+                                  {en ? 'Direct Support' : 'Asistencia Directa'}
+                                </span>
+                                <span className="text-gray-400">
+                                  {en ? 'We will contact you via WhatsApp to coordinate final details: driver, route, and scheduling.' : 'Te contactaremos vía WhatsApp para coordinar los detalles finales: conductor, ruta y horarios.'}
                                 </span>
                               </div>
                             </div>
