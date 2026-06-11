@@ -13,6 +13,7 @@ import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
 import { useCurrency } from '../context/CurrencyContext';
+import { useDarkMode } from '../context/DarkModeContext';
 
 const SUPPORT_PHONE_ES = '34642517787';
 
@@ -31,9 +32,10 @@ export default function ItineraryPage() {
     if (!str) return '';
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
-  const [searchParams] = useSearchParams();
+  const searchParams = useSearchParams()[0];
   const { i18n } = useTranslation();
   const { currency, toggleCurrency, formatPrice } = useCurrency();
+  const { isDark: darkMode, toggleDarkMode } = useDarkMode();
   const rawRef = searchParams.get('ref') || '';
   const ref = rawRef.replace(/^CT-?/i, '').replace(/^0+/, '');
   const formatCT = (val) => 'CT-' + String(val).replace(/^CT-?/i, '').padStart(4, '0');
@@ -42,7 +44,6 @@ export default function ItineraryPage() {
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [darkMode, setDarkMode] = useState(() => window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
   const showToast = (message, type = 'success') => {
@@ -858,7 +859,7 @@ export default function ItineraryPage() {
 
           {/* Theme Toggle */}
           <button
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={toggleDarkMode}
             className={`flex items-center justify-center w-8 h-8 rounded-full border transition-all ${dark ? 'border-white/10 text-gray-400' : 'border-gray-300 text-gray-500'}`}
           >
             {dark ? <Sun size={12} /> : <Moon size={12} />}
@@ -1614,7 +1615,7 @@ export default function ItineraryPage() {
                               return actions.order.create({
                                 purchase_units: [{
                                   amount: {
-                                    value: formatPrice(balance).amount.toString(),
+                                    value: Number(formatPrice(balance).amount).toFixed(2),
                                     currency_code: currency
                                   },
                                   description: `Booking ${formatCT(ref)} - ${booking?.client_name}`
@@ -1628,7 +1629,7 @@ export default function ItineraryPage() {
                                 const res = await capturePayPalPayment({
                                   orderID: data.orderID,
                                   bookingRef: ref,
-                                  amount: formatPrice(balance).amount,
+                                  amount: Number(formatPrice(balance).amount).toFixed(2),
                                   currency: currency,
                                   payerName: details.payer.name.given_name + ' ' + details.payer.name.surname,
                                   payerEmail: details.payer.email_address
