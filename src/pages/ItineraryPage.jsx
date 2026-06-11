@@ -27,6 +27,10 @@ function parseLocalDate(str) {
 }
 
 export default function ItineraryPage() {
+  const toSentenceCase = (str) => {
+    if (!str) return '';
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
   const [searchParams] = useSearchParams();
   const { i18n } = useTranslation();
   const { currency, toggleCurrency, formatPrice } = useCurrency();
@@ -344,9 +348,9 @@ export default function ItineraryPage() {
 
 
   const handleCheckinSubmit = async () => {
-    const missing = checkinData.some(p => !(p.name || '').trim() || !(p.passport || '').trim());
+    const missing = checkinData.some(p => !(p.name || '').trim() || !(p.passport || '').trim() || !String(p.age || '').trim());
     if (missing) {
-      showToast(i18n.language.startsWith('en') ? 'Please fill in the Full Name and Passport Number for all passengers.' : 'Por favor, completa el Nombre Completo y el Número de Pasaporte para todos los pasajeros.', 'error');
+      showToast(i18n.language.startsWith('en') ? 'Please fill in the Full Name, Passport Number, and Age for all passengers.' : 'Por favor, completa el Nombre Completo, el Número de Pasaporte y la Edad para todos los pasajeros.', 'error');
       return;
     }
     setSubmittingCheckin(true);
@@ -908,10 +912,11 @@ export default function ItineraryPage() {
                 <div className="grid className='grid-cols-3 gap-x-4 gap-y-5'" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1.25rem 1rem' }}>
                   {[
                     { label: en ? 'DATE' : 'FECHA',       val: `${dayNum} ${monthStr} ${yearStr}` },
-                    { label: en ? 'PASSENGERS' : 'PAX',   val: `${booking.pax} PAX` },
-                    { label: en ? 'GATE / PICKUP' : 'RECOGIDA', val: booking.hotel },
-                    { label: en ? 'START TIME' : 'Hora Inicio', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
+                    { label: en ? 'START TIME' : 'HORA INICIO', val: (function(){try{const ext = typeof booking.extras === 'string' ? JSON.parse(booking.extras) : (booking.extras || {}); return ext.pickup_time;}catch(e){return '';}})() || booking.pickup_time || (en ? 'TBD' : 'Por confirmar') },
+                    { label: en ? 'PAX' : 'PAX',   val: `${booking.pax} PAX` },
+                    { label: en ? 'PICKUP' : 'RECOGIDA', val: booking.hotel },
                     { label: en ? 'DRIVER' : 'CHOFER',    val: booking.drivers ? booking.drivers.name : (en ? 'TBD' : 'Por confirmar') },
+                    { label: en ? 'VEHICLE' : 'VEHÍCULO', val: booking.drivers && booking.drivers.car_model ? booking.drivers.car_model : (en ? 'TBD' : 'Por confirmar') },
                   ].map((f, i) => (
                     <div key={i}>
                       <div className={`text-[8px] font-black uppercase tracking-widest mb-1 ${sub}`}>{f.label}</div>
@@ -954,15 +959,15 @@ export default function ItineraryPage() {
                       onClick={() => setShowItinerary(!showItinerary)}
                       className="w-full flex items-center justify-between text-left focus:outline-none"
                     >
-                      <div className={`text-[8px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
-                        <Map className="text-primary" size={12} />
+                      <div className={`text-[10px] font-black uppercase tracking-[0.3em] flex items-center gap-2 ${sub}`}>
+                        <Map className="text-primary" size={14} />
                         {en ? 'DETAILED ITINERARY' : 'ITINERARIO DETALLADO'}
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className={`text-[8px] font-black uppercase tracking-widest ${sub}`}>
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${sub}`}>
                           {en ? 'Your Route' : 'Tu Ruta'}
                         </span>
-                        <span className={`text-[9px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
+                        <span className={`text-[10px] ${sub} transition-transform duration-300 ${showItinerary ? 'rotate-180' : ''}`} style={{ display: 'inline-block' }}>
                           ▼
                         </span>
                       </div>
@@ -1046,406 +1051,372 @@ export default function ItineraryPage() {
         <div ref={managementRef} className={`rounded-[2.5rem] overflow-hidden shadow-2xl ${dark ? 'shadow-black/50 bg-[#1a1a1a]' : 'shadow-gray-300/80 bg-white'}`}>
           <div className="relative overflow-hidden">
             <div>
-              <div className={`p-6 sm:p-8 ${dark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-[2.5rem]`}>
-                  {/* Header de Gestión con el icono animado */}
-                  <div className="mb-6 pb-6 border-b border-gray-150 dark:border-white/5">
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="relative flex h-2.5 w-2.5 flex-shrink-0">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75" />
-                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500" />
-                      </span>
-                      <h3 className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                        {en ? 'Booking Management' : 'Gestión de Reserva'}
-                      </h3>
-                    </div>
-                    
-                    {/* Barra de progreso de reserva */}
-                    <div className="mt-3 mb-2 w-full">
-                      <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest mb-1 opacity-70">
-                        <span>{en ? 'Booking Progress' : 'Progreso de Reserva'}</span>
-                        <span className="font-black">{getProgressPercentage()}%</span>
-                      </div>
-                      <div className={`h-1.5 w-full rounded-full overflow-hidden ${dark ? 'bg-white/10' : 'bg-gray-100'} mb-4`}>
-                        <motion.div 
-                          initial={{ width: 0 }}
-                          animate={{ width: `${getProgressPercentage()}%` }}
-                          transition={{ duration: 0.8, ease: 'easeOut' }}
-                          className="h-full bg-primary rounded-full"
-                        />
-                      </div>
-                      
-                      {/* Toggle Button for Timeline Details (Now under progress bar directly) */}
-                      <div className="flex justify-start mt-4 mb-3">
-                        <button
-                          onClick={() => setShowTimelineDetails(!showTimelineDetails)}
-                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[8.5px] font-black uppercase tracking-widest transition-all ${dark ? 'border-white/5 hover:bg-white/5 text-gray-400' : 'border-gray-150 hover:bg-gray-50 text-gray-500'} cursor-pointer hover:scale-105 active:scale-95`}
-                        >
-                          <span>{showTimelineDetails ? (en ? 'Hide details' : 'Ocultar detalles') : (en ? 'Show progress details' : 'Ver detalles de progreso')}</span>
-                          <span className="transition-transform duration-250" style={{ transform: showTimelineDetails ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block' }}>▾</span>
-                        </button>
-                      </div>
-
-                      {/* Integrated Booking Timeline Steps */}
-                      <AnimatePresence initial={false}>
-                        {showTimelineDetails && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.35, ease: 'easeInOut' }}
-                            style={{ overflow: 'hidden' }}
-                            className={`mb-4 rounded-2xl p-5 ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}
-                          >
-                            <div className="space-y-5 relative pl-1">
-                              {[
-                                statusMap.requested, 
-                                statusMap.pending_payment, 
-                                (effectiveStatus === 'verifying_payment' ? statusMap.verifying_payment : statusMap.payment_received), 
-                                statusMap.reserved, 
-                                statusMap.confirmed,
-                                statusMap.in_progress,
-                                statusMap.completed
-                              ].map((st, i) => {
-                                const isPast = st.step < currentStep;
-                                const isCurrent = st.step === currentStep;
-                                
-                                const stepTime = getStepTimestamp(st.step);
-                                const stepTimeStr = stepTime ? formatStepDate(stepTime) : '';
-                                
-                                return (
-                                  <div key={i} className="flex gap-3 relative z-10">
-                                    <div className="flex flex-col items-center justify-start pt-0.5">
-                                      <div className="relative z-10">
-                                        {isPast ? (
-                                          <div className="w-4 h-4 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center shadow-sm">
-                                            <CheckCircle2 size={8} className="stroke-[3]" />
-                                          </div>
-                                        ) : isCurrent ? (
-                                          <div className="relative flex h-4 w-4 items-center justify-center">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-30" />
-                                            <div className="relative w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center shadow-md">
-                                              <div className="w-1 h-1 bg-white rounded-full" />
-                                            </div>
-                                          </div>
-                                        ) : (
-                                          <div className={`w-3.5 h-3.5 rounded-full border-2 ${dark ? 'bg-[#1a1a1a] border-white/10' : 'bg-gray-50 border-gray-200'} flex items-center justify-center`} />
-                                        )}
-                                      </div>
-                                      
-                                      {i < 6 && (
-                                        <div 
-                                          className={`absolute top-4 bottom-[-20px] left-[7px] w-0.5 ${
-                                            st.step < currentStep ? 'bg-primary' : (dark ? 'bg-white/5' : 'bg-gray-200')
-                                          } z-0`}
-                                        />
-                                      )}
-                                    </div>
-                                    
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center justify-between gap-3">
-                                        <span className={`text-[9px] font-black uppercase tracking-wider ${
-                                          isCurrent ? 'text-primary' : isPast ? text : 'text-gray-400 dark:text-gray-600'
-                                        }`}>
-                                          {st.label}
-                                        </span>
-                                        {stepTimeStr && (
-                                          <span className={`text-[7.5px] font-bold uppercase tracking-tighter ${sub}`}>
-                                            {stepTimeStr}
-                                          </span>
-                                        )}
-                                      </div>
-                                      {isCurrent && (
-                                        <p className={`text-[9.5px] font-semibold mt-0.5 leading-relaxed ${dark ? 'text-gray-300' : 'text-gray-600'}`}>
-                                          {st.desc}
-                                        </p>
-                                      )}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+              {/* Top part: Booking Management Header + Progress + Timeline */}
+              <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 pt-10 transition-all duration-300 ${showTimelineDetails ? 'pb-4' : 'pb-6'}`}>
+                {/* Header: Title + dot on left, Status toggle on right */}
+                <button
+                  onClick={() => setShowTimelineDetails(!showTimelineDetails)}
+                  className="w-full flex items-center justify-between text-left focus:outline-none cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="relative flex h-2 w-2 flex-shrink-0 items-center justify-center">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-500 opacity-75" />
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500" />
+                    </span>
+                    <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${sub} leading-none`}>
+                      {en ? 'BOOKING MANAGEMENT' : 'GESTIÓN DE RESERVA'}
+                    </span>
                   </div>
 
-                  <div className="space-y-8">
-                    {/* Panel Operativo Contextual (Mejora 6) */}
-                    {(function() {
-                      if (effectiveStatus === 'confirmed' && !isCheckinPending) {
-                        return (
-                          <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50'}`}>
-                            <div className="flex items-start gap-4">
-                              <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center flex-shrink-0">
-                                <CheckCircle2 size={16} />
-                              </div>
-                              <div className="flex-1">
-                                <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                  {en ? 'Booking Guaranteed ✓' : 'Reserva Garantizada ✓'}
-                                </div>
-                                <div className={`text-[11px] font-bold mt-1.5 leading-relaxed ${sub}`}>
-                                  {en 
-                                    ? 'All set! Your professional driver will pick you up at your hotel at the scheduled time.' 
-                                    : '¡Todo listo! Tu chofer profesional te recogerá en tu hotel a la hora acordada.'}
+                  <div className="flex items-center gap-2">
+                    <span className={`text-[10px] font-black tracking-widest ${sub} leading-none`}>
+                      {toSentenceCase(status.label)}
+                    </span>
+                    <span className={`text-[10px] ${sub} transition-transform duration-300 ${showTimelineDetails ? 'rotate-180' : ''} leading-none`} style={{ display: 'inline-flex', alignItems: 'center' }}>
+                      ▼
+                    </span>
+                  </div>
+                </button>
+
+                {/* Progress Bar & Timeline (Animated via AnimatePresence / motion.div) */}
+                <AnimatePresence initial={false}>
+                  {showTimelineDetails && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.35, ease: 'easeInOut' }}
+                      style={{ overflow: 'hidden' }}
+                      className={showTimelineDetails ? "mb-2 pb-2" : "mb-0 pb-0"}
+                    >
+                      {/* Progress bar container */}
+                      <div className="mt-6 w-full">
+                        <div className="flex justify-between items-center text-[8px] font-black uppercase tracking-widest mb-1.5 opacity-70">
+                          <span>{en ? 'Booking Progress' : 'Progreso de Reserva'}</span>
+                          <span className="font-black">{getProgressPercentage()}%</span>
+                        </div>
+                        <div className={`h-1.5 w-full rounded-full overflow-hidden ${dark ? 'bg-white/10' : 'bg-gray-100'} mb-4`}>
+                          <motion.div 
+                            initial={{ width: 0 }}
+                            animate={{ width: `${getProgressPercentage()}%` }}
+                            transition={{ duration: 0.8, ease: 'easeOut' }}
+                            className="h-full bg-primary rounded-full"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Timeline steps container */}
+                      <div className={`rounded-2xl p-4 mb-4 ${dark ? "bg-white/5 border border-white/5" : "bg-gray-50 border border-gray-100"}`}>
+                        <div className="space-y-5 relative pl-1">
+                          {[
+                            statusMap.requested, 
+                            statusMap.pending_payment, 
+                            (effectiveStatus === 'verifying_payment' ? statusMap.verifying_payment : statusMap.payment_received), 
+                            statusMap.reserved, 
+                            statusMap.confirmed,
+                            statusMap.in_progress,
+                            statusMap.completed
+                          ].map((st, i) => {
+                            const isPast = st.step < currentStep;
+                            const isCurrent = st.step === currentStep;
+                            
+                            const stepTime = getStepTimestamp(st.step);
+                            const stepTimeStr = stepTime ? formatStepDate(stepTime) : '';
+                            
+                            return (
+                              <div key={i} className="flex gap-3 relative z-10">
+                                <div className="flex flex-col items-center justify-start pt-0.5">
+                                  <div className="relative z-10">
+                                    {isPast ? (
+                                      <div className="w-4 h-4 rounded-full bg-primary/20 border border-primary text-primary flex items-center justify-center shadow-sm">
+                                        <CheckCircle2 size={8} className="stroke-[3]" />
+                                      </div>
+                                    ) : isCurrent ? (
+                                      <div className="relative flex h-4 w-4 items-center justify-center">
+                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                                        <div className="relative w-3.5 h-3.5 rounded-full bg-primary flex items-center justify-center shadow-md">
+                                          <div className="w-1 h-1 bg-white rounded-full" />
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className={`w-3.5 h-3.5 rounded-full border-2 ${dark ? 'bg-[#1a1a1a] border-white/10' : 'bg-gray-50 border-gray-200'} flex items-center justify-center`} />
+                                    )}
+                                  </div>
+                                  
+                                  {i < 6 && (
+                                    <div 
+                                      className={`absolute top-4 bottom-[-20px] left-[7px] w-0.5 ${
+                                        st.step < currentStep ? 'bg-primary' : (dark ? 'bg-white/5' : 'bg-gray-200')
+                                      } z-0`}
+                                    />
+                                  )}
                                 </div>
                                 
-                                {booking.drivers && (
-                                  <div className={`mt-4 p-4 rounded-xl border ${dark ? 'bg-white/5 border-white/5' : 'bg-gray-50 border-gray-200'} text-xs`}>
-                                    <div className={`text-[9px] font-black uppercase tracking-widest text-primary mb-2`}>
-                                      {en ? 'ASSIGNED DRIVER' : 'CHOFER ASIGNADO'}
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-3 font-bold">
-                                      <div>
-                                        <div className="text-[8px] text-gray-400 uppercase">{en ? 'NAME' : 'NOMBRE'}</div>
-                                        <div className={text}>{booking.drivers.name}</div>
-                                      </div>
-                                      {booking.drivers.car_model && (
-                                        <div>
-                                          <div className="text-[8px] text-gray-400 uppercase">{en ? 'VEHICLE' : 'VEHÍCULO'}</div>
-                                          <div className={text}>{booking.drivers.car_model}</div>
-                                        </div>
-                                      )}
-                                    </div>
-                                    {booking.drivers.phone && (
-                                      <a 
-                                        href={`https://wa.me/${booking.drivers.phone.replace(/[^0-9]/g, '')}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="mt-3 inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-500 hover:opacity-80"
-                                      >
-                                        <MessageCircle size={10} />
-                                        {en ? 'Contact Driver via WhatsApp' : 'Contactar Chofer por WhatsApp'}
-                                      </a>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between gap-3">
+                                    <span className={`text-[9px] font-black uppercase tracking-wider ${
+                                      isCurrent ? 'text-primary' : isPast ? text : 'text-gray-400 dark:text-gray-600'
+                                    }`}>
+                                      {st.label}
+                                    </span>
+                                    {stepTimeStr && (
+                                      <span className={`text-[7.5px] font-bold uppercase tracking-tighter ${sub}`}>
+                                        {stepTimeStr}
+                                      </span>
                                     )}
                                   </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                      
-                      if (effectiveStatus === 'in_progress') {
-                        return (
-                          <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-primary/5 border-primary/10' : 'bg-cyan-50/20 border-primary/15'}`}>
-                            <div className="flex items-start gap-4">
-                              <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0">
-                                <Activity size={16} />
-                              </div>
-                              <div className="flex-1">
-                                <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                  {en ? 'Tour in Progress' : 'Tour en Curso'}
+                                  {isCurrent && (
+                                    <p className={`text-[9.5px] font-semibold mt-0.5 leading-relaxed ${dark ? 'text-gray-300' : 'text-gray-600'}`}>
+                                      {st.desc}
+                                    </p>
+                                  )}
                                 </div>
-                                <div className={`text-[11px] font-bold mt-1 leading-relaxed ${sub}`}>
-                                  {en 
-                                    ? 'Your Bali experience is underway! Please contact your driver or our support team for any immediate assistance.' 
-                                    : '¡Tu experiencia en Bali está en marcha! Si necesitas asistencia operativa inmediata, contacta con tu chofer o soporte.'}
-                                </div>
-                                {booking.drivers && (
-                                  <div className="mt-4 flex gap-2">
-                                    {booking.drivers.phone && (
-                                      <a 
-                                        href={`https://wa.me/${booking.drivers.phone.replace(/[^0-9]/g, '')}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="px-4 py-2 bg-emerald-500 text-white rounded-full text-[9px] font-black uppercase tracking-wider flex items-center gap-1 hover:opacity-90 shadow-md shadow-emerald-500/10"
-                                      >
-                                        <MessageCircle size={10} />
-                                        {en ? 'Driver WhatsApp' : 'WhatsApp Chofer'}
-                                      </a>
-                                    )}
-                                  </div>
-                                )}
                               </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                      
-                      if (effectiveStatus === 'completed') {
-                        return (
-                          <div className={`p-6 rounded-3xl border transition-all ${dark ? 'bg-[#181818] border-white/5 shadow-md shadow-black/10' : 'bg-white border-gray-200 shadow-sm'}`}>
-                            <div className="flex flex-col items-center text-center">
-                              <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
-                                <Star size={24} className="fill-primary/20" />
-                              </div>
-                              <h4 className={`text-sm font-black uppercase tracking-wider ${text}`}>
-                                {en ? 'How was your experience?' : '¿Qué tal fue tu experiencia?'}
-                              </h4>
-                              <p className={`text-[11px] font-bold mt-1.5 leading-relaxed max-w-sm ${sub}`}>
-                                {en 
-                                  ? 'We hope you had a magical time. Leaving a review helps other travelers and supports our local guides!' 
-                                  : 'Esperamos que haya sido un día mágico. ¡Dejar una reseña ayuda a otros viajeros y apoya a nuestros guías locales!'}
-                              </p>
-                              <div className="mt-4">
-                                <Link
-                                  to={`/${en ? 'en' : 'es'}/reviews`}
-                                  className="inline-flex px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 shadow-lg shadow-primary/10"
-                                >
-                                  {en ? 'Leave a Review' : 'Dejar Reseña'}
-                                </Link>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                      
-                      return null;
-                    })()}
-
-                    {/* Bloque de Pago / Finanzas (Mejoras 2 y 3) */}
-                    <div>
-                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
-                        {en ? 'FINANCES & PAYMENTS' : 'FINANZAS Y PAGOS'}
-                      </div>
-                      {hasPendingPayment ? (
-                        <div className={`p-6 rounded-3xl border-2 transition-all shadow-md ${dark ? 'bg-[#181818] border-primary/30' : 'bg-cyan-50/20 border-primary/20'}`}>
-                          <div className="flex flex-col items-center text-center justify-center gap-2">
-                            <div>
-                              <div className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400 mb-1">
-                                {en ? 'PENDING AMOUNT' : 'IMPORTE PENDIENTE'}
-                              </div>
-                              <div className={`text-3xl sm:text-4xl font-black ${text} tracking-tight`}>
-                                <span className="text-xl sm:text-2xl opacity-50 mr-1">{formatPrice(balance).symbol}</span>
-                                {formatPrice(balance).amount}
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="mt-6">
-                            <button
-                              onClick={() => setShowPaymentModal(true)}
-                              className="w-full py-4 bg-primary text-white hover:opacity-90 font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:animate-pulse"
-                            >
-                              <CreditCard size={14} />
-                              {en ? 'Pay Booking Securely' : 'Pagar Reserva Ahora'}
-                            </button>
-                            
-                            {/* Trust Seal */}
-                            <div className="mt-3 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-500">
-                              <ShieldCheck size={12} />
-                              <span>{en ? '100% Secure Booking' : 'Reserva 100% Segura'}</span>
-                            </div>
-                          </div>
-                          
-                          {/* ¿Qué ocurre después? Section (Mejora 3) */}
-                          <div className={`mt-6 pt-5 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200/80'} text-[11px]`}>
-                            <div className={`font-black uppercase tracking-wider mb-2.5 ${text}`}>
-                              {en ? 'What happens next?' : '¿Qué ocurre después?'}
-                            </div>
-                            <ul className="space-y-1.5 font-bold text-gray-400">
-                              <li className="flex items-center gap-2">
-                                <span className="text-emerald-500">✓</span>
-                                {en ? 'We will validate your payment receipt in less than 12 hours' : 'Validaremos tu comprobante en menos de 12 horas'}
-                              </li>
-                              <li className="flex items-center gap-2">
-                                <span className="text-emerald-500">✓</span>
-                                {en ? 'We will confirm local availability' : 'Confirmaremos disponibilidad'}
-                              </li>
-                              <li className="flex items-center gap-2">
-                                <span className="text-emerald-500">✓</span>
-                                {en ? 'We will update this booking automatically' : 'Actualizaremos esta reserva automáticamente'}
-                              </li>
-                            </ul>
-                          </div>
+                            );
+                          })}
                         </div>
-                      ) : (
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Perforated divider */}
+              <div className="relative h-8 flex items-center z-20">
+                <div className="absolute left-0 -translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
+                <div className="absolute right-0 translate-x-1/2 w-8 h-8 rounded-full z-10" style={{ backgroundColor: notchBg }} />
+                <div className={`w-full mx-6 border-t-2 border-dashed ${dark ? 'border-white/10' : 'border-gray-200'}`} />
+              </div>
+
+              {/* Bottom part: Contextual Panels, Payments, Check-in */}
+              <div className={`${dark ? 'bg-[#1a1a1a]' : 'bg-white'} px-8 pt-5 sm:pt-6 pb-10 rounded-b-[2.5rem]`}>
+                <div className="space-y-6">
+                  {/* Panel Operativo Contextual (Mejora 6) */}
+                  {(function() {
+                    if (effectiveStatus === 'confirmed' && !isCheckinPending) {
+                      return (
                         <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50'}`}>
-                          <div className="flex items-center gap-4">
+                          <div className="flex items-start gap-4">
                             <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center flex-shrink-0">
                               <CheckCircle2 size={16} />
-                            </div>
-                            <div>
-                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                {en ? 'Payment Completed ✓' : 'Pago Completado ✓'}
-                              </div>
-                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                                {en ? 'No pending balance for this tour.' : 'No tienes ningún pago pendiente para este tour.'}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Registro de Pasajeros / Check-in (Mejora 7) */}
-                    {isCheckinPending ? (
-                      <div>
-                        <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
-                          {en ? 'PASSENGER CHECK-IN' : 'REGISTRO DE PASAJEROS'}
-                        </div>
-                        <div className={`p-5 rounded-2xl border transition-all ${
-                          hasPendingPayment 
-                            ? (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200/80 shadow-sm')
-                            : (dark ? 'bg-[#181818] border-primary/30' : 'bg-cyan-50/20 border-primary/20')
-                        }`}>
-                          <div className="flex items-start gap-4">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                              hasPendingPayment ? 'bg-gray-500/20 text-gray-500' : 'bg-amber-500/20 text-amber-500'
-                            }`}>
-                              <Users size={16} />
                             </div>
                             <div className="flex-1">
                               <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                {en ? 'Passenger Check-In' : 'Check in Viajeros'}
+                                {en ? 'Booking Guaranteed ✓' : 'Reserva Garantizada ✓'}
                               </div>
-                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                                {en ? 'Please complete passenger details.' : 'Completa los datos de todos los pasajeros.'}
-                              </div>
-                              
-                              {hasPendingPayment && (
-                                <p className="text-[10px] font-bold text-amber-500 mt-2">
-                                  {en ? 'Puedes completarlo ahora o después del pago.' : 'Puedes completarlo ahora o después del pago.'}
-                                </p>
-                              )}
-                              
-                              <div className="mt-4">
-                                <button
-                                  onClick={() => setShowCheckin(true)}
-                                  className={`inline-flex px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all border ${
-                                    hasPendingPayment
-                                      ? 'bg-transparent text-gray-400 border-gray-300 dark:border-white/10 hover:border-primary hover:text-primary'
-                                      : 'bg-primary text-white border-primary hover:opacity-90 shadow-md shadow-primary/10 animate-pulse'
-                                  }`}
-                                >
-                                  {en ? 'Complete Check-in' : 'Hacer Check-in'}
-                                </button>
+                              <div className={`text-[11px] font-bold mt-1.5 leading-relaxed ${sub}`}>
+                                {en 
+                                  ? 'All set! Your professional driver will pick you up at your hotel at the scheduled time.' 
+                                  : '¡Todo listo! Tu chofer profesional te recogerá en tu hotel a la hora acordada.'}
                               </div>
                             </div>
                           </div>
                         </div>
+                      );
+                    }
+                    
+                    if (effectiveStatus === 'in_progress') {
+                      return (
+                        <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-primary/5 border-primary/10' : 'bg-cyan-50/20 border-primary/15'}`}>
+                          <div className="flex items-start gap-4">
+                            <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center flex-shrink-0">
+                              <Activity size={16} />
+                            </div>
+                            <div className="flex-1">
+                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                                {en ? 'Tour in Progress' : 'Tour en Curso'}
+                              </div>
+                              <div className={`text-[11px] font-bold mt-1 leading-relaxed ${sub}`}>
+                                {en 
+                                  ? 'Your Bali experience is underway! Please contact your driver or our support team for any immediate assistance.' 
+                                  : '¡Tu experiencia en Bali está en marcha! Si necesitas asistencia operativa inmediata, contacta con tu chofer o soporte.'}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    if (effectiveStatus === 'completed') {
+                      return (
+                        <div className={`p-6 rounded-3xl border transition-all ${dark ? 'bg-[#181818] border-white/5 shadow-md shadow-black/10' : 'bg-white border-gray-200 shadow-sm'}`}>
+                          <div className="flex flex-col items-center text-center">
+                            <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4">
+                              <Star size={24} className="fill-primary/20" />
+                            </div>
+                            <h4 className={`text-sm font-black uppercase tracking-wider ${text}`}>
+                              {en ? 'How was your experience?' : '¿Qué tal fue tu experiencia?'}
+                            </h4>
+                            <p className={`text-[11px] font-bold mt-1.5 leading-relaxed max-w-sm ${sub}`}>
+                              {en 
+                                ? 'We hope you had a magical time. Leaving a review helps other travelers and supports our local guides!' 
+                                : 'Esperamos que haya sido un día mágico. ¡Dejar una reseña ayuda a otros viajeros y apoya a nuestros guías locales!'}
+                            </p>
+                            <div className="mt-4">
+                              <Link
+                                to={`/${en ? 'en' : 'es'}/reviews`}
+                                className="inline-flex px-6 py-3 bg-primary text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:opacity-90 shadow-lg shadow-primary/10"
+                              >
+                                {en ? 'Leave a Review' : 'Dejar Reseña'}
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    return null;
+                  })()}
+
+                  {/* Bloque de Pago / Finanzas (Mejoras 2 y 3) */}
+                  <div>
+                    <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                      {en ? 'FINANCES & PAYMENTS' : 'FINANZAS Y PAGOS'}
+                    </div>
+                    {hasPendingPayment ? (
+                      <div className={`p-6 rounded-3xl border-2 transition-all shadow-md ${dark ? 'bg-[#181818] border-primary/30' : 'bg-cyan-50/20 border-primary/20'}`}>
+                        <div className="flex flex-col items-center text-center justify-center gap-2">
+                          <div>
+                            <div className="text-[10px] font-black uppercase tracking-[0.15em] text-gray-400 mb-1">
+                              {en ? 'PENDING AMOUNT' : 'IMPORTE PENDIENTE'}
+                            </div>
+                            <div className={`text-3xl sm:text-4xl font-black ${text} tracking-tight`}>
+                              <span className="text-xl sm:text-2xl opacity-50 mr-1">{formatPrice(balance).symbol}</span>
+                              {formatPrice(balance).amount}
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-6">
+                          <button
+                            onClick={() => setShowPaymentModal(true)}
+                            className="w-full py-4 bg-primary text-white hover:opacity-90 font-black text-xs uppercase tracking-widest rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 hover:animate-pulse"
+                          >
+                            <CreditCard size={14} />
+                            {en ? 'Pay Booking Securely' : 'Pagar Reserva Ahora'}
+                          </button>
+                          
+                          {/* Trust Seal */}
+                          <div className="mt-3 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-500">
+                            <ShieldCheck size={12} />
+                            <span>{en ? '100% SECURE BOOKING' : 'PAGA SEGURO CON TARJETAS'}</span>
+                          </div>
+                        </div>
+                        
+                        {/* ¿Qué ocurre después? Section (Mejora 3) */}
+                        <div className={`mt-6 pt-5 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200/80'} text-[11px]`}>
+                          <div className={`font-black uppercase tracking-wider mb-2.5 ${text}`}>
+                            {en ? 'What happens next?' : '¿Qué ocurre después?'}
+                          </div>
+                          <ul className="space-y-1.5 font-bold text-gray-400">
+                            <li className="flex items-center gap-2">
+                              <span className="text-emerald-500">✓</span>
+                              {en ? 'We will validate your payment receipt in less than 12 hours' : 'Validaremos tu comprobante en menos de 12 horas'}
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="text-emerald-500">✓</span>
+                              {en ? 'We will confirm local availability' : 'Confirmaremos disponibilidad'}
+                            </li>
+                            <li className="flex items-center gap-2">
+                              <span className="text-emerald-500">✓</span>
+                              {en ? 'We will update this booking automatically' : 'Actualizaremos esta reserva automáticamente'}
+                            </li>
+                          </ul>
+                        </div>
                       </div>
                     ) : (
-                      <div>
-                        <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
-                          {en ? 'PASSENGER CHECK-IN' : 'REGISTRO DE PASAJEROS'}
-                        </div>
-                        <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50'}`}>
-                          <div className="flex items-center gap-4">
-                            <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center flex-shrink-0">
-                              <CheckCircle2 size={16} />
+                      <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50'}`}>
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center flex-shrink-0">
+                            <CheckCircle2 size={16} />
+                          </div>
+                          <div>
+                            <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                              {en ? 'Payment Completed ✓' : 'Pago Completado ✓'}
                             </div>
-                            <div>
-                              <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
-                                {en ? 'Check-in Completed ✓' : 'Check-in Completado ✓'}
-                              </div>
-                              <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
-                                {en ? 'All passengers registered successfully.' : 'Todos los pasajeros han sido registrados correctamente.'}
-                              </div>
+                            <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                              {en ? 'No pending balance for this tour.' : 'No tienes ningún pago pendiente para este tour.'}
                             </div>
                           </div>
                         </div>
                       </div>
                     )}
-
-
-
                   </div>
+
+                  {/* Registro de Pasajeros / Check-in (Mejora 7) */}
+                  {isCheckinPending ? (
+                    <div>
+                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                        {en ? 'PASSENGER CHECK-IN' : 'REGISTRO DE PASAJEROS'}
+                      </div>
+                      <div className={`p-5 rounded-2xl border transition-all ${
+                        hasPendingPayment 
+                          ? (dark ? 'bg-white/5 border-white/5' : 'bg-white border-gray-200/80 shadow-sm')
+                          : (dark ? 'bg-[#181818] border-primary/30' : 'bg-cyan-50/20 border-primary/20')
+                      }`}>
+                        <div className="flex items-start gap-4">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                            hasPendingPayment ? 'bg-gray-500/20 text-gray-500' : 'bg-amber-500/20 text-amber-500'
+                          }`}>
+                            <Users size={16} />
+                          </div>
+                          <div className="flex-1">
+                            <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                              {en ? 'Passenger Check-In' : 'Check in Viajeros'}
+                            </div>
+                            <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                              {en ? 'Please complete passenger details.' : 'Completa los datos de todos los pasajeros.'}
+                            </div>
+                            
+                            {hasPendingPayment && (
+                              <p className="text-[10px] font-bold text-amber-500 mt-2">
+                                {en ? 'Puedes completarlo ahora o después del pago.' : 'Puedes completarlo ahora o después del pago.'}
+                              </p>
+                            )}
+                            
+                            <div className="mt-4">
+                              <button
+                                onClick={() => setShowCheckin(true)}
+                                className={`inline-flex px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-full transition-all border ${
+                                  hasPendingPayment
+                                    ? 'bg-transparent text-gray-400 border-gray-300 dark:border-white/10 hover:border-primary hover:text-primary'
+                                    : 'bg-primary text-white border-primary hover:opacity-90 shadow-md shadow-primary/10 animate-pulse'
+                                }`}
+                              >
+                                {en ? 'Complete Check-in' : 'Hacer Check-in'}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className={`text-[8px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 block`}>
+                        {en ? 'PASSENGER CHECK-IN' : 'REGISTRO DE PASAJEROS'}
+                      </div>
+                      <div className={`p-5 rounded-2xl border transition-all ${dark ? 'bg-emerald-500/5 border-emerald-500/10' : 'bg-emerald-50/50 border-emerald-200/50'}`}>
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-500 flex items-center justify-center flex-shrink-0">
+                            <CheckCircle2 size={16} />
+                          </div>
+                          <div>
+                            <div className={`text-xs font-black uppercase tracking-wider ${text}`}>
+                              {en ? 'Check-in Completed ✓' : 'Check-in Completado ✓'}
+                            </div>
+                            <div className={`text-[11px] font-bold mt-0.5 ${sub}`}>
+                              {en ? 'All passengers registered successfully.' : 'Todos los pasajeros han sido registrados correctamente.'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
+        </div>
         <div className="h-6" />
 
       </div>
@@ -1513,6 +1484,24 @@ export default function ItineraryPage() {
                         }}
                         className={`w-full px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
                         placeholder="Ej: P1234567"
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-[9px] font-black uppercase tracking-widest mb-1.5 ${sub}`}>
+                        {en ? 'Age *' : 'Edad *'}
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="120"
+                        value={pax.age || ''}
+                        onChange={(e) => {
+                          const nd = [...checkinData];
+                          nd[idx] = { ...nd[idx], age: e.target.value };
+                          setCheckinData(nd);
+                        }}
+                        className={`w-full max-w-[120px] px-4 py-3 rounded-xl text-sm font-bold border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all ${dark ? 'bg-black/50 border-white/10 text-white' : 'bg-white border-gray-300 text-black'}`}
+                        placeholder="Ej: 28"
                       />
                     </div>
                     <div>
@@ -1614,7 +1603,11 @@ export default function ItineraryPage() {
                         <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
                           {en ? 'PAY SECURELY WITH CARD (NO LOGIN REQUIRED) OR PAYPAL' : 'PAGO SEGURO CON TARJETA (SIN LOGIN) O PAYPAL'}
                         </div>
-                        <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: currency }}>
+                        <PayPalScriptProvider options={{ 
+                          "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", 
+                          currency: currency,
+                          locale: en ? 'en_US' : 'es_ES'
+                        }}>
                           <PayPalButtons 
                             style={{ layout: "vertical", shape: "rect", color: "blue" }}
                             createOrder={(data, actions) => {
@@ -1905,7 +1898,7 @@ export default function ItineraryPage() {
                   <span className="text-sm">🇪🇸</span> Español (ES)
                 </a>
                 <a
-                  href={`https://wa.me/6285691533356?text=${encodeURIComponent(
+                  href={`https://wa.me/34642517787?text=${encodeURIComponent(
                     `Hello Cantik Tours!\nI need help with my booking.\n${fichaUrl}`
                   )}`}
                   target="_blank"
