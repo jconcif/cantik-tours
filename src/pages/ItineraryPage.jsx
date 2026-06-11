@@ -1305,38 +1305,60 @@ export default function ItineraryPage() {
                         </div>
                         
                         {/* ¿Qué ocurre después? Section (Mejora 3) */}
-                        <div className={`mt-6 pt-5 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200/80'} text-[11px]`}>
-                          <div className={`font-black uppercase tracking-wider mb-2.5 ${text}`}>
+                        <div className={`mt-6 pt-5 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200/80'} text-[11px] space-y-3.5`}>
+                          <div className={`font-black uppercase tracking-wider ${text}`}>
                             {en ? 'What happens next?' : '¿Qué ocurre después?'}
                           </div>
-                          <ul className="space-y-2 font-bold text-gray-400">
-                            <li className="flex items-start gap-2">
-                              <span className="text-emerald-500 mt-0.5">✓</span>
-                              <span>
-                                <strong>{en ? 'Bank transfer: ' : 'Transferencia bancaria: '}</strong>
-                                {en ? 'We will validate your receipt as soon as possible (keep in mind time differences).' : 'Validaremos tu comprobante lo antes posible (recuerda que puede haber diferencias horarias).'}
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-emerald-500 mt-0.5">✓</span>
-                              <span>
-                                <strong>{en ? 'Card payment: ' : 'Pago con tarjeta: '}</strong>
-                                {en ? 'Payment will be validated automatically.' : 'Se validará el pago automáticamente.'}
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-emerald-500 mt-0.5">✓</span>
-                              <span>
-                                {en ? 'We will confirm availability.' : 'Confirmaremos la disponibilidad.'}
-                              </span>
-                            </li>
-                            <li className="flex items-start gap-2">
-                              <span className="text-emerald-500 mt-0.5">✓</span>
-                              <span>
-                                {en ? 'We will keep this booking page updated automatically.' : 'Mantendremos actualizada esta página de reserva automáticamente.'}
-                              </span>
-                            </li>
-                          </ul>
+                          
+                          <div className="space-y-3.5 font-medium">
+                            <div className="flex gap-2.5">
+                              <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                              <div>
+                                <span className={`font-bold block ${text}`}>
+                                  {en ? '100% Encrypted & Secure Payment' : 'Pago 100% Cifrado y Seguro'}
+                                </span>
+                                <span className="text-gray-400">
+                                  {en ? 'Your transaction is processed under strict SSL security standards.' : 'Tu transacción se procesa bajo estrictos estándares de seguridad SSL.'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2.5">
+                              <CheckCircle2 className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                              <div>
+                                <span className={`font-bold block ${text}`}>
+                                  {en ? 'Instant Validation (Card or PayPal)' : 'Validación al Instante (Tarjeta o PayPal)'}
+                                </span>
+                                <span className="text-gray-400">
+                                  {en ? 'If you choose Card or PayPal, your booking is confirmed automatically.' : 'Si eliges tarjeta o PayPal, el pago y tu reserva se confirmarán automáticamente en el acto.'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2.5">
+                              <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                              <div>
+                                <span className={`font-bold block ${text}`}>
+                                  {en ? 'Manual Verification (Bank Transfer)' : 'Verificación de Transferencias'}
+                                </span>
+                                <span className="text-gray-400">
+                                  {en ? 'Upload your receipt and we will validate it as soon as possible (usually in less than 12h, considering time zone differences with Bali).' : 'Sube tu comprobante de transferencia y lo validaremos lo antes posible (normalmente en pocas horas, considerando la diferencia horaria con Bali).'}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2.5">
+                              <Info className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                              <div>
+                                <span className={`font-bold block ${text}`}>
+                                  {en ? 'Confirmation & Assistance' : 'Confirmación y Asistencia Directa'}
+                                </span>
+                                <span className="text-gray-400">
+                                  {en ? 'This page updates in real-time. We will also contact you on WhatsApp to coordinate your driver, guide, and tour details.' : 'Esta página se actualiza automáticamente. Adicionalmente, te contactaremos por WhatsApp para coordinar los detalles finales de tu conductor, guía y horarios.'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     ) : (
