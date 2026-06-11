@@ -1300,7 +1300,7 @@ export default function ItineraryPage() {
                           {/* Trust Seal */}
                           <div className="mt-3 flex items-center justify-center gap-1.5 text-[9px] font-black uppercase tracking-wider text-emerald-500">
                             <ShieldCheck size={12} />
-                            <span>{en ? '100% SECURE BOOKING' : 'PAGA SEGURO CON TARJETAS'}</span>
+                            <span>{en ? '100% SECURE CARD OR TRANSFER PAYMENT' : 'PAGA SEGURO CON TARJETA O TRANSFERENCIA BANCARIA'}</span>
                           </div>
                         </div>
                         
@@ -1309,18 +1309,32 @@ export default function ItineraryPage() {
                           <div className={`font-black uppercase tracking-wider mb-2.5 ${text}`}>
                             {en ? 'What happens next?' : '¿Qué ocurre después?'}
                           </div>
-                          <ul className="space-y-1.5 font-bold text-gray-400">
-                            <li className="flex items-center gap-2">
-                              <span className="text-emerald-500">✓</span>
-                              {en ? 'We will validate your payment receipt in less than 12 hours' : 'Validaremos tu comprobante en menos de 12 horas'}
+                          <ul className="space-y-2 font-bold text-gray-400">
+                            <li className="flex items-start gap-2">
+                              <span className="text-emerald-500 mt-0.5">✓</span>
+                              <span>
+                                <strong>{en ? 'Bank transfer: ' : 'Transferencia bancaria: '}</strong>
+                                {en ? 'We will validate your receipt as soon as possible (keep in mind time differences).' : 'Validaremos tu comprobante lo antes posible (recuerda que puede haber diferencias horarias).'}
+                              </span>
                             </li>
-                            <li className="flex items-center gap-2">
-                              <span className="text-emerald-500">✓</span>
-                              {en ? 'We will confirm local availability' : 'Confirmaremos disponibilidad'}
+                            <li className="flex items-start gap-2">
+                              <span className="text-emerald-500 mt-0.5">✓</span>
+                              <span>
+                                <strong>{en ? 'Card payment: ' : 'Pago con tarjeta: '}</strong>
+                                {en ? 'Payment will be validated automatically.' : 'Se validará el pago automáticamente.'}
+                              </span>
                             </li>
-                            <li className="flex items-center gap-2">
-                              <span className="text-emerald-500">✓</span>
-                              {en ? 'We will update this booking automatically' : 'Actualizaremos esta reserva automáticamente'}
+                            <li className="flex items-start gap-2">
+                              <span className="text-emerald-500 mt-0.5">✓</span>
+                              <span>
+                                {en ? 'We will confirm availability.' : 'Confirmaremos la disponibilidad.'}
+                              </span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <span className="text-emerald-500 mt-0.5">✓</span>
+                              <span>
+                                {en ? 'We will keep this booking page updated automatically.' : 'Mantendremos actualizada esta página de reserva automáticamente.'}
+                              </span>
                             </li>
                           </ul>
                         </div>
