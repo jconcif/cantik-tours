@@ -26,10 +26,9 @@ export const CurrencyProvider = ({ children }) => {
     };
 
     const formatPrice = (eurPrice) => {
-        if (currency === 'USD') {
-            return { symbol: '$', amount: Number(Math.round(eurPrice * exchangeRate)).toFixed(2) };
-        }
-        return { symbol: '€', amount: Number(eurPrice).toFixed(2) };
+        const val = currency === 'USD' ? Math.round(eurPrice * exchangeRate) : Number(Number(eurPrice).toFixed(2));
+        const amountStr = val % 1 === 0 ? val.toString() : val.toFixed(2);
+        return { symbol: currency === 'USD' ? '$' : '€', amount: amountStr };
     };
 
     return (
