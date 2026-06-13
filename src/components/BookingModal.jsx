@@ -674,7 +674,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
 
                                             <div className="text-center mb-4 px-4">
                                                 <p className="text-[11px] font-bold text-gray-500 dark:text-gray-400 leading-snug">
-                                                    {i18n.language === 'en' ? 'Your booking will be secured once payment is completed.' : 'Tu reserva quedará garantizada una vez realizado el pago.'}
+                                                    {i18n.language === 'en' ? 'You are just one step away from experiencing Bali with us! Request your booking now and secure your spot by making a 100% secure payment next.' : '¡Estás a un paso de vivir Bali con nosotros! Solicita tu reserva ahora y asegura tu plaza realizando el pago de forma 100% segura a continuación.'}
                                                 </p>
                                             </div>
 
