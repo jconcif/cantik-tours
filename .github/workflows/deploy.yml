@@ -35,14 +35,13 @@ jobs:
       - name: 🔍 Inspect dist folder
         run: ls -R dist
 
-      - name: 🚀 Custom FTP Upload
+      - name: 🚀 Custom SFTP Upload
         run: |
-          npm install basic-ftp
-          node scripts/upload.js
+          npm install ssh2-sftp-client
+          node scripts/deploy-sftp.js
         env:
           FTP_SERVER: 45.130.228.19
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }} # Wait, basic-ftp uses 'password' but my script uses FTP_PASSWORD
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
 
 
