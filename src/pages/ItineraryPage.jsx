@@ -73,6 +73,7 @@ export default function ItineraryPage() {
   const [globalSettings, setGlobalSettings] = useState(null);
   const [showTimelineDetails, setShowTimelineDetails] = useState(false);
   const [showNextStepAlert, setShowNextStepAlert] = useState(true);
+  const [showWhatHappens, setShowWhatHappens] = useState(false);
 
   useEffect(() => {
     getGlobalSettings().then(res => {
@@ -1305,60 +1306,76 @@ export default function ItineraryPage() {
                         </div>
                         
                         {/* ¿Qué ocurre después? Section (Mejora 3) */}
-                        <div className={`mt-6 pt-5 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200/80'} text-[11px] space-y-3.5`}>
-                          <div className={`font-black uppercase tracking-wider ${text}`}>
-                            {en ? 'What happens next?' : '¿Qué ocurre después?'}
-                          </div>
+                        <div className={`mt-6 pt-4 border-t border-dashed ${dark ? 'border-white/10' : 'border-gray-200/80'} text-[11px]`}>
+                          <button
+                            onClick={() => setShowWhatHappens(!showWhatHappens)}
+                            className={`w-full flex items-center justify-between py-2 text-left font-black uppercase tracking-wider transition-colors ${dark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-primary'}`}
+                          >
+                            <span>{en ? 'What happens next?' : '¿Qué ocurre después?'}</span>
+                            <ChevronLeft size={14} className={`transform transition-transform duration-300 ${showWhatHappens ? '-rotate-90' : 'rotate-180'}`} />
+                          </button>
                           
-                          <div className="space-y-3.5 font-medium">
-                            <div className="flex gap-2.5">
-                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                              <div>
-                                <span className={`font-bold block ${text}`}>
-                                  {en ? 'Card or PayPal Payment' : 'Pago con Tarjeta o PayPal'}
-                                </span>
-                                <span className="text-gray-400">
-                                  {en ? 'Confirmation is immediate through the payment platform.' : 'La confirmación es inmediata a través de la plataforma de pago.'}
-                                </span>
-                              </div>
-                            </div>
+                          <AnimatePresence initial={false}>
+                            {showWhatHappens && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25, ease: 'easeInOut' }}
+                                className="overflow-hidden"
+                              >
+                                <div className="space-y-3.5 font-medium pt-3.5 pb-1">
+                                  <div className="flex gap-2.5">
+                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                                    <div>
+                                      <span className={`font-bold block ${text}`}>
+                                        {en ? 'Card or PayPal Payment' : 'Pago con Tarjeta o PayPal'}
+                                      </span>
+                                      <span className="text-gray-400">
+                                        {en ? 'Confirmation is immediate through the payment platform.' : 'La confirmación es inmediata a través de la plataforma de pago.'}
+                                      </span>
+                                    </div>
+                                  </div>
 
-                            <div className="flex gap-2.5">
-                              <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                              <div>
-                                <span className={`font-bold block ${text}`}>
-                                  {en ? 'Bank Transfers' : 'Transferencias Bancarias'}
-                                </span>
-                                <span className="text-gray-400">
-                                  {en ? 'Send your receipt after making the payment. We will validate it shortly; keep in mind there might be time zone differences depending on your location.' : 'Envía tu comprobante tras realizar el pago. Lo validaremos a la brevedad; recuerda que puede haber diferencias de zona horaria según donde te encuentres.'}
-                                </span>
-                              </div>
-                            </div>
+                                  <div className="flex gap-2.5">
+                                    <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+                                    <div>
+                                      <span className={`font-bold block ${text}`}>
+                                        {en ? 'Bank Transfers' : 'Transferencias Bancarias'}
+                                      </span>
+                                      <span className="text-gray-400">
+                                        {en ? 'Send your receipt after making the payment. We will validate it shortly; keep in mind there might be time zone differences depending on your location.' : 'Envía tu comprobante tras realizar el pago. Lo validaremos a la brevedad; recuerda que puede haber diferencias de zona horaria según donde te encuentres.'}
+                                      </span>
+                                    </div>
+                                  </div>
 
-                            <div className="flex gap-2.5">
-                              <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                              <div>
-                                <span className={`font-bold block ${text}`}>
-                                  {en ? 'Your Booking' : 'Tu Reserva'}
-                                </span>
-                                <span className="text-gray-400">
-                                  {en ? 'This page will update automatically with all your travel details.' : 'Esta página se actualizará automáticamente con todos los detalles de tu viaje.'}
-                                </span>
-                              </div>
-                            </div>
+                                  <div className="flex gap-2.5">
+                                    <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                                    <div>
+                                      <span className={`font-bold block ${text}`}>
+                                        {en ? 'Your Booking' : 'Tu Reserva'}
+                                      </span>
+                                      <span className="text-gray-400">
+                                        {en ? 'This page will update automatically with all your travel details.' : 'Esta página se actualizará automáticamente con todos los detalles de tu viaje.'}
+                                      </span>
+                                    </div>
+                                  </div>
 
-                            <div className="flex gap-2.5">
-                              <MessageCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
-                              <div>
-                                <span className={`font-bold block ${text}`}>
-                                  {en ? 'Direct Support' : 'Asistencia Directa'}
-                                </span>
-                                <span className="text-gray-400">
-                                  {en ? 'We will contact you via WhatsApp to coordinate final details: driver, route, and scheduling.' : 'Te contactaremos vía WhatsApp para coordinar los detalles finales: conductor, ruta y horarios.'}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
+                                  <div className="flex gap-2.5">
+                                    <MessageCircle className="w-4 h-4 text-blue-500 shrink-0 mt-0.5" />
+                                    <div>
+                                      <span className={`font-bold block ${text}`}>
+                                        {en ? 'Direct Support' : 'Asistencia Directa'}
+                                      </span>
+                                      <span className="text-gray-400">
+                                        {en ? 'We will contact you via WhatsApp to coordinate final details: driver, route, and scheduling.' : 'Te contactaremos vía WhatsApp para coordinar los detalles finales: conductor, ruta y horarios.'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </div>
                     ) : (
