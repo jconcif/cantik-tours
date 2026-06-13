@@ -682,7 +682,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
                                             <button type="button" disabled={isSubmitting} onClick={handleConfirmBooking} className={`w-full py-5 rounded-[2rem] bg-primary text-white flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20 active:scale-[0.98] relative overflow-hidden group ${isSubmitting ? 'opacity-80 cursor-not-allowed' : 'hover:opacity-95'}`}>
                                                 {!isSubmitting && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-[100%] group-hover:animate-[shimmer_1.5s_infinite]" />}
                                                 {isSubmitting ? <Loader2 size={22} className="animate-spin" /> : <ShieldCheck size={22} />}
-                                                <span className="text-[15px] font-black tracking-tight">{isSubmitting ? (i18n.language === 'en' ? 'PROCESSING...' : 'PROCESANDO...') : (i18n.language === 'en' ? 'CONFIRM BOOKING' : 'CONFIRMAR RESERVA')}</span>
+                                                <span className="text-[15px] font-black tracking-tight">{isSubmitting ? (i18n.language === 'en' ? 'PROCESSING...' : 'PROCESANDO...') : (i18n.language === 'en' ? 'REQUEST BOOKING' : 'SOLICITAR RESERVA')}</span>
                                             </button>
 
                                             {/* Terms */}
