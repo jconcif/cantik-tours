@@ -104,6 +104,9 @@ export default function AdminPanel() {
   const { isDark, toggleDarkMode } = useDarkMode();
   const [annotationTexts, setAnnotationTexts] = useState({});
   const [reloading, setReloading] = useState(false);
+  const [filterPendingPastOnly, setFilterPendingPastOnly] = useState(false);
+  const [autoUpdating, setAutoUpdating] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(25);
 
   // A booking needs validation only if it's in verifying_payment AND has unvalidated pending_receipts
   const hasPendingReceipts = (b) => {
@@ -117,6 +120,26 @@ export default function AdminPanel() {
 
   const pendingValidationCount = useMemo(() => {
     return bookings.filter(b => hasPendingReceipts(b)).length;
+  }, [bookings]);
+
+  const pendingPastBookings = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return bookings.filter(b => {
+      if (!b || !b.booking_date) return false;
+      let ext = {};
+      try {
+        ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+      } catch(e) {}
+      if (ext.is_deleted === true) return false;
+      const [y, m, d] = b.booking_date.split('T')[0].split('-').map(Number);
+      const tourDay = new Date(y, m - 1, d);
+      const isToday = tourDay.getTime() === today.getTime();
+      const isPast  = tourDay < today;
+      if (isToday && b.payment_status === 'confirmed') return true;
+      if (isPast  && ['confirmed', 'in_progress'].includes(b.payment_status)) return true;
+      return false;
+    });
   }, [bookings]);
 
   const userTZ = Intl.DateTimeFormat().resolvedOptions().timeZone.split('/').pop().replace('_', ' ');
@@ -207,12 +230,18 @@ export default function AdminPanel() {
     return null;
   };
 
-  // ── Auto-transition status by date ──────────────────────────
-  const autoUpdateStatuses = async (list) => {
+  // ── Auto-transition status by date (manual trigger) ──────────
+  const autoUpdateStatuses = async () => {
+    const list = bookings;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const needsUpdate = list.filter(b => {
       if (!b || !b.booking_date) return false;
+      let ext = {};
+      try {
+        ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+      } catch(e) {}
+      if (ext.is_deleted === true) return false;
       const [y, m, d] = b.booking_date.split('T')[0].split('-').map(Number);
       const tourDay = new Date(y, m - 1, d);
       const isToday = tourDay.getTime() === today.getTime();
@@ -222,28 +251,38 @@ export default function AdminPanel() {
       return false;
     });
     if (needsUpdate.length === 0) return;
-    await Promise.allSettled(needsUpdate.map(b => {
-      const [y, m, d] = b.booking_date.split('T')[0].split('-').map(Number);
-      const tourDay = new Date(y, m - 1, d);
-      const newStatus = tourDay.getTime() === today.getTime() ? 'in_progress' : 'completed';
-      
-      let ext = {};
-      try {
-        ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
-      } catch(e) {}
-      if (!ext.logs) ext.logs = [];
-      
-      const oldStatusLabel = PAY_LABEL[b.payment_status] || b.payment_status;
-      const newStatusLabel = PAY_LABEL[newStatus] || newStatus;
-      
-      ext.logs.push({
-        timestamp: new Date().toISOString(),
-        text: `Estado cambiado automáticamente de "${oldStatusLabel}" a "${newStatusLabel}" por fecha`
-      });
+    
+    setAutoUpdating(true);
+    try {
+      await Promise.allSettled(needsUpdate.map(b => {
+        const [y, m, d] = b.booking_date.split('T')[0].split('-').map(Number);
+        const tourDay = new Date(y, m - 1, d);
+        const newStatus = tourDay.getTime() === today.getTime() ? 'in_progress' : 'completed';
+        
+        let ext = {};
+        try {
+          ext = typeof b.extras === 'string' ? JSON.parse(b.extras) : (b.extras || {});
+        } catch(e) {}
+        if (!ext.logs) ext.logs = [];
+        
+        const oldStatusLabel = PAY_LABEL[b.payment_status] || b.payment_status;
+        const newStatusLabel = PAY_LABEL[newStatus] || newStatus;
+        
+        ext.logs.push({
+          timestamp: new Date().toISOString(),
+          text: `Estado cambiado de "${oldStatusLabel}" a "${newStatusLabel}" por actualización por lotes`
+        });
 
-      return api.updateBooking({ ...b, payment_status: newStatus, extras: JSON.stringify(ext) });
-    }));
-    await reload();
+        return api.updateBooking({ ...b, payment_status: newStatus, extras: JSON.stringify(ext) });
+      }));
+      toast(`${needsUpdate.length} reservas completadas con éxito`);
+      setFilterPendingPastOnly(false);
+      await reload();
+    } catch (err) {
+      toast('Error al actualizar reservas', false);
+    } finally {
+      setAutoUpdating(false);
+    }
   };
 
   const load = useCallback(async () => {
@@ -269,8 +308,6 @@ export default function AdminPanel() {
       setCoupons(c.data || []);
       setDetailedStats(s.data);
       setAuthed(true);
-      // Auto-transition by date — runs silently after auth
-      await autoUpdateStatuses(bList);
     } catch (e) {
       setAuthed(false);
       toast(e.message, false);
@@ -299,6 +336,10 @@ export default function AdminPanel() {
   };
 
   useEffect(() => { load(); }, [load]);
+
+  useEffect(() => {
+    setVisibleCount(25);
+  }, [tab, search, statusFilter, driverFilter, filterPendingPastOnly]);
 
 
   const save = async () => {
@@ -470,14 +511,29 @@ export default function AdminPanel() {
         } catch(e){}
         return !ext.is_deleted && x.payment_status !== 'blocked';
       });
-      if (statusFilter !== 'ALL') {
-        result = result.filter(x => String(x.payment_status).toUpperCase() === statusFilter);
-      }
-      if (driverFilter !== 'ALL') {
-        if (driverFilter === 'null') {
-          result = result.filter(x => !x.driver_id);
-        } else {
-          result = result.filter(x => String(x.driver_id) === driverFilter);
+      if (filterPendingPastOnly) {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        result = result.filter(b => {
+          if (!b.booking_date) return false;
+          const [y, m, d] = b.booking_date.split('T')[0].split('-').map(Number);
+          const tourDay = new Date(y, m - 1, d);
+          const isToday = tourDay.getTime() === today.getTime();
+          const isPast  = tourDay < today;
+          if (isToday && b.payment_status === 'confirmed') return true;
+          if (isPast  && ['confirmed', 'in_progress'].includes(b.payment_status)) return true;
+          return false;
+        });
+      } else {
+        if (statusFilter !== 'ALL') {
+          result = result.filter(x => String(x.payment_status).toUpperCase() === statusFilter);
+        }
+        if (driverFilter !== 'ALL') {
+          if (driverFilter === 'null') {
+            result = result.filter(x => !x.driver_id);
+          } else {
+            result = result.filter(x => String(x.driver_id) === driverFilter);
+          }
         }
       }
     }
@@ -561,6 +617,33 @@ export default function AdminPanel() {
     const a=document.createElement('a');
     a.href=u;
     a.download=`Export_Contabilidad_CantikTours_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  };
+
+  const exportMonthlyFinancials = () => {
+    if (!detailedStats || !Array.isArray(detailedStats.monthly_breakdown)) {
+      toast('No hay datos financieros disponibles para exportar', false);
+      return;
+    }
+    const h = ['Mes', 'Reservas Totales', 'Previsto (EUR)', 'Cobrado (EUR)', 'Gastos (EUR)', 'Beneficio (EUR)', 'Margen (%)'];
+    const r = detailedStats.monthly_breakdown.map(m => {
+      const margin = m.revenue > 0 ? ((m.profit / m.revenue) * 100).toFixed(1) + '%' : '0.0%';
+      return [
+        m.month,
+        m.bookings_count,
+        m.expected,
+        m.revenue,
+        m.expenses,
+        m.profit,
+        `"${margin}"`
+      ];
+    });
+    const c = [h, ...r].map(e => e.join(',')).join('\n');
+    const blob = new Blob(['\ufeff' + c], { type: 'text/csv;charset=utf-8;' });
+    const u = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = u;
+    a.download = `Reporte_Mensual_CantikTours_${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
   };
 
@@ -1070,7 +1153,68 @@ export default function AdminPanel() {
               )}
             </div>
           )}
-          {tab==='bookings'&&filter(bookings).map(b=>(
+          {tab === 'bookings' && pendingPastBookings.length > 0 && (
+            <div style={{
+              background: 'rgba(245, 158, 11, 0.08)',
+              border: '1px solid rgba(245, 158, 11, 0.2)',
+              borderRadius: '16px',
+              padding: '16px 20px',
+              marginBottom: '20px',
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              justifyContent: 'space-between',
+              alignItems: isMobile ? 'stretch' : 'center',
+              gap: '12px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+            }}>
+              <div style={{display:'flex', gap:'12px', alignItems:'center'}}>
+                <span style={{fontSize:'24px'}}>⚠️</span>
+                <div>
+                  <div style={{fontWeight: 900, fontSize:'14px', color:'#f59e0b'}}>Tours pendientes de finalizar</div>
+                  <div style={{fontSize:'12px', color: theme.textMuted || '#888', marginTop:'2px'}}>
+                    Tienes {pendingPastBookings.length} {pendingPastBookings.length === 1 ? 'reserva' : 'reservas'} de fechas pasadas sin marcar como completadas.
+                  </div>
+                </div>
+              </div>
+              <div style={{display:'flex', gap:'8px', flexWrap:'wrap'}}>
+                <button
+                  onClick={() => setFilterPendingPastOnly(!filterPendingPastOnly)}
+                  style={{
+                    background: filterPendingPastOnly ? '#f59e0b' : '#ffffff0d',
+                    color: filterPendingPastOnly ? '#000' : '#fff',
+                    border: 'none',
+                    padding: '8px 14px',
+                    borderRadius: '10px',
+                    fontWeight: 900,
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {filterPendingPastOnly ? 'Ver todas las reservas' : 'Revisar pendientes'}
+                </button>
+                <button
+                  onClick={autoUpdateStatuses}
+                  disabled={autoUpdating}
+                  style={{
+                    background: 'linear-gradient(90deg, #11BDDB, #10b981)',
+                    color: '#000',
+                    border: 'none',
+                    padding: '8px 14px',
+                    borderRadius: '10px',
+                    fontWeight: 900,
+                    fontSize: '11px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    opacity: autoUpdating ? 0.7 : 1
+                  }}
+                >
+                  {autoUpdating ? 'Procesando...' : 'Completar todas'}
+                </button>
+              </div>
+            </div>
+          )}
+          {tab==='bookings'&&filter(bookings).slice(0, visibleCount).map(b=>(
             <div key={b.id} style={{...s.card, cursor:'pointer', border: expandedId===b.id ? `1px solid ${C}` : '1px solid #ffffff05'}} onClick={()=>setExpandedId(expandedId===b.id?null:b.id)}>
               {/* BLOQUE SUPERIOR: Siempre visible */}
               <div style={{display:'flex', gap:'16px', alignItems:'flex-start', width:'100%'}}>
@@ -1251,6 +1395,22 @@ export default function AdminPanel() {
               )}
             </div>
           ))}
+          {tab === 'bookings' && filter(bookings).length > visibleCount && (
+            <div style={{display:'flex', justifyContent:'center', marginTop:'20px', marginBottom:'20px'}}>
+              <button
+                onClick={() => setVisibleCount(prev => prev + 25)}
+                style={{
+                  ...s.btn(C, '#000'),
+                  padding: '12px 24px',
+                  borderRadius: '14px',
+                  fontSize: '14px',
+                  fontWeight: 900
+                }}
+              >
+                Cargar más reservas (Mostrando {visibleCount} de {filter(bookings).length})
+              </button>
+            </div>
+          )}
           {tab==='trash'&&filter(bookings).map(b=>(
             <div key={b.id} style={{...s.card, padding:'20px', display:'flex', gap:'16px', alignItems:'center', border:'1px solid #ffffff05'}}>
               <div style={{flex:1, minWidth:0}}>
@@ -1609,6 +1769,67 @@ export default function AdminPanel() {
                     })
                   )}
                 </div>
+              </div>
+            </div>
+
+            {/* TABLA DE PÉRDIDAS Y GANANCIAS POR MES */}
+            <div style={{background:'#1a1a1a', padding:'24px', borderRadius:'24px', border:'1px solid #ffffff05', marginTop:'12px'}}>
+              <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'20px', flexWrap:'wrap', gap:'12px'}}>
+                <h3 style={{margin:0, fontSize:'14px', fontWeight:900, color:C, letterSpacing:'0.5px', textTransform:'uppercase'}}>Resumen Financiero Mensual (P&L)</h3>
+                <button
+                  onClick={exportMonthlyFinancials}
+                  style={{...s.btn('#10b981', '#000'), fontSize:'12px', padding:'8px 16px', borderRadius:'10px', border:'none', cursor:'pointer'}}
+                >
+                  <Download size={14} /> Exportar Excel/CSV
+                </button>
+              </div>
+
+              <div style={{overflowX:'auto', scrollbarWidth:'none'}}>
+                <table style={{width:'100%', borderCollapse:'collapse', fontSize:'13px', textAlign:'left'}}>
+                  <thead>
+                    <tr style={{borderBottom:'1px solid #ffffff11', color:'#888', fontWeight:900}}>
+                      <th style={{padding:'12px 8px'}}>Mes</th>
+                      <th style={{padding:'12px 8px', textAlign:'center'}}>Reservas</th>
+                      <th style={{padding:'12px 8px', textAlign:'right'}}>Previsto</th>
+                      <th style={{padding:'12px 8px', textAlign:'right'}}>Cobrado (Caja)</th>
+                      <th style={{padding:'12px 8px', textAlign:'right'}}>Gastos</th>
+                      <th style={{padding:'12px 8px', textAlign:'right'}}>Beneficio</th>
+                      <th style={{padding:'12px 8px', textAlign:'right'}}>Margen</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {!detailedStats || !Array.isArray(detailedStats.monthly_breakdown) || detailedStats.monthly_breakdown.length === 0 ? (
+                      <tr>
+                        <td colSpan="7" style={{padding:'20px', color:'#666', textAlign:'center'}}>Sin datos financieros registrados.</td>
+                      </tr>
+                    ) : (
+                      detailedStats.monthly_breakdown.map((m, idx) => {
+                        const margin = m.revenue > 0 ? ((m.profit / m.revenue) * 100).toFixed(1) : '0.0';
+                        const isPositive = m.profit >= 0;
+                        return (
+                          <tr key={idx} style={{borderBottom:'1px solid #ffffff05', color:'#fff', fontWeight:600}} onMouseOver={e=>e.currentTarget.style.background='#ffffff02'} onMouseOut={e=>e.currentTarget.style.background='transparent'}>
+                            <td style={{padding:'12px 8px', fontWeight:900, textTransform:'uppercase', color:C}}>{m.month}</td>
+                            <td style={{padding:'12px 8px', textAlign:'center'}}>{m.bookings_count}</td>
+                            <td style={{padding:'12px 8px', textAlign:'right', color:'#aaa'}}>{m.expected.toFixed(0)}€</td>
+                            <td style={{padding:'12px 8px', textAlign:'right', color:'#11BDDB'}}>{m.revenue.toFixed(0)}€</td>
+                            <td style={{padding:'12px 8px', textAlign:'right', color:'#ef4444'}}>{m.expenses.toFixed(0)}€</td>
+                            <td style={{padding:'12px 8px', textAlign:'right', color: isPositive ? '#10b981' : '#ef4444', fontWeight:900}}>{m.profit.toFixed(0)}€</td>
+                            <td style={{padding:'12px 8px', textAlign:'right'}}>
+                              <span style={{
+                                background: isPositive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                                color: isPositive ? '#10b981' : '#ef4444',
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                                fontSize: '11px',
+                                fontWeight: 900
+                              }}>{margin}%</span>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

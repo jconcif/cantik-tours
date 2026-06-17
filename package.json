@@ -1,7 +1,7 @@
 {
   "name": "cantik-tours",
   "private": true,
-  "version": "1.8.4.2.4",
+  "version": "1.8.4.2.8",
   "type": "module",
   "scripts": {
     "dev": "vite",

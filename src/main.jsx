@@ -9,6 +9,16 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 console.log("%c🚀 Cantik Tours Web Version:", "color: #11BDDB; font-weight: bold; font-size: 14px;", __BUILD_DATE__);
 
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+            console.log('SW Registered successfully:', reg.scope);
+        }).catch((err) => {
+            console.error('SW Registration failed:', err);
+        });
+    });
+}
+
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')).render(

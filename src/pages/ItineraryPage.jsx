@@ -471,16 +471,41 @@ export default function ItineraryPage() {
 
   if (error || !booking) return (
     <div className={`min-h-screen ${bg} ${text} flex flex-col items-center justify-center p-6 text-center`}>
-      <div className="bg-red-500/10 p-10 rounded-[2.5rem] border border-red-500/20 mb-8 max-w-md">
+      <div className="bg-red-500/10 p-10 rounded-[2.5rem] border border-red-500/20 mb-8 max-w-md w-full">
         <Info size={48} className="text-red-500 mx-auto mb-6" />
         <h2 className="text-2xl font-black mb-3">{error || (en ? 'Booking not found' : 'Reserva no encontrada')}</h2>
-        <p className="text-gray-400 font-bold leading-relaxed">
+        <p className="text-gray-400 font-bold leading-relaxed mb-6">
           {en 
-            ? 'We could not load your booking details. Please verify the link received or try again in a few moments.'
-            : 'No hemos podido cargar los detalles de tu reserva. Verifica el enlace recibido o vuelve a intentarlo en unos instantes.'}
+            ? 'We could not load your booking details. Please verify the link received or search by code below.'
+            : 'No hemos podido cargar los detalles de tu reserva. Verifica el enlace recibido o búscalo por código abajo.'}
         </p>
+        <form onSubmit={(e) => {
+          e.preventDefault();
+          const code = e.target.code.value.trim();
+          if (code) {
+            navigate(`/booking?ref=${encodeURIComponent(code)}`);
+            window.location.reload();
+          }
+        }} className="flex flex-col gap-3">
+          <input
+            name="code"
+            type="text"
+            placeholder={en ? "Enter code (e.g., CT-0042)" : "Introduce tu código (ej. CT-0042)"}
+            className={`w-full px-5 py-4 rounded-2xl border text-center font-bold outline-none text-lg transition-all ${
+              dark 
+                ? 'bg-black/40 border-white/10 text-white focus:border-primary/50' 
+                : 'bg-white border-gray-300 text-gray-900 focus:border-primary/50'
+            }`}
+          />
+          <button
+            type="submit"
+            className="w-full bg-primary text-black font-black py-4 rounded-2xl shadow-lg transition-opacity hover:opacity-90 uppercase tracking-widest text-xs"
+          >
+            {en ? 'Search Booking' : 'Buscar Reserva'}
+          </button>
+        </form>
       </div>
-      <LocalLink to="/" className="bg-primary text-white px-10 py-5 rounded-[2rem] font-black shadow-xl shadow-primary/20 uppercase tracking-widest text-xs">Volver al Inicio</LocalLink>
+      <LocalLink to="/" className="bg-white/10 hover:bg-white/15 text-white px-10 py-5 rounded-[2rem] font-black uppercase tracking-widest text-xs transition-colors">Volver al Inicio</LocalLink>
     </div>
   );
 
@@ -790,9 +815,14 @@ export default function ItineraryPage() {
   };
 
   return (
-    <div className={`min-h-screen ${bg} ${text} font-sans overflow-x-hidden transition-colors duration-300 flex flex-col`}>
+    <PayPalScriptProvider options={{ 
+      "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", 
+      currency: currency,
+      locale: en ? 'en_US' : 'es_ES'
+    }}>
+      <div className={`min-h-screen ${bg} ${text} font-sans overflow-x-hidden transition-colors duration-300 flex flex-col`}>
 
-      {/* Simulated Push Notification Banner */}
+        {/* Simulated Push Notification Banner */}
       <AnimatePresence>
         {false && pushNotification && (
           <motion.div
@@ -1657,51 +1687,45 @@ export default function ItineraryPage() {
                         <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
                           {en ? 'PAY SECURELY WITH CARD (NO LOGIN REQUIRED) OR PAYPAL' : 'PAGO SEGURO CON TARJETA (SIN LOGIN) O PAYPAL'}
                         </div>
-                        <PayPalScriptProvider options={{ 
-                          "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", 
-                          currency: currency,
-                          locale: en ? 'en_US' : 'es_ES'
-                        }}>
-                          <PayPalButtons 
-                            style={{ layout: "vertical", shape: "rect", color: "blue" }}
-                            createOrder={(data, actions) => {
-                              return actions.order.create({
-                                purchase_units: [{
-                                  amount: {
-                                    value: Number(formatPrice(balance).amount).toFixed(2),
-                                    currency_code: currency
-                                  },
-                                  description: `Booking ${formatCT(ref)} - ${booking?.client_name}`
-                                }]
+                        <PayPalButtons 
+                          style={{ layout: "vertical", shape: "rect", color: "blue" }}
+                          createOrder={(data, actions) => {
+                            return actions.order.create({
+                              purchase_units: [{
+                                amount: {
+                                  value: Number(formatPrice(balance).amount).toFixed(2),
+                                  currency_code: currency
+                                },
+                                description: `Booking ${formatCT(ref)} - ${booking?.client_name}`
+                              }]
+                            });
+                          }}
+                          onApprove={async (data, actions) => {
+                            try {
+                              setUploadingReceipt(true);
+                              const details = await actions.order.capture();
+                              const res = await capturePayPalPayment({
+                                orderID: data.orderID,
+                                bookingRef: ref,
+                                amount: Number(formatPrice(balance).amount).toFixed(2),
+                                currency: currency,
+                                payerName: details.payer.name.given_name + ' ' + details.payer.name.surname,
+                                payerEmail: details.payer.email_address
                               });
-                            }}
-                            onApprove={async (data, actions) => {
-                              try {
-                                setUploadingReceipt(true);
-                                const details = await actions.order.capture();
-                                const res = await capturePayPalPayment({
-                                  orderID: data.orderID,
-                                  bookingRef: ref,
-                                  amount: Number(formatPrice(balance).amount).toFixed(2),
-                                  currency: currency,
-                                  payerName: details.payer.name.given_name + ' ' + details.payer.name.surname,
-                                  payerEmail: details.payer.email_address
-                                });
-                                if (res.status === 'success') {
-                                  showToast(en ? 'Payment successful!' : '¡Pago exitoso!', 'success');
-                                  setShowPaymentModal(false);
-                                  setTimeout(() => window.location.reload(), 1500);
-                                } else {
-                                  throw new Error('Server returned error');
-                                }
-                              } catch (err) {
-                                showToast(en ? 'Error validating payment.' : 'Error al validar el pago.', 'error');
-                              } finally {
-                                setUploadingReceipt(false);
+                              if (res.status === 'success') {
+                                showToast(en ? 'Payment successful!' : '¡Pago exitoso!', 'success');
+                                setShowPaymentModal(false);
+                                setTimeout(() => window.location.reload(), 1500);
+                              } else {
+                                throw new Error('Server returned error');
                               }
-                            }}
-                          />
-                        </PayPalScriptProvider>
+                            } catch (err) {
+                              showToast(en ? 'Error validating payment.' : 'Error al validar el pago.', 'error');
+                            } finally {
+                              setUploadingReceipt(false);
+                            }
+                          }}
+                        />
                         <p className={`text-[11px] mt-4 ${sub}`}>
                           {en ? 'You can pay with your PayPal account or safely with any credit/debit card.' : 'Puedes pagar con tu cuenta PayPal o de forma segura con cualquier tarjeta de crédito/débito.'}
                         </p>
@@ -1981,6 +2005,7 @@ export default function ItineraryPage() {
           )}
         </button>
       </motion.div>
-    </div>
+      </div>
+    </PayPalScriptProvider>
   );
 }

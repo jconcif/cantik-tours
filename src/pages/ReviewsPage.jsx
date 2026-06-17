@@ -18,6 +18,8 @@ const ReviewsPage = () => {
     const paramName = searchParams.get('name');
     const paramTour = searchParams.get('tour');
     const paramDriver = searchParams.get('driver');
+    const paramCountry = searchParams.get('country') || searchParams.get('pais') || searchParams.get('nationality');
+    const paramFindUs = searchParams.get('find_us') || searchParams.get('findUs') || searchParams.get('source');
 
     const [step, setStep] = useState(1);
     const [status, setStatus] = useState('idle'); // idle, loading, success, error
@@ -47,10 +49,10 @@ const ReviewsPage = () => {
         name: paramName || '',
         tour_type: paramTour || 'ubud_central',
         driver_name: paramDriver || '',
-        find_us: 'instagram',
+        find_us: paramFindUs || 'instagram',
         comment: '',
         ig_user: '',
-        country: 'es',
+        country: paramCountry || 'es',
         auth: false
     });
 
@@ -71,6 +73,8 @@ const ReviewsPage = () => {
                                 name: prev.name || j.data.client_name || '',
                                 tour_type: prev.tour_type !== 'ubud_central' ? prev.tour_type : (j.data.tour_id || 'ubud_central'),
                                 driver_name: prev.driver_name || (j.data.drivers && j.data.drivers.name) || j.data.driver_name || '',
+                                country: prev.country !== 'es' ? prev.country : (j.data.client_country || j.data.country || j.data.pais || 'es'),
+                                find_us: prev.find_us !== 'instagram' ? prev.find_us : (j.data.find_us || j.data.how_heard || j.data.reference_source || 'instagram'),
                             }));
                             setIsPreFilled(true);
                         }
@@ -80,7 +84,7 @@ const ReviewsPage = () => {
                 fetchPreFill();
             }
         }
-    }, [ref, paramName, paramTour, paramDriver]);
+    }, [ref, paramName, paramTour, paramDriver, paramCountry, paramFindUs]);
 
     const nextStep = () => {
         if (step < 3) setStep(step + 1);

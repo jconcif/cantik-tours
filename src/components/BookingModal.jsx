@@ -42,6 +42,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
     });
 
     useEffect(() => {
+        if (!isOpen) return;
         const fetchAvailability = async () => {
             try {
                 const j = await getAvailability();
@@ -49,7 +50,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             } catch (e) { console.error("Error fetching availability:", e); }
         };
         fetchAvailability();
-    }, []);
+    }, [isOpen]);
 
     const getBaliTomorrow = () => {
         try {
@@ -306,6 +307,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
 
     const handleConfirmBooking = async () => {
         setIsSubmitting(true);
+        const startTime = Date.now();
         const instantId = Math.random().toString(36).substring(2, 6).toUpperCase();
         
         const res = await saveBookingToDB(instantId); 
@@ -320,9 +322,14 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         trackEvent('Conversion', 'Web Booking Request', tourTitle);
         trackLeadWhatsapp(tourTitle, finalTotalPriceWithFees);
         
-        resetModal();
-        setIsSubmitting(false);
-        navigate(`/${i18n.language}/booking?ref=CT-${instantId}`);
+        const elapsed = Date.now() - startTime;
+        const remainingDelay = Math.max(0, 1500 - elapsed);
+
+        setTimeout(() => {
+            resetModal();
+            setIsSubmitting(false);
+            navigate(`/${i18n.language}/booking?ref=CT-${instantId}`);
+        }, remainingDelay);
     };
 
     const inputClasses = "w-full bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/5 rounded-2xl px-5 py-4 font-bold outline-none focus:border-primary/50 focus:ring-4 focus:ring-primary/5 transition-all text-gray-700 dark:text-gray-200 min-h-[62px] block box-border";
