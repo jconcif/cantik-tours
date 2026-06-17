@@ -746,7 +746,8 @@ export default function ItineraryPage() {
   const tourData = tours.find(t => t.id === booking.tour_id) || tours.find(t => t.title === booking.tour_title);
   
   // If we have selected_stops, we use those for the 'visit' parts
-  const customStops = booking.selected_stops ? booking.selected_stops.split(',').map(s => s.trim()) : [];
+  const rawStops = booking.selected_stops || (booking.tour_id === 'ubud-flexible' && booking.itinerary && !booking.itinerary.startsWith('[') ? booking.itinerary : '');
+  const customStops = rawStops ? rawStops.split(',').map(s => s.trim()) : [];
   
   const displayItinerary = tourData?.itinerary ? [...tourData.itinerary] : [];
   
@@ -816,7 +817,7 @@ export default function ItineraryPage() {
 
   return (
     <PayPalScriptProvider options={{ 
-      "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", 
+      "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "AfmGZ_o7JbfteSOvIohJm2T33FYfP7NX9AqGTPzY-4Ua2BhDREV3FHpmy5hZ_WG7oF2Crw0Y6D3YiEr_", 
       currency: currency,
       locale: en ? 'en_US' : 'es_ES'
     }}>

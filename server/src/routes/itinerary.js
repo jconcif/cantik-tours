@@ -71,6 +71,7 @@ router.get('/', async (req, res) => {
       status: 'success',
       data: {
         ...booking,
+        selected_stops: booking.itinerary && !booking.itinerary.startsWith('[') ? booking.itinerary : null,
         drivers: driverRes.data
       },
       payments: paymentsRes.data || [],

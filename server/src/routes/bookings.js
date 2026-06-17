@@ -18,7 +18,8 @@ router.post(
       const {
         tour_id, tour_title, client_name, date, pax, hotel,
         experience, payment_type, total_price, deposit_amount,
-        is_paid, coupon, itinerary, reference, client_phone, client_email
+        is_paid, coupon, itinerary, reference, client_phone, client_email,
+        selected_stops
       } = req.body;
 
       // Server-side price validation would go here
@@ -49,7 +50,7 @@ router.post(
           deposit_amount: parseFloat(deposit_amount) || 0,
           is_paid: is_paid ? 1 : 0,
           coupon: coupon || '',
-          itinerary: itinerary || '',
+          itinerary: itinerary || selected_stops || '',
           payment_status: is_paid ? 'reserved' : 'requested',
           reference: reference || null,
           extras: JSON.stringify(initialExtras)
@@ -301,9 +302,9 @@ router.get('/', requireAuth, async (req, res) => {
 
     if (error) throw error;
 
-    // Flatten aggregates
     const bookings = (data || []).map((b) => ({
       ...b,
+      selected_stops: b.itinerary && !b.itinerary.startsWith('[') ? b.itinerary : null,
       total_paid: (b.total_paid || []).reduce((s, p) => s + Number(p.amount), 0),
       total_expenses: (b.total_expenses || []).reduce((s, e) => s + Number(e.amount), 0),
       total_charges: (b.total_charges || []).reduce((s, c) => s + Number(c.amount), 0),
