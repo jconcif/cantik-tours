@@ -882,7 +882,7 @@ export default function ItineraryPage() {
 
   return (
     <PayPalScriptProvider options={{ 
-      "client-id": "AfmGZ_o7JbfteSOvIohJm2T33FYfP7NX9AqGTPzY-4Ua2BhDREV3FHpmy5hZ_WG7oF2Crw0Y6D3YiEr_", 
+      "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "AfmGZ_o7JbfteSOvIohJm2T33FYfP7NX9AqGTPzY-4Ua2BhDREV3FHpmy5hZ_WG7oF2Crw0Y6D3YiEr_", 
       currency: currency,
       locale: en ? 'en_US' : 'es_ES'
     }}>
