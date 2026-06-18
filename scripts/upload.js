@@ -54,7 +54,7 @@ async function upload() {
         console.log("📤 Subiendo archivos de dist...");
         
         // Subir archivos individuales de la raíz de dist
-        const rootFiles = ["index.html", "sitemap.xml", "robots.txt", ".htaccess", "favicon.png", "apple-touch-icon.png"];
+        const rootFiles = ["index.html", "sitemap.xml", "robots.txt", ".htaccess", "favicon.png", "apple-touch-icon.png", "manifest.json", "sw.js"];
         for (const file of rootFiles) {
             try {
                 await client.uploadFrom(path.join(__dirname, "../dist", file), file);

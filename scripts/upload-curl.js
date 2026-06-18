@@ -47,7 +47,7 @@ const uploadFile = (localFilePath, remoteFilePath) => {
 const localDist = path.join(__dirname, '../dist');
 
 // Upload root files
-const rootFiles = ["index.html", "sitemap.xml", "robots.txt", ".htaccess", "favicon.png", "apple-touch-icon.png"];
+const rootFiles = ["index.html", "sitemap.xml", "robots.txt", ".htaccess", "favicon.png", "apple-touch-icon.png", "manifest.json", "sw.js"];
 for (const file of rootFiles) {
     const localFile = path.join(localDist, file);
     if (fs.existsSync(localFile)) {
