@@ -9,7 +9,7 @@ import {
   ChevronLeft, ChevronRight, CreditCard, Users
 } from 'lucide-react';
 import { getItinerary, submitCheckin, uploadReceipt, capturePayPalPayment, getGlobalSettings } from '../services/api';
-import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
+import { PayPalScriptProvider, PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import { useTranslation } from 'react-i18next';
 import { tours } from '../data/tours';
 import { useCurrency } from '../context/CurrencyContext';
@@ -25,6 +25,71 @@ function parseLocalDate(str) {
   const [y, m, d] = parts.map(Number);
   if (!y || !m || !d) return null;
   return new Date(y, m - 1, d);
+}
+
+function PayPalButtonsWrapper({ balance, currency, refCode, clientName, en, setUploadingReceipt, showToast, setShowPaymentModal }) {
+  const [{ isPending, isRejected }] = usePayPalScriptReducer();
+
+  if (isPending) {
+    return (
+      <div className="flex flex-col items-center justify-center py-6 gap-2">
+        <span className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">
+          {en ? 'Loading payment platform...' : 'Cargando plataforma de pago...'}
+        </span>
+      </div>
+    );
+  }
+
+  if (isRejected) {
+    return (
+      <div className="text-center py-6 text-red-500 text-xs font-bold">
+        {en ? 'Failed to load PayPal. Please use bank transfer.' : 'Error al cargar PayPal. Por favor usa transferencia.'}
+      </div>
+    );
+  }
+
+  return (
+    <PayPalButtons 
+      style={{ layout: "vertical", shape: "rect", color: "blue" }}
+      createOrder={(data, actions) => {
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              value: Number(balance).toFixed(2),
+              currency_code: currency
+            },
+            description: `Booking ${refCode} - ${clientName}`
+          }]
+        });
+      }}
+      onApprove={async (data, actions) => {
+        try {
+          setUploadingReceipt(true);
+          const details = await actions.order.capture();
+          const res = await capturePayPalPayment({
+            orderID: data.orderID,
+            bookingRef: refCode.replace('CT-', ''),
+            amount: Number(balance).toFixed(2),
+            currency: currency,
+            payerName: details.payer.name.given_name + ' ' + details.payer.name.surname,
+            payerEmail: details.payer.email_address
+          });
+          if (res.status === 'success') {
+            showToast(en ? 'Payment successful!' : '¡Pago exitoso!', 'success');
+            setShowPaymentModal(false);
+            setTimeout(() => window.location.reload(), 1500);
+          } else {
+            throw new Error('Server returned error');
+          }
+        } catch (err) {
+          showToast(en ? 'Error validating payment.' : 'Error al validar el pago.', 'error');
+        } finally {
+          setUploadingReceipt(false);
+        }
+      }}
+    />
+  );
 }
 
 export default function ItineraryPage() {
@@ -1651,23 +1716,6 @@ export default function ItineraryPage() {
                   <span className="text-3xl opacity-50 mr-1">{formatPrice(balance).symbol}</span>
                   {formatPrice(balance).amount}
                 </div>
-                
-                {/* Reference Pill */}
-                <div className="inline-flex flex-col items-center">
-                  <div className={`flex items-center gap-3 pl-5 pr-2 py-1.5 rounded-full border ${dark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
-                    <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">REF:</span>
-                    <span className={`text-sm font-mono font-black tracking-widest ${text}`}>{formatCT(ref)}</span>
-                    <button
-                      onClick={() => handleCopy(formatCT(ref), 'ref')}
-                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${copiedField === 'ref' ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-white/10 text-gray-500 hover:text-primary shadow-sm'}`}
-                    >
-                      {copiedField === 'ref' ? <CheckCircle2 size={14} /> : <Copy size={14} />}
-                    </button>
-                  </div>
-                  <span className={`text-[9px] font-bold uppercase tracking-widest mt-3 opacity-60 ${sub}`}>
-                    {en ? 'Include this REF in your transfer' : 'Incluye esta REF en el concepto'}
-                  </span>
-                </div>
               </div>
 
               
@@ -1688,44 +1736,15 @@ export default function ItineraryPage() {
                         <div className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-4">
                           {en ? 'PAY SECURELY WITH CARD (NO LOGIN REQUIRED) OR PAYPAL' : 'PAGO SEGURO CON TARJETA (SIN LOGIN) O PAYPAL'}
                         </div>
-                        <PayPalButtons 
-                          style={{ layout: "vertical", shape: "rect", color: "blue" }}
-                          createOrder={(data, actions) => {
-                            return actions.order.create({
-                              purchase_units: [{
-                                amount: {
-                                  value: Number(formatPrice(balance).amount).toFixed(2),
-                                  currency_code: currency
-                                },
-                                description: `Booking ${formatCT(ref)} - ${booking?.client_name}`
-                              }]
-                            });
-                          }}
-                          onApprove={async (data, actions) => {
-                            try {
-                              setUploadingReceipt(true);
-                              const details = await actions.order.capture();
-                              const res = await capturePayPalPayment({
-                                orderID: data.orderID,
-                                bookingRef: ref,
-                                amount: Number(formatPrice(balance).amount).toFixed(2),
-                                currency: currency,
-                                payerName: details.payer.name.given_name + ' ' + details.payer.name.surname,
-                                payerEmail: details.payer.email_address
-                              });
-                              if (res.status === 'success') {
-                                showToast(en ? 'Payment successful!' : '¡Pago exitoso!', 'success');
-                                setShowPaymentModal(false);
-                                setTimeout(() => window.location.reload(), 1500);
-                              } else {
-                                throw new Error('Server returned error');
-                              }
-                            } catch (err) {
-                              showToast(en ? 'Error validating payment.' : 'Error al validar el pago.', 'error');
-                            } finally {
-                              setUploadingReceipt(false);
-                            }
-                          }}
+                        <PayPalButtonsWrapper 
+                          balance={formatPrice(balance).amount}
+                          currency={currency}
+                          refCode={formatCT(ref)}
+                          clientName={booking?.client_name}
+                          en={en}
+                          setUploadingReceipt={setUploadingReceipt}
+                          showToast={showToast}
+                          setShowPaymentModal={setShowPaymentModal}
                         />
                         <p className={`text-[11px] mt-4 ${sub}`}>
                           {en ? 'You can pay with your PayPal account or safely with any credit/debit card.' : 'Puedes pagar con tu cuenta PayPal o de forma segura con cualquier tarjeta de crédito/débito.'}
@@ -1767,6 +1786,23 @@ export default function ItineraryPage() {
                           <h3 className={`text-xs font-black uppercase tracking-widest text-primary mb-6 text-center`}>
                             {en ? 'Step 1: Make the Transfer' : 'Paso 1: Haz la transferencia'}
                           </h3>
+                          
+                          {/* Reference Pill (Only for bank transfers) */}
+                          <div className="flex flex-col items-center mb-8">
+                            <div className={`flex items-center gap-3 pl-5 pr-2 py-1.5 rounded-full border ${dark ? 'bg-white/5 border-white/10' : 'bg-gray-50 border-gray-200'}`}>
+                              <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400">REF:</span>
+                              <span className={`text-sm font-mono font-black tracking-widest ${text}`}>{formatCT(ref)}</span>
+                              <button
+                                onClick={() => handleCopy(formatCT(ref), 'ref')}
+                                className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${copiedField === 'ref' ? 'bg-emerald-500 text-white' : 'bg-white dark:bg-white/10 text-gray-500 hover:text-primary shadow-sm'}`}
+                              >
+                                {copiedField === 'ref' ? <CheckCircle2 size={14} /> : <Copy size={14} />}
+                              </button>
+                            </div>
+                            <span className={`text-[9px] font-bold uppercase tracking-widest mt-3 opacity-60 ${sub}`}>
+                              {en ? 'Include this REF in your transfer' : 'Incluye esta REF en el concepto'}
+                            </span>
+                          </div>
                           
                           {/* Pill Tabs for EUR / USD inside bank transfer */}
                           <div className={`flex p-1 rounded-2xl mb-8 ${dark ? 'bg-white/5' : 'bg-gray-100'}`}>
