@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cantik-tours-cache-v1';
+const CACHE_NAME = 'cantik-tours-cache-v1.8.4.3.4';
 const ASSETS_TO_CACHE = [
   '/',
   '/admin',
@@ -39,11 +39,8 @@ self.addEventListener('fetch', (event) => {
   }
   
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then((response) => {
+    fetch(event.request)
+      .then((response) => {
         if (!response || response.status !== 200 || response.type !== 'basic') {
           return response;
         }
@@ -52,9 +49,10 @@ self.addEventListener('fetch', (event) => {
           cache.put(event.request, responseToCache);
         });
         return response;
-      }).catch(() => {
-        // Fallback for offline if necessary
-      });
-    })
+      })
+      .catch(() => {
+        // Fallback to cache if network is unavailable
+        return caches.match(event.request);
+      })
   );
 });
