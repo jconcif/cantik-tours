@@ -52,7 +52,7 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
         fetchAvailability();
     }, [isOpen]);
 
-    const getBaliTomorrow = () => {
+    const getBaliSubsequent = () => {
         try {
             const formatter = new Intl.DateTimeFormat('en-US', {
                 timeZone: 'Asia/Makassar',
@@ -66,21 +66,21 @@ const BookingModal = ({ isOpen, onClose, tourTitle, tourPrice, tourId, initialSe
             const month = parseInt(val('month')) - 1;
             const day = parseInt(val('day'));
             const baliToday = new Date(year, month, day);
-            const baliTomorrow = new Date(baliToday);
-            baliTomorrow.setDate(baliTomorrow.getDate() + 1);
-            return baliTomorrow;
+            const baliSubsequent = new Date(baliToday);
+            baliSubsequent.setDate(baliSubsequent.getDate() + 2);
+            return baliSubsequent;
         } catch (e) {
-            const localTomorrow = new Date();
-            localTomorrow.setDate(localTomorrow.getDate() + 1);
-            localTomorrow.setHours(0, 0, 0, 0);
-            return localTomorrow;
+            const localSubsequent = new Date();
+            localSubsequent.setDate(localSubsequent.getDate() + 2);
+            localSubsequent.setHours(0, 0, 0, 0);
+            return localSubsequent;
         }
     };
 
     const getMinSelectableDate = () => {
-        const tomorrow = getBaliTomorrow();
+        const subsequent = getBaliSubsequent();
         const startLimit = new Date(2026, 5, 1);
-        return tomorrow > startLimit ? tomorrow : startLimit;
+        return subsequent > startLimit ? subsequent : startLimit;
     };
 
     const getMaxSelectableDate = () => {
