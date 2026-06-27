@@ -15,7 +15,7 @@ import { tours } from '../data/tours';
 import { useCurrency } from '../context/CurrencyContext';
 import { useDarkMode } from '../context/DarkModeContext';
 
-const SUPPORT_PHONE_ES = '34642517787';
+const SUPPORT_PHONE_ES = '6287797717707';
 
 // Safe date parser — avoids timezone shift issues with ISO strings
 function parseLocalDate(str) {
@@ -2002,7 +2002,7 @@ export default function ItineraryPage() {
               </div>
               <div className="flex flex-col gap-1.5">
                 <a
-                  href={`https://wa.me/34642517787?text=${encodeURIComponent(
+                  href={`https://wa.me/6287797717707?text=${encodeURIComponent(
                     `Hola Cantik Tours!\nNecesito ayuda con mi reserva.\n${fichaUrl}`
                   )}`}
                   target="_blank"
@@ -2013,7 +2013,7 @@ export default function ItineraryPage() {
                   <span className="text-sm">🇪🇸</span> Español (ES)
                 </a>
                 <a
-                  href={`https://wa.me/34642517787?text=${encodeURIComponent(
+                  href={`https://wa.me/6287797717707?text=${encodeURIComponent(
                     `Hello Cantik Tours!\nI need help with my booking.\n${fichaUrl}`
                   )}`}
                   target="_blank"

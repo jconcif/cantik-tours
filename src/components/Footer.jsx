@@ -58,9 +58,9 @@ const Footer = () => {
                     <h3 className="font-bold text-lg mb-6">{t('footer.contact')}</h3>
                     <ul className="space-y-4 font-medium text-gray-600 dark:text-gray-400">
                         <li>
-                            <a href="https://wa.me/34642517787" className="hover:text-primary transition-colors block leading-tight mt-2">
+                            <a href="https://wa.me/6287797717707" className="hover:text-primary transition-colors block leading-tight mt-2">
                                 <span className="block text-xs font-bold text-gray-400">España / Latam:</span>
-                                +34 642 51 77 87 <span className="text-[10px] opacity-60">(ES / EN)</span>
+                                +62 877 9771 7707 <span className="text-[10px] opacity-60">(ES / EN)</span>
                             </a>
                         </li>
                         <li>

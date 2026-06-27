@@ -83,7 +83,7 @@ const TourFinder = ({ isOpen, onClose }) => {
         return tours.find(t => t.id === 'ubud-central') || tours[0];
     })() : null;
 
-    const whatsappNumber = '34642517787';
+    const whatsappNumber = '6287797717707';
     const whatsappMessage = matchedTour
         ? isEs
             ? `¡Hola Cantik Tours! Hice el test de vuestra web y me recomendó el tour "${matchedTour.title}". Me gustaría consultar disponibilidad e información.`

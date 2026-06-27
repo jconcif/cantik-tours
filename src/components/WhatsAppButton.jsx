@@ -29,7 +29,7 @@ const WhatsAppButton = () => {
         : t('common.whatsapp_message');
 
     const whatsappMessage = encodeURIComponent(baseMessage);
-    const whatsappLink = `https://wa.me/34642517787?text=${whatsappMessage}`;
+    const whatsappLink = `https://wa.me/6287797717707?text=${whatsappMessage}`;
 
     return (
         <AnimatePresence>

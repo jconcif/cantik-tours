@@ -9,7 +9,7 @@ const FinalCTA = () => {
     const { t } = useTranslation();
 
     const whatsappMessage = encodeURIComponent(t('common.whatsapp_message'));
-    const whatsappLink = `https://wa.me/34642517787?text=${whatsappMessage}`;
+    const whatsappLink = `https://wa.me/6287797717707?text=${whatsappMessage}`;
 
     return (
         <section className="py-24 px-6 relative overflow-hidden bg-white dark:bg-bg-dark">

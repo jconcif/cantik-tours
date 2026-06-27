@@ -35,7 +35,7 @@ const AboutPage = () => {
         }
     ];
 
-    const whatsappLinkHelp = `https://wa.me/34642517787?text=${encodeURIComponent(t('common.whatsapp_about'))}`;
+    const whatsappLinkHelp = `https://wa.me/6287797717707?text=${encodeURIComponent(t('common.whatsapp_about'))}`;
 
     return (
         <div className="pt-24 min-h-screen bg-bg-light dark:bg-bg-dark font-sans">
